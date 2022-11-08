@@ -8,19 +8,13 @@ from ensemble_parameters import *
 from tqdm import tqdm
 plt.rcParams.update(plotparams)
 
-ensemble = 'C2'
-data = '/home/rm/external/NPR/'+ensemble
-cfgs = os.listdir(data)[1:]
-cfgs.sort()
-N_cf = len(cfgs) # number of configs)
+path = '/home/rm/external/NPR/'
 N_d = 4 # Dirac indices
 N_c = 3 # Color indices
 N_bl = 16 # number of bilinears
-N_boot = 30 # number of bootstrap samples
+N_boot = 20 # number of bootstrap samples
 N_fq = 16 # number of fourquarks
 L = 24 # lattice spatial extent
-a = params[ensemble]['ainv'] 
-Z_A = 0.71783 # axial renorm factor on m_l=0.001
 
 dirs = ['X','Y','Z','T']
 currents = ['S','P','V','A','T']
@@ -133,7 +127,9 @@ for i in range(len(operators)):
 mask[1,2], mask[2,1] = True, True
 mask[3,4], mask[4,3] = True, True 
 #=====filenames===================================================
-def common_cf_files(corr, prefix=None):
+def common_cf_files(data, corr, prefix=None):
+    cfgs = os.listdir(data)[1:]
+    cfgs.sort()
     file_names = {cf:os.listdir(f'{data}/{cf}/NPR/{corr}/')
                   for cf in cfgs}
 
@@ -169,10 +165,16 @@ def encode_prop(prop_info):
 
 
 class external:
-    def __init__(self, data=data, cfgs=cfgs, mom=[-3,-3,0,0], tw=[0.00, 0.00, 0.00, 0.00],
+    def __init__(self, ensemble, mom=[-3,-3,0,0], tw=[0.00, 0.00, 0.00, 0.00],
                  prop='fgauge_SDWF', Ls='16', M5='1.80', am='0.0100',
                  filename='', **kwargs):
 
+        data = path+ensemble
+        a_inv = params[ensemble]['ainv'] 
+        cfgs = os.listdir(data)[1:]
+        cfgs.sort()
+        N_cf = len(cfgs) # number of configs)
+        L = params[ensemble]['XX']
         self.type ='externalleg'
         self.prefix = 'external_'
         if filename != '':
@@ -191,13 +193,10 @@ class external:
                          'src_mom_p':'_'.join([str(i) for i in self.mom])}
             self.filename = encode_prop(self.info)
 
-        self.tot_mom = (2*np.pi*a/L)*(np.array(self.mom)+np.array(self.tw))
+        self.tot_mom = (2*np.pi*a_inv/L)*(np.array(self.mom)+np.array(self.tw))
         self.norm = np.linalg.norm(self.tot_mom)
         self.mom_sq = self.norm**2
         
-        #if self.filename not in common_cf_files(data, self.type, cfgs, prefix=self.prefix):
-        #    warnings.warn(f'Data not found at path {self.filename}')
-        #else:
         self.N_cf = len(cfgs)
         self.data = np.empty(shape=(self.N_cf,12,12),dtype='complex128')
         for cf in range(self.N_cf):
@@ -208,7 +207,6 @@ class external:
                                 2).reshape((12,12))
 
         self.prop = np.mean(self.data,axis=0)
-        #pdb.set_trace()
         self.dagger = self.prop.conj().T
         self.prop_out = Gamma['5']@self.dagger@Gamma['5']
         self.inv = np.linalg.inv(self.prop)
@@ -227,15 +225,18 @@ class external:
 
 
 class bilinear:
-    def __init__(self, prop1, prop2, data=data, cfgs=cfgs, scheme='gamma', **kwargs):
+    def __init__(self, ensemble, prop1, prop2, scheme='gamma', **kwargs):
 
+        data = path+ensemble
+        a_inv = params[ensemble]['ainv'] 
+        cfgs = os.listdir(data)[1:]
+        cfgs.sort()
+        N_cf = len(cfgs) # number of configs)
+        L = params[ensemble]['XX']
         self.type = 'bilinears'
         self.prefix = 'bi_'
         self.filename = prop1.filename+'__'+prop2.filename
 
-        #if self.filename not in common_cf_files(data, self.type, cfgs, prefix=self.prefix):
-        #    warnings.warn('Data not found at path {self.filename}')
-        #else:
         self.N_cf = len(cfgs)
         self.bilinear = np.array([np.empty(shape=(self.N_cf,12,12),dtype='complex128')
                                   for i in range(N_bl)], dtype=object)
@@ -312,17 +313,20 @@ class bilinear:
             self.proj_err[k] = (diff.dot(diff)/N_boot)**0.5
 
 class fourquark:
-    def __init__(self, prop1, prop2, data=data, cfgs=cfgs, scheme='gamma', **kwargs):
+    def __init__(self, ensemble, prop1, prop2, scheme='gamma', **kwargs):
 
+        data = path+ensemble
+        a_inv = params[ensemble]['ainv'] 
+        cfgs = os.listdir(data)[1:]
+        cfgs.sort()
+        N_cf = len(cfgs) # number of configs)
+        L = params[ensemble]['XX']
         self.type = 'fourquarks'
         self.prefix = 'fourquarks_'
         self.filename = prop1.filename+'__'+prop2.filename
         fq_str = 'FourQuarkFullyConnected'
         self.scheme = 'gamma'
 
-        #if self.filename not in common_cf_files(data, self.type, cfgs, prefix=self.prefix):
-        #    warnings.warn('Data not found at path {self.filename}')
-        #else:
         self.N_cf = len(cfgs)
         self.fourquark = np.array([np.empty(shape=(self.N_cf,12,12,12,12),dtype='complex128')
                                   for i in range(N_fq)], dtype=object)
@@ -375,17 +379,15 @@ class fourquark:
         if self.scheme=='gamma':
             self.projector = fq_gamma_projector
             self.F = fq_gamma_F
-        #if self.scheme=='qslash':
-        #    self.projector = {'VV+AA': 
 
         self.projected = np.array([[np.einsum('abcd,badc',self.projector[k1],
                           self.amputated[k2]) for k2 in operators]
                           for k1 in operators]) 
-        #self.projected = np.multiply(self.projected, mask)
-        self.bl = bilinear(self.prop_in, self.prop_out, data=data, cfgs=cfgs)
+        self.bl = bilinear(ensemble, self.prop_in, self.prop_out, cfgs=cfgs)
         self.Z_V = ((self.F/(self.bl.F['V']**2))@np.linalg.inv(self.projected.T/self.bl.projected['V']**2)).real 
         self.Z_V = np.multiply(self.Z_V,mask)
         self.Z_A = ((self.F/self.bl.F['A']**2)@np.linalg.inv(self.projected/self.bl.projected['A']**2)).real
+        self.Z_S = np.multiply(self.Z_A,mask)
 
     def errs(self):
         self.prop_in.errs()
