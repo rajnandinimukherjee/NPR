@@ -5,7 +5,7 @@ import itertools
 from scipy.interpolate import interp1d
 import pdb
 
-ensembles = ['KEKC1L','KEKF1']
+ensembles = ['KEKC1S']
 
 phys_ens = ['C0','M0']
 

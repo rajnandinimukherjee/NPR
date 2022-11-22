@@ -1,0 +1,16 @@
+\documentclass{article}
+
+\usepackage{pgfplotstable}
+\usepackage{array}
+
+\begin{document}
+
+\begin{table}
+    \centering
+    \pgfplotstabletypeset[dec sep align,
+    fixed zerofill,
+    precision=4,
+    col sep=space]{C0.csv}
+\end{table}
+
+\end{document}
