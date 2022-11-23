@@ -1,13 +1,7 @@
 from NPR_structures import *
 import pickle
 
-ensembles = ['C0','C1','C2',
-             'M0','M1','M2','M3',
-             'F1M','F1S',
-             'KEKC2a','KEKC2b',
-             #'KEKM1a','KEKM1b',
-             'KEKC1S','KEKC1L',
-             'KEKF1']
+ensembles = ['KEKM1a','KEKM1b']
 schemes = ['1']
 N_boot = 20
 UKQCD_ens = ['C0','C1','C2',
@@ -18,9 +12,6 @@ KEK_ens = ['KEKC2a','KEKC2b',
            'KEKC1S','KEKC1L',
            'KEKF1']
 all_ens = UKQCD_ens+KEK_ens
-#from random import shuffle, seed
-#seed(1)
-#shuffle(all_ens)
 
 def err_disp(num, err, n=2, **kwargs):
     ''' converts num and err into num(err) in scientific notation upto n digits
@@ -47,13 +38,41 @@ def st_dev(data, mean=None, **kwargs):
         mean = np.mean(data)
     return np.sqrt(((data-mean).dot(data-mean))/n)
 
+def sigma(ens,mu1=2,mu2=3,**kwargs):
+    res = all_data[ens]['1']['Z_fac']
+    err = all_data[ens]['1']['Z_err']
+
+    all_data[ens]['1']['sigma'] = {}
+    all_data[ens]['1']['sigma_err'] = {}
+
+    for k in res.keys():
+        Z_1 = res[k][mu1]
+        Z_2 = res[k][mu2]
+        sig = Z_2@np.linalg.inv(Z_1)
+        all_data[ens]['1']['sigma'][k] = sig
+
+        var_Z1 = np.zeros(shape=(5,5,N_boot))
+        var_Z2 = np.zeros(shape=(5,5,N_boot))
+        for i,j in itertools.product(range(5),range(5)):
+            if mask[i,j]:
+                var_Z1[i,j,:] = np.random.normal(Z_1[i,j],err[k][mu1][i,j],N_boot)  
+                var_Z2[i,j,:] = np.random.normal(Z_2[i,j],err[k][mu2][i,j],N_boot) 
+        sigmas = np.array([var_Z2[:,:,b]@np.linalg.inv(var_Z1[:,:,b])
+                           for b in range(N_boot)])
+        errors = np.zeros(shape=(5,5))
+        for i,j in itertools.product(range(5),range(5)):
+            if mask[i,j]:
+                errors[i,j] = st_dev(sigmas[:,i,j], mean=sig[i,j])
+
+        all_data[ens]['1']['sigma_err'][k] = errors
+
 import itertools
 from scipy.interpolate import interp1d
 import pdb
 
 def get_data(ens, s, **kwargs):
-    #file = f'all_res/{ens}_{s}_scheme.p'
-    file = f'RISMOM/{ens}.p'
+    file = f'all_res/{ens}_{s}_scheme.p'
+    #file = f'RISMOM/{ens}.p'
     momenta, results, errs = pickle.load(open(file, 'rb'))
     return momenta, results, errs
 
@@ -81,46 +100,60 @@ def extrap(momenta, results, errs, ens, point=3, **kwargs):
                 errors[(k,l)][i,j] = st_dev(np.array(store), mean=matrix[(k,l)][i,j])
     return matrix, errors
 
+def merge_mixed(ens, all_data, **kwargs):
+    data = all_data[ens]['1']
+    mixed_res = {m:(data['Z_fac'][(0,1)][m]+data['Z_fac'][(1,0)][m])/2.0
+                 for m in data['mom']}
+    mixed_err = {m:(data['Z_err'][(0,1)][m]+data['Z_err'][(1,0)][m])
+                 for m in data['mom']}
+    return mixed_res, mixed_err
+
 from matching import *
 R_MS = R_MSbar(3,alpha_3)
 all_data = {ens:{} for ens in ensembles}
 for ens, s, in itertools.product(ensembles, schemes):
     momenta, results, errs = get_data(ens, s)
-    all_data[ens][s] = {'mom':momenta,
-                        'Z_fac':results,
-                        'Z_err':errs,
-                        'Z_MS':{},
-                        'err_MS':{}}
-    for k in all_data[ens][s]['Z_fac'].keys():
-        all_data[ens][s]['Z_MS'][k] = {m:R_MS@all_data[ens][s]['Z_fac'][k][m]
-                                       for m in momenta}
-        all_data[ens][s]['err_MS'][k] = {m:R_MS@all_data[ens][s]['Z_err'][k][m]
-                                       for m in momenta}
-    sigma(ens)
-
-
-    #if ens in KEK_ens:
-    #    results[(0,0)] = results.pop((1,1))
-    #    errs[(0,0)] = errs.pop((1,1))
-
-    #extrap_3, err_3 = extrap(momenta, results, errs, ens, point=3)
-    #extrap_2, err_2 = extrap(momenta, results, errs, ens, point=2)
     #all_data[ens][s] = {'mom':momenta,
-    #                    'Z_fac':results, 
+    #                    'Z_fac':results,
     #                    'Z_err':errs,
-    #                    'extrap_3':extrap_3,
-    #                    'err_3':err_3,
-    #                    'extrap_2':extrap_2,
-    #                    'err_2':err_2}
-    #momenta = list(momenta)
-    #momenta.append(3)
-    #momenta.append(2)
-    #momenta.sort()
-    #print(momenta)
-    #for k in results.keys():
-    #    results[k].update({2:extrap_2[k], 3:extrap_3[k]})
-    #    errs[k].update({2:err_2[k], 3:err_3[k]})
-    #pickle.dump([np.array(momenta),results, errs], open('RISMOM/'+ens+'.p','wb'))
+    #                    'Z_MS':{},
+    #                    'err_MS':{}}
+    #if ens in UKQCD_ens:
+    #    mixed_res, mixed_err = merge_mixed(ens, all_data)
+    #    all_data[ens][s]['Z_fac'][(0,1)] = mixed_res
+    #    all_data[ens][s]['Z_fac'].pop((1,0))
+    #    all_data[ens][s]['Z_err'][(0,1)] = mixed_err
+    #    all_data[ens][s]['Z_err'].pop((1,0))
+    #for k in all_data[ens][s]['Z_fac'].keys():
+    #    all_data[ens][s]['Z_MS'][k] = {m:R_MS@all_data[ens][s]['Z_fac'][k][m]
+    #                                   for m in momenta}
+    #    all_data[ens][s]['err_MS'][k] = {m:R_MS@all_data[ens][s]['Z_err'][k][m]
+    #                                   for m in momenta}
+    #sigma(ens)
+
+
+    if ens in KEK_ens:
+        results[(0,0)] = results.pop((1,1))
+        errs[(0,0)] = errs.pop((1,1))
+
+    extrap_3, err_3 = extrap(momenta, results, errs, ens, point=3)
+    extrap_2, err_2 = extrap(momenta, results, errs, ens, point=2)
+    all_data[ens][s] = {'mom':momenta,
+                        'Z_fac':results, 
+                        'Z_err':errs,
+                        'extrap_3':extrap_3,
+                        'err_3':err_3,
+                        'extrap_2':extrap_2,
+                        'err_2':err_2}
+    momenta = list(momenta)
+    momenta.append(3)
+    momenta.append(2)
+    momenta.sort()
+    print(momenta)
+    for k in results.keys():
+        results[k].update({2:extrap_2[k], 3:extrap_3[k]})
+        errs[k].update({2:err_2[k], 3:err_3[k]})
+    pickle.dump([np.array(momenta),results, errs], open('RISMOM/'+ens+'.p','wb'))
 
 
 def plot_actions(ens, s,  **kwargs):
@@ -312,37 +345,62 @@ def print_mtx(vals, errs, **kwargs):
                 string_mtx[n,m]=err_disp(vals[n,m],errs[n,m],n=2)
             else:
                 string_mtx[n,m]='0'
-    print(string_mtx)
+    #print(string_mtx)
+    return string_mtx
 
-def sigma(ens,mu1=2,mu2=3,**kwargs):
-    res = all_data[ens]['1']['Z_fac']
-    err = all_data[ens]['1']['Z_err']
+def bmatrix(a):
+    """Returns a LaTeX bmatrix
 
-    all_data[ens]['1']['sigma'] = {}
-    all_data[ens]['1']['sigma_err'] = {}
+    :a: numpy array
+    :returns: LaTeX bmatrix as a string
+    """
+    if len(a.shape) > 2:
+        raise ValueError('bmatrix can at most display two dimensions')
+    lines = str(a).replace('\'','').replace('[', '').replace(']', '').splitlines()
+    rv = [r'\begin{bmatrix}']
+    rv += ['  ' + ' & '.join(l.split()) + r'\\' for l in lines]
+    rv +=  [r'\end{bmatrix}']
+    return '\n'.join(rv)
 
-    for k in res.keys():
-        Z_1 = res[k][mu1]
-        Z_2 = res[k][mu2]
-        sig = Z_2@np.linalg.inv(Z_1)
-        all_data[ens]['1']['sigma'][k] = sig
+def make_table(ens, save=True, **kwargs):
+    data = all_data[ens]['1']
+    #rv = [r'\begin{center}']
+    rv = [r'\begin{tabular}{c|c|c}']
+    rv += [ens+ r' & 2 GeV & 3 GeV \\']
+    rv += [r'\hline']
+    rv += [str(k) + ' & $' + bmatrix(print_mtx(data['Z_fac'][k][2],
+           data['Z_err'][k][2])) + '$ & $' + bmatrix(print_mtx(data['Z_fac'][k][3],
+           data['Z_err'][k][3])) + r'$\\' for k in data['Z_fac'].keys()]
+    rv += [r'\end{tabular}']
+    #rv += [r'\end{center}']
 
-        var_Z1 = np.zeros(shape=(5,5,N_boot))
-        var_Z2 = np.zeros(shape=(5,5,N_boot))
-        for i,j in itertools.product(range(5),range(5)):
-            if mask[i,j]:
-                var_Z1[i,j,:] = np.random.normal(Z_1[i,j],err[k][mu1][i,j],N_boot)  
-                var_Z2[i,j,:] = np.random.normal(Z_2[i,j],err[k][mu2][i,j],N_boot) 
-        sigmas = np.array([var_Z2[:,:,b]@np.linalg.inv(var_Z1[:,:,b])
-                           for b in range(N_boot)])
-        errors = np.zeros(shape=(5,5))
-        for i,j in itertools.product(range(5),range(5)):
-            if mask[i,j]:
-                errors[i,j] = st_dev(sigmas[:,i,j], mean=sig[i,j])
+    if save:
+       f = open('tex/'+ens+'.tex','w')
+       f.write('\n'.join(rv))
+       f.close()
+    else:
+        return '\n'.join(rv)
 
-        all_data[ens]['1']['sigma_err'][k] = errors
+import os
+def make_results_tex(**kwargs):
+    rv = [r'\documentclass[10pt]{extarticle}']
+    rv += [r'\usepackage[paperwidth=18in,paperheight=6in]{geometry}']
+    rv += [r'\usepackage{amsmath}']
+    rv += [r'\usepackage[utf8]{inputenc}']
+    rv += [r'\title{NPR $Z_{ij}/Z_V^2$}'+'\n'+r'\author{Rajnandini Mukherjee}'+'\n'+r'\date{\today}']
+    rv += [r'\begin{document}']
+    rv += [r'\maketitle']
+    rv += ['\n\clearpage\n' + make_table(ens, save=False) for ens in ensembles]
+    rv += [r'\end{document}']
 
+    f = open('tex/results.tex','w')
+    f.write('\n'.join(rv))
+    f.close()
 
+    os.system("pdflatex tex/results.tex")
+    os.system("open results.pdf")
+   
+    
 
 
 
