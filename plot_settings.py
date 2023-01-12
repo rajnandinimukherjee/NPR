@@ -16,12 +16,12 @@ fig_width   = fig_width_pt*inches_per_pt # width in inches
 fig_height  = fig_width/golden_mean      # height in inches
 fig_size    =  [fig_width,fig_height]
 plotparams  = {'backend': 'ps',
-              'font.size': 12,
+              'font.size': 10,
               'font.family': 'STIXGeneral',
               'mathtext.fontset':'stix',
-              'xtick.labelsize': 12,
-              'ytick.labelsize': 12,
-              'axes.labelsize': 12,
+              'xtick.labelsize': 10,
+              'ytick.labelsize': 10,
+              'axes.labelsize': 10,
               'figure.figsize': fig_size,
               'savefig.bbox':'tight',
               'legend.numpoints':1,

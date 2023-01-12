@@ -1,7 +1,8 @@
 from NPR_structures import *
+#import seaborn as sns
+#sns.set_theme()
 import pickle
 
-ensembles = ['KEKM1a','KEKM1b']
 schemes = ['1']
 N_boot = 20
 UKQCD_ens = ['C0','C1','C2',
@@ -12,6 +13,7 @@ KEK_ens = ['KEKC2a','KEKC2b',
            'KEKC1S','KEKC1L',
            'KEKF1']
 all_ens = UKQCD_ens+KEK_ens
+ensembles = UKQCD_ens #all_ens
 
 def err_disp(num, err, n=2, **kwargs):
     ''' converts num and err into num(err) in scientific notation upto n digits
@@ -27,7 +29,12 @@ def err_disp(num, err, n=2, **kwargs):
     else:
         num_sf = num*10**(-(num_dec_place))
         num_trunc = round(num_sf, num_dec_place-(err_dec_place+1-n))
-        return str(num_trunc)+'('+str(err_n_digits)+')E%+d'%num_dec_place
+        digs = -err_dec_place+n-1
+        str_num_trunc = str(num)[:digs+2]
+        #num_nontrunc = round(num,-err_dec_place+n-1)
+        #pdb.set_trace()
+        #return str(num_trunc)+'('+str(err_n_digits)+')E%+d'%num_dec_place
+        return str_num_trunc+'('+str(err_n_digits)+')'
 
 def st_dev(data, mean=None, **kwargs):
     '''standard deviation function - finds stdev around data mean or mean
@@ -71,8 +78,8 @@ from scipy.interpolate import interp1d
 import pdb
 
 def get_data(ens, s, **kwargs):
-    file = f'all_res/{ens}_{s}_scheme.p'
-    #file = f'RISMOM/{ens}.p'
+    #file = f'all_res/{ens}_{s}_scheme.p'
+    file = f'RISMOM/{ens}.p'
     momenta, results, errs = pickle.load(open(file, 'rb'))
     return momenta, results, errs
 
@@ -108,52 +115,108 @@ def merge_mixed(ens, all_data, **kwargs):
                  for m in data['mom']}
     return mixed_res, mixed_err
 
-from matching import *
-R_MS = R_MSbar(3,alpha_3)
+from coeffs import *
+#alpha_3 = 4*np.pi*(1-1.00414)/r_11
+mus = np.linspace(2,3,20)
+gs = [g(m) for m in mus]
+#alphas = [alpha(m) for m in mus]
+
+#===leading order perturbative running=====
+from scipy.linalg import expm
+beta_0 = Bcoeffs(3)[0]
+exponent = gamma_0/beta_0
+def pt_running_lo(mu1, mu2, **kwargs):
+    frac = g(mu1)/g(mu2)
+    return expm(exponent*np.log(frac))
+order_1_running = np.array([pt_running_lo(2,mu) for mu in mus])
+
+#===next-to-leading order perturbative running=====
+    #====calculating gamma_1_RISMOM=========
+beta_0, beta_1 = Bcoeffs(3)[:2]
+gamma_1_RISMOM = r_mtx@gamma_0 - gamma_0@r_mtx + gamma_1_MS(f=3) + 2*beta_0*r_mtx
+
+def gamma(mu,order):
+    mult = (g(mu)**2)/(16*np.pi**2)
+    expansion = [gamma_0*mult, gamma_1_RISMOM*(mult**2)]
+    return sum(expansion[:order])
+
+def beta_func(Z, mu, order):
+    Z_mtx = Z.reshape([5,5])
+    dZ_dmu = -gamma(mu,order)@(Z_mtx)/mu
+    return dZ_dmu.reshape(-1)
+
+from scipy.integrate import odeint
+def pt_running(ens, order, action=(0,0), **kwargs):
+    Z_2 = all_data[ens]['1']['Z_fac'][action][2]
+    Z_mus = odeint(beta_func, Z_2.reshape(-1), mus, args=(order,))
+    o2r = np.array([Z_2@np.linalg.inv(Z.reshape([5,5])) for Z in Z_mus])
+    return o2r
+
+#===NLO running using diagonalisation===============
+J = np.loadtxt('J.txt',delimiter=',')
+L = np.loadtxt('L.txt',delimiter=',')
+
+def K(mu, **kwargs):
+    return np.identity(5) + (J+L*np.log(g(mu)))*(g(mu)**2/(16*np.pi**2))
+
+def pt_running_nlo(mu1, mu2, **kwargs):
+    o2r = K(mu1)@pt_running_lo(mu1,mu2)@np.linalg.inv(K(mu2))
+    #o2r = pt_running_lo(mu1,mu2)
+    #o2r += (g(mu1)**2/(16*np.pi**2))*(J + L*np.log(g(mu1)))@order_1_diag
+    #o2r -= (g(mu2)**2/(16*np.pi**2))*order_1_diag@(J + L*np.log(g(mu2)))
+    return o2r
+order_2_running = np.array([pt_running_nlo(2,mu) for mu in mus])
+
+#===non-perturbative running=====
+def npt_running(ens, action=(0,0), **kwargs):
+    data = all_data[ens]['1']
+    mom, Z_facs, Z_errs = data['mom'], data['Z_fac'], data['Z_err']
+    running_mtx = np.zeros(shape=(len(mus),5,5))
+    for m_idx in range(len(mus)):
+        mu = mus[m_idx]
+        mtx, err = extrap(mom,Z_facs,Z_errs,ens,point=mu)
+        running_mtx[m_idx,:,:] = Z_facs[action][2]@np.linalg.inv(mtx[action])
+    return running_mtx
+
+
+from coeffs import *
 all_data = {ens:{} for ens in ensembles}
 for ens, s, in itertools.product(ensembles, schemes):
     momenta, results, errs = get_data(ens, s)
-    #all_data[ens][s] = {'mom':momenta,
-    #                    'Z_fac':results,
-    #                    'Z_err':errs,
-    #                    'Z_MS':{},
-    #                    'err_MS':{}}
+    all_data[ens][s] = {'mom':momenta,
+                        'Z_fac':results,
+                        'Z_err':errs}
     #if ens in UKQCD_ens:
     #    mixed_res, mixed_err = merge_mixed(ens, all_data)
     #    all_data[ens][s]['Z_fac'][(0,1)] = mixed_res
     #    all_data[ens][s]['Z_fac'].pop((1,0))
     #    all_data[ens][s]['Z_err'][(0,1)] = mixed_err
     #    all_data[ens][s]['Z_err'].pop((1,0))
-    #for k in all_data[ens][s]['Z_fac'].keys():
-    #    all_data[ens][s]['Z_MS'][k] = {m:R_MS@all_data[ens][s]['Z_fac'][k][m]
-    #                                   for m in momenta}
-    #    all_data[ens][s]['err_MS'][k] = {m:R_MS@all_data[ens][s]['Z_err'][k][m]
-    #                                   for m in momenta}
-    #sigma(ens)
+    sigma(ens)
 
 
-    if ens in KEK_ens:
-        results[(0,0)] = results.pop((1,1))
-        errs[(0,0)] = errs.pop((1,1))
+    #if ens in KEK_ens:
+    #    results[(0,0)] = results.pop((1,1))
+    #    errs[(0,0)] = errs.pop((1,1))
 
-    extrap_3, err_3 = extrap(momenta, results, errs, ens, point=3)
-    extrap_2, err_2 = extrap(momenta, results, errs, ens, point=2)
-    all_data[ens][s] = {'mom':momenta,
-                        'Z_fac':results, 
-                        'Z_err':errs,
-                        'extrap_3':extrap_3,
-                        'err_3':err_3,
-                        'extrap_2':extrap_2,
-                        'err_2':err_2}
-    momenta = list(momenta)
-    momenta.append(3)
-    momenta.append(2)
-    momenta.sort()
-    print(momenta)
-    for k in results.keys():
-        results[k].update({2:extrap_2[k], 3:extrap_3[k]})
-        errs[k].update({2:err_2[k], 3:err_3[k]})
-    pickle.dump([np.array(momenta),results, errs], open('RISMOM/'+ens+'.p','wb'))
+    #extrap_3, err_3 = extrap(momenta, results, errs, ens, point=3)
+    #extrap_2, err_2 = extrap(momenta, results, errs, ens, point=2)
+    #all_data[ens][s] = {'mom':momenta,
+    #                    'Z_fac':results, 
+    #                    'Z_err':errs,
+    #                    'extrap_3':extrap_3,
+    #                    'err_3':err_3,
+    #                    'extrap_2':extrap_2,
+    #                    'err_2':err_2}
+    #momenta = list(momenta)
+    #momenta.append(3)
+    #momenta.append(2)
+    #momenta.sort()
+    #print(momenta)
+    #for k in results.keys():
+    #    results[k].update({2:extrap_2[k], 3:extrap_3[k]})
+    #    errs[k].update({2:err_2[k], 3:err_3[k]})
+    #pickle.dump([np.array(momenta),results, errs], open('RISMOM/'+ens+'.p','wb'))
 
 
 def plot_actions(ens, s,  **kwargs):
@@ -288,8 +351,9 @@ def plot_ens(**kwargs):
                    label=ens)
     
     ax.set_xlabel('$q/GeV$')
-    ax.legend(bbox_to_anchor=(1.02, 0.8))
-    plt.suptitle(f'Block 1 action (1,1)')
+    ax.legend(bbox_to_anchor=(1.02, 1.03))
+    plt.savefig('/Users/rajnandinimukherjee/Desktop/OSM.pdf')
+    #plt.suptitle(r'$Z_{O_{\text{SM}}}(q,a)/Z_V^2$')
 
     fig, ax = plt.subplots(2,2)
     for i,j in itertools.product(range(2), range(2)):
@@ -307,7 +371,7 @@ def plot_ens(**kwargs):
             if i==1:
                 ax[i,j].set_xlabel('$q/GeV$')
     handles, labels = ax[0,0].get_legend_handles_labels()
-    fig.legend(handles, labels, bbox_to_anchor=(1.04,0.75))
+    #fig.legend(handles, labels, bbox_to_anchor=(1.04,0.75))
     plt.suptitle(f'Block 2 action (1,1)')
 
     fig, ax = plt.subplots(2,2)
@@ -326,7 +390,7 @@ def plot_ens(**kwargs):
             if i==1:
                 ax[i,j].set_xlabel('$q/GeV$')
     handles, labels = ax[0,0].get_legend_handles_labels()
-    fig.legend(handles, labels, bbox_to_anchor=(1.04,0.75))
+    #fig.legend(handles, labels, bbox_to_anchor=(1.04,0.75))
     plt.suptitle(f'Block 3 action (1,1)')
 
     pp = PdfPages('plots/summary.pdf')
@@ -335,14 +399,19 @@ def plot_ens(**kwargs):
     for fig in figs:
         fig.savefig(pp, format='pdf')
     pp.close()
+    plt.close('all')
+    os.system("open plots/summary.pdf")
 
-def print_mtx(vals, errs, **kwargs):
+def print_mtx(vals, errs=None, **kwargs):
     N, M = vals.shape
     string_mtx = np.empty(shape=(5,5),dtype=object)
     for n in range(N):
         for m in range(M):
             if mask[n,m]:
-                string_mtx[n,m]=err_disp(vals[n,m],errs[n,m],n=2)
+                if errs is None:
+                    string_mtx[n,m]="{0:0.5f}".format(vals[n,m])
+                else:
+                    string_mtx[n,m]=err_disp(vals[n,m],errs[n,m],n=2)
             else:
                 string_mtx[n,m]='0'
     #print(string_mtx)
@@ -364,15 +433,19 @@ def bmatrix(a):
 
 def make_table(ens, save=True, **kwargs):
     data = all_data[ens]['1']
-    #rv = [r'\begin{center}']
-    rv = [r'\begin{tabular}{c|c|c}']
-    rv += [ens+ r' & 2 GeV & 3 GeV \\']
+    rv = [r'\begin{center}']
+    rv += [r'\begin{tabular}{c|c|c|c|c}']
+    rv += [ens+ r' & $Z$(2 GeV) & $Z$(3 GeV) & $\sigma_{npt}(2,3)$ & $\sigma_{pt}^{NLO}(2,3)$ \\']
     rv += [r'\hline']
     rv += [str(k) + ' & $' + bmatrix(print_mtx(data['Z_fac'][k][2],
            data['Z_err'][k][2])) + '$ & $' + bmatrix(print_mtx(data['Z_fac'][k][3],
-           data['Z_err'][k][3])) + r'$\\' for k in data['Z_fac'].keys()]
+           data['Z_err'][k][3])) + '$ & $' + bmatrix(print_mtx(data['sigma'][k],
+           data['sigma_err'][k])) + '$ & $' + bmatrix(print_mtx(pt_running_nlo(2,3)))
+           + r'$ & \\' for k in data['Z_fac'].keys()]
+    rv += [r'\hline']
+    #rv += ['NLO pt & $' + bmatrix
     rv += [r'\end{tabular}']
-    #rv += [r'\end{center}']
+    rv += [r'\end{center}']
 
     if save:
        f = open('tex/'+ens+'.tex','w')
@@ -383,8 +456,8 @@ def make_table(ens, save=True, **kwargs):
 
 import os
 def make_results_tex(**kwargs):
-    rv = [r'\documentclass[10pt]{extarticle}']
-    rv += [r'\usepackage[paperwidth=18in,paperheight=6in]{geometry}']
+    rv = [r'\documentclass[9pt]{extarticle}']
+    rv += [r'\usepackage[paperwidth=25in,paperheight=6in]{geometry}']
     rv += [r'\usepackage{amsmath}']
     rv += [r'\usepackage[utf8]{inputenc}']
     rv += [r'\title{NPR $Z_{ij}/Z_V^2$}'+'\n'+r'\author{Rajnandini Mukherjee}'+'\n'+r'\date{\today}']
@@ -400,13 +473,58 @@ def make_results_tex(**kwargs):
     os.system("pdflatex tex/results.tex")
     os.system("open results.pdf")
    
+
+def plot_running(ens, action=(0,0), **kwargs):
+    npt = npt_running(ens)
+    s='1'
+    fig = plt.figure()
+    ax = plt.subplot(111)
+    ax.yaxis.tick_right()
+    plt.plot(mus**2, order_1_running[:,0,0], label='LO',c='k',linestyle='dashed')
+    plt.plot(mus**2, order_2_running[:,0,0], label='NLO mtx',c='k')
+    plt.plot(mus**2, pt_running(ens, 2, action)[:,0,0], label='NLO int',c='r')
+    plt.plot(mus**2, npt[:,0,0], label='npt',c='b')
     
+    ax.set_xlabel('$q^2/GeV^2$')
+    ax.legend(bbox_to_anchor=(1.02, 0.8))
+    plt.suptitle(ens+' $\sigma(2GeV,q)_{11}$')
+
+    fig, ax = plt.subplots(2,2)
+    for i,j in itertools.product(range(2), range(2)):
+        k, l = i+1, j+1
+        ax[i,j].plot(mus**2, order_1_running[:,k,l], label='LO',c='k',linestyle='dashed')
+        ax[i,j].plot(mus**2, order_2_running[:,k,l], label='NLO mtx',c='k')
+        ax[i,j].plot(mus**2, pt_running(ens, 2, action)[:,k,l], label='NLO int',c='r')
+        ax[i,j].plot(mus**2, npt[:,k,l], label='npt',c='b')
+        ax[i,j].yaxis.tick_right()
+        if i==1:
+            ax[i,j].set_xlabel('$q^2/GeV^2$')
+    handles, labels = ax[0,0].get_legend_handles_labels()
+    fig.legend(handles, labels, bbox_to_anchor=(0.8,1.08))
+    plt.suptitle(ens+r' $\sigma(2GeV,q)_{2\times3}$')
+
+    fig, ax = plt.subplots(2,2)
+    for i,j in itertools.product(range(2), range(2)):
+        k, l = i+3, j+3
+        ax[i,j].plot(mus**2, order_1_running[:,k,l], label='LO',c='k',linestyle='dashed')
+        ax[i,j].plot(mus**2, order_2_running[:,k,l], label='NLO mtx',c='k')
+        ax[i,j].plot(mus**2, pt_running(ens, 2, action)[:,k,l], label='NLO int',c='r')
+        ax[i,j].plot(mus**2, npt[:,k,l], label='npt',c='b')
+        ax[i,j].yaxis.tick_right()
+        if i==1:
+            ax[i,j].set_xlabel('$q^2/GeV^2$')
+    handles, labels = ax[0,0].get_legend_handles_labels()
+    fig.legend(handles, labels, bbox_to_anchor=(0.8,1.08))
+    plt.suptitle(ens+r' $\sigma(2GeV,q)_{4\times5}$')
 
 
+    pp = PdfPages('plots/running.pdf')
+    fig_nums = plt.get_fignums()
+    figs = [plt.figure(n) for n in fig_nums]
+    for fig in figs:
+        fig.savefig(pp, format='pdf')
+    pp.close()
+    plt.close('all')
+    os.system("open plots/running.pdf")
 
-
-
-
-
-
-
+#=================================================================
