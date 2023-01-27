@@ -443,7 +443,6 @@ def make_table(ens, save=True, **kwargs):
            data['sigma_err'][k])) + '$ & $' + bmatrix(print_mtx(pt_running_nlo(2,3)))
            + r'$ & \\' for k in data['Z_fac'].keys()]
     rv += [r'\hline']
-    #rv += ['NLO pt & $' + bmatrix
     rv += [r'\end{tabular}']
     rv += [r'\end{center}']
 

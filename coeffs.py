@@ -107,8 +107,8 @@ gamma_0 = np.zeros(shape=(5,5))
 gamma_0[0,0] = g_11
 gamma_0[1,1], gamma_0[1,2] = g_22, g_23
 gamma_0[2,1], gamma_0[2,2] = g_32, g_33
-gamma_0[3,3], gamma_0[3,4] = g_44, g_45
-gamma_0[4,3], gamma_0[4,4] = g_54, g_55
+gamma_0[3,3], gamma_0[3,4] = g_44, 4*g_45
+gamma_0[4,3], gamma_0[4,4] = g_54/4, g_55
 #gamma_0 = gamma_0*((4*np.pi)**(-2))
 
 #====gamma_1 matrix elements==========================
@@ -127,8 +127,8 @@ def gamma_1_MS(f):
     gamma_1[0,0] = g_11
     gamma_1[1,1], gamma_1[1,2] = g_22, g_23
     gamma_1[2,1], gamma_1[2,2] = g_32, g_33
-    gamma_1[3,3], gamma_1[3,4] = g_44, g_45
-    gamma_1[4,3], gamma_1[4,4] = g_54, g_55
+    gamma_1[3,3], gamma_1[3,4] = g_44, 4*g_45
+    gamma_1[4,3], gamma_1[4,4] = g_54/4, g_55
     #gamma_1 = gamma_1*((4*np.pi)**(-4))
     return gamma_1
 
