@@ -106,7 +106,9 @@ class bilinear_analysis:
             plt.savefig('plots/'+self.ens+'_mass_comp_bl.pdf')
             print('Plot saved to plots/'+self.ens+'_mass_comp_bl.pdf')
 
-    def plot_actionwise(self, mass=sea_mass, save=False, **kwargs):
+    def plot_actionwise(self, mass=None, save=False, **kwargs):
+        if (mass==None) or mass not in self.all_masses:
+            mass = self.sea_mass
         fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))
         action_combinations = self.momenta.keys()
         for i in range(5):
@@ -114,9 +116,9 @@ class bilinear_analysis:
             err_col.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
             c = currents[i]
             for action in action_combinations:
-                mom = self.momenta[action][m]
-                res = self.avg_results[action][m][c]
-                err = self.avg_errs[action][m][c]
+                mom = self.momenta[action][mass]
+                res = self.avg_results[action][mass][c]
+                err = self.avg_errs[action][mass][c]
                 val_col.scatter(mom, res, label=action)
                 err_col.scatter(mom, err, label=action)
             val_col.title.set_text(c)
