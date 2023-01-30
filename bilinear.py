@@ -1,23 +1,33 @@
 from NPR_structures import *
 
-input_dict  ={0:{'prop':'fgauge_SDWF',
-                 'Ls':'16',
-                 'M5':'1.80'},
-              1:{'prop':'sfgauge_MDWF_sm',
-                 'Ls':'12',
-                 'M5':'1.00'}}
-
-
-bl_list = common_cf_files('bilinears', prefix='bi_')
 currents = ['S','P','V','A','T']
+phys_ens = ['C0','M0']
+scheme = 1
 
 from numpy.linalg import norm
 from tqdm import tqdm
 
 
-def bl_mixed_action(num1, num2, **kwargs):
-    dict1 = input_dict[num1]
-    dict2 = input_dict[num2]
+def bl_mixed_action(ens, num1, num2, **kwargs):
+    print(ens)
+    data = path+ens
+    info = params[ens]
+    if ens in phys_ens:
+        sea_mass = '{:.4f}'.format(info['masses'][0])
+    else:
+        sea_mass = '{:.4f}'.format(info['aml_sea'])
+
+    
+    action0 = info['gauges'][0]+'_'+info['baseactions'][0]
+    if 'KEK' not in ens:
+        action1 = info['gauges'][1]+'_'+info['baseactions'][1]
+        input_dict  ={0:{'prop':action0, 'am':sea_mass},
+                      1:{'prop':action1, 'am':sea_mass}}
+    else:
+        input_dict = {1:{'prop':action0, 'am':sea_mass}}
+
+    bl_list = common_cf_files(data, 'bilinears', prefix='bi_')
+
     results = {'S':{}, 'P':{}, 'V':{}, 'A':{}, 'T':{}}
     errs = {'S':{}, 'P':{}, 'V':{}, 'A':{}, 'T':{}}
     for i in tqdm(range(len(bl_list))):
