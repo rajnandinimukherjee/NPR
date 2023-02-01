@@ -224,7 +224,7 @@ class fourquark_analysis:
                                 for mom in self.momenta[action][(m1,m2)]])
     
     def save_NPR(self, addl_txt='', **kwargs):
-        filename = 'pickles/'+self.ens+'_fq.p'
+        filename = 'pickles/'+self.ens+'_fq'+addl_txt+'.p'
         pickle.dump([self.momenta, self.avg_results, self.avg_errs],
                     open(filename,'wb'))
         print('Saved fourquark NPR results to '+filename)
