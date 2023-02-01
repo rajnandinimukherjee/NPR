@@ -96,8 +96,17 @@ class bilinear_analysis:
 
     def plot_masswise(self, action=(0,0), save=False, **kwargs):
         fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))
-        if 'mass_combinations' in kwargs.keys():
-            plot_masses = kwargs['mass_combinations']
+        if 'mass_combination' in kwargs.keys():
+            if kwargs['mass_combination']=='nondeg':
+                plot_masses = []
+                for m in [self.sea_mass]+self.non_sea_masses:
+                    plot_masses.append((m, self.sea_mass))
+            elif kwargs['mass_combination']=='deg':
+                plot_masses = []
+                for m in [self.sea_mass]+self.non_sea_masses:
+                    plot_masses.append((m, m))
+            else:
+                plot_masses = kwargs['mass_combination']
         else:
             plot_masses = self.momenta[action].keys()
         for i in range(5):
