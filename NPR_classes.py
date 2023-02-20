@@ -4,6 +4,7 @@ import itertools
 import pickle
 import os
 
+
 phys_ens = ['C0', 'M0']
 
 class bilinear_analysis:
@@ -14,9 +15,10 @@ class bilinear_analysis:
         self.sea_mass = '{:.4f}'.format(info['masses'][0])
         self.non_sea_masses = ['{:.4f}'.format(info['masses'][k])
                                for k in range(1,len(info['masses']))]
-
-        self.actions = [info['gauges'][0]+'_'+info['baseactions'][0],
-                   info['gauges'][1]+'_'+info['baseactions'][1]]
+        
+        gauge_count = len(info['baseactions'])
+        self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
+                        i in range(gauge_count)]
 
         if loadpath==None:
             self.momenta, self.avg_results, self.avg_errs = {}, {}, {}
@@ -195,7 +197,8 @@ class fourquark_analysis:
             results = {}
             errs = {}
 
-            for f in tqdm(range(len(self.fq_list)), leave=False):
+            desc = '_'.join([self.ens, m1, m2, str(a1), str(a2)])
+            for f in tqdm(range(len(self.fq_list)), leave=False, desc=desc):
                 prop1_name, prop2_name = self.fq_list[f].split('__')
                 prop1_info, prop2_info = decode_prop(prop1_name), decode_prop(prop2_name)
 
@@ -211,6 +214,7 @@ class fourquark_analysis:
                     condition4 = prop1.mom_sq==scheme*np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
+                        if m1=!self.sea_mass or m2=!self.sea_mass
                         fq = fourquark(self.ens, prop1, prop2)
                         fq.errs()
                         if fq.q not in results.keys():
@@ -230,7 +234,8 @@ class fourquark_analysis:
         print('Saved fourquark NPR results to '+filename)
 
     def NPR_all(self, massive=False, save=True, **kwargs):
-        for a1,a2 in itertools.product([0,1],[0,1]):
+        num_actions = len(self.actions)
+        for a1,a2 in itertools.product(range(num_actions),range(num_actions)):
             self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
         if massive:
             for mass in self.non_sea_masses:

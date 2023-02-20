@@ -1,103 +1,97 @@
+import numpy as np
+from gamma_scheme import *
 from NPR_structures import *
+import h5py
+from ensemble_parameters import *
 
-currents = ['S','P','V','A','T']
-phys_ens = ['C0','M0']
-scheme = 1
+class bilinear:
+    def __init__(self, ensemble, prop1, prop2, scheme='gamma', **kwargs):
 
-from numpy.linalg import norm
-from tqdm import tqdm
+        data = path+ensemble
+        a_inv = params[ensemble]['ainv'] 
+        cfgs = os.listdir(data)[1:]
+        cfgs.sort()
+        N_cf = len(cfgs) # number of configs)
+        L = params[ensemble]['XX']
+        self.type = 'bilinears'
+        self.prefix = 'bi_'
+        self.filename = prop1.filename+'__'+prop2.filename
+        h5_path = f'{data}/{cfgs[0]}/NPR/{self.type}/{self.prefix}{self.filename}.{cfgs[0]}.h5'
+        self.N_bl = len(h5py.File(h5_path, 'r')['Bilinear'].keys())
 
+        self.N_cf = len(cfgs)
+        self.bilinear = np.array([np.empty(shape=(self.N_cf,12,12),dtype='complex128')
+                                  for i in range(self.N_bl)], dtype=object)
+        for cf in range(self.N_cf):
+            c = cfgs[cf]
+            h5_path = f'{data}/{c}/NPR/{self.type}/{self.prefix}{self.filename}.{c}.h5'
+            h5_data = h5py.File(h5_path, 'r')['Bilinear']
+            for i in range(self.N_bl):
+                bilinear_i = h5_data[f'Bilinear_{i}']['corr'][0,0,:]
+                self.bilinear[i][cf,:] = np.array(bilinear_i['re']+bilinear_i['im'
+                                         ]*1j).swapaxes(1,2).reshape((12,12))
+        self.pOut = [int(x) for x in h5_data['Bilinear_0']['info'
+                    ].attrs['pOut'][0].decode().rsplit('.')[:-1]]
+        self.pIn = [int(x) for x in h5_data['Bilinear_0']['info'
+                   ].attrs['pIn'][0].decode().rsplit('.')[:-1]]
+        self.prop_in = prop1 if prop1.mom==self.pIn else prop2
+        self.prop_out = prop1 if prop1.mom==self.pOut else prop2
+        self.tot_mom = self.prop_out.tot_mom-self.prop_in.tot_mom
+        self.mom_sq = self.prop_in.mom_sq
+        self.q = self.mom_sq**0.5
 
-def bl_mixed_action(ens, num1, num2, **kwargs):
-    print(ens)
-    data = path+ens
-    info = params[ens]
-    if ens in phys_ens:
-        sea_mass = '{:.4f}'.format(info['masses'][0])
-    else:
-        sea_mass = '{:.4f}'.format(info['aml_sea'])
+        self.org_gammas = np.array([h5_data[f'Bilinear_{i}']['info'
+                          ].attrs['gamma'][0].decode() for i in range(self.N_bl)])
+        self.gammas = [[x for x in list(self.org_gammas[i]) if x in list(gamma.keys())]
+                                for i in range(self.N_bl)]
+        self.avg_bilinear = np.array([np.mean(self.bilinear[i],axis=0)
+                                      for i in range(self.N_bl)],dtype=object)
+        self.amputated = np.array([self.prop_out.inv_out@self.avg_bilinear[i]@self.prop_in.inv
+                                   for i in range(self.N_bl)])
+        self.operator = {'S':[self.amputated[self.gammas.index(['I'])]],
+                         'P':[self.amputated[self.gammas.index(['5'])]],
+                         'V':[self.amputated[self.gammas.index([i])]
+                             for i in dirs],
+                         'A':[self.amputated[self.gammas.index([i,'5'])]
+                             for i in dirs],
+                         'T':sum([[self.amputated[self.gammas.index([dirs[i],
+                             dirs[j]])] for j in range(i+1,4)] for i in range(0,4-1)], [])}
+        
+        #if scheme=='gamma':
+        self.projector = bl_proj
+        self.F = bl_gamma_F
 
-    
-    action0 = info['gauges'][0]+'_'+info['baseactions'][0]
-    if 'KEK' not in ens:
-        action1 = info['gauges'][1]+'_'+info['baseactions'][1]
-        input_dict  ={0:{'prop':action0, 'am':sea_mass},
-                      1:{'prop':action1, 'am':sea_mass}}
-    else:
-        input_dict = {1:{'prop':action0, 'am':sea_mass}}
+        self.projected = {k:np.trace(np.sum([self.projector[k][i]@self.operator[k][i]
+                          for i in range(len(self.operator[k]))],axis=0)) for k in currents}
+        self.proj_arr = np.array([(self.projected[k]/self.F[k]).real
+                                 for k in currents])
+        self.qslash = np.sum([self.tot_mom[i]*Gamma[dirs[i]] for i in range(len(dirs))], axis=0)
+        self.qslash_V = np.sum([self.tot_mom[i]*np.trace(self.qslash@self.amputated[self.gammas.index([dirs[i]])])
+                                for i in range(len(dirs))], axis=0)/(12*self.mom_sq)
 
-    bl_list = common_cf_files(data, 'bilinears', prefix='bi_')
+    def errs(self):
+        self.prop_in.errs()
+        self.prop_out.errs()
 
-    results = {'S':{}, 'P':{}, 'V':{}, 'A':{}, 'T':{}}
-    errs = {'S':{}, 'P':{}, 'V':{}, 'A':{}, 'T':{}}
-    for i in tqdm(range(len(bl_list))):
-        b = bl_list[i]
-        prop1_name, prop2_name = b.rsplit('__')
-        prop1_info, prop2_info = decode_prop(prop1_name), decode_prop(prop2_name)
+        self.samp_bl = np.array([bootstrap(self.bilinear[i]) for i in range(N_bl)])
+        self.samp_proj = {k:np.zeros(N_boot,dtype='complex128') for k in currents}
+        self.proj_err = {k:0 for k in currents}
+        for b in range(N_boot):
+            inv_out, inv = self.prop_out.samples_out[b,], self.prop_in.samples_inv[b,]
+            amputated = np.array([inv_out@self.samp_bl[i][b,]@inv for i in range(N_bl)])
+            operator = {'S':[amputated[self.gammas.index(['I'])]],
+                        'P':[amputated[self.gammas.index(['5'])]],
+                        'V':[amputated[self.gammas.index([i])]
+                                 for i in dirs],
+                        'A':[amputated[self.gammas.index([i,'5'])]
+                                 for i in dirs],
+                        'T':sum([[amputated[self.gammas.index([dirs[i],
+                                 dirs[j]])] for j in range(i+1,4)] for i in range(0,4-1)], [])}
+            for k in currents:
+                self.samp_proj[k][b] = np.trace(np.sum([self.projector[k][i]@operator[k][i]
+                                                       for i in range(len(operator[k]))],axis=0))
+                self.samp_proj[k][b] = (self.samp_proj[k][b]/self.F[k]).real
 
-        if all(prop1_info[k]==v for k,v in dict1.items()):
-            if all(prop2_info[k]==v for k,v in dict2.items()):
-                prop1 = external(filename=prop1_name)
-                prop2 = external(filename=prop2_name)
-                mom_diff = prop1.tot_mom-prop2.tot_mom
-                # choose RI-SMOM data
-                if (prop1.mom_sq==prop2.mom_sq) and (prop1.mom_sq==norm(mom_diff)**2):
-                    bl = bilinear(prop1, prop2)
-                    bl.errs()
-                    for k in results.keys():
-                        if bl.q not in results[k].keys():
-                            results[k][bl.q] = [(bl.projected[k]/bl.F[k]).real]
-                            errs[k][bl.q] = [bl.proj_err[k]]
-    momenta = [i for i in results['S'].keys()]
-    momenta.sort()
-    momenta = np.array(momenta)
-
-    avg_results = {k:np.array([np.mean(v[m]) for m in momenta]) for k,v in results.items()}
-    avg_errs = {k:np.array([np.mean(v[m]) for m in momenta]) for k,v in errs.items()}
-    return momenta, avg_results, avg_errs
-
-
-mixed_action = {}
-for a in [0,1]:
-    for b in [0,1]:
-        mom, res, err = bl_mixed_action(a,b)
-        mixed_action[(a,b)] = {'mom':mom, 'res':res, 'err':err}
-
-from matplotlib.ticker import FormatStrFormatter
-fig, ax = plt.subplots(nrows=2, ncols=5)
-for i in range(5):
-    val_col = ax[0,i]
-    err_col = ax[1,i]
-    #val_col.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    err_col.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-    current = currents[i]
-    for k in mixed_action.keys():
-        mom = mixed_action[k]['mom']
-        res = mixed_action[k]['res'][current]
-        err = mixed_action[k]['err'][current]
-        val_col.scatter(mom, np.abs(res), label=k)
-        err_col.scatter(mom, err, label=k)
-    val_col.title.set_text(current)
-    handles, labels = err_col.get_legend_handles_labels()
-    #err_col.set_ylim([1e-6, 1e-3])
-ax[1,2].set_xlabel('$q/GeV$')
-fig.legend(handles, labels, loc='center right')
-#fig.tight_layout()
-fig.suptitle('C1: $Z/Z_{\psi}$ for sMOM bilinears ($\gamma_{\mu}$ scheme, 15 configs)')
-
-plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        for k in currents:
+            diff = self.samp_proj[k]-self.proj_arr[currents.index(k)]
+            self.proj_err[k] = (diff.dot(diff)/N_boot)**0.5
