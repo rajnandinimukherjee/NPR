@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from plot_settings import plotparams
 from ensemble_parameters import *
 from tqdm import tqdm
+import pickle
 plt.rcParams.update(plotparams)
 
 path = '/home/rm/external/NPR/'
