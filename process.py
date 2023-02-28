@@ -13,7 +13,7 @@ KEK_ens = ['KEKC2a','KEKC2b',
            'KEKC1S','KEKC1L',
            'KEKF1']
 all_ens = UKQCD_ens+KEK_ens
-ensembles = UKQCD_ens #all_ens
+ensembles = all_ens
 
 def err_disp(num, err, n=2, **kwargs):
     ''' converts num and err into num(err) in scientific notation upto n digits
@@ -434,14 +434,14 @@ def bmatrix(a):
 def make_table(ens, save=True, **kwargs):
     data = all_data[ens]['1']
     rv = [r'\begin{center}']
-    rv += [r'\begin{tabular}{c|c|c|c|c}']
-    rv += [ens+ r' & $Z$(2 GeV) & $Z$(3 GeV) & $\sigma_{npt}(2,3)$ & $\sigma_{pt}^{NLO}(2,3)$ \\']
+    rv += [r'\begin{tabular}{c|c|c|c}']
+    rv += [ens+ r' & $Z$(2 GeV) & $Z$(3 GeV) & $\sigma_{npt}(2,3)$ \\']# & $\sigma_{pt}^{NLO}(2,3)$ \\']
     rv += [r'\hline']
     rv += [str(k) + ' & $' + bmatrix(print_mtx(data['Z_fac'][k][2],
            data['Z_err'][k][2])) + '$ & $' + bmatrix(print_mtx(data['Z_fac'][k][3],
            data['Z_err'][k][3])) + '$ & $' + bmatrix(print_mtx(data['sigma'][k],
-           data['sigma_err'][k])) + '$ & $' + bmatrix(print_mtx(pt_running_nlo(2,3)))
-           + r'$ & \\' for k in data['Z_fac'].keys()]
+           data['sigma_err'][k])) + r'$ &\\' for k in data['Z_fac'].keys()]
+           # + '$ & $' + bmatrix(print_mtx(pt_running_nlo(2,3))) #+ r'$ & \\'
     rv += [r'\hline']
     rv += [r'\end{tabular}']
     rv += [r'\end{center}']
@@ -456,7 +456,7 @@ def make_table(ens, save=True, **kwargs):
 import os
 def make_results_tex(**kwargs):
     rv = [r'\documentclass[9pt]{extarticle}']
-    rv += [r'\usepackage[paperwidth=25in,paperheight=6in]{geometry}']
+    rv += [r'\usepackage[paperwidth=20in,paperheight=6in]{geometry}']
     rv += [r'\usepackage{amsmath}']
     rv += [r'\usepackage[utf8]{inputenc}']
     rv += [r'\title{NPR $Z_{ij}/Z_V^2$}'+'\n'+r'\author{Rajnandini Mukherjee}'+'\n'+r'\date{\today}']

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2021.12.13)  12 JAN 2023 19:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2021.12.13)  28 FEB 2023 16:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -152,14 +152,14 @@ LaTeX Font Info:    ... okay on input line 8.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(271.01526pt, 1264.71948pt, 271.01526pt)
+* h-part:(L,W,R)=(216.81221pt, 1011.77557pt, 216.81221pt)
 * v-part:(T,H,B)=(52.03491pt, 303.53267pt, 78.05241pt)
-* \paperwidth=1806.75pt
+* \paperwidth=1445.4pt
 * \paperheight=433.62pt
-* \textwidth=1264.71948pt
+* \textwidth=1011.77557pt
 * \textheight=303.53267pt
-* \oddsidemargin=198.74527pt
-* \evensidemargin=198.74527pt
+* \oddsidemargin=144.54222pt
+* \evensidemargin=144.54222pt
 * \topmargin=-57.23508pt
 * \headheight=12.0pt
 * \headsep=25.0pt
@@ -184,26 +184,26 @@ LaTeX Font Info:    ... okay on input line 8.
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.40 \end{bmatrix}$ &
-                      \\
+l.34 \end{bmatrix}$ &
+                     \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.65 \end{bmatrix}$ &
-                      \\
+l.53 \end{bmatrix}$ &
+                     \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.90 \end{bmatrix}$ &
-                      \\
+l.72 \end{bmatrix}$ &
+                     \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.115 \end{bmatrix}$ &
-                       \\
+l.91 \end{bmatrix}$ &
+                     \\
 ? 
 [2
 
@@ -211,26 +211,26 @@ l.115 \end{bmatrix}$ &
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.149 \end{bmatrix}$ &
-                       \\
+l.119 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.174 \end{bmatrix}$ &
-                       \\
+l.138 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.199 \end{bmatrix}$ &
-                       \\
+l.157 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.224 \end{bmatrix}$ &
-                       \\
+l.176 \end{bmatrix}$ &
+                      \\
 ? 
 [3
 
@@ -238,26 +238,26 @@ l.224 \end{bmatrix}$ &
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.258 \end{bmatrix}$ &
-                       \\
+l.204 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.283 \end{bmatrix}$ &
-                       \\
+l.223 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.308 \end{bmatrix}$ &
-                       \\
+l.242 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.333 \end{bmatrix}$ &
-                       \\
+l.261 \end{bmatrix}$ &
+                      \\
 ? 
 [4
 
@@ -265,53 +265,58 @@ l.333 \end{bmatrix}$ &
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.367 \end{bmatrix}$ &
-                       \\
+l.289 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.392 \end{bmatrix}$ &
-                       \\
+l.308 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.417 \end{bmatrix}$ &
-                       \\
+l.327 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.442 \end{bmatrix}$ &
-                       \\
+l.346 \end{bmatrix}$ &
+                      \\
 ? 
+
+Overfull \hbox (6.1911pt too wide) in paragraph at lines 268--349
+ [] 
+ []
+
 [5
 
 ]
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.476 \end{bmatrix}$ &
-                       \\
+l.374 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.501 \end{bmatrix}$ &
-                       \\
+l.393 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.526 \end{bmatrix}$ &
-                       \\
+l.412 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.551 \end{bmatrix}$ &
-                       \\
+l.431 \end{bmatrix}$ &
+                      \\
 ? 
 [6
 
@@ -319,26 +324,26 @@ l.551 \end{bmatrix}$ &
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.585 \end{bmatrix}$ &
-                       \\
+l.459 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.610 \end{bmatrix}$ &
-                       \\
+l.478 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.635 \end{bmatrix}$ &
-                       \\
+l.497 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.660 \end{bmatrix}$ &
-                       \\
+l.516 \end{bmatrix}$ &
+                      \\
 ? 
 [7
 
@@ -346,26 +351,26 @@ l.660 \end{bmatrix}$ &
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.694 \end{bmatrix}$ &
-                       \\
+l.544 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.719 \end{bmatrix}$ &
-                       \\
+l.563 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.744 \end{bmatrix}$ &
-                       \\
+l.582 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.769 \end{bmatrix}$ &
-                       \\
+l.601 \end{bmatrix}$ &
+                      \\
 ? 
 [8
 
@@ -373,26 +378,26 @@ l.769 \end{bmatrix}$ &
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.803 \end{bmatrix}$ &
-                       \\
+l.629 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.828 \end{bmatrix}$ &
-                       \\
+l.648 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.853 \end{bmatrix}$ &
-                       \\
+l.667 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.878 \end{bmatrix}$ &
-                       \\
+l.686 \end{bmatrix}$ &
+                      \\
 ? 
 [9
 
@@ -400,34 +405,102 @@ l.878 \end{bmatrix}$ &
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.912 \end{bmatrix}$ &
-                       \\
+l.714 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.937 \end{bmatrix}$ &
-                       \\
+l.733 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.962 \end{bmatrix}$ &
-                       \\
+l.752 \end{bmatrix}$ &
+                      \\
 ? 
 ! Extra alignment tab has been changed to \cr.
 <recently read> \endtemplate 
                              
-l.987 \end{bmatrix}$ &
-                       \\
+l.771 \end{bmatrix}$ &
+                      \\
 ? 
 [10
+
+]
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.799 \end{bmatrix}$ &
+                      \\
+? 
+[11
+
+]
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.827 \end{bmatrix}$ &
+                      \\
+? 
+[12
+
+]
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.855 \end{bmatrix}$ &
+                      \\
+? 
+[13
+
+]
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.883 \end{bmatrix}$ &
+                      \\
+? 
+[14
+
+]
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.911 \end{bmatrix}$ &
+                      \\
+? 
+[15
+
+]
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.939 \end{bmatrix}$ &
+                      \\
+? 
+
+Overfull \hbox (1.04802pt too wide) in paragraph at lines 918--942
+ [] 
+ []
+
+[16
+
+]
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.967 \end{bmatrix}$ &
+                      \\
+? 
+[17
 
 ] (./results.aux) ) 
 Here is how much of TeX's memory you used:
  1795 strings out of 479804
  30395 string characters out of 5882302
- 376308 words of memory out of 5000000
+ 364304 words of memory out of 5000000
  19741 multiletter control sequences out of 15000+600000
  408431 words of font info for 45 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
@@ -443,10 +516,10 @@ dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2021basic/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2021basic/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2021basic
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
-Output written on results.pdf (10 pages, 114670 bytes).
+Output written on results.pdf (17 pages, 120005 bytes).
 PDF statistics:
- 87 PDF objects out of 1000 (max. 8388607)
- 54 compressed objects within 1 object stream
+ 109 PDF objects out of 1000 (max. 8388607)
+ 69 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
