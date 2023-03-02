@@ -3,7 +3,7 @@ from bag_param_renorm import *
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.colors as mc
 
-extrap_ensembles = bag_ensembles
+extrap_ensembles = ['C0','C1','M0','M1','M2']
 
 Z_dict = {ens:Z_analysis(ens) for ens in extrap_ensembles}
 bag_dict = {ens:bag_analysis(ens) for ens in extrap_ensembles}
@@ -71,6 +71,192 @@ def plot_dep(mu, x_key='mpisq', y_key='sigma', xmax=1.7, **kwargs):
     plt.close('all')
     os.system("open plots/"+filename)
 
-def ansatz(a_sq, mpi_f_m, **kwargs):
-    return signal
+def chiral_continuum_ansatz(params, a_sq, mpi_f_m_sq, **kwargs):
+    return params[0]*(1+params[1]*a_sq + params[2]*mpi_f_m_sq)
+
+from scipy.optimize import least_squares
+import matplotlib.colors as mcolors
+from scipy.special import gammaincc
+
+class bag_fits:
+    N_boot = 200
+    operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
+    mpi_phys = 139.5706/1000
+    f_m_phys = 130.7/1000
+    def __init__(self, ens_list):
+        self.ens_list = ens_list
+        self.bag_dict = {e:bag_analysis(e) for e in self.ens_list}
+        self.colors = {list(self.bag_dict.keys())[k]:list(
+                       mcolors.TABLEAU_COLORS.keys())[k]
+                       for k in range(len(self.ens_list))}
+        
+    def fit_operator(self, operator, mu, **kwargs):
+        op_idx = bag_analysis.operators.index(operator)
+        dof = len(self.ens_list)-3
+
+        def pred(params, **kwargs):
+            p = [self.bag_dict[e].ansatz(params, **kwargs)
+                 for e in self.ens_list]
+            return p
+
+        def diff(bag, params, **kwargs):
+            return np.array(bag) - np.array(pred(params, **kwargs))
+
+        #==central fit======
+        bags_central = np.array([self.bag_dict[e].bag_ren[mu][
+                        op_idx] for e in self.ens_list])
+        COV = np.diag([self.bag_dict[e].bag_ren_err[mu][op_idx]**2
+                          for e in self.ens_list])
+        L_inv = np.linalg.cholesky(COV)
+        L = np.linalg.inv(L_inv)
+
+        def LS(params):
+            return L.dot(diff(bags_central, params, fit='central',
+                        operator=operator))
+
+        res = least_squares(LS, [1e-1,1e-2,1e-3], ftol=1e-10, gtol=1e-10)
+        chi_sq = LS(res.x).dot(LS(res.x))
+        pvalue = gammaincc(dof/2,chi_sq/2)
+        
+        res_btsp = np.zeros(shape=(self.N_boot, len(res.x)))
+        for k in range(self.N_boot):
+            bag_btsp = np.array([self.bag_dict[e].bag_ren_btsp[mu][k,
+                        op_idx] for e in self.ens_list])
+
+            def LS_btsp(params):
+                return L.dot(diff(bag_btsp, params, fit='btsp',
+                            operator=operator, k=k))
+            res_k = least_squares(LS_btsp, [1e-1,1e-2,1e-3],
+                                     ftol=1e-10, gtol=1e-10)
+            res_btsp[k,:] = res_k.x
+
+        res_err = [((res_btsp[:,i]-res.x[i]).dot(res_btsp[:,
+                  i]-res.x[i])/self.N_boot)**0.5 for i in range(len(res.x))]
+
+        return res.x, chi_sq/dof, pvalue, res_err, res_btsp 
+
+    def plot_fits(self, mu, **kwargs):
+
+        fig, ax = plt.subplots(len(self.operators),2,figsize=(15,30))
+        for i in range(len(self.operators)): 
+            ax[i,0].title.set_text(self.operators[i])
+            ax[i,1].title.set_text(self.operators[i])
+            op = self.operators[i]
+            params, chi_sq_dof, pvalue, err, btsp = self.fit_operator(op, mu, **kwargs)
+
+
+            x_asq = np.linspace(0,(1/1.7)**2,50)
+            x_mpi_sq = np.linspace(0,0.2, 50)
+
+            for e in self.ens_list:
+                mpi_sq = self.bag_dict[e].mpi**2
+                f_m_sq = self.bag_dict[e].f_m_ren**2
+                mpi_f_m_sq = mpi_sq/f_m_sq
+                y_asq = np.array([chiral_continuum_ansatz(params,x,
+                                 mpi_f_m_sq) for x in x_asq])
+                y_asq_var_diff = np.array([[chiral_continuum_ansatz(btsp[k,:],x_asq[a],
+                                 mpi_f_m_sq)-y_asq[a] for k in range(self.N_boot)]
+                                 for a in range(len(x_asq))])
+                y_asq_err = np.array([(y_asq_var_diff[a,:].dot(y_asq_var_diff[a,
+                                     :])/self.N_boot)**0.5
+                                     for a in range(len(x_asq))])
+                ax[i,0].plot(x_asq, y_asq, color=self.colors[e])
+                ax[i,0].fill_between(x_asq, y_asq+y_asq_err, y_asq-y_asq_err,
+                                     color=self.colors[e], alpha=0.2)
+
+                a_sq = self.bag_dict[e].ainv**(-2)
+                y_mpi = np.array([chiral_continuum_ansatz(params,a_sq,x*a_sq/f_m_sq)
+                                  for x in x_mpi_sq])
+                y_mpi_var_diff = np.array([[chiral_continuum_ansatz(btsp[k,:],
+                                            a_sq,x_mpi_sq[p]*a_sq/f_m_sq)-y_mpi[p]
+                                            for k in range(self.N_boot)]
+                                            for p in range(len(x_mpi_sq))])
+                y_mpi_err = np.array([(y_mpi_var_diff[p,:].dot(y_mpi_var_diff[p,
+                                     :])/self.N_boot)**0.5
+                                     for p in range(len(x_mpi_sq))])
+                ax[i,1].plot(x_mpi_sq, y_mpi, color=self.colors[e])
+                ax[i,1].fill_between(x_mpi_sq, y_mpi+y_mpi_err, y_mpi-y_mpi_err,
+                                     color=self.colors[e], alpha=0.2)
+
+                a_sq = self.bag_dict[e].ainv**(-2)
+                mpi_sq = (self.bag_dict[e].mpi)**2
+                bag = self.bag_dict[e].bag_ren[mu][i]
+                bag_err = self.bag_dict[e].bag_ren_err[mu][i]
+                ax[i,0].errorbar([a_sq],[bag],yerr=[bag_err],fmt='o',
+                                 label=e,capsize=4,color=self.colors[e],
+                                 mfc='None')
+                ax[i,1].errorbar([mpi_sq/a_sq],[bag],yerr=[bag_err],fmt='o',
+                                 label=e,capsize=4,color=self.colors[e],
+                                 mfc='None')
+
+            
+            y_phys = chiral_continuum_ansatz(params,0,(self.mpi_phys/self.f_m_phys)**2)
+            y_phys_var_diff = np.array([chiral_continuum_ansatz(btsp[k,:],0,
+                             (self.mpi_phys/self.f_m_phys)**2)-y_phys
+                             for k in range(self.N_boot)])
+            y_phys_err = (y_phys_var_diff[:].dot(y_phys_var_diff[:])/self.N_boot)**0.5
+            ax[i,0].errorbar([0],[y_phys],yerr=[y_phys_err],color='k',
+                             fmt='o',capsize=4,label='phys')
+            ax[i,1].errorbar([self.mpi_phys**2],[y_phys],yerr=[y_phys_err],
+                             color='k',fmt='o',capsize=4,label='phys')
+            ax[i,1].axvline((self.mpi_phys)**2,color='k')
+            ax[i,0].legend()
+            ax[i,0].set_xlabel(r'$a^2$')
+            ax[i,1].legend()
+            ax[i,1].set_xlabel(r'$m_{\pi}^2$ (GeV${}^2$)')
+
+            ax[i,0].text(0.4,0.05,r'$\chi^2$/DOF:'+'{:.3f}'.format(chi_sq_dof),
+                         transform=ax[i,0].transAxes)
+            ax[i,1].text(0.4,0.05,r'$p$-value:'+'{:.3f}'.format(pvalue),
+                         transform=ax[i,1].transAxes)
+        plt.suptitle(r'$K\overline{K}$ renormalised bag parameter fits at $\mu=2$ GeV',y=0.90)
+            
+            
+        filename = f'bag_fits.pdf'
+        pp = PdfPages('plots/'+filename)
+        fig_nums = plt.get_fignums()
+        figs = [plt.figure(n) for n in fig_nums]
+        for fig in figs:
+            fig.savefig(pp, format='pdf')
+        pp.close()
+        plt.close('all')
+        os.system("open plots/"+filename)
+
+
+
+        
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
