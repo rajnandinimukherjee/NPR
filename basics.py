@@ -1,4 +1,11 @@
 import numpy as np
+import h5py
+import pdb
+import matplotlib.pyplot as plt
+from plot_settings import plotparams
+from ensemble_parameters import *
+from tqdm import tqdm
+plt.rcParams.update(plotparams)
 import os
 
 path = '/home/rm/external/NPR/'
