@@ -7,14 +7,14 @@ from ensemble_parameters import *
 from tqdm import tqdm
 plt.rcParams.update(plotparams)
 import os
+from matplotlib.backends.backend_pdf import PdfPages
 
 path = '/home/rm/external/NPR/'
 N_d = 4 # Dirac indices
 N_c = 3 # Color indices
 #N_bl = 16 # number of bilinears
-N_boot = 20 # number of bootstrap samples
+N_boot = 200 # number of bootstrap samples
 N_fq = 16 # number of fourquarks
-L = 24 # lattice spatial extent
 
 dirs = ['X','Y','Z','T']
 currents = ['S','P','V','A','T']

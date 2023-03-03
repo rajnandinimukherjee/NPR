@@ -1,13 +1,13 @@
-from NPR_structures import *
 from matplotlib.ticker import FormatStrFormatter
 import itertools
 import pickle
-import os
+from bilinear import *
 
 
 phys_ens = ['C0', 'M0']
 
 class bilinear_analysis:
+    keys = ['S','P', 'V', 'A', 'T', 'm']
     def __init__(self, ensemble, loadpath=None, **kwargs):
 
         self.ens = ensemble
@@ -33,7 +33,7 @@ class bilinear_analysis:
             self.all_masses = list(self.momenta[(0,0)].keys()) 
 
     
-    def NPR(self, masses, action=(0,0), scheme=1, **kwargs): 
+    def NPR(self, masses, action=(0,0), scheme=1, massive=False, **kwargs): 
         m1, m2 = masses
         a1, a2 = action
         a1, a2 = self.actions[a1], self.actions[a2]
@@ -44,8 +44,8 @@ class bilinear_analysis:
         else:
             self.bl_list = common_cf_files(self.data, 'bilinears', prefix='bi_')
 
-            results = {c:{} for c in currents}
-            errs = {c:{} for c in currents}
+            results = {c:{} for c in self.keys}
+            errs = {c:{} for c in self.keys}
 
             for b in tqdm(range(len(self.bl_list)), leave=False):
                 prop1_name, prop2_name = self.bl_list[b].split('__')
@@ -57,26 +57,26 @@ class bilinear_analysis:
                 if (condition1 and condition2):
                     prop1 = external(self.ens, filename=prop1_name)
                     prop2 = external(self.ens, filename=prop2_name)
-                    mom_diff = prop1.tot_mom-prop2.tot_mom
+                    mom_diff = prop1.total_momentum-prop2.total_momentum
 
-                    condition3 = prop1.mom_sq==prop2.mom_sq
-                    condition4 = prop1.mom_sq==scheme*np.linalg.norm(mom_diff)**2
+                    condition3 = prop1.momentum_squared==prop2.momentum_squared
+                    condition4 = prop1.momentum_squared==scheme*np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
                         bl = bilinear(self.ens, prop1, prop2)
-                        bl.errs()
-                        for c in currents:
+                        bl.NPR(massive=massive)
+                        for c in bl.Z.keys():
                             if bl.q not in results[c].keys():
-                                results[c][bl.q] = [(bl.projected[c]/bl.F[c]).real]
-                                errs[c][bl.q] = [(bl.proj_err[c].real)]
+                                results[c][bl.q] = [bl.Z[c]]
+                                errs[c][bl.q] = [bl.Z_err[c]]
 
-                self.momenta[action][(m1,m2)] = sorted(results['S'].keys())
-                self.avg_results[action][(m1,m2)] = {k:np.array([np.mean(v[mom])
-                                               for mom in self.momenta[action][(m1,m2)]])
-                                               for k,v in results.items()}
-                self.avg_errs[action][(m1,m2)] = {k:np.array([np.mean(v[mom])
-                                            for mom in self.momenta[action][(m1,m2)]])
-                                            for k,v in errs.items()}
+            self.momenta[action][(m1,m2)] = sorted(results['S'].keys())
+            self.avg_results[action][(m1,m2)] = {k:np.array([np.mean(v[mom])
+                                           for mom in self.momenta[action][(m1,m2)]])
+                                           for k,v in results.items()}
+            self.avg_errs[action][(m1,m2)] = {k:np.array([np.mean(v[mom])
+                                        for mom in self.momenta[action][(m1,m2)]])
+                                        for k,v in errs.items()}
     
     def save_NPR(self, addl_txt='', **kwargs):
         filename = 'pickles/'+self.ens+'_bl.p'
@@ -85,13 +85,13 @@ class bilinear_analysis:
         print('Saved bilinear NPR results to '+filename)
 
     def NPR_all(self, massive=False, save=True, **kwargs):
-        for a1,a2 in itertools.product([0,1],[0,1]):
-            self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
+        #for a1,a2 in itertools.product([0,1],[0,1]):
+        #    self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
         if massive:
             for mass in self.non_sea_masses:
-                self.NPR((self.sea_mass, mass))
-                self.NPR((mass, self.sea_mass))
-                self.NPR((mass, mass))
+                self.NPR((self.sea_mass, mass),massive=True)
+                self.NPR((mass, self.sea_mass),massive=True)
+                self.NPR((mass, mass),massive=True)
 
         if save:
             self.save_NPR()
@@ -129,9 +129,17 @@ class bilinear_analysis:
         fig.suptitle(self.ens+' comparison of masses')
         fig.tight_layout()
 
-        if save:
-            plt.savefig('plots/'+self.ens+'_mass_comp_bl.pdf')
-            print('Plot saved to plots/'+self.ens+'_mass_comp_bl.pdf')
+
+        filename = 'plots/'+self.ens+'_mass_comp_bl.pdf'
+        print('Plot saved to plots/'+self.ens+'_mass_comp_bl.pdf')
+        pp = PdfPages(filename)
+        fig_nums = plt.get_fignums()
+        figs = [plt.figure(n) for n in fig_nums]
+        for fig in figs:
+            fig.savefig(pp, format='pdf')
+        pp.close()
+        plt.close('all')
+        os.system(filename)
 
     def plot_actionwise(self, mass, save=False, **kwargs):
         fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))
@@ -156,6 +164,26 @@ class bilinear_analysis:
         if save:
             plt.savefig('plots/'+self.ens+'_action_comp_bl.pdf')
             print('Plot saved to plots/'+self.ens+'_action_comp_bl.pdf')
+
+    def massive_Z_plots(self, **kwargs):
+        chosen_m = self.momenta[(0,0)][('0.5000','0.5000')][0]
+        plt.figure()
+        plt.title('Z_m({:.3f})'.format(chosen_m))
+        x = [float(m) for m in self.non_sea_masses]
+        y = [self.avg_results[(0,0)][(m,m)]['m'][0] for m in self.non_sea_masses]
+        plt.scatter(x,y)
+        plt.xlabel('am_q')
+        filename = 'plots/'+self.ens+'_massive_Z.pdf'
+        print('Plot saved to '+filename)
+        pp = PdfPages(filename)
+        fig_nums = plt.get_fignums()
+        figs = [plt.figure(n) for n in fig_nums]
+        for fig in figs:
+            fig.savefig(pp, format='pdf')
+        pp.close()
+        plt.close('all')
+        os.system('open '+filename)
+        
 
 class fourquark_analysis:
     def __init__(self, ensemble, loadpath=None, **kwargs):
@@ -214,12 +242,12 @@ class fourquark_analysis:
                     condition4 = prop1.mom_sq==scheme*np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
-                        if m1=!self.sea_mass or m2=!self.sea_mass
-                        fq = fourquark(self.ens, prop1, prop2)
-                        fq.errs()
-                        if fq.q not in results.keys():
-                            results[fq.q] = fq.Z_V
-                            errs[fq.q] = fq.Z_V_errs
+                        if m1!=self.sea_mass or m2!=self.sea_mass:
+                            fq = fourquark(self.ens, prop1, prop2)
+                            fq.errs()
+                            if fq.q not in results.keys():
+                                results[fq.q] = fq.Z_V
+                                errs[fq.q] = fq.Z_V_errs
 
                 self.momenta[action][(m1,m2)] = sorted(results.keys())
                 self.avg_results[action][(m1,m2)] = np.array([results[mom]

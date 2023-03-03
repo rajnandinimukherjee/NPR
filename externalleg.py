@@ -1,6 +1,7 @@
 from basics import *
 
 class external:
+    N_boot = N_boot
     obj = 'externalleg'
     prefix = 'external_'
     def __init__(self, ensemble, momentum=[-3,-3,0,0],
@@ -25,12 +26,14 @@ class external:
                          'Ls':Ls,
                          'M5':M5,
                          'am':am,
-                         'tw':'_'.join(['%.2f'%i for i in self.tw]),
-                         'src_mom_p':'_'.join([str(i) for i in self.mom])}
+                         'tw':'_'.join(['%.2f'%i for i in self.twist]),
+                         'src_mom_p':'_'.join([str(i) for i in self.momentum])}
             self.filename = encode_prop(self.info)
 
-        self.total_momentum = (2*np.pi*a_inv/L)*(np.array(
-                                self.momentum)+np.array(self.twist))
+        coeff = 2*np.pi*a_inv/L
+        self.total_momentum = coeff*(np.array(self.momentum)+np.array(self.twist))
+        self.pslash = np.sum([self.total_momentum[i]*Gamma[dirs[i]]
+                             for i in range(len(dirs))],axis=0)
         self.momentum_norm = np.linalg.norm(self.total_momentum)
         self.momentum_squared = self.momentum_norm**2
         
@@ -48,13 +51,20 @@ class external:
         self.inv_avg_propagator = np.linalg.inv(self.avg_propagator)
         self.inv_outgoing_avg_propagator = np.linalg.inv(self.outgoing_avg_propagator)
             
-        self.btsp_propagator = bootstrap(self.propagator)
+        self.btsp_propagator = bootstrap(self.propagator, K=self.N_boot)
         self.btsp_outgoing_propgator = np.array([Gamma['5']@(
-                            self.samples[k].conj().T)@Gamma['5']
-                            for k in range(N_boot)])
+                            self.btsp_propagator[k,].conj().T)@Gamma['5']
+                            for k in range(self.N_boot)])
         self.btsp_inv_propagator = np.array([np.linalg.inv(
-                            self.samples[k] for k in range(N_boot)])
+                            self.btsp_propagator[k]) for k in range(self.N_boot)])
         self.btsp_inv_outgoing_propagator = np.array([
-                            np.linalg.inv(self.samples_out[k])
-                            for k in range(N_boot)])
+                            np.linalg.inv(self.btsp_outgoing_propgator[k])
+                            for k in range(self.N_boot)])
+
+        self.Z_q_avg_qslash = np.trace(1j*self.inv_avg_propagator@self.pslash
+                                      ).real/(12*self.momentum_squared)
+        self.Z_q_btsp_qslash = np.array([np.trace(1j*(
+                               self.btsp_inv_propagator[k,:,:]@self.pslash)).real/(
+                               12*self.momentum_squared)
+                               for k in range(self.N_boot)])
 
