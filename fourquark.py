@@ -1,4 +1,3 @@
-from basics import *
 from bilinear import *
 
 #=====fourquark projectors=======================================
@@ -60,6 +59,10 @@ mask[1,2], mask[2,1] = True, True
 mask[3,4], mask[4,3] = True, True 
 
 class fourquark:
+    N_boot = 20
+    obj = 'fourquarks'
+    prefix = 'fourquarks_'
+    fq_str = 'FourQuarkFullyConnected'
     def __init__(self, ensemble, prop1, prop2, scheme='gamma', **kwargs):
 
         data = path+ensemble
@@ -68,33 +71,32 @@ class fourquark:
         cfgs.sort()
         N_cf = len(cfgs) # number of configs)
         L = params[ensemble]['XX']
-        self.type = 'fourquarks'
-        self.prefix = 'fourquarks_'
         self.filename = prop1.filename+'__'+prop2.filename
-        fq_str = 'FourQuarkFullyConnected'
-        self.scheme = 'gamma'
+        self.scheme = scheme
 
         self.N_cf = len(cfgs)
         self.fourquark = np.array([np.empty(shape=(self.N_cf,12,12,12,12),dtype='complex128')
                                   for i in range(N_fq)], dtype=object)
         for cf in range(self.N_cf):
             c = cfgs[cf]
-            h5_path = f'{data}/{c}/NPR/{self.type}/{self.prefix}{self.filename}.{c}.h5'
-            h5_data = h5py.File(h5_path, 'r')[fq_str]
+            h5_path = f'{data}/{c}/NPR/{self.obj}/{self.prefix}{self.filename}.{c}.h5'
+            h5_data = h5py.File(h5_path, 'r')[self.fq_str]
             for i in range(N_fq):
-                fourquark_i = h5_data[f'{fq_str}_{i}']['corr'][0,0,:]
+                fourquark_i = h5_data[f'{self.fq_str}_{i}']['corr'][0,0,:]
                 self.fourquark[i][cf,:] = np.array(fourquark_i['re']+fourquark_i['im']*1j).swapaxes(1,
                                           2).swapaxes(5,6).reshape((12,12,12,12))
-        self.pOut = [int(x) for x in h5_data[f'{fq_str}_0']['info'].attrs['pOut'][0].decode().rsplit('.')[:-1]]
-        self.pIn = [int(x) for x in h5_data[f'{fq_str}_0']['info'].attrs['pIn'][0].decode().rsplit('.')[:-1]]
-        self.prop_in = prop1 if prop1.mom==self.pIn else prop2
-        self.prop_out = prop1 if prop1.mom==self.pOut else prop2
-        self.tot_mom = self.prop_out.tot_mom-self.prop_in.tot_mom
-        self.mom_sq = self.prop_in.mom_sq
+        self.pOut = [int(x) for x in h5_data[f'{self.fq_str}_0'][
+                     'info'].attrs['pOut'][0].decode().rsplit('.')[:-1]]
+        self.pIn = [int(x) for x in h5_data[f'{self.fq_str}_0'][
+                    'info'].attrs['pIn'][0].decode().rsplit('.')[:-1]]
+        self.prop_in = prop1 if prop1.momentum==self.pIn else prop2
+        self.prop_out = prop1 if prop1.momentum==self.pOut else prop2
+        self.tot_mom = self.prop_out.total_momentum-self.prop_in.total_momentum
+        self.mom_sq = self.prop_in.momentum_squared
         self.q = self.mom_sq**0.5
 
-        self.org_gammas = [[h5_data[f'{fq_str}_{i}']['info'].attrs['gammaA'][0].decode(),
-                        h5_data[f'{fq_str}_{i}']['info'].attrs['gammaB'][0].decode()]
+        self.org_gammas = [[h5_data[f'{self.fq_str}_{i}']['info'].attrs['gammaA'][0].decode(),
+                        h5_data[f'{self.fq_str}_{i}']['info'].attrs['gammaB'][0].decode()]
                         for i in range(N_fq)]
         self.gammas = [[[x for x in list(self.org_gammas[i][0]) if x in list(gamma.keys())],
                         [y for y in list(self.org_gammas[i][1]) if y in list(gamma.keys())]]
@@ -116,7 +118,7 @@ class fourquark:
                          'TT':self.doublets['TT']}
         
         self.amputated = {}
-        in_, out_ = self.prop_in.inv, self.prop_out.inv_out
+        in_, out_ = self.prop_in.inv_avg_propagator, self.prop_out.inv_outgoing_avg_propagator
         for k in operators:
             op = 2*(self.operator[k]-self.operator[k].swapaxes(2,4))
             op_avg = np.array(np.mean(op, axis=0),dtype='complex128')
@@ -131,22 +133,18 @@ class fourquark:
                           self.amputated[k2]) for k2 in operators]
                           for k1 in operators]) 
         self.bl = bilinear(ensemble, self.prop_in, self.prop_out, cfgs=cfgs)
-        self.Z_V = ((self.F/(self.bl.F['V']**2))@np.linalg.inv(self.projected.T/self.bl.projected['V']**2)).real 
-        self.Z_V = np.multiply(self.Z_V,mask)
-        self.Z_A = ((self.F/self.bl.F['A']**2)@np.linalg.inv(self.projected/self.bl.projected['A']**2)).real
-        self.Z_A = np.multiply(self.Z_A,mask)
+        self.bl.NPR(massive=False)
+        Z_A_over_Z_q = self.bl.Z['A']
+        self.Z_over_Z_q = (self.F@np.linalg.inv(self.projected.T)).real
+        self.Z_over_Z_A = self.Z_over_Z_q*(Z_A_over_Z_q**-2)
 
     def errs(self):
-        self.prop_in.errs()
-        self.prop_out.errs()
-        self.bl.errs()
+        self.samples = {k:bootstrap(self.operator[k], K=self.N_boot) for k in operators}
 
-        self.samples = {k:bootstrap(self.operator[k]) for k in operators}
-
-        self.samples_Z_V = np.zeros(shape=(N_boot,len(operators),len(operators)))
-        for k in tqdm(range(N_boot), leave=False):
-        #for k in range(N_boot):
-            in_, out_ = self.prop_in.samples_inv[k], self.prop_out.samples_out[k]
+        self.samples_Z_over_Z_A = np.zeros(shape=(self.N_boot,len(operators),len(operators)))
+        for k in tqdm(range(self.N_boot), leave=False):
+            in_ = self.prop_in.btsp_inv_propagator[k]
+            out_ = self.prop_out.btsp_inv_outgoing_propagator[k]
             samples_amp = {}
             for key in self.samples.keys():
                 samples_op = 2*(self.samples[key][k,]-self.samples[key][k,].swapaxes(1,3))
@@ -155,9 +153,10 @@ class fourquark:
             samples_proj = np.array([[np.einsum('abcd,badc',self.projector[k1],
                                               samples_amp[k2]) for k2 in operators]
                                               for k1 in operators])
-            self.samples_Z_V[k,:,:] = (self.F@np.linalg.inv(samples_proj.T/(self.bl.samp_proj['V'][k]**2))).real
-        self.Z_V_errs = np.zeros(shape=(len(operators),len(operators)))
+            self.samples_Z_over_Z_A[k,:,:] = (self.F@np.linalg.inv(samples_proj.T)).real*(
+                                       self.bl.Z_btsp['A'][k]**2)
+        self.Z_A_errs = np.zeros(shape=(len(operators),len(operators)))
         for i in range(len(operators)):
             for j in range(len(operators)):
-                diff = self.samples_Z_V[:,i,j]-self.Z_V[i,j]
-                self.Z_V_errs[i,j] = (diff.dot(diff)/N_boot)**0.5
+                diff = self.samples_Z_over_Z_A[:,i,j]-self.Z_over_Z_A[i,j]
+                self.Z_A_errs[i,j] = (diff.dot(diff)/N_boot)**0.5

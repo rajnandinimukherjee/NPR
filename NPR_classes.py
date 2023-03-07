@@ -1,10 +1,4 @@
-from matplotlib.ticker import FormatStrFormatter
-import itertools
-import pickle
-from bilinear import *
-
-
-phys_ens = ['C0', 'M0']
+from fourquark import *
 
 class bilinear_analysis:
     keys = ['S','P', 'V', 'A', 'T', 'm']
@@ -236,18 +230,18 @@ class fourquark_analysis:
                 if (condition1 and condition2):
                     prop1 = external(self.ens, filename=prop1_name)
                     prop2 = external(self.ens, filename=prop2_name)
-                    mom_diff = prop1.tot_mom-prop2.tot_mom
+                    mom_diff = prop1.total_momentum-prop2.total_momentum
 
-                    condition3 = prop1.mom_sq==prop2.mom_sq
-                    condition4 = prop1.mom_sq==scheme*np.linalg.norm(mom_diff)**2
+                    condition3 = prop1.momentum_squared==prop2.momentum_squared
+                    condition4 = prop1.momentum_squared==scheme*np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
-                        if m1!=self.sea_mass or m2!=self.sea_mass:
-                            fq = fourquark(self.ens, prop1, prop2)
-                            fq.errs()
-                            if fq.q not in results.keys():
-                                results[fq.q] = fq.Z_V
-                                errs[fq.q] = fq.Z_V_errs
+                        #if m1!=self.sea_mass or m2!=self.sea_mass:
+                        fq = fourquark(self.ens, prop1, prop2)
+                        fq.errs()
+                        if fq.q not in results.keys():
+                            results[fq.q] = fq.Z_over_Z_A
+                            errs[fq.q] = fq.Z_A_errs
 
                 self.momenta[action][(m1,m2)] = sorted(results.keys())
                 self.avg_results[action][(m1,m2)] = np.array([results[mom]

@@ -8,6 +8,9 @@ from tqdm import tqdm
 plt.rcParams.update(plotparams)
 import os
 from matplotlib.backends.backend_pdf import PdfPages
+import pickle
+import itertools
+from matplotlib.ticker import FormatStrFormatter 
 
 path = '/home/rm/external/NPR/'
 N_d = 4 # Dirac indices
@@ -19,6 +22,15 @@ N_fq = 16 # number of fourquarks
 dirs = ['X','Y','Z','T']
 currents = ['S','P','V','A','T']
 operators = ['VV+AA', 'VV-AA', 'SS-PP', 'SS+PP', 'TT']
+UKQCD_ens = ['C0', 'C1', 'C2',
+             'M0', 'M1', 'M2', 'M3',
+             'F1M', 'F1S']
+KEK_ens = ['KEKC1L', 'KEKC1S',
+           'KEKC2a', 'KEKC2b',
+           'KEKM1a', 'KEKM1b',
+           'KEKF1']
+all_ens = UKQCD_ens+KEK_ens
+phys_ens = ['C0', 'M0']
 
 #=====gamma matrices=============================================
 gamma = {'I':np.identity(N_d,dtype='complex128'),
