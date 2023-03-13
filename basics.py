@@ -8,6 +8,7 @@ from tqdm import tqdm
 plt.rcParams.update(plotparams)
 import os
 from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib.colors as mc
 import pickle
 import itertools
 from matplotlib.ticker import FormatStrFormatter 
@@ -108,4 +109,14 @@ def encode_prop(prop_info):
     for k, v in prop_info.items():
         prop_name += f'{k}_{v}_'
     return prop_name[:-1]
+
+#=====misc functions======================================================
+def st_dev(data, mean=None, **kwargs):
+    '''standard deviation function - finds stdev around data mean or mean
+    provided as input'''
+
+    n = len(data)
+    if mean is None:
+        mean = np.mean(data)
+    return np.sqrt(((data-mean).dot(data-mean))/n)
 

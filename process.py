@@ -36,15 +36,6 @@ def err_disp(num, err, n=2, **kwargs):
         #return str(num_trunc)+'('+str(err_n_digits)+')E%+d'%num_dec_place
         return str_num_trunc+'('+str(err_n_digits)+')'
 
-def st_dev(data, mean=None, **kwargs):
-    '''standard deviation function - finds stdev around data mean or mean
-    provided as input'''
-
-    n = len(data)
-    if mean is None:
-        mean = np.mean(data)
-    return np.sqrt(((data-mean).dot(data-mean))/n)
-
 def sigma(ens,mu1=2,mu2=3,**kwargs):
     res = all_data[ens]['1']['Z_fac']
     err = all_data[ens]['1']['Z_err']

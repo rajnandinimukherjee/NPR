@@ -180,6 +180,7 @@ class bilinear_analysis:
         
 
 class fourquark_analysis:
+    N_boot = 200
     def __init__(self, ensemble, loadpath=None, **kwargs):
 
         self.ens = ensemble
@@ -189,7 +190,7 @@ class fourquark_analysis:
                                for k in range(1,len(info['masses']))]
 
         self.actions = [info['gauges'][0]+'_'+info['baseactions'][0],
-                   info['gauges'][1]+'_'+info['baseactions'][1]]
+                   info['gauges'][-1]+'_'+info['baseactions'][-1]]
 
         if loadpath==None:
             self.momenta, self.avg_results, self.avg_errs = {}, {}, {}
@@ -236,7 +237,6 @@ class fourquark_analysis:
                     condition4 = prop1.momentum_squared==scheme*np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
-                        #if m1!=self.sea_mass or m2!=self.sea_mass:
                         fq = fourquark(self.ens, prop1, prop2)
                         fq.errs()
                         if fq.q not in results.keys():
@@ -267,4 +267,136 @@ class fourquark_analysis:
 
         if save:
             self.save_NPR()
+
+    def extrap_Z(self, action, point, masses=None, **kwargs): 
+        if masses==None:
+            masses = (self.sea_mass, self.sea_mass)
+
+        momentas = self.momenta[action][masses]
+        Z_facs = self.avg_results[action][masses]
+        Z_errs = self.avg_errs[action][masses]
+
+        mtx, errs = np.zeros(shape=(5,5)), np.zeros(shape=(5,5))
+        for i,j in itertools.product(range(5), range(5)):
+            Zs = [Z_facs[m][i,j] for m in momentas]
+            f = interp1d(momenta, Zs, fill_value='extrapolate')
+            mtx[i,j] = f(point)
+
+            Z_es = [Z_errs[m][i,j] for m in momentas]
+            np.random.seed(1)
+            Z_btsp = np.random.multivariate_normal(Zs,
+                     np.diag(Z_es)**2, self.N_boot)
+            store = []
+            for k in range(self.N_boot):
+                f = interp1d(momenta, Z_btsp[k,:],
+                         fill_value='extrapolate')
+                store.append(f(point))
+            errs[i,j] = st_dev(np.array(store),mean=mtx[i,j])
+
+        return mtx, errs
     
+    def merge_mixed(self, **kwargs):
+        mass_combinations = self.avg_results[(0,1)].keys()
+
+        for masses in list(mass_combinations):
+            momenta = self.momenta[(0,1)][masses]
+            res1 = self.avg_results[(0,1)][masses]
+            res2 = self.avg_resutls[(1,0)][masses]
+            mixed_res = {m:(res1[m]+res2[m])/2.0 for m in momenta}
+
+            err1 = self.avg_errs[(0,1)][masses]
+            err2 = self.avg_errs[(1,0)][masses]
+            mixed_err = {m:(err1[m]+err2[m]) for m in momenta}
+
+            self.avg_results[(0,1)][masses] = mixed_res
+            self.avg_errs[(0,1)] = mixed_err
+
+        self.avg_results.pop((1,0))
+        self.avg_errs.pop((1,0))
+
+    def sigma(self, action, mu1, mu2, **kwargs):
+        cond1 = mu1 in self.momenta[action]
+        cond2 = mu2 in self.momenta[action]
+        if not cond1:
+            Z1, Z1_err = self.extrap_Z(action, mu1)
+        else:
+            Z1 = self.avg_results[action][mu1]
+            Z1_err = self.avg_errs[action][mu1]
+
+        if not cond2:
+            Z2, Z2_err = self.extrap_Z(action, mu2)
+        else:
+            Z2 = self.avg_results[action][mu2]
+            Z2_err = self.avg_errs[action][mu2]
+
+        sig = Z2@np.linalg.inv(Z1)
+        
+        var_Z1 = np.zeros(shape=(5,5,self.N_boot))
+        var_Z2 = np.zeros(shape=(5,5,self.N_boot))
+        for i,j in itertools.product(range(5),range(5)):
+            var_Z1[i,j,:] = np.random.normal(Z1[i,j],Z1_err[i,j],self.N_boot)  
+            var_Z2[i,j,:] = np.random.normal(Z2[i,j],Z2_err[i,j],self.N_boot) 
+        sig_btsp = np.array([var_Z2[:,:,b]@np.linalg.inv(var_Z1[:,:,b])
+                           for b in range(self.N_boot)])
+        sig_err = np.zeros(shape=(5,5))
+        for i,j in itertools.product(range(5),range(5)):
+            sig_err[i,j] = st_dev(sig_btsp[:,i,j], mean=sig[i,j])
+
+        return sigma, sig_err
+
+    def plot_actions(self, masses=None, **kwargs):
+        if masses==None:
+            masses = (self.sea_mass, self.sea_mass)
+        
+        action_combinations = list(self.avg_results.keys())
+
+        plt.figure()
+        for action in action_combinations:
+            x = self.momenta[action][masses]
+            y = [self.avg_results[action][masses][0,0] for m in x]
+            e = [self.avg_errs[action][masses][0,0] for m in x]
+        
+            plt.errorbar(x,y,yerr=e,fmt='o',capsize=4,label=str(action))
+        plt.legend()
+        plt.xlabel('$q/GeV$')
+        plt.title(f'Block 1 Ensemble {self.ens}')
+
+        fig, ax = plt.subplots(2,2,sharex=True)
+        for i,j in itertools.product(range(2), range(2)):
+            k, l = i+1, j+1
+            for action in action_combinations:
+                x = self.momenta[action][masses]
+                y = [self.avg_results[action][masses][k,l] for m in x]
+                e = [self.avg_errs[action][masses][k,l] for m in x]
+                ax[i,j].errorbar(x,y,yerr=e,fmt='o',capsize=4,label=str(action))
+                if i==1:
+                    ax[i,j].set_xlabel('$q/GeV$')
+        handles, labels = ax[1,1].get_legend_handles_labels()
+        fig.legend(handles, labels, loc='upper right')
+        plt.suptitle(f'Block 2 Ensemble {self.ens}')
+
+        fig, ax = plt.subplots(2,2,sharex=True)
+        for i,j in itertools.product(range(2), range(2)):
+            k, l = i+3, j+3
+            for key in results.keys():
+                x = self.momenta[action][masses]
+                y = [self.avg_results[action][masses][k,l] for m in x]
+                e = [self.avg_errs[action][masses][k,l] for m in x]
+                ax[i,j].errorbar(x,y,yerr=e,fmt='o',capsize=4,label=str(action))
+                if i==1:
+                    ax[i,j].set_xlabel('$q/GeV$')
+        handles, labels = ax[1,1].get_legend_handles_labels()
+        fig.legend(handles, labels, loc='upper right')
+        plt.suptitle(f'Block 3 Ensemble {self.ens}')
+
+        filename = f'plots/{self.ens}_summary.pdf'
+        pp = PdfPages(filename)
+        fig_nums = plt.get_fignums()
+        figs = [plt.figure(n) for n in fig_nums]
+        for fig in figs:
+            fig.savefig(pp, format='pdf')
+        pp.close()
+        plt.close('all')
+        os.system(f'open {filnename}')
+
+
