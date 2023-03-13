@@ -278,11 +278,11 @@ class fourquark_analysis:
 
         mtx, errs = np.zeros(shape=(5,5)), np.zeros(shape=(5,5))
         for i,j in itertools.product(range(5), range(5)):
-            Zs = [Z_facs[m][i,j] for m in momentas]
+            Zs = [Z[i,j] for Z in Z_facs]
             f = interp1d(momenta, Zs, fill_value='extrapolate')
             mtx[i,j] = f(point)
 
-            Z_es = [Z_errs[m][i,j] for m in momentas]
+            Z_es = [e[i,j] for e in Z_errs]
             np.random.seed(1)
             Z_btsp = np.random.multivariate_normal(Zs,
                      np.diag(Z_es)**2, self.N_boot)
@@ -302,32 +302,34 @@ class fourquark_analysis:
             momenta = self.momenta[(0,1)][masses]
             res1 = self.avg_results[(0,1)][masses]
             res2 = self.avg_resutls[(1,0)][masses]
-            mixed_res = {m:(res1[m]+res2[m])/2.0 for m in momenta}
+            self.avg_results[(0,1)][masses] = (res1+res2)/2.0
 
             err1 = self.avg_errs[(0,1)][masses]
             err2 = self.avg_errs[(1,0)][masses]
-            mixed_err = {m:(err1[m]+err2[m]) for m in momenta}
-
-            self.avg_results[(0,1)][masses] = mixed_res
-            self.avg_errs[(0,1)] = mixed_err
+            self.avg_errs[(0,1)] = err1+err2
 
         self.avg_results.pop((1,0))
         self.avg_errs.pop((1,0))
 
-    def sigma(self, action, mu1, mu2, **kwargs):
-        cond1 = mu1 in self.momenta[action]
-        cond2 = mu2 in self.momenta[action]
+    def sigma(self, action, mu1, mu2, masses=None, **kwargs):
+        if masses==None:
+            masses = (self.sea_mass, self.sea_mass)
+
+        cond1 = mu1 in self.momenta[action][masses]
+        cond2 = mu2 in self.momenta[action][masses]
         if not cond1:
-            Z1, Z1_err = self.extrap_Z(action, mu1)
+            Z1, Z1_err = self.extrap_Z(action, mu1, masses=masses)
         else:
-            Z1 = self.avg_results[action][mu1]
-            Z1_err = self.avg_errs[action][mu1]
+            mu1_idx = self.momenta[action][masses].index(mu1)
+            Z1 = self.avg_results[action][masses][mu1_idx,:,:]
+            Z1_err = self.avg_errs[action][masses][mu1_idx,:,:]
 
         if not cond2:
-            Z2, Z2_err = self.extrap_Z(action, mu2)
+            Z2, Z2_err = self.extrap_Z(action, mu2, masses=masses)
         else:
-            Z2 = self.avg_results[action][mu2]
-            Z2_err = self.avg_errs[action][mu2]
+            mu2_idx = self.momenta[action][masses].index(mu2)
+            Z2 = self.avg_results[action][masses][mu2_idx,:,:]
+            Z2_err = self.avg_errs[action][masses][mu2_idx,:,:]
 
         sig = Z2@np.linalg.inv(Z1)
         
@@ -353,9 +355,8 @@ class fourquark_analysis:
         plt.figure()
         for action in action_combinations:
             x = self.momenta[action][masses]
-            y = [self.avg_results[action][masses][0,0] for m in x]
-            e = [self.avg_errs[action][masses][0,0] for m in x]
-        
+            y = [mtx[0,0] for mtx in self.avg_results[action][masses]]
+            e = [mtx[0,0] for mtx in self.avg_errs[action][masses]]
             plt.errorbar(x,y,yerr=e,fmt='o',capsize=4,label=str(action))
         plt.legend()
         plt.xlabel('$q/GeV$')
@@ -366,8 +367,8 @@ class fourquark_analysis:
             k, l = i+1, j+1
             for action in action_combinations:
                 x = self.momenta[action][masses]
-                y = [self.avg_results[action][masses][k,l] for m in x]
-                e = [self.avg_errs[action][masses][k,l] for m in x]
+                y = [mtx[k,l] for mtx in self.avg_results[action][masses]]
+                e = [mtx[k,l] for mtx in self.avg_errs[action][masses]]
                 ax[i,j].errorbar(x,y,yerr=e,fmt='o',capsize=4,label=str(action))
                 if i==1:
                     ax[i,j].set_xlabel('$q/GeV$')
@@ -378,10 +379,10 @@ class fourquark_analysis:
         fig, ax = plt.subplots(2,2,sharex=True)
         for i,j in itertools.product(range(2), range(2)):
             k, l = i+3, j+3
-            for key in results.keys():
+            for action in action_combinations:
                 x = self.momenta[action][masses]
-                y = [self.avg_results[action][masses][k,l] for m in x]
-                e = [self.avg_errs[action][masses][k,l] for m in x]
+                y = [mtx[k,l] for mtx in self.avg_results[action][masses]]
+                e = [mtx[k,l] for mtx in self.avg_errs[action][masses]]
                 ax[i,j].errorbar(x,y,yerr=e,fmt='o',capsize=4,label=str(action))
                 if i==1:
                     ax[i,j].set_xlabel('$q/GeV$')
@@ -397,6 +398,6 @@ class fourquark_analysis:
             fig.savefig(pp, format='pdf')
         pp.close()
         plt.close('all')
-        os.system(f'open {filnename}')
+        os.system(f'open {filename}')
 
 
