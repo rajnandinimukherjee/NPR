@@ -61,9 +61,9 @@ class external:
                             np.linalg.inv(self.btsp_outgoing_propgator[k])
                             for k in range(self.N_boot)])
 
-        self.Z_q_avg_qslash = np.trace(1j*self.inv_avg_propagator@self.pslash
+        self.Z_q_avg_qslash = np.trace(-1j*self.inv_avg_propagator@self.pslash
                                       ).real/(12*self.momentum_squared)
-        self.Z_q_btsp_qslash = np.array([np.trace(1j*(
+        self.Z_q_btsp_qslash = np.array([np.trace(-1j*(
                                self.btsp_inv_propagator[k,:,:]@self.pslash)).real/(
                                12*self.momentum_squared)
                                for k in range(self.N_boot)])

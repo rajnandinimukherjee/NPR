@@ -1,15 +1,15 @@
 from externalleg import *
 
 #=====bilinear projectors==============================
-gamma_proj = {'S':[Gamma['I']],
+bl_gamma_proj = {'S':[Gamma['I']],
            'P':[Gamma['5']],
            'V':[Gamma[i] for i in dirs],
            'A':[Gamma[i]@Gamma['5'] for i in dirs],
            'T':sum([[Gamma[dirs[i]]@Gamma[dirs[j]]
                for j in range(i+1,4)] for i in range(0,4-1)],[])}
 
-gamma_F = {k:np.trace(np.sum([mtx@mtx
-           for mtx in gamma_proj[k]],axis=0))
+bl_gamma_F = {k:np.trace(np.sum([mtx@mtx
+           for mtx in bl_gamma_proj[k]],axis=0))
            for k in currents}
 
 class bilinear:
@@ -63,41 +63,38 @@ class bilinear:
                                        for i in range(self.N_bl)])
 
     def gamma_Z(self, operators, **kwargs):
-        gamma_Z = {}
-        for c in bilinear.currents: 
-            projected = np.trace(np.sum([gamma_proj[c][i]@operators[c][i]
-                               for i in range(len(operators[c]))],axis=0))
-            gamma_Z[c] = (gamma_F[c]/projected).real
-        return gamma_Z 
+        projected = {c:np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]
+                        for i in range(len(operators[c]))],axis=0))
+                        for c in bilinear.currents}
 
-    def qslash_Z(self, operators, Z_q, q_vec, **kwargs):
+        gamma_Z = {c:(bl_gamma_F[c]/projected[c]).real for c in bilinear.currents}
+        return projected, gamma_Z 
+
+    def qslash_Z(self, operators, q_vec, Z_q, S_inv, **kwargs):
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
         q_sq = np.linalg.norm(q_vec)**2
-        qslash_Z = {}
-        qslash_Z['P'] = Z_q*self.gamma_Z(operators)['P']
-        qslash_Z['T'] = Z_q*self.gamma_Z(operators)['T']
-        qslash_Z['V'] = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
+        Z_P = Z_q*self.gamma_Z(operators)[1]['P']
+        Z_T = Z_q*self.gamma_Z(operators)[1]['T']
+        Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                        for i in range(len(dirs))],axis=0)@qslash).real/(12*q_sq))
 
         m_q = float(self.prop_in.info['am'])
-        _1 = Z_q
-        _2 = Z_q/qslash_Z['P'] 
-        _3 = np.trace(2*1j*m_q*operators['P'][0]@Gamma['5']@qslash).real/(12*q_sq)
-        _4 = np.trace(np.sum([q_vec[i]*operators['A'][i]
-             for i in range(len(dirs))],axis=0)@Gamma['5']).real/(12*m_q)
-        numerator = _4*_2*((_3/_1)+2*(_1/_4)+2*(_3/_4))
-        denominator = 2*(_1**2) + 2*_1*_3 + _3*_4
-        qslash_Z['m'] = numerator/denominator
-        a_term  = np.trace(np.sum([q_vec[i]*operators['A'][i]
-                           for i in range(len(dirs))],
-                           axis=0)@Gamma['5']@qslash).real/(12*q_sq)
-        mass_term = qslash_Z['m']*_3/_2
-        qslash_Z['A'] = Z_q*(1+mass_term)/a_term
+        A1 = np.trace(np.sum([q_vec[i]*operators['A'][i]
+             for i in range(len(dirs))],axis=0)@Gamma['5'])
+        A2 = np.trace(np.sum([q_vec[i]*operators['A'][i]
+             for i in range(len(dirs))],axis=0)@Gamma['5']@qslash)
+        P = np.trace(operators['P'][0]@Gamma['5']@qslash)
+        S = np.trace(S_inv)
 
-        s_term = np.trace(operators['S'][0]).real/12
-        mass_term = 2*_3*qslash_Z['m']/_2
-        qslash_Z['S'] = Z_q*(1+mass_term)/s_term
+        Z_A = (12*q_sq*(Z_q**2)+1j*Z_P*S*P/6)/(Z_q*A2 + 1j*Z_P*A1*P/12)
+        Z_m = (S-Z_A*A1/2)/(12*m_q*Z_q)
+                
+        s_term = np.trace(operators['S'][0])/12
+        mass_term = 2*1j*m_q*Z_m*Z_P*P/(6*q_sq*Z_q)
+        Z_S = (Z_q*(1+mass_term)/s_term)
+        qslash_Z = {'S':Z_S.real, 'P':Z_P.real, 'V':Z_V.real,
+                    'A':Z_A.real, 'T':Z_T.real, 'm':Z_m.real}
         return qslash_Z
 
     def construct_operators(self, S_in, S_out, Gs, **kwargs):
@@ -119,26 +116,31 @@ class bilinear:
         S_out = self.prop_out.inv_outgoing_avg_propagator
         operators = self.construct_operators(S_in, S_out, self.avg_bilinear)
         if not massive:
-            self.Z = self.gamma_Z(operators)
+            self.avg_projected, self.Z = self.gamma_Z(operators)
         else:
             Z_q = self.prop_in.Z_q_avg_qslash
-            self.Z = self.qslash_Z(operators, Z_q, self.tot_mom) 
+            S_inv = self.prop_in.inv_avg_propagator
+            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv) 
         #==bootstrap===
         self.Z_btsp = {c:np.zeros(self.N_boot) for c in self.Z.keys()}
+        self.btsp_projected = {c:np.zeros(self.N_boot,dtype=object)
+                               for c in self.Z.keys()}
         for k in range(self.N_boot):
             S_in = self.prop_in.btsp_inv_propagator[k,:,:]
             S_out = self.prop_out.btsp_inv_outgoing_propagator[k,:,:]
             operators = self.construct_operators(S_in, S_out,
                         self.btsp_bilinear[:,k,:])
             if not massive:
-                Z_k = self.gamma_Z(operators)
+                proj_k, Z_k = self.gamma_Z(operators)
                 for c in Z_k.keys():
+                    self.btsp_projected[c][k] = proj_k[c]
                     self.Z_btsp[c][k] = Z_k[c]
             else:
                 Z_q = self.prop_in.Z_q_btsp_qslash[k]
-                Z_k = self.qslash_Z(operators, Z_q, self.tot_mom)
+                S_inv = self.prop_in.btsp_inv_propagator[k,:,:]
+                Z_k = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv)
                 for c in Z_k.keys():
-                    self.Z_btsp[c][k] = Z_k[c]
+                    self.Z_btsp[c][k] = Z_k[c].real
 
         #==errors===
         self.Z_err = {}

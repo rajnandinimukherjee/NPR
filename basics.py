@@ -12,6 +12,7 @@ import matplotlib.colors as mc
 import pickle
 import itertools
 from matplotlib.ticker import FormatStrFormatter 
+from scipy.interpolate import interp1d
 
 path = '/home/rm/external/NPR/'
 N_d = 4 # Dirac indices

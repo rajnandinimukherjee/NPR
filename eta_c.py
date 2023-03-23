@@ -1,6 +1,4 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
+from basics import *
 
 eta_c_data = {'C0':{'central':{0.30:2.1609,
                                0.35:2.3786,

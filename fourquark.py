@@ -134,9 +134,10 @@ class fourquark:
                           for k1 in operators]) 
         self.bl = bilinear(ensemble, self.prop_in, self.prop_out, cfgs=cfgs)
         self.bl.NPR(massive=False)
-        Z_A_over_Z_q = self.bl.Z['A']
-        self.Z_over_Z_q = (self.F@np.linalg.inv(self.projected.T)).real
-        self.Z_over_Z_A = self.Z_over_Z_q*(Z_A_over_Z_q**-2)
+        bl_A_proj = self.bl.avg_projected['A']
+        self.NPR_RHS = self.F/(bl_gamma_F['A']**2)
+        LHS = self.projected.T/(bl_A_proj**2)
+        self.Z_over_Z_A = (self.NPR_RHS@np.linalg.inv(LHS)).real
 
     def errs(self):
         self.samples = {k:bootstrap(self.operator[k], K=self.N_boot) for k in operators}
@@ -153,10 +154,12 @@ class fourquark:
             samples_proj = np.array([[np.einsum('abcd,badc',self.projector[k1],
                                               samples_amp[k2]) for k2 in operators]
                                               for k1 in operators])
-            self.samples_Z_over_Z_A[k,:,:] = (self.F@np.linalg.inv(samples_proj.T)).real*(
-                                       self.bl.Z_btsp['A'][k]**2)
+            bl_A_proj_btsp = self.bl.btsp_projected['A'][k]
+            self.samples_Z_over_Z_A[k,:,:] = (self.NPR_RHS@np.linalg.inv(
+                                              samples_proj.T/(bl_A_proj_btsp**2))).real
         self.Z_A_errs = np.zeros(shape=(len(operators),len(operators)))
         for i in range(len(operators)):
             for j in range(len(operators)):
                 diff = self.samples_Z_over_Z_A[:,i,j]-self.Z_over_Z_A[i,j]
                 self.Z_A_errs[i,j] = (diff.dot(diff)/N_boot)**0.5
+

@@ -38,8 +38,8 @@ class bilinear_analysis:
         else:
             self.bl_list = common_cf_files(self.data, 'bilinears', prefix='bi_')
 
-            results = {c:{} for c in self.keys}
-            errs = {c:{} for c in self.keys}
+            results = {}
+            errs = {}
 
             for b in tqdm(range(len(self.bl_list)), leave=False):
                 prop1_name, prop2_name = self.bl_list[b].split('__')
@@ -59,18 +59,15 @@ class bilinear_analysis:
                     if (condition3 and condition4):
                         bl = bilinear(self.ens, prop1, prop2)
                         bl.NPR(massive=massive)
-                        for c in bl.Z.keys():
-                            if bl.q not in results[c].keys():
-                                results[c][bl.q] = [bl.Z[c]]
-                                errs[c][bl.q] = [bl.Z_err[c]]
+                        if bl.q not in results.keys():
+                            results[bl.q] = bl.Z
+                            errs[bl.q] = bl.Z_err
 
-            self.momenta[action][(m1,m2)] = sorted(results['S'].keys())
-            self.avg_results[action][(m1,m2)] = {k:np.array([np.mean(v[mom])
-                                           for mom in self.momenta[action][(m1,m2)]])
-                                           for k,v in results.items()}
-            self.avg_errs[action][(m1,m2)] = {k:np.array([np.mean(v[mom])
-                                        for mom in self.momenta[action][(m1,m2)]])
-                                        for k,v in errs.items()}
+            self.momenta[action][(m1,m2)] = sorted(results.keys())
+            self.avg_results[action][(m1,m2)] = np.array([results[mom]
+                            for mom in self.momenta[action][(m1,m2)]])
+            self.avg_errs[action][(m1,m2)] = np.array([errs[mom]
+                            for mom in self.momenta[action][(m1,m2)]])
     
     def save_NPR(self, addl_txt='', **kwargs):
         filename = 'pickles/'+self.ens+'_bl.p'
@@ -79,8 +76,8 @@ class bilinear_analysis:
         print('Saved bilinear NPR results to '+filename)
 
     def NPR_all(self, massive=False, save=True, **kwargs):
-        #for a1,a2 in itertools.product([0,1],[0,1]):
-        #    self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
+        for a1,a2 in itertools.product([0,1],[0,1]):
+            self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
         if massive:
             for mass in self.non_sea_masses:
                 self.NPR((self.sea_mass, mass),massive=True)
@@ -89,6 +86,30 @@ class bilinear_analysis:
 
         if save:
             self.save_NPR()
+
+    def extrap_Z(self, mu, masses, action=(0,0), **kwargs):
+        Z = {}
+        Z_err = {}
+        momentas = self.momenta[action][masses]
+        for c in self.avg_results[action][masses][0].keys():
+            Zs = [self.avg_results[action][masses][i][c]
+                 for i in range(len(momentas))]
+            f = interp1d(momentas, Zs, fill_value='extrapolate')
+            Z[c] = f(mu)
+
+            Z_es = [self.avg_errs[action][masses][i][c]
+                     for i in range(len(momentas))]
+            np.random.seed(1)
+            Z_btsp = np.random.multivariate_normal(Zs,
+                     np.diag(Z_es)**2, self.N_boot)
+            store = []
+            for k in range(self.N_boot):
+                f = interp1d(momenta, Z_btsp[k,:],
+                         fill_value='extrapolate')
+                store.append(f(point))
+            Z_err[c] = st_dev(np.array(store),mean=Z[c])
+
+        return Z, Z_err
 
     def plot_masswise(self, action=(0,0), save=False, **kwargs):
         fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))
@@ -159,14 +180,37 @@ class bilinear_analysis:
             plt.savefig('plots/'+self.ens+'_action_comp_bl.pdf')
             print('Plot saved to plots/'+self.ens+'_action_comp_bl.pdf')
 
-    def massive_Z_plots(self, **kwargs):
-        chosen_m = self.momenta[(0,0)][('0.5000','0.5000')][0]
+    def massive_Z_plots(self, mu=2, action=(0,0), **kwargs):
         plt.figure()
-        plt.title('Z_m({:.3f})'.format(chosen_m))
-        x = [float(m) for m in self.non_sea_masses]
-        y = [self.avg_results[(0,0)][(m,m)]['m'][0] for m in self.non_sea_masses]
-        plt.scatter(x,y)
-        plt.xlabel('am_q')
+        plt.title(self.ens+' $Z_m$({:.3f})'.format(mu))
+        x = np.array([float(m) for m in self.non_sea_masses])
+
+        m_nsm_0 = self.non_sea_masses[0]
+        if mu in self.momenta[action][(m_nsm_0,m_nsm_0)]:
+            mu_idx = self.momenta[action][(m_nsm_0,m_nsm_0)].index(mu)
+            y = np.array([self.avg_results[(0,0)][(m,m)][mu_idx]['m']
+                          for m in self.non_sea_masses])
+            e = np.array([self.avg_errs[(0,0)][(m,m)][mu_idx]['m']
+                          for m in self.non_sea_masses])
+            
+        else:
+            y = np.array([self.extrap_Z(mu=mu, masses=(m,m),
+                          action=action)[0]['m']
+                          for m in self.non_sea_masses])
+            e = np.array([self.extrap_Z(mu=mu, masses=(m,m),
+                          action=action)[1]['m']
+                          for m in self.non_sea_masses])
+
+        plt.errorbar(x,y,yerr=e,fmt='o',capsize=4)
+        plt.xlabel(r'$am_q$')
+
+        def Z_m_ansatz(params, am, **kwargs):
+            return params[0] + params[1]*am + params[2]*(am**2)
+
+        def diff(params):
+            return y - Z_m_ansatz(params, x)
+
+
         filename = 'plots/'+self.ens+'_massive_Z.pdf'
         print('Plot saved to '+filename)
         pp = PdfPages(filename)
@@ -199,7 +243,7 @@ class fourquark_analysis:
                     data[(a1,a2)] = {}
 
         else:
-            print('Loading NPR bilinear data from '+loadpath)
+            print('Loading NPR fourquark data from '+loadpath)
             self.momenta, self.avg_results, self.avg_errs = pickle.load(
                                                             open(loadpath, 'rb')) 
             self.all_masses = list(self.momenta[(0,0)].keys()) 
