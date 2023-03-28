@@ -59,17 +59,20 @@ class Z_analysis:
         
         self.ens = ensemble
         self.ainv = params[self.ens]['ainv']
-        self.f_m, self.f_m_err, self.f_m_btsp = load_info('f_M', self.ens,
-                                                self.operators, meson='ls')
+        self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
+        self.masses = (self.sea_m, self.sea_m)
         self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
                                                 self.operators, meson='ll')
+        self.f_m_ren = (130.41/1000)/self.ainv
+        self.f_m_ren_btsp = np.random.normal(self.f_m_ren, 0.23/(1000*self.ainv), self.N_boot)
     
         Z_data = pickle.load(open(f'RISMOM/{self.ens}.p','rb'))
-        self.momenta = Z_data[0]
-        self.Z, self.Z_err = Z_data[1][self.action], Z_data[2][self.action]
-        self.Z_btsp = {m:np.array([[np.random.normal(Z[i,j],
+        self.momenta = Z_data[0][self.action][self.masses]
+        self.Z = Z_data[1][self.action][self.masses]
+        self.Z_err = Z_data[2][self.action][self.masses]
+        self.Z_btsp = np.array([[[np.random.normal(self.Z[m][i,j],
                       self.Z_err[m][i,j], self.N_boot) for j in range(5)]
-                      for i in range(5)]) for m, Z in self.Z.items()}
+                      for i in range(5)] for m in range(len(self.momenta))])
 
     def interpolate(self, mu, **kwargs):
         if mu in self.momenta:
@@ -111,11 +114,11 @@ class Z_analysis:
     def chiral_data(self, fit='central', i=range(5), **kwargs):
         a_sq = (1/self.ainv)**2
         if fit=='central':
-            mpi_f_m_sq = (self.mpi/self.f_m)**2
+            mpi_f_m_sq = (self.mpi/self.f_m_ren)**2
             return  [a_sq, mpi_f_m_sq]
         else:
             k = kwargs['k']
-            mpi_f_m_sq = (self.mpi_btsp[k]/self.f_m_btsp[:,k])**2
+            mpi_f_m_sq = (self.mpi_btsp[k]/self.f_m_ren_btsp[:,k])**2
             return  [a_sq, mpi_f_m_sq]
 
 class bag_analysis:
@@ -131,15 +134,6 @@ class bag_analysis:
         bag_data = all_bag_data[self.ens]
         self.bag, self.bag_err, self.bag_btsp = load_info('bag', self.ens,
                                                 self.operators, meson='ls')
-        #self.f_m, self.f_m_err, self.f_m_btsp = load_info('f_M', self.ens,
-        #                                        self.operators, meson='ll')
-        #Z_A, Z_A_err = Z_A_dict['central'][self.ens], Z_A_dict['errors'][self.ens]
-        #self.f_m_ren = Z_A*self.f_m
-        #Z_A_btsp = np.random.normal(Z_A, Z_A_err, self.N_boot)
-        #self.f_m_ren_btsp = np.array([Z_A_btsp[k]*self.f_m_btsp[k]
-        #                            for k in range(self.N_boot)])
-        #self.f_m_ren_err = ((self.f_m_ren_btsp[:]-self.f_m_ren).dot(
-        #                    self.f_m_ren_btsp[:]-self.f_m_ren)/self.N_boot)**0.5
         self.f_m_ren = (130.41/1000)/self.ainv
         self.f_m_ren_btsp = np.random.normal(self.f_m_ren, 0.23/(1000*self.ainv), self.N_boot)
 
@@ -148,8 +142,8 @@ class bag_analysis:
 
         self.Z_info = Z_analysis(self.ens)
         self.Z, self.Z_btsp = self.Z_info.Z, self.Z_info.Z_btsp
-        self.bag_ren = {m:Z@self.bag for m, Z in self.Z.items()}
-        self.bag_ren_btsp = {m:np.array([Z_btsp[:,:,k]@self.bag_btsp[:,k] 
+        self.bag_ren = [Z@self.bag for Z in self.Z]
+        self.bag_ren_btsp = [np.array([Z_btsp[:,:,k]@self.bag_btsp[:,k] 
                             for k in range(self.N_boot)]) 
                             for m, Z_btsp in self.Z_btsp.items()}
         bag_ren_btsp_diff = {m:ren_btsp-self.bag_ren[m]

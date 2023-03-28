@@ -2,6 +2,7 @@ from fourquark import *
 
 class bilinear_analysis:
     keys = ['S','P', 'V', 'A', 'T', 'm']
+    N_boot = 200
     def __init__(self, ensemble, loadpath=None, **kwargs):
 
         self.ens = ensemble
