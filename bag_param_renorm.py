@@ -1,4 +1,4 @@
-from NPR_structures import *
+from NPR_classes import *
 
 all_bag_data = h5py.File('kaon_bag_fits.h5','r')
 bag_ensembles = list(all_bag_data.keys())
@@ -63,16 +63,16 @@ class Z_analysis:
         self.masses = (self.sea_m, self.sea_m)
         self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
                                                 self.operators, meson='ll')
-        self.f_m_ren = (130.41/1000)/self.ainv
-        self.f_m_ren_btsp = np.random.normal(self.f_m_ren, 0.23/(1000*self.ainv), self.N_boot)
+        self.f_m_ren = f_pi_PDG/self.ainv
+        self.f_m_ren_btsp = np.random.normal(self.f_m_ren, f_pi_PDG_err/self.ainv, self.N_boot)
     
         Z_data = pickle.load(open(f'RISMOM/{self.ens}.p','rb'))
         self.momenta = Z_data[0][self.action][self.masses]
         self.Z = Z_data[1][self.action][self.masses]
         self.Z_err = Z_data[2][self.action][self.masses]
-        self.Z_btsp = np.array([[[np.random.normal(self.Z[m][i,j],
+        self.Z_btsp = [np.array([[np.random.normal(self.Z[m][i,j],
                       self.Z_err[m][i,j], self.N_boot) for j in range(5)]
-                      for i in range(5)] for m in range(len(self.momenta))])
+                      for i in range(5)]) for m in range(len(self.momenta))]
 
     def interpolate(self, mu, **kwargs):
         if mu in self.momenta:
@@ -134,8 +134,8 @@ class bag_analysis:
         bag_data = all_bag_data[self.ens]
         self.bag, self.bag_err, self.bag_btsp = load_info('bag', self.ens,
                                                 self.operators, meson='ls')
-        self.f_m_ren = (130.41/1000)/self.ainv
-        self.f_m_ren_btsp = np.random.normal(self.f_m_ren, 0.23/(1000*self.ainv), self.N_boot)
+        self.f_m_ren = f_pi_PDG/self.ainv
+        self.f_m_ren_btsp = np.random.normal(self.f_m_ren, f_pi_PDG_err/self.ainv, self.N_boot)
 
         self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
                                                 self.operators, meson='ll')
@@ -145,13 +145,13 @@ class bag_analysis:
         self.bag_ren = [Z@self.bag for Z in self.Z]
         self.bag_ren_btsp = [np.array([Z_btsp[:,:,k]@self.bag_btsp[:,k] 
                             for k in range(self.N_boot)]) 
-                            for m, Z_btsp in self.Z_btsp.items()}
-        bag_ren_btsp_diff = {m:ren_btsp-self.bag_ren[m]
-                            for m, ren_btsp in self.bag_ren_btsp.items()}
-        self.bag_ren_err = {m:np.array([(val[:,i].dot(
+                            for Z_btsp in self.Z_btsp]
+        bag_ren_btsp_diff = [self.bag_ren_btsp[i]-self.bag_ren[i]
+                            for i in range(len(self.bag_ren_btsp))]
+        self.bag_ren_err = [np.array([(val[:,i].dot(
                            val[:,i])/self.N_boot)**0.5
                            for i in range(5)])
-                           for m, val in bag_ren_btsp_diff.items()}
+                           for val in bag_ren_btsp_diff]
 
     def interpolate(self, mu):
         Z_mu, Z_mu_err, Z_mu_btsp = self.Z_info.interpolate(mu)
@@ -175,7 +175,12 @@ class bag_analysis:
 
     def ansatz(self, params, **kwargs):
         a_sq, mpi_f_m_sq = self.chiral_data(**kwargs)
-        return params[0]*(1+params[1]*a_sq+params[2]*mpi_f_m_sq)
-
+        func = params[0]*(1+params[1]*a_sq + params[2]*mpi_f_m_sq)
+        if 'addnl_terms' in kwargs.keys():
+            if kwargs['addnl_terms']=='a4':
+                func += params[0]*(params[3]*(a_sq**2))
+            elif kwargs['addnl_terms']=='m4':
+                func += params[0]*(params[3]*(mpi_f_m_sq**2))
+        return func 
 
 

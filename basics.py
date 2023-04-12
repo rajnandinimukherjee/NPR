@@ -13,6 +13,8 @@ import pickle
 import itertools
 from matplotlib.ticker import FormatStrFormatter 
 from scipy.interpolate import interp1d
+from scipy.optimize import least_squares
+from scipy.special import gammaincc
 
 path = '/home/rm/external/NPR/'
 N_d = 4 # Dirac indices
@@ -20,6 +22,11 @@ N_c = 3 # Color indices
 #N_bl = 16 # number of bilinears
 N_boot = 200 # number of bootstrap samples
 N_fq = 16 # number of fourquarks
+
+mpi_PDG = 139.5709/1000
+#mpi_PDG_err = 
+f_pi_PDG = 130.41/1000
+f_pi_PDG_err = 0.23/1000
 
 dirs = ['X','Y','Z','T']
 currents = ['S','P','V','A','T']

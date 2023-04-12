@@ -1,7 +1,4 @@
-from NPR_structures import *
 from bag_param_renorm import *
-from matplotlib.backends.backend_pdf import PdfPages
-import matplotlib.colors as mc
 
 extrap_ensembles = ['C0','C1','M0','M1','M2']
 
@@ -72,34 +69,36 @@ def plot_dep(mu, x_key='mpisq', y_key='sigma', xmax=1.7, **kwargs):
     os.system("open plots/"+filename)
 
 def chiral_continuum_ansatz(params, a_sq, mpi_f_m_sq, **kwargs):
-    return params[0]*(1+params[1]*a_sq + params[2]*mpi_f_m_sq)
+    func = params[0]*(1+params[1]*a_sq + params[2]*mpi_f_m_sq)
+    if 'addnl_terms' in kwargs.keys():
+        if kwargs['addnl_terms']=='a4':
+            func += params[0]*(params[3]*(a_sq**2))
+        elif kwargs['addnl_terms']=='m4':
+            func += params[0]*(params[3]*(mpi_f_m_sq**2))
+    return func 
 
-from scipy.optimize import least_squares
-import matplotlib.colors as mcolors
-from scipy.special import gammaincc
 
 class bag_fits:
     N_boot = 200
     operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
-    mpi_phys = 139.5706/1000
-    f_m_phys = 130.7/1000
     def __init__(self, ens_list):
         self.ens_list = ens_list
         self.bag_dict = {e:bag_analysis(e) for e in self.ens_list}
         self.colors = {list(self.bag_dict.keys())[k]:list(
-                       mcolors.TABLEAU_COLORS.keys())[k]
+                       mc.TABLEAU_COLORS.keys())[k]
                        for k in range(len(self.ens_list))}
         
-    def fit_operator(self, operator, mu, **kwargs):
+    def fit_operator(self, operator, mu, 
+                     guess=[1e-1,1e-2,1e-3], **kwargs):
         op_idx = bag_analysis.operators.index(operator)
-        dof = len(self.ens_list)-3
+        dof = len(self.ens_list)-len(guess)
 
-        def pred(params, **kwargs):
+        def pred(params, **akwargs):
             p = [self.bag_dict[e].ansatz(params, **kwargs)
                  for e in self.ens_list]
             return p
 
-        def diff(bag, params, **kwargs):
+        def diff(bag, params, **akwargs):
             return np.array(bag) - np.array(pred(params, **kwargs))
 
         #==central fit======
@@ -110,11 +109,11 @@ class bag_fits:
         L_inv = np.linalg.cholesky(COV)
         L = np.linalg.inv(L_inv)
 
-        def LS(params):
+        def LS(params, **akwargs):
             return L.dot(diff(bags_central, params, fit='central',
                         operator=operator))
 
-        res = least_squares(LS, [1e-1,1e-2,1e-3], ftol=1e-10, gtol=1e-10)
+        res = least_squares(LS, guess, ftol=1e-10, gtol=1e-10)
         chi_sq = LS(res.x).dot(LS(res.x))
         pvalue = gammaincc(dof/2,chi_sq/2)
         
@@ -126,7 +125,7 @@ class bag_fits:
             def LS_btsp(params):
                 return L.dot(diff(bag_btsp, params, fit='btsp',
                             operator=operator, k=k))
-            res_k = least_squares(LS_btsp, [1e-1,1e-2,1e-3],
+            res_k = least_squares(LS_btsp, guess,
                                      ftol=1e-10, gtol=1e-10)
             res_btsp[k,:] = res_k.x
 
@@ -136,6 +135,7 @@ class bag_fits:
         return res.x, chi_sq/dof, pvalue, res_err, res_btsp 
 
     def plot_fits(self, mu, **kwargs):
+        print(kwargs)
 
         fig, ax = plt.subplots(len(self.operators),2,figsize=(15,30))
         for i in range(len(self.operators)): 
@@ -143,6 +143,7 @@ class bag_fits:
             ax[i,1].title.set_text(self.operators[i])
             op = self.operators[i]
             params, chi_sq_dof, pvalue, err, btsp = self.fit_operator(op, mu, **kwargs)
+            print(params)
 
 
             x_asq = np.linspace(0,(1/1.7)**2,50)
@@ -190,18 +191,18 @@ class bag_fits:
                                  mfc='None')
 
             
-            y_phys = chiral_continuum_ansatz(params,0,(self.mpi_phys/self.f_m_phys)**2)
+            y_phys = chiral_continuum_ansatz(params,0,(mpi_PDG/f_pi_PDG)**2)
             y_phys_var_diff = np.array([chiral_continuum_ansatz(btsp[k,:],0,
-                             (self.mpi_phys/self.f_m_phys)**2)-y_phys
+                             (mpi_PDG/f_m_PDG)**2)-y_phys
                              for k in range(self.N_boot)])
             y_phys_err = (y_phys_var_diff[:].dot(y_phys_var_diff[:])/self.N_boot)**0.5
             ax[i,0].errorbar([0],[y_phys],yerr=[y_phys_err],color='k',
                              fmt='o',capsize=4,label='phys')
-            ax[i,1].errorbar([self.mpi_phys**2],[y_phys],yerr=[y_phys_err],
+            ax[i,1].errorbar([mpi_PDG**2],[y_phys],yerr=[y_phys_err],
                              color='k',fmt='o',capsize=4,label='phys')
-            ax[i,1].axvline((self.mpi_phys)**2,color='k')
+            ax[i,1].axvline(mpi_PDG**2,color='k',linestyle='dashed')
             ax[i,0].legend()
-            ax[i,0].set_xlabel(r'$a^2$')
+            ax[i,0].set_xlabel(r'$a^2$ (GeV${}^{-2}$)')
             ax[i,1].legend()
             ax[i,1].set_xlabel(r'$m_{\pi}^2$ (GeV${}^2$)')
 
