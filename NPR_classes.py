@@ -17,6 +17,7 @@ class bilinear_analysis:
         gauge_count = len(info['baseactions'])
         self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
                         i in range(gauge_count)]
+        self.all_masses = [self.sea_mass]+self.non_sea_masses
 
         if loadpath==None:
             self.momenta, self.avg_results, self.avg_errs = {}, {}, {}
@@ -29,8 +30,6 @@ class bilinear_analysis:
             #print('Loading NPR bilinear data from '+loadpath)
             self.momenta, self.avg_results, self.avg_errs = pickle.load(
                                                             open(loadpath, 'rb')) 
-            self.all_masses = list(self.momenta[(0,0)].keys()) 
-
     
     def NPR(self, masses, action=(0,0), scheme=1, massive=False, **kwargs): 
         m1, m2 = masses
@@ -190,23 +189,23 @@ class bilinear_analysis:
             print('Plot saved to plots/'+self.ens+'_action_comp_bl.pdf')
 
     def massive_Z_plots(self, mu=2, action=(0,0), passinfo=False, **kwargs):
-        x = np.array([float(m) for m in self.non_sea_masses])
+        x = np.array([float(m) for m in self.all_masses])
 
         m_nsm_0 = self.non_sea_masses[0]
         if mu in self.momenta[action][(m_nsm_0,m_nsm_0)]:
             mu_idx = self.momenta[action][(m_nsm_0,m_nsm_0)].index(mu)
             y = np.array([self.avg_results[(0,0)][(m,m)][mu_idx]['m']
-                          for m in self.non_sea_masses])
+                          for m in self.all_masses])
             e = np.array([self.avg_errs[(0,0)][(m,m)][mu_idx]['m']
-                          for m in self.non_sea_masses])
+                          for m in self.all_masses])
             
         else:
             y = np.array([self.extrap_Z(mu=mu, masses=(m,m),
                           action=action)[0]['m']
-                          for m in self.non_sea_masses])
+                          for m in self.all_masses])
             e = np.array([self.extrap_Z(mu=mu, masses=(m,m),
                           action=action)[1]['m']
-                          for m in self.non_sea_masses])
+                          for m in self.all_masses])
 
         if passinfo:
             return x, y, e

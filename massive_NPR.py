@@ -66,7 +66,7 @@ ens_dict = {}
 for ens in ens_list:
     ens_idx = ens_list.index(ens)
     ens_dict[ens] = {'bl_obj':bilinear_analysis(ens, 
-                     loadpath=f'pickles/{ens}_bl.p')}
+                     loadpath=f'pickles/{ens}_bl_massive.p')}
     ainv = ens_dict[ens]['bl_obj'].ainv
     eta_star_dict = {eta:interpolate_eta_c(ens,eta)
                      for eta in eta_stars}
