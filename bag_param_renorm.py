@@ -40,58 +40,107 @@ def load_info(key, ens, ops, meson='ls',**kwargs):
 
     return central_val, error, bootstraps
 
-def st_dev(data, mean=None, **kwargs):
-    '''standard deviation function - finds stdev around data mean or mean
-    provided as input'''
+def into_arr(list_arr):
+    return np.array([l for l in list_arr])
 
-    n = len(data)
-    if mean is None:
-        mean = np.mean(data)
-    return np.sqrt(((data-mean).dot(data-mean))/n)
+def load_Z_data(ens, **kwargs):
+    mom, Z, Z_err = pickle.load(open(f'RISMOM/{ens}.p','rb'))
+    for k1 in mom.keys():
+        for k2 in mom[k1].keys():
+            mom[k1][k2] = into_arr(mom[k1][k2])
+            Z[k1][k2] = into_arr(Z[k1][k2])
+            Z_err[k1][k2] = into_arr(Z_err[k1][k2])
+    return mom, Z, Z_err
 
 import itertools
 from scipy.interpolate import interp1d
 class Z_analysis:
     operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP','TT']
-    action = (0,0)
-    N_boot = 200
-    def __init__(self, ensemble, **kwargs):
+    N_boot = N_boot
+    def __init__(self, ensemble, action=(0,0), bag=False, **kwargs):
         
         self.ens = ensemble
+        self.action = action
+        self.bag = bag
         self.ainv = params[self.ens]['ainv']
         self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
         self.masses = (self.sea_m, self.sea_m)
-        self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
-                                                self.operators, meson='ll')
+        if self.ens in bag_ensembles:
+            self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
+                                                    self.operators, meson='ll')
         self.f_m_ren = f_pi_PDG/self.ainv
         self.f_m_ren_btsp = np.random.normal(self.f_m_ren, f_pi_PDG_err/self.ainv, self.N_boot)
     
-        Z_data = pickle.load(open(f'RISMOM/{self.ens}.p','rb'))
+        Z_data = load_Z_data(self.ens)
+        self.Z_data = Z_data
         self.momenta = Z_data[0][self.action][self.masses]
-        self.Z = Z_data[1][self.action][self.masses]
-        self.Z_err = Z_data[2][self.action][self.masses]
-        self.Z_btsp = [np.array([[np.random.normal(self.Z[m][i,j],
-                      self.Z_err[m][i,j], self.N_boot) for j in range(5)]
-                      for i in range(5)]) for m in range(len(self.momenta))]
+        self.N_mom = self.momenta.shape[0]
+
+        if self.action==(0,1) or self.action==(1,0):
+            self.action==(0,1)
+            print('Actions (0,1) and (1,0) have been averaged into group called "(0,1)"')
+
+            Z1 =  Z_data[1][(0,1)][self.masses]
+            Z1_err =  Z_data[2][(0,1)][self.masses]
+            Z1_btsp = np.array([[[np.random.normal(Z1[m,i,j],
+                      Z1_err[m,i,j], self.N_boot) for j in range(5)]
+                      for i in range(5)] for m in range(self.N_mom)])
+            Z2 =  Z_data[1][(1,0)][self.masses]
+            Z2_err =  Z_data[2][(1,0)][self.masses]
+            Z2_btsp = np.array([[[np.random.normal(Z2[m,i,j],
+                      Z2_err[m,i,j], self.N_boot) for j in range(5)]
+                      for i in range(5)] for m in range(self.N_mom)])
+            self.Z = (Z1+Z2)/2.0
+            self.Z_btsp = np.array([(Z1_btsp[m,]+Z2_btsp[m,])/2.0
+                          for m in range(self.N_mom)])
+            self.Z_err = np.array([[[st_dev(self.Z_btsp[m,i,j,:],self.Z[m,i,j])
+                                     for j in range(5)] for i in range(5)]
+                                     for m in range(self.N_mom)])
+        else:
+            self.Z = Z_data[1][self.action][self.masses]
+            self.Z_err = Z_data[2][self.action][self.masses]
+            self.Z_btsp = np.array([[[np.random.normal(self.Z[m,i,j],
+                          self.Z_err[m,i,j], self.N_boot) for j in range(5)]
+                          for i in range(5)] for m in range(self.N_mom)])
+        if self.bag:
+            bl = bilinear_analysis(self.ens, loadpath=f'pickles/{self.ens}_bl.p')
+            Z_bl = bl.avg_results[self.action][self.masses]
+            Z_bl_err = bl.avg_errs[self.action][self.masses]
+            for m in range(self.N_mom):
+                mult = Z_bl[m]['A']/Z_bl[m]['P']
+                self.Z[m,:,:] = mask*self.Z[m,:,:]*(mult**2)
+                self.Z[m,0,0] = self.Z[m,0,0]/mult
+
+                bl_btsp = {c:np.random.normal(Z_bl[m][c],
+                           Z_bl_err[m][c],self.N_boot) for c in Z_bl[m].keys()}
+                for k in range(self.N_boot):
+                    mult = bl_btsp['A'][k]/bl_btsp['P'][k]
+                    self.Z_btsp[m,:,:,k] = mask*self.Z_btsp[m,:,:,k]*(mult**2)
+                    self.Z_btsp[m,0,0,k] = self.Z_btsp[m,0,0,k]/mult
+                self.Z_err[m,:,:]  = np.array([[st_dev(self.Z_btsp[m,i,j,:],
+                                     self.Z[m,i,j]) for j in range(5)]
+                                     for i in range(5)])
 
     def interpolate(self, mu, **kwargs):
         if mu in self.momenta:
-            matrix, errs, btsp = self.Z[mu], self.Z_err[mu], self.Z_btsp[mu]
+            mu_idx = self.momenta.index(mu)
+            matrix, errs, btsp = self.Z[mu_idx,], self.Z_err[mu_idx,], self.Z_btsp[mu_idx,]
         else:
             matrix, errs = np.zeros(shape=(5,5)), np.zeros(shape=(5,5))
             btsp = np.zeros(shape=(5,5,200))
             for i,j in itertools.product(range(5), range(5)):
                 if mask[i,j]:
-                    y = [self.Z[m][i,j] for m in self.momenta]
+                    y = self.Z[:,i,j]
                     f = interp1d(self.momenta,y,fill_value='extrapolate')
                     matrix[i,j] = f(mu)
 
-                    ys = [list(self.Z_btsp[m][i,j,:]) for m in self.momenta]
+                    ys = self.Z_btsp[:,i,j,:]
                     store = []
-                    for Y in ys:
-                        f = interp1d(x,Y,fill_value='extrapolate')
-                        store.append(f(point))
-                    errors[i,j] = st_dev(np.array(store), mean=matrix[i,j])
+                    for k in range(self.N_boot):
+                        Y = ys[:,k]
+                        f = interp1d(self.momenta,Y,fill_value='extrapolate')
+                        store.append(f(mu))
+                    errs[i,j] = st_dev(np.array(store), mean=matrix[i,j])
                 btsp[i,j,:] = np.random.normal(matrix[i,j], errs[i,j],
                               self.N_boot)
         return matrix, errs, btsp
@@ -121,15 +170,34 @@ class Z_analysis:
             mpi_f_m_sq = (self.mpi_btsp[k]/self.f_m_ren_btsp[:,k])**2
             return  [a_sq, mpi_f_m_sq]
 
+    def output_h5(self, add_mu=[2.0,3.0], **kwargs):
+        filename = 'Z_fq_bag.h5' if self.bag else 'Z_fq_A.h5'
+        f = h5py.File(filename,'a')
+        f_str = f'{self.action}/{self.ens}'
+
+        momenta = self.momenta
+        Z = self.Z
+        Z_err = self.Z_err
+
+        for mu in add_mu:
+            momenta = np.append(momenta, mu)
+            Z_mu, Z_mu_err, Z_mu_btsp = self.interpolate(mu)
+            Z = np.append(Z,np.resize(Z_mu,(1,5,5)),axis=0)
+            Z_err = np.append(Z_err,np.resize(Z_mu_err,(1,5,5)),axis=0)
+
+        f.create_dataset(f_str+'/momenta',data=momenta)
+        f.create_dataset(f_str+'/Z',data=Z)
+        f.create_dataset(f_str+'/Z_err',data=Z_err)
+
 class bag_analysis:
     operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP','TT']
     #renorm_scale = 3
     #match_scale = 2
-    action = (0,0)
-    N_boot = 200
-    def __init__(self, ensemble, **kwargs):
+    N_boot = N_boot
+    def __init__(self, ensemble, action=(0,0), **kwargs):
         
         self.ens = ensemble
+        self.action = action
         self.ainv = params[self.ens]['ainv']
         bag_data = all_bag_data[self.ens]
         self.bag, self.bag_err, self.bag_btsp = load_info('bag', self.ens,
@@ -140,28 +208,27 @@ class bag_analysis:
         self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
                                                 self.operators, meson='ll')
 
-        self.Z_info = Z_analysis(self.ens)
+        self.Z_info = Z_analysis(self.ens, bag=True)
+        self.momenta = self.Z_info.momenta
         self.Z, self.Z_btsp = self.Z_info.Z, self.Z_info.Z_btsp
-        self.bag_ren = [Z@self.bag for Z in self.Z]
-        self.bag_ren_btsp = [np.array([Z_btsp[:,:,k]@self.bag_btsp[:,k] 
-                            for k in range(self.N_boot)]) 
-                            for Z_btsp in self.Z_btsp]
-        bag_ren_btsp_diff = [self.bag_ren_btsp[i]-self.bag_ren[i]
-                            for i in range(len(self.bag_ren_btsp))]
-        self.bag_ren_err = [np.array([(val[:,i].dot(
-                           val[:,i])/self.N_boot)**0.5
-                           for i in range(5)])
-                           for val in bag_ren_btsp_diff]
+        self.N_mom = self.Z_info.N_mom
+        self.bag_ren = np.array([self.Z[m,:,:]@self.bag
+                                for m in range(self.N_mom)])
+        self.bag_ren_btsp = np.array([[self.Z_btsp[m,:,:,k]@self.bag_btsp[:,k] 
+                            for k in range(self.N_boot)] 
+                            for m in range(self.N_mom)])
+        self.bag_ren_err = np.array([[st_dev(self.bag_ren_btsp[m,:,i],
+                                      self.bag_ren[m,i]) for i in range(5)]
+                                      for m in range(self.N_mom)])
 
     def interpolate(self, mu):
         Z_mu, Z_mu_err, Z_mu_btsp = self.Z_info.interpolate(mu)
-        central_bag_ren = Z_mu@self.bag
-        btsp = np.array([Z_mu_btsp[:,:,k]@self.bag_btsp[
-               :,:,k]-central_bag_ren for k in range(self.N_boot)]) 
-        err = np.array([[(btsp[:,i,j].dot(btsp[:,i,j])/self.N_boot)**0.5
-              for j in range(5)] for i in range(5)])
-        mu_btsp = np.random.normal(central_bag_ren, err, self.N_boot)
-        return central_bag_ren, err, mu_btsp
+        central = Z_mu@self.bag
+        btsp = np.array([Z_mu_btsp[:,:,k]@self.bag_btsp[:,k]
+                        for k in range(self.N_boot)]) 
+        err = np.array([st_dev(btsp[:,i],mean=central[i])
+                       for i in range(5)])
+        return central, err, btsp
     
     def chiral_data(self, fit='central', **kwargs):
         a_sq = (1/self.ainv)**2
@@ -181,6 +248,10 @@ class bag_analysis:
                 func += params[0]*(params[3]*(a_sq**2))
             elif kwargs['addnl_terms']=='m4':
                 func += params[0]*(params[3]*(mpi_f_m_sq**2))
+            elif kwargs['addnl_terms']=='log':
+                lambda_f_m_sq = 1.0/(f_pi_PDG**2) 
+                mult = params[3]/(16*np.pi**2)
+                func += params[0]*(mult*mpi_f_m_sq*np.log(mpi_f_m_sq/lambda_f_m_sq))
         return func 
 
 

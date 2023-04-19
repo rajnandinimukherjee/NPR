@@ -7,6 +7,8 @@ class bilinear_analysis:
 
         self.ens = ensemble
         info = params[self.ens]
+        self.ainv = params[ensemble]['ainv']
+        self.asq = (1/self.ainv)**2
         self.sea_mass = '{:.4f}'.format(info['masses'][0])
         self.non_sea_masses = ['{:.4f}'.format(info['masses'][k])
                                for k in range(1,len(info['masses']))]
@@ -22,7 +24,7 @@ class bilinear_analysis:
                     data[(a1,a2)] = {}
 
         else:
-            print('Loading NPR bilinear data from '+loadpath)
+            #print('Loading NPR bilinear data from '+loadpath)
             self.momenta, self.avg_results, self.avg_errs = pickle.load(
                                                             open(loadpath, 'rb')) 
             self.all_masses = list(self.momenta[(0,0)].keys()) 
@@ -105,9 +107,9 @@ class bilinear_analysis:
                      np.diag(Z_es)**2, self.N_boot)
             store = []
             for k in range(self.N_boot):
-                f = interp1d(momenta, Z_btsp[k,:],
+                f = interp1d(momentas, Z_btsp[k,:],
                          fill_value='extrapolate')
-                store.append(f(point))
+                store.append(f(mu))
             Z_err[c] = st_dev(np.array(store),mean=Z[c])
 
         return Z, Z_err
@@ -181,9 +183,7 @@ class bilinear_analysis:
             plt.savefig('plots/'+self.ens+'_action_comp_bl.pdf')
             print('Plot saved to plots/'+self.ens+'_action_comp_bl.pdf')
 
-    def massive_Z_plots(self, mu=2, action=(0,0), **kwargs):
-        plt.figure()
-        plt.title(self.ens+' $Z_m$({:.3f})'.format(mu))
+    def massive_Z_plots(self, mu=2, action=(0,0), passinfo=False, **kwargs):
         x = np.array([float(m) for m in self.non_sea_masses])
 
         m_nsm_0 = self.non_sea_masses[0]
@@ -202,27 +202,23 @@ class bilinear_analysis:
                           action=action)[1]['m']
                           for m in self.non_sea_masses])
 
-        plt.errorbar(x,y,yerr=e,fmt='o',capsize=4)
-        plt.xlabel(r'$am_q$')
-
-        def Z_m_ansatz(params, am, **kwargs):
-            return params[0] + params[1]*am + params[2]*(am**2)
-
-        def diff(params):
-            return y - Z_m_ansatz(params, x)
-
-
-        filename = 'plots/'+self.ens+'_massive_Z.pdf'
-        print('Plot saved to '+filename)
-        pp = PdfPages(filename)
-        fig_nums = plt.get_fignums()
-        figs = [plt.figure(n) for n in fig_nums]
-        for fig in figs:
-            fig.savefig(pp, format='pdf')
-        pp.close()
-        plt.close('all')
-        os.system('open '+filename)
-        
+        if passinfo:
+            return x, y, e
+        else:
+            plt.figure()
+            plt.title(self.ens+' $Z_m(\mu=${:.3f} GeV)'.format(mu))
+            plt.errorbar(x,y,yerr=e,fmt='o',capsize=4)
+            plt.xlabel(r'$am_q$')
+            filename = 'plots/'+self.ens+'_massive_Z.pdf'
+            #print('Plot saved to '+filename)
+            pp = PdfPages(filename)
+            fig_nums = plt.get_fignums()
+            figs = [plt.figure(n) for n in fig_nums]
+            for fig in figs:
+                fig.savefig(pp, format='pdf')
+            pp.close()
+            plt.close('all')
+            os.system('open '+filename)
 
 class fourquark_analysis:
     N_boot = 200
@@ -244,7 +240,7 @@ class fourquark_analysis:
                     data[(a1,a2)] = {}
 
         else:
-            print('Loading NPR fourquark data from '+loadpath)
+            #print('Loading NPR fourquark data from '+loadpath)
             self.momenta, self.avg_results, self.avg_errs = pickle.load(
                                                             open(loadpath, 'rb')) 
             self.all_masses = list(self.momenta[(0,0)].keys()) 

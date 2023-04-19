@@ -127,4 +127,6 @@ def st_dev(data, mean=None, **kwargs):
     if mean is None:
         mean = np.mean(data)
     return np.sqrt(((data-mean).dot(data-mean))/n)
-
+#====coloring and markers=================================================
+color_list = list(mc.TABLEAU_COLORS.keys())
+marker_list = ['o','s','D','x','*','v','^','h','8']

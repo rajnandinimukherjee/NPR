@@ -1,6 +1,6 @@
 from bag_param_renorm import *
 
-extrap_ensembles = ['C0','C1','M0','M1','M2']
+extrap_ensembles = ['C0','C1','C2','M0','M1','M2','M3']
 
 Z_dict = {ens:Z_analysis(ens) for ens in extrap_ensembles}
 bag_dict = {ens:bag_analysis(ens) for ens in extrap_ensembles}
@@ -75,6 +75,10 @@ def chiral_continuum_ansatz(params, a_sq, mpi_f_m_sq, **kwargs):
             func += params[0]*(params[3]*(a_sq**2))
         elif kwargs['addnl_terms']=='m4':
             func += params[0]*(params[3]*(mpi_f_m_sq**2))
+        elif kwargs['addnl_terms']=='log':
+            lambda_f_m_sq = (1.0/f_pi_PDG)**2
+            mult = params[3]/(16*np.pi**2)
+            func += params[0]*(mult*mpi_f_m_sq*np.log(mpi_f_m_sq/lambda_f_m_sq))
     return func 
 
 
@@ -102,30 +106,33 @@ class bag_fits:
             return np.array(bag) - np.array(pred(params, **kwargs))
 
         #==central fit======
-        bags_central = np.array([self.bag_dict[e].bag_ren[mu][
-                        op_idx] for e in self.ens_list])
-        COV = np.diag([self.bag_dict[e].bag_ren_err[mu][op_idx]**2
-                          for e in self.ens_list])
+        '''something majorly wrong here, need to interpolate to mu=2.0,
+        not use the bag_ren at index 2 - fix it!!!!'''
+
+        bags_central = np.array([self.bag_dict[e].interpolate(mu)[0][op_idx]
+                                for e in self.ens_list])
+        COV = np.diag([self.bag_dict[e].interpolate(mu)[1][op_idx]**2
+                       for e in self.ens_list])
         L_inv = np.linalg.cholesky(COV)
         L = np.linalg.inv(L_inv)
 
-        def LS(params, **akwargs):
+        def LD(params, **akwargs):
             return L.dot(diff(bags_central, params, fit='central',
                         operator=operator))
 
-        res = least_squares(LS, guess, ftol=1e-10, gtol=1e-10)
-        chi_sq = LS(res.x).dot(LS(res.x))
+        res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
+        chi_sq = LD(res.x).dot(LD(res.x))
         pvalue = gammaincc(dof/2,chi_sq/2)
         
         res_btsp = np.zeros(shape=(self.N_boot, len(res.x)))
+        bag_btsp = np.array([self.bag_dict[e].interpolate(mu)[2][:,op_idx]
+                            for e in self.ens_list])
         for k in range(self.N_boot):
-            bag_btsp = np.array([self.bag_dict[e].bag_ren_btsp[mu][k,
-                        op_idx] for e in self.ens_list])
 
-            def LS_btsp(params):
-                return L.dot(diff(bag_btsp, params, fit='btsp',
+            def LD_btsp(params):
+                return L.dot(diff(bag_btsp[:,k], params, fit='btsp',
                             operator=operator, k=k))
-            res_k = least_squares(LS_btsp, guess,
+            res_k = least_squares(LD_btsp, guess,
                                      ftol=1e-10, gtol=1e-10)
             res_btsp[k,:] = res_k.x
 
@@ -135,16 +142,12 @@ class bag_fits:
         return res.x, chi_sq/dof, pvalue, res_err, res_btsp 
 
     def plot_fits(self, mu, **kwargs):
-        print(kwargs)
-
         fig, ax = plt.subplots(len(self.operators),2,figsize=(15,30))
         for i in range(len(self.operators)): 
             ax[i,0].title.set_text(self.operators[i])
             ax[i,1].title.set_text(self.operators[i])
             op = self.operators[i]
             params, chi_sq_dof, pvalue, err, btsp = self.fit_operator(op, mu, **kwargs)
-            print(params)
-
 
             x_asq = np.linspace(0,(1/1.7)**2,50)
             x_mpi_sq = np.linspace(0,0.2, 50)
@@ -154,9 +157,9 @@ class bag_fits:
                 f_m_sq = self.bag_dict[e].f_m_ren**2
                 mpi_f_m_sq = mpi_sq/f_m_sq
                 y_asq = np.array([chiral_continuum_ansatz(params,x,
-                                 mpi_f_m_sq) for x in x_asq])
+                                 mpi_f_m_sq,**kwargs) for x in x_asq])
                 y_asq_var_diff = np.array([[chiral_continuum_ansatz(btsp[k,:],x_asq[a],
-                                 mpi_f_m_sq)-y_asq[a] for k in range(self.N_boot)]
+                                 mpi_f_m_sq,**kwargs)-y_asq[a] for k in range(self.N_boot)]
                                  for a in range(len(x_asq))])
                 y_asq_err = np.array([(y_asq_var_diff[a,:].dot(y_asq_var_diff[a,
                                      :])/self.N_boot)**0.5
@@ -166,10 +169,10 @@ class bag_fits:
                                      color=self.colors[e], alpha=0.2)
 
                 a_sq = self.bag_dict[e].ainv**(-2)
-                y_mpi = np.array([chiral_continuum_ansatz(params,a_sq,x*a_sq/f_m_sq)
+                y_mpi = np.array([chiral_continuum_ansatz(params,a_sq,x*a_sq/f_m_sq,**kwargs)
                                   for x in x_mpi_sq])
                 y_mpi_var_diff = np.array([[chiral_continuum_ansatz(btsp[k,:],
-                                            a_sq,x_mpi_sq[p]*a_sq/f_m_sq)-y_mpi[p]
+                                            a_sq,x_mpi_sq[p]*a_sq/f_m_sq,**kwargs)-y_mpi[p]
                                             for k in range(self.N_boot)]
                                             for p in range(len(x_mpi_sq))])
                 y_mpi_err = np.array([(y_mpi_var_diff[p,:].dot(y_mpi_var_diff[p,
@@ -181,8 +184,8 @@ class bag_fits:
 
                 a_sq = self.bag_dict[e].ainv**(-2)
                 mpi_sq = (self.bag_dict[e].mpi)**2
-                bag = self.bag_dict[e].bag_ren[mu][i]
-                bag_err = self.bag_dict[e].bag_ren_err[mu][i]
+                bag = self.bag_dict[e].interpolate(mu)[0][i]
+                bag_err = self.bag_dict[e].interpolate(mu)[1][i]
                 ax[i,0].errorbar([a_sq],[bag],yerr=[bag_err],fmt='o',
                                  label=e,capsize=4,color=self.colors[e],
                                  mfc='None')
@@ -193,7 +196,7 @@ class bag_fits:
             
             y_phys = chiral_continuum_ansatz(params,0,(mpi_PDG/f_pi_PDG)**2)
             y_phys_var_diff = np.array([chiral_continuum_ansatz(btsp[k,:],0,
-                             (mpi_PDG/f_m_PDG)**2)-y_phys
+                             (mpi_PDG/f_pi_PDG)**2)-y_phys
                              for k in range(self.N_boot)])
             y_phys_err = (y_phys_var_diff[:].dot(y_phys_var_diff[:])/self.N_boot)**0.5
             ax[i,0].errorbar([0],[y_phys],yerr=[y_phys_err],color='k',
@@ -210,7 +213,7 @@ class bag_fits:
                          transform=ax[i,0].transAxes)
             ax[i,1].text(0.4,0.05,r'$p$-value:'+'{:.3f}'.format(pvalue),
                          transform=ax[i,1].transAxes)
-        plt.suptitle(r'$K\overline{K}$ renormalised bag parameter fits at $\mu=2$ GeV',y=0.90)
+        plt.suptitle(r'$K\overline{K}$ renormalised bag parameter ($\mu=2$ GeV) fits',y=0.90)
             
             
         filename = f'bag_fits.pdf'

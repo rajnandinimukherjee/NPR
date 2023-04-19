@@ -87,12 +87,12 @@ class bilinear:
         P = np.trace(operators['P'][0]@Gamma['5']@qslash)
         S = np.trace(S_inv)
 
-        Z_A = (12*q_sq*(Z_q**2)+1j*Z_P*S*P/6)/(Z_q*A2 + 1j*Z_P*A1*P/12)
-        Z_m = (S-Z_A*A1/2)/(12*m_q*Z_q)
+        Z_A = (144*m_q*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*m_q*Z_q*A2 + 1j*Z_P*A1*P)
+        Z_m = (S+Z_A*A1/2)/(12*m_q*Z_q)
                 
-        s_term = np.trace(operators['S'][0])/12
-        mass_term = 2*1j*m_q*Z_m*Z_P*P/(6*q_sq*Z_q)
-        Z_S = (Z_q*(1+mass_term)/s_term)
+        s_term = np.trace(operators['S'][0])
+        mass_term = 4*m_q*Z_m*Z_P*P
+        Z_S = (12*q_sq*Z_q-mass_term)/(q_sq*s_term)
         qslash_Z = {'S':Z_S.real, 'P':Z_P.real, 'V':Z_V.real,
                     'A':Z_A.real, 'T':Z_T.real, 'm':Z_m.real}
         return qslash_Z
