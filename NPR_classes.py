@@ -1,4 +1,5 @@
 from fourquark import *
+from basics import *
 
 class bilinear_analysis:
     keys = ['S','P', 'V', 'A', 'T', 'm']
@@ -20,7 +21,8 @@ class bilinear_analysis:
         if loadpath==None:
             self.momenta, self.avg_results, self.avg_errs = {}, {}, {}
             for data in [self.momenta, self.avg_results, self.avg_errs]:
-                for a1, a2 in itertools.product([0,1],[0,1]):
+                r_actions = range(len(self.actions))
+                for a1, a2 in itertools.product(r_actions,r_actions):
                     data[(a1,a2)] = {}
 
         else:
@@ -79,7 +81,8 @@ class bilinear_analysis:
         print('Saved bilinear NPR results to '+filename)
 
     def NPR_all(self, massive=False, save=True, **kwargs):
-        for a1,a2 in itertools.product([0,1],[0,1]):
+        r_actions = range(len(self.actions))
+        for a1, a2 in itertools.product(r_actions,r_actions):
             self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
         if massive:
             for mass in self.non_sea_masses:
