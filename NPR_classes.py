@@ -75,23 +75,26 @@ class bilinear_analysis:
                             for mom in self.momenta[action][(m1,m2)]])
     
     def save_NPR(self, addl_txt='', **kwargs):
-        filename = 'pickles/'+self.ens+'_bl.p'
+        filename = 'pickles/'+self.ens+f'_bl{addl_txt}.p'
         pickle.dump([self.momenta, self.avg_results, self.avg_errs],
                     open(filename,'wb'))
         print('Saved bilinear NPR results to '+filename)
 
     def NPR_all(self, massive=False, save=True, **kwargs):
+        addl_txt = ''
         r_actions = range(len(self.actions))
         for a1, a2 in itertools.product(r_actions,r_actions):
             self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
         if massive:
+            self.NPR((self.sea_mass,self.sea_mass),massive=True)
             for mass in self.non_sea_masses:
                 self.NPR((self.sea_mass, mass),massive=True)
                 self.NPR((mass, self.sea_mass),massive=True)
                 self.NPR((mass, mass),massive=True)
+                addl_txt = '_massive'
 
         if save:
-            self.save_NPR()
+            self.save_NPR(addl_txt=addl_txt)
 
     def extrap_Z(self, mu, masses, action=(0,0), **kwargs):
         Z = {}
