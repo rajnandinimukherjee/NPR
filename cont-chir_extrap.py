@@ -2,8 +2,8 @@ from bag_param_renorm import *
 
 extrap_ensembles = ['C0','C1','C2','M0','M1','M2','M3']
 
-Z_dict = {ens:Z_analysis(ens) for ens in extrap_ensembles}
-bag_dict = {ens:bag_analysis(ens) for ens in extrap_ensembles}
+Z_dict = {ens:Z_analysis(ens) for ens in bag_ensembles}
+bag_dict = {ens:bag_analysis(ens) for ens in bag_ensembles}
 
 
 cmap = plt.cm.tab20b
