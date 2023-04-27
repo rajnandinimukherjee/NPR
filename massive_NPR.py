@@ -1,4 +1,5 @@
 from NPR_classes import *
+from basics import *
 from eta_c import *
 
 ens_list = list(eta_c_data.keys())
@@ -54,7 +55,7 @@ os.system("open plots/eta_c.pdf")
 
 #====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
 def Z_m_ansatz(params, am, **kwargs):
-    return params[0] + (am**2)*params[1]+ params[2]*np.log(am)*am
+    return params[0] + (am**2)*params[1]+ params[2]*am*np.log(am)
 
 fig, ax = plt.subplots(1,len(ens_list),figsize=(15,6))
 plt.suptitle('$Z_m(\mu=${:.3f} GeV)'.format(
@@ -80,9 +81,9 @@ for ens in ens_list:
     ax[ens_idx].set_xlabel(r'$am_q$')#'$(am_q)^2$')
 
     def diff(params):
-        return y - Z_m_ansatz(params, x)
+        return y[1:] - Z_m_ansatz(params, x[1:])
     
-    COV = np.diag(e**2)
+    COV = np.diag(e[1:]**2)
     L_inv = np.linalg.cholesky(COV)
     L = np.linalg.inv(L_inv)
 
@@ -96,13 +97,14 @@ for ens in ens_list:
     pvalue = gammaincc(dof/2,chi_sq/2)
 
     xmin, xmax = ax[ens_idx].get_xlim()
-    x_grain = np.linspace(xmin,xmax,50)
+    x_grain = np.linspace(x[1],xmax,50)
     ax[ens_idx].plot(x_grain,Z_m_ansatz(res.x,x_grain**1),#**0.5),
                 label='fit $p$-value:{:.2f}'.format(pvalue),
                 color='tab:gray')
 
     m_q_stars = np.array([v[0] for k,v in eta_star_dict.items()])
     Z_ms = Z_m_ansatz(res.x,m_q_stars)
+    np.random.seed(seed)
     m_q_btsp = np.array([np.random.normal(v[0],v[1],N_boot)
                        for k,v in eta_star_dict.items()])
     Z_m_btsp = np.array([Z_m_ansatz(res.x,m_q_btsp[:,k])
@@ -130,11 +132,19 @@ for ens in ens_list:
     #===m_C renormalisation=====================
     m_C, m_C_err = interpolate_eta_c(ens,eta_PDG)
     ens_dict[ens]['m_C_ren'] = Z_ms*m_C*ainv
+    np.random.seed(seed)
     m_C_btsp = np.random.normal(m_C, m_C_err, N_boot)
     m_C_ren_btsp = np.array([Z_m_btsp[k,:]*m_C_btsp[k]*ainv
                              for k in range(N_boot)])
     ens_dict[ens]['m_C_ren_err'] = [st_dev(m_C_ren_btsp[:,i],Z_ms[i]*m_C*ainv)
                     for i in range(len(Z_ms))]
+    ens_dict[ens]['m_C_ren_chiral'] = y[0]*m_C*ainv
+    np.random.seed(seed)
+    Z_m_chiral_btsp = np.random.normal(y[0], e[0], N_boot)
+    m_C_chiral_btsp = np.array([Z_m_chiral_btsp[k]*m_C_btsp[k]*ainv
+                                for k in range(N_boot)])
+    ens_dict[ens]['m_C_ren_chiral_err'] = st_dev(m_C_chiral_btsp,
+                                          mean=y[0]*m_C*ainv)
 
     #===m_q renormalisation=====================
     ens_dict[ens]['m_q_ren'] = Z_ms*m_q_stars*ainv 
@@ -143,6 +153,10 @@ for ens in ens_list:
     ens_dict[ens]['m_q_ren_err'] = np.array([st_dev(m_q_ren_btsp[:,i],
                                mean=(Z_ms*m_q_stars*ainv)[i])
                                for i in range(len(m_q_stars))])
+    ens_dict[ens]['m_q_ren_chiral'] = y[0]*x[0]*ainv
+    m_q_chiral_btsp = Z_m_chiral_btsp*x[0]*ainv
+    ens_dict[ens]['m_C_ren_chiral_err'] = st_dev(m_q_chiral_btsp,
+                                          mean=y[0]*x[0]*ainv)
 
 fig_nums = plt.get_fignums()
 figs = [plt.figure(n) for n in fig_nums]
@@ -167,6 +181,11 @@ for key in ['m_C','m_q']:
         x = [ens_dict[ens]['bl_obj'].asq]*len(y)
         plt.errorbar(x,y,yerr=e,fmt='o',capsize=4,
                      color=color_list[ens_idx],label=ens)
+        #===massless scheme renorm====================
+        plt.errorbar([ens_dict[ens]['bl_obj'].asq],
+                     [ens_dict[ens][f'{key}_ren_chiral']],
+                     fmt='D',capsize=4,color=color_list[ens_idx])
+                     
 
     x = np.array([v['bl_obj'].asq for k,v in ens_dict.items()])
     for eta in eta_stars:
@@ -194,6 +213,7 @@ for key in ['m_C','m_q']:
         a0_pred = continuum_ansatz(res.x,0)
 
         #===bootstrap=====
+        np.random.seed(seed)
         y_btsp = np.array([np.random.normal(y[i],e[i],N_boot)
                            for i in range(len(y))])
         a0_pred_btsp = np.zeros(N_boot)
@@ -210,7 +230,7 @@ for key in ['m_C','m_q']:
         plt.errorbar([0],[a0_pred],yerr=[a0_pred_err],
                      capsize=4,color=color_list[eta_idx+3],
                      label=eta_label,#+' ($p$:{:.2f})'.format(pvalue),
-                     marker=marker_list[eta_idx])
+                     fmt='o')
 
         x_grain = np.linspace(0,1.1*max(x),50) 
         y_grain = continuum_ansatz(res.x,x_grain)

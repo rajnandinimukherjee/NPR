@@ -22,6 +22,7 @@ N_c = 3 # Color indices
 #N_bl = 16 # number of bilinears
 N_boot = 200 # number of bootstrap samples
 N_fq = 16 # number of fourquarks
+seed = 1 # random seed
 
 mpi_PDG = 139.5709/1000
 #mpi_PDG_err = 

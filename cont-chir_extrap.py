@@ -105,10 +105,6 @@ class bag_fits:
         def diff(bag, params, **akwargs):
             return np.array(bag) - np.array(pred(params, **kwargs))
 
-        #==central fit======
-        '''something majorly wrong here, need to interpolate to mu=2.0,
-        not use the bag_ren at index 2 - fix it!!!!'''
-
         bags_central = np.array([self.bag_dict[e].interpolate(mu)[0][op_idx]
                                 for e in self.ens_list])
         COV = np.diag([self.bag_dict[e].interpolate(mu)[1][op_idx]**2
@@ -141,7 +137,7 @@ class bag_fits:
 
         return res.x, chi_sq/dof, pvalue, res_err, res_btsp 
 
-    def plot_fits(self, mu, **kwargs):
+    def plot_fits(self, mu, cont_adjust=False, **kwargs):
         fig, ax = plt.subplots(len(self.operators),2,figsize=(15,30))
         for i in range(len(self.operators)): 
             ax[i,0].title.set_text(self.operators[i])
@@ -152,41 +148,58 @@ class bag_fits:
             x_asq = np.linspace(0,(1/1.7)**2,50)
             x_mpi_sq = np.linspace(0,0.2, 50)
 
+            y_phys = chiral_continuum_ansatz(params,0,(mpi_PDG/f_pi_PDG)**2)
+            y_phys_btsp = np.array([chiral_continuum_ansatz(btsp[k,:],0,
+                                   (mpi_PDG/f_pi_PDG)**2)
+                                   for k in range(self.N_boot)])
+            y_phys_err = st_dev(y_phys_btsp, mean=y_phys)
+
+            scaling = 1/y_phys if cont_adjust else 1
+            subtract = params[0]*params[2]*(mpi_PDG/f_pi_PDG)**2
+
+            ax[i,0].errorbar([0],[y_phys*scaling],yerr=[y_phys_err],color='k',
+                             fmt='o',capsize=4,label='phys')
+            ax[i,1].errorbar([mpi_PDG**2],[y_phys],yerr=[y_phys_err],
+                             color='k',fmt='o',capsize=4,label='phys')
+            ax[i,1].axvline(mpi_PDG**2,color='k',linestyle='dashed')
+
             for e in self.ens_list:
+                a_sq = self.bag_dict[e].ainv**(-2)
                 mpi_sq = self.bag_dict[e].mpi**2
                 f_m_sq = self.bag_dict[e].f_m_ren**2
                 mpi_f_m_sq = mpi_sq/f_m_sq
+
+                subtract = params[0]*params[2]*mpi_f_m_sq if cont_adjust else 0
+
                 y_asq = np.array([chiral_continuum_ansatz(params,x,
                                  mpi_f_m_sq,**kwargs) for x in x_asq])
-                y_asq_var_diff = np.array([[chiral_continuum_ansatz(btsp[k,:],x_asq[a],
-                                 mpi_f_m_sq,**kwargs)-y_asq[a] for k in range(self.N_boot)]
-                                 for a in range(len(x_asq))])
-                y_asq_err = np.array([(y_asq_var_diff[a,:].dot(y_asq_var_diff[a,
-                                     :])/self.N_boot)**0.5
+                y_asq_btsp = np.array([[chiral_continuum_ansatz(btsp[k,:],
+                                      x_asq[a], mpi_f_m_sq,**kwargs)
+                                      for k in range(self.N_boot)] 
+                                      for a in range(len(x_asq))])
+                y_asq_err = np.array([st_dev(y_asq_btsp[a,:], mean=y_asq[a])
                                      for a in range(len(x_asq))])
+                y_asq = (y_asq-subtract)*scaling
                 ax[i,0].plot(x_asq, y_asq, color=self.colors[e])
-                ax[i,0].fill_between(x_asq, y_asq+y_asq_err, y_asq-y_asq_err,
+                ax[i,0].fill_between(x_asq, y_asq+y_asq_err,y_asq-y_asq_err,
                                      color=self.colors[e], alpha=0.2)
 
-                a_sq = self.bag_dict[e].ainv**(-2)
-                y_mpi = np.array([chiral_continuum_ansatz(params,a_sq,x*a_sq/f_m_sq,**kwargs)
-                                  for x in x_mpi_sq])
-                y_mpi_var_diff = np.array([[chiral_continuum_ansatz(btsp[k,:],
-                                            a_sq,x_mpi_sq[p]*a_sq/f_m_sq,**kwargs)-y_mpi[p]
-                                            for k in range(self.N_boot)]
-                                            for p in range(len(x_mpi_sq))])
-                y_mpi_err = np.array([(y_mpi_var_diff[p,:].dot(y_mpi_var_diff[p,
-                                     :])/self.N_boot)**0.5
+                y_mpi = np.array([chiral_continuum_ansatz(params,a_sq,
+                                 x*a_sq/f_m_sq,**kwargs)
+                                 for x in x_mpi_sq])
+                y_mpi_btsp = np.array([[chiral_continuum_ansatz(btsp[k,:],a_sq,
+                                      x_mpi_sq[p]*a_sq/f_m_sq,**kwargs)
+                                      for k in range(self.N_boot)]
+                                      for p in range(len(x_mpi_sq))])
+                y_mpi_err = np.array([st_dev(y_mpi_btsp[p,:],mean=y_mpi[p])
                                      for p in range(len(x_mpi_sq))])
                 ax[i,1].plot(x_mpi_sq, y_mpi, color=self.colors[e])
                 ax[i,1].fill_between(x_mpi_sq, y_mpi+y_mpi_err, y_mpi-y_mpi_err,
                                      color=self.colors[e], alpha=0.2)
 
-                a_sq = self.bag_dict[e].ainv**(-2)
-                mpi_sq = (self.bag_dict[e].mpi)**2
                 bag = self.bag_dict[e].interpolate(mu)[0][i]
                 bag_err = self.bag_dict[e].interpolate(mu)[1][i]
-                ax[i,0].errorbar([a_sq],[bag],yerr=[bag_err],fmt='o',
+                ax[i,0].errorbar([a_sq],[(bag-subtract)*scaling],yerr=[bag_err],fmt='o',
                                  label=e,capsize=4,color=self.colors[e],
                                  mfc='None')
                 ax[i,1].errorbar([mpi_sq/a_sq],[bag],yerr=[bag_err],fmt='o',
@@ -194,16 +207,6 @@ class bag_fits:
                                  mfc='None')
 
             
-            y_phys = chiral_continuum_ansatz(params,0,(mpi_PDG/f_pi_PDG)**2)
-            y_phys_var_diff = np.array([chiral_continuum_ansatz(btsp[k,:],0,
-                             (mpi_PDG/f_pi_PDG)**2)-y_phys
-                             for k in range(self.N_boot)])
-            y_phys_err = (y_phys_var_diff[:].dot(y_phys_var_diff[:])/self.N_boot)**0.5
-            ax[i,0].errorbar([0],[y_phys],yerr=[y_phys_err],color='k',
-                             fmt='o',capsize=4,label='phys')
-            ax[i,1].errorbar([mpi_PDG**2],[y_phys],yerr=[y_phys_err],
-                             color='k',fmt='o',capsize=4,label='phys')
-            ax[i,1].axvline(mpi_PDG**2,color='k',linestyle='dashed')
             ax[i,0].legend()
             ax[i,0].set_xlabel(r'$a^2$ (GeV${}^{-2}$)')
             ax[i,1].legend()
@@ -213,8 +216,9 @@ class bag_fits:
                          transform=ax[i,0].transAxes)
             ax[i,1].text(0.4,0.05,r'$p$-value:'+'{:.3f}'.format(pvalue),
                          transform=ax[i,1].transAxes)
-        plt.suptitle(r'$K\overline{K}$ renormalised bag parameter ($\mu=2$ GeV) fits',y=0.90)
-            
+
+        title = r'$B_i^{ren}(a^2,am_\pi)=Z_{ij}(\mu=2$ GeV$)B_{j}^{lat}(a^2,am_\pi)$'
+        plt.suptitle(title,y=0.90)
             
         filename = f'bag_fits.pdf'
         pp = PdfPages('plots/'+filename)

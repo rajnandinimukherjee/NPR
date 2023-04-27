@@ -69,6 +69,7 @@ class Z_analysis:
             self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
                                                     self.operators, meson='ll')
         self.f_m_ren = f_pi_PDG/self.ainv
+        np.random.seed(seed)
         self.f_m_ren_btsp = np.random.normal(self.f_m_ren, f_pi_PDG_err/self.ainv, self.N_boot)
     
         Z_data = load_Z_data(self.ens)
@@ -82,11 +83,13 @@ class Z_analysis:
 
             Z1 =  Z_data[1][(0,1)][self.masses]
             Z1_err =  Z_data[2][(0,1)][self.masses]
+            np.random.seed(seed)
             Z1_btsp = np.array([[[np.random.normal(Z1[m,i,j],
                       Z1_err[m,i,j], self.N_boot) for j in range(5)]
                       for i in range(5)] for m in range(self.N_mom)])
             Z2 =  Z_data[1][(1,0)][self.masses]
             Z2_err =  Z_data[2][(1,0)][self.masses]
+            np.random.seed(seed)
             Z2_btsp = np.array([[[np.random.normal(Z2[m,i,j],
                       Z2_err[m,i,j], self.N_boot) for j in range(5)]
                       for i in range(5)] for m in range(self.N_mom)])
@@ -99,6 +102,7 @@ class Z_analysis:
         else:
             self.Z = Z_data[1][self.action][self.masses]
             self.Z_err = Z_data[2][self.action][self.masses]
+            np.random.seed(seed)
             self.Z_btsp = np.array([[[np.random.normal(self.Z[m,i,j],
                           self.Z_err[m,i,j], self.N_boot) for j in range(5)]
                           for i in range(5)] for m in range(self.N_mom)])
@@ -111,6 +115,7 @@ class Z_analysis:
                 self.Z[m,:,:] = mask*self.Z[m,:,:]*(mult**2)
                 self.Z[m,0,0] = self.Z[m,0,0]/mult
 
+                np.random.seed(seed)
                 bl_btsp = {c:np.random.normal(Z_bl[m][c],
                            Z_bl_err[m][c],self.N_boot) for c in Z_bl[m].keys()}
                 for k in range(self.N_boot):
@@ -141,6 +146,7 @@ class Z_analysis:
                         f = interp1d(self.momenta,Y,fill_value='extrapolate')
                         store.append(f(mu))
                     errs[i,j] = st_dev(np.array(store), mean=matrix[i,j])
+                np.random.seed(seed)
                 btsp[i,j,:] = np.random.normal(matrix[i,j], errs[i,j],
                               self.N_boot)
         return matrix, errs, btsp
@@ -203,6 +209,7 @@ class bag_analysis:
         self.bag, self.bag_err, self.bag_btsp = load_info('bag', self.ens,
                                                 self.operators, meson='ls')
         self.f_m_ren = f_pi_PDG/self.ainv
+        np.random.seed(seed)
         self.f_m_ren_btsp = np.random.normal(self.f_m_ren, f_pi_PDG_err/self.ainv, self.N_boot)
 
         self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
