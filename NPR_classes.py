@@ -90,7 +90,7 @@ class bilinear_analysis:
                 self.NPR((self.sea_mass, mass),massive=True)
                 self.NPR((mass, self.sea_mass),massive=True)
                 self.NPR((mass, mass),massive=True)
-                addl_txt = '_massive'
+            addl_txt = '_massive'
 
         if save:
             self.save_NPR(addl_txt=addl_txt)
