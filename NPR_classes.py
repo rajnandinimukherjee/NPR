@@ -119,8 +119,7 @@ class bilinear_analysis:
 
         return Z, Z_err
 
-    def plot_masswise(self, action=(0,0), save=False, **kwargs):
-        fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))
+    def plot_masswise(self, action=(0,0), save=True, **kwargs):
         if 'mass_combination' in kwargs.keys():
             if kwargs['mass_combination']=='nondeg':
                 plot_masses = []
@@ -134,6 +133,8 @@ class bilinear_analysis:
                 plot_masses = kwargs['mass_combination']
         else:
             plot_masses = self.momenta[action].keys()
+
+        fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))
         for i in range(5):
             val_col, err_col = ax[:,i]
             err_col.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
@@ -152,17 +153,16 @@ class bilinear_analysis:
         fig.suptitle(self.ens+' comparison of masses')
         fig.tight_layout()
 
-
         filename = 'plots/'+self.ens+'_mass_comp_bl.pdf'
-        print('Plot saved to plots/'+self.ens+'_mass_comp_bl.pdf')
         pp = PdfPages(filename)
         fig_nums = plt.get_fignums()
         figs = [plt.figure(n) for n in fig_nums]
-        for fig in figs:
-            fig.savefig(pp, format='pdf')
+        for f in figs:
+            f.savefig(pp, format='pdf')
         pp.close()
         plt.close('all')
-        os.system(filename)
+        print('Plot saved to plots/'+self.ens+'_mass_comp_bl.pdf')
+        os.system('open '+filename)
 
     def plot_actionwise(self, mass, save=False, **kwargs):
         fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))

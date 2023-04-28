@@ -87,7 +87,7 @@ class bilinear:
         P = np.trace(operators['P'][0]@Gamma['5']@qslash)
         S = np.trace(S_inv)
 
-        Z_A = (144*m_q*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*m_q*Z_q*A2 + 1j*Z_P*A1*P)
+        Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
         Z_m = (S+Z_A*A1/2)/(12*m_q*Z_q)
                 
         s_term = np.trace(operators['S'][0])
