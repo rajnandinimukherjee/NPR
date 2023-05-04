@@ -62,7 +62,7 @@ class bilinear_analysis:
 
                     if (condition3 and condition4):
                         bl = bilinear(self.ens, prop1, prop2)
-                        bl.NPR(massive=massive)
+                        bl.NPR(massive=massive, kwargs)
                         if bl.q not in results.keys():
                             results[bl.q] = bl.Z
                             errs[bl.q] = bl.Z_err
@@ -85,10 +85,8 @@ class bilinear_analysis:
         for a1, a2 in itertools.product(r_actions,r_actions):
             self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
         if massive:
-            self.NPR((self.sea_mass,self.sea_mass),massive=True)
+            self.NPR((self.sea_mass,self.sea_mass),massive=True,massless=True)
             for mass in self.non_sea_masses:
-                self.NPR((self.sea_mass, mass),massive=True)
-                self.NPR((mass, self.sea_mass),massive=True)
                 self.NPR((mass, mass),massive=True)
             addl_txt = '_massive'
 

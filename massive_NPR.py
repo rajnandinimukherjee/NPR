@@ -182,9 +182,9 @@ for key in ['m_C','m_q']:
         plt.errorbar(x,y,yerr=e,fmt='o',capsize=4,
                      color=color_list[ens_idx],label=ens)
         #===massless scheme renorm====================
-        plt.errorbar([ens_dict[ens]['bl_obj'].asq],
-                     [ens_dict[ens][f'{key}_ren_chiral']],
-                     fmt='D',capsize=4,color=color_list[ens_idx])
+        #plt.errorbar([ens_dict[ens]['bl_obj'].asq],
+        #             [ens_dict[ens][f'{key}_ren_chiral']],
+        #             fmt='D',capsize=4,color=color_list[ens_idx])
                      
 
     x = np.array([v['bl_obj'].asq for k,v in ens_dict.items()])

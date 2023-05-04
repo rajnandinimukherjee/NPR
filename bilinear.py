@@ -70,7 +70,7 @@ class bilinear:
         gamma_Z = {c:(bl_gamma_F[c]/projected[c]).real for c in bilinear.currents}
         return projected, gamma_Z 
 
-    def qslash_Z(self, operators, q_vec, Z_q, S_inv, **kwargs):
+    def qslash_Z(self, operators, q_vec, Z_q, S_inv, massless=False, **kwargs):
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
         q_sq = np.linalg.norm(q_vec)**2
@@ -87,7 +87,10 @@ class bilinear:
         P = np.trace(operators['P'][0]@Gamma['5']@qslash)
         S = np.trace(S_inv)
 
-        Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
+        if massless:
+            Z_A = 12*q_sq*Z_q/A2
+        else:   
+            Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
         Z_m = (S+Z_A*A1/2)/(12*m_q*Z_q)
                 
         s_term = np.trace(operators['S'][0])
@@ -120,7 +123,7 @@ class bilinear:
         else:
             Z_q = self.prop_in.Z_q_avg_qslash
             S_inv = self.prop_in.inv_avg_propagator
-            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv) 
+            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv, kwargs) 
         #==bootstrap===
         self.Z_btsp = {c:np.zeros(self.N_boot) for c in self.Z.keys()}
         self.btsp_projected = {c:np.zeros(self.N_boot,dtype=object)
@@ -138,7 +141,7 @@ class bilinear:
             else:
                 Z_q = self.prop_in.Z_q_btsp_qslash[k]
                 S_inv = self.prop_in.btsp_inv_propagator[k,:,:]
-                Z_k = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv)
+                Z_k = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv, kwargs)
                 for c in Z_k.keys():
                     self.Z_btsp[c][k] = Z_k[c].real
 
