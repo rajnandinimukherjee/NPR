@@ -123,7 +123,7 @@ class bilinear:
         else:
             Z_q = self.prop_in.Z_q_avg_qslash
             S_inv = self.prop_in.inv_avg_propagator
-            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv, kwargs) 
+            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv, **kwargs) 
         #==bootstrap===
         self.Z_btsp = {c:np.zeros(self.N_boot) for c in self.Z.keys()}
         self.btsp_projected = {c:np.zeros(self.N_boot,dtype=object)
@@ -141,13 +141,12 @@ class bilinear:
             else:
                 Z_q = self.prop_in.Z_q_btsp_qslash[k]
                 S_inv = self.prop_in.btsp_inv_propagator[k,:,:]
-                Z_k = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv, kwargs)
+                Z_k = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv, **kwargs)
                 for c in Z_k.keys():
                     self.Z_btsp[c][k] = Z_k[c].real
 
         #==errors===
         self.Z_err = {}
         for c in self.Z.keys():
-            self.Z_err[c] = ((self.Z_btsp[c][:]-self.Z[c]).dot(
-                            self.Z_btsp[c][:]-self.Z[c])/self.N_boot)**0.5
+            self.Z_err[c] = st_dev(self.Z_btsp[c], self.Z[c])
 
