@@ -79,7 +79,7 @@ class bilinear:
         Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                        for i in range(len(dirs))],axis=0)@qslash).real/(12*q_sq))
 
-        m_q = float(self.prop_in.info['am'])*self.ainv
+        m_q = float(self.prop_in.info['am'])*self.a_inv
         A1 = np.trace(np.sum([q_vec[i]*operators['A'][i]
              for i in range(len(dirs))],axis=0)@Gamma['5'])
         A2 = np.trace(np.sum([q_vec[i]*operators['A'][i]
