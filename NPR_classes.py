@@ -323,7 +323,7 @@ class fourquark_analysis:
         mtx, errs = np.zeros(shape=(5,5)), np.zeros(shape=(5,5))
         for i,j in itertools.product(range(5), range(5)):
             Zs = [Z[i,j] for Z in Z_facs]
-            f = interp1d(momenta, Zs, fill_value='extrapolate')
+            f = interp1d(momentas, Zs, fill_value='extrapolate')
             mtx[i,j] = f(point)
 
             Z_es = [e[i,j] for e in Z_errs]
@@ -332,7 +332,7 @@ class fourquark_analysis:
                      np.diag(Z_es)**2, self.N_boot)
             store = []
             for k in range(self.N_boot):
-                f = interp1d(momenta, Z_btsp[k,:],
+                f = interp1d(momentas, Z_btsp[k,:],
                          fill_value='extrapolate')
                 store.append(f(point))
             errs[i,j] = st_dev(np.array(store),mean=mtx[i,j])
@@ -345,12 +345,12 @@ class fourquark_analysis:
         for masses in list(mass_combinations):
             momenta = self.momenta[(0,1)][masses]
             res1 = self.avg_results[(0,1)][masses]
-            res2 = self.avg_resutls[(1,0)][masses]
+            res2 = self.avg_results[(1,0)][masses]
             self.avg_results[(0,1)][masses] = (res1+res2)/2.0
 
             err1 = self.avg_errs[(0,1)][masses]
             err2 = self.avg_errs[(1,0)][masses]
-            self.avg_errs[(0,1)] = err1+err2
+            self.avg_errs[(0,1)][masses] = err1+err2
 
         self.avg_results.pop((1,0))
         self.avg_errs.pop((1,0))

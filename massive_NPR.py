@@ -3,7 +3,7 @@ from basics import *
 from eta_c import *
 
 ens_list = list(eta_c_data.keys())
-mu_chosen = 2.0
+mu_chosen = 2.5
 
 #====plotting eta_c data from f_D paper=========================================
 fig, ax = plt.subplots(1,len(ens_list),sharey=True)
@@ -172,6 +172,9 @@ os.system('open '+filename)
 def continuum_ansatz(params, a_sq, **kwargs):
     return params[0]*(1 + params[1]*a_sq + params[2]*(a_sq**2))
 
+cont_dict = {'m_C':{'val':[], 'err':[], 'btsp':[]},
+             'm_q':{'val':[], 'err':[], 'btsp':[]}}
+
 for key in ['m_C','m_q']:
     plt.figure()
     for ens in ens_list:
@@ -182,9 +185,9 @@ for key in ['m_C','m_q']:
         plt.errorbar(x,y,yerr=e,fmt='o',capsize=4,
                      color=color_list[ens_idx],label=ens)
         #===massless scheme renorm====================
-        #plt.errorbar([ens_dict[ens]['bl_obj'].asq],
-        #             [ens_dict[ens][f'{key}_ren_chiral']],
-        #             fmt='D',capsize=4,color=color_list[ens_idx])
+        plt.errorbar([ens_dict[ens]['bl_obj'].asq],
+                     [ens_dict[ens][f'{key}_ren_chiral']],
+                     fmt='D',capsize=4,color=color_list[ens_idx])
                      
 
     x = np.array([v['bl_obj'].asq for k,v in ens_dict.items()])
@@ -211,6 +214,7 @@ for key in ['m_C','m_q']:
         pvalue = gammaincc(dof/2,chi_sq/2)
 
         a0_pred = continuum_ansatz(res.x,0)
+        cont_dict[key]['val'].append(a0_pred)
 
         #===bootstrap=====
         np.random.seed(seed)
@@ -224,8 +228,10 @@ for key in ['m_C','m_q']:
             res_k = least_squares(LD_btsp, guess, ftol=1e-10, gtol=1e-10)
             a0_pred_btsp[k] = continuum_ansatz(res_k.x,0) 
             res_btsp[k,:] = res_k.x
+        cont_dict[key]['btsp'].append(a0_pred_btsp)
 
         a0_pred_err = st_dev(a0_pred_btsp,mean=a0_pred)
+        cont_dict[key]['err'].append(a0_pred_err)
         eta_label = 'PDG' if eta==eta_PDG else str(eta)+' GeV'
         plt.errorbar([0],[a0_pred],yerr=[a0_pred_err],
                      capsize=4,color=color_list[eta_idx+3],
@@ -250,12 +256,30 @@ for key in ['m_C','m_q']:
         
     plt.legend()
     plt.xlabel(r'$a^2$ (GeV${}^{2})$')
-    ylabel_mc = r'$m_C^{ren}=Z_mm_C$'
-    ylabel_mq = r'$\overline{m}=m_q^{*ren}=Z_mm_q^*$'
+    ylabel_mc = r'$m_C^{ren}(\mu='+str(mu_chosen)+'$ GeV$)=Z_mm_C$'
+    ylabel_mq = r'$\overline{m}(\mu='+str(mu_chosen)+'$ GeV$)=m_q^{*ren}=Z_mm_q^*$'
     plt.ylabel(ylabel_mc if key=='m_C' else ylabel_mq)
     title_mc = 'Renormalised charm quark mass'
     title_mq = 'Renormalised quark mass'
     plt.title(title_mc if key=='m_C' else title_mq)
+
+#===m_c_ren vs mbar=====================
+plt.figure()
+for eta_idx in range(len(eta_stars)):
+    x = cont_dict['m_q']['val'][eta_idx]
+    xerr = cont_dict['m_q']['err'][eta_idx]
+    y = cont_dict['m_C']['val'][eta_idx]
+    yerr = cont_dict['m_C']['err'][eta_idx]
+    eta = eta_stars[eta_idx]
+    eta_label = 'PDG' if eta==eta_PDG else str(eta)+' GeV'
+
+    plt.errorbar(x, y, yerr=yerr, xerr=xerr, fmt='o', markerfacecolor='none',
+                 color=color_list[eta_idx+3], label=eta_label)
+
+plt.legend()
+plt.xlabel(r'$\overline{m}$ (GeV)')
+plt.ylabel(r'$m_C^{ren}$ (GeV)')
+plt.title(r'$m_C^{ren}(\overline{m},\mu='+str(mu_chosen)+'$ GeV$)$')
 
 pq = PdfPages('plots/m_c_ren.pdf') 
 fig_nums = plt.get_fignums()
