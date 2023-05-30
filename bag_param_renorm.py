@@ -107,21 +107,22 @@ class Z_analysis:
                           self.Z_err[m,i,j], self.N_boot) for j in range(5)]
                           for i in range(5)] for m in range(self.N_mom)])
         if self.bag:
+            print('bag parameters')
             bl = bilinear_analysis(self.ens, loadpath=f'pickles/{self.ens}_bl.p')
             Z_bl = bl.avg_results[self.action][self.masses]
             Z_bl_err = bl.avg_errs[self.action][self.masses]
             for m in range(self.N_mom):
                 mult = Z_bl[m]['A']/Z_bl[m]['P']
-                self.Z[m,:,:] = mask*self.Z[m,:,:]*(mult**2)
-                self.Z[m,0,0] = self.Z[m,0,0]/mult
+                self.Z[m,1:,1:] = self.Z[m,1:,1:]*(mult**2)
+                self.Z[m,:,:] = mask*self.Z[m,:,:]
 
                 np.random.seed(seed)
                 bl_btsp = {c:np.random.normal(Z_bl[m][c],
                            Z_bl_err[m][c],self.N_boot) for c in Z_bl[m].keys()}
                 for k in range(self.N_boot):
                     mult = bl_btsp['A'][k]/bl_btsp['P'][k]
-                    self.Z_btsp[m,:,:,k] = mask*self.Z_btsp[m,:,:,k]*(mult**2)
-                    self.Z_btsp[m,0,0,k] = self.Z_btsp[m,0,0,k]/mult
+                    self.Z_btsp[m,1:,1:,k] = self.Z_btsp[m,1:,1:,k]*(mult**2)
+                    self.Z_btsp[m,:,:,k] = mask*self.Z_btsp[m,:,:,k]
                 self.Z_err[m,:,:]  = np.array([[st_dev(self.Z_btsp[m,i,j,:],
                                      self.Z[m,i,j]) for j in range(5)]
                                      for i in range(5)])
