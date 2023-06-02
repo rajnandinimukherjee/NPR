@@ -3,7 +3,7 @@ from basics import *
 from eta_c import *
 
 ens_list = list(eta_c_data.keys())
-mu_chosen = 2.5
+mu_chosen = 2.0
 
 #====plotting eta_c data from f_D paper=========================================
 fig, ax = plt.subplots(1,len(ens_list),sharey=True)
@@ -290,4 +290,6 @@ pq.close()
 plt.close('all')
 
 os.system("open plots/m_c_ren.pdf")
-    
+
+#===make table==========================
+
