@@ -91,7 +91,7 @@ class bilinear:
             Z_A = 12*q_sq*Z_q/A2
         else:   
             Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
-        Z_m = (S+Z_A*A1/2)/(12*m_q*Z_q)
+        Z_m = (S+Z_A*A1*1j/2)/(12*m_q*Z_q)
                 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P

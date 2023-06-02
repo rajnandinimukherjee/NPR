@@ -55,3 +55,74 @@ def interpolate_eta_c(ens,find_y,**kwargs):
     pred_x_err = ((pred_x_k[:]-pred_x).dot(pred_x_k[:]-pred_x)/100)**0.5
     return [pred_x.item(), pred_x_err]
 
+class etaCvalence:
+    vpath = 'valence/'
+    eta_C_gamma = ('Gamma5','Gamma5')
+    eta_C_file = h5py.File('eta_C.h5','a')
+    def __init__(self, ens, create=False):
+        self.ens = ens
+        self.NPR_masses = params[self.ens]['masses'][1:]
+        self.N_mass = len(self.NPR_masses)
+        self.NPR_mass_deg = [(f'c{m}',f'c{m}') for m in range(self.N_mass)]
+
+        if ens not in self.eta_C_file or create:
+            self.createH5()
+        else:
+            self.T, self.N_cf = self.eta_C_file[self.ens][str(
+                                self.NPR_mass_deg[0])]['corr'].shape
+            self.eta_C_corr = {k:np.zeros(shape=(self.T,self.N_cf),dtype=float)
+                               for k in self.NPR_mass_deg}
+            for key in self.eta_C_corr.keys():
+                self.eta_C_corr[key][:,:] = np.array(self.eta_C_file[self.ens][str(
+                                                   self.NPR_mass_deg[0])]['corr'])
+
+    def createH5(self):
+        self.datapath = path+self.vpath+self.ens
+        self.cf_list = sorted(next(os.walk(self.datapath))[1])[:-4]
+        self.N_cf = len(self.cf_list)
+
+        self.meson_combos = []
+        test_path = self.datapath+f'/{self.cf_list[0]}/mesons/'
+        for foldername in next(os.walk(test_path))[1]:
+            str_m1, str_m2 = foldername.rsplit('__')
+            self.meson_combos.append((str_m1.rsplit('_R')[0], str_m2.rsplit('_R')[0]))
+        self.N_mc = len(self.meson_combos)
+
+        testfile_path = glob.glob(test_path+'c0*c0*')[0]+'/'
+        self.T_src = len(os.listdir(testfile_path))
+
+        testfile_path = glob.glob(testfile_path+'*c0*t00*')[0]
+        self.testfile = h5py.File(testfile_path,'r')['meson']
+        self.T = len(np.array(self.testfile['meson_0']['corr'])['re'])
+        T_src_list = ['%02d'%t for t in np.arange(0,self.T,self.T/self.T_src)]
+
+        self.gammas = []
+        for mes_idx in range(16**2):
+            gamma_src = self.testfile[f'meson_{mes_idx}'].attrs['gamma_src'][0].decode()
+            gamma_snk = self.testfile[f'meson_{mes_idx}'].attrs['gamma_snk'][0].decode()
+            self.gammas.append((gamma_src,gamma_snk))
+        self.eta_C_idx = self.gammas.index(self.eta_C_gamma) 
+
+        self.eta_C_corr = {k:np.zeros(shape=(self.T,self.N_cf),dtype=float)
+                           for k in self.NPR_mass_deg}
+
+        for key in self.eta_C_corr.keys():
+            for c in range(self.N_cf):
+                filepath = self.datapath+f'/{self.cf_list[c]}/mesons/'
+                filepath = glob.glob(filepath+f'{key[0]}*{key[1]}*')[0]+'/'
+                config_data = np.zeros(shape=(self.T_src, self.T))
+                for t in range(self.T_src):
+                    filename = glob.glob(filepath+f'*t{T_src_list[t]}*')[0]
+                    datafile = h5py.File(filename,'r')['meson'][f'meson_{self.eta_C_idx}']
+                    data = np.array(datafile['corr'])['re']
+                    config_data[t,:] = np.roll(data, -int(self.T/self.T_src)*t)
+                self.eta_C_corr[key][:,c] = np.mean(config_data,axis=0)
+
+        if self.ens in self.eta_C_file:
+            del self.eta_C_file[self.ens]
+        ens_group = self.eta_C_file.create_group(self.ens)
+        for key in self.eta_C_corr.keys():
+            key_group = ens_group.create_group(str(key))
+            key_group.create_dataset('corr',data=self.eta_C_corr[key])
+            key_group.attrs['mass'] = self.NPR_masses[int(key[0][1])]
+        print(f'Added correlator data to {self.ens} group in eta_C.h5 file')
