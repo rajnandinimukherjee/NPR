@@ -63,9 +63,10 @@ class bilinear_analysis:
                     if (condition3 and condition4):
                         bl = bilinear(self.ens, prop1, prop2)
                         bl.NPR(massive=massive, **kwargs)
-                        if bl.q not in results.keys():
-                            results[bl.q] = bl.Z
-                            errs[bl.q] = bl.Z_err
+                        mom = bl.q*bl.a_inv
+                        if mom not in results.keys():
+                            results[mom] = bl.Z
+                            errs[mom] = bl.Z_err
 
             self.momenta[action][(m1,m2)] = sorted(results.keys())
             self.avg_results[action][(m1,m2)] = np.array([results[mom]

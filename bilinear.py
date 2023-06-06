@@ -79,7 +79,7 @@ class bilinear:
         Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                        for i in range(len(dirs))],axis=0)@qslash).real/(12*q_sq))
 
-        m_q = float(self.prop_in.info['am'])*self.a_inv
+        m_q = float(self.prop_in.info['am'])#*self.a_inv
         A1 = np.trace(np.sum([q_vec[i]*operators['A'][i]
              for i in range(len(dirs))],axis=0)@Gamma['5'])
         A2 = np.trace(np.sum([q_vec[i]*operators['A'][i]
@@ -92,8 +92,8 @@ class bilinear:
         else:   
             Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
         Z_m = (S+(Z_A*A1*1j)/2)/(12*m_q*Z_q)
-        if 'printval' in kwargs:
-            print(f'mu={q_sq**0.5}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}')
+        #if 'printval' in kwargs:
+        #    print(f'mu={q_sq**0.5}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}')
                 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P

@@ -35,7 +35,7 @@ class external:
         self.pslash = np.sum([self.total_momentum[i]*Gamma[dirs[i]]
                              for i in range(len(dirs))],axis=0)
         self.momentum_norm = np.linalg.norm(self.total_momentum)
-        self.momentum_squared = (a_inv*self.momentum_norm)**2
+        self.momentum_squared = (self.momentum_norm)**2
         
         self.propagator = np.empty(shape=(self.N_cf,12,12),dtype='complex128')
         for cf in range(self.N_cf):
