@@ -79,7 +79,7 @@ class bilinear:
         Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                        for i in range(len(dirs))],axis=0)@qslash).real/(12*q_sq))
 
-        m_q = float(self.prop_in.info['am'])#*self.a_inv
+        m_q = float(self.prop_in.info['am'])
         A1 = np.trace(np.sum([q_vec[i]*operators['A'][i]
              for i in range(len(dirs))],axis=0)@Gamma['5'])
         A2 = np.trace(np.sum([q_vec[i]*operators['A'][i]
@@ -92,14 +92,20 @@ class bilinear:
         else:   
             Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
         Z_m = (S+(Z_A*A1*1j)/2)/(12*m_q*Z_q)
+        Z_mm_q = (S+(Z_A*A1*1j)/2)/(12*Z_q)
         #if 'printval' in kwargs:
-        #    print(f'mu={q_sq**0.5}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}')
+        #    print(f'mu={q_sq**0.5*self.a_inv}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}'+
+        #        f'\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}\nZ_m*m_q:{Z_mm_q}')
                 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P
-        Z_S = (12*q_sq*Z_q-mass_term)/(q_sq*s_term)
+        if massless:
+            Z_S = 12*Z_q/s_term
+        else:
+            Z_S = (12*q_sq*Z_q-mass_term)/(q_sq*s_term)
         qslash_Z = {'S':Z_S.real, 'P':Z_P.real, 'V':Z_V.real,
-                    'A':Z_A.real, 'T':Z_T.real, 'm':Z_m.real}
+                    'A':Z_A.real, 'T':Z_T.real, 'm':Z_m.real,
+                    'mm_q':Z_mm_q.real}
         return qslash_Z
 
     def construct_operators(self, S_in, S_out, Gs, **kwargs):

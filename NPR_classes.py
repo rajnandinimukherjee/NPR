@@ -187,30 +187,30 @@ class bilinear_analysis:
             plt.savefig('plots/'+self.ens+'_action_comp_bl.pdf')
             print('Plot saved to plots/'+self.ens+'_action_comp_bl.pdf')
 
-    def massive_Z_plots(self, mu=2, action=(0,0), passinfo=False, **kwargs):
+    def massive_Z_plots(self, mu=2, action=(0,0), key='m', passinfo=False, **kwargs):
         x = np.array([float(m) for m in self.all_masses])
 
         m_nsm_0 = self.non_sea_masses[0]
         if mu in self.momenta[action][(m_nsm_0,m_nsm_0)]:
             mu_idx = self.momenta[action][(m_nsm_0,m_nsm_0)].index(mu)
-            y = np.array([self.avg_results[(0,0)][(m,m)][mu_idx]['m']
+            y = np.array([self.avg_results[(0,0)][(m,m)][mu_idx][key]
                           for m in self.all_masses])
-            e = np.array([self.avg_errs[(0,0)][(m,m)][mu_idx]['m']
+            e = np.array([self.avg_errs[(0,0)][(m,m)][mu_idx][key]
                           for m in self.all_masses])
             
         else:
             y = np.array([self.extrap_Z(mu=mu, masses=(m,m),
-                          action=action)[0]['m']
+                          action=action)[0][key]
                           for m in self.all_masses])
             e = np.array([self.extrap_Z(mu=mu, masses=(m,m),
-                          action=action)[1]['m']
+                          action=action)[1][key]
                           for m in self.all_masses])
 
         if passinfo:
             return x, y, e
         else:
             plt.figure()
-            plt.title(self.ens+' $Z_m(\mu=${:.3f} GeV)'.format(mu))
+            plt.title(self.ens+' $Z_'+key+'(\mu=${:.3f} GeV)'.format(mu))
             plt.errorbar(x,y,yerr=e,fmt='o',capsize=4)
             plt.xlabel(r'$am_q$')
             filename = 'plots/'+self.ens+'_massive_Z.pdf'
