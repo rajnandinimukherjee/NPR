@@ -30,12 +30,12 @@ class external:
                          'src_mom_p':'_'.join([str(i) for i in self.momentum])}
             self.filename = encode_prop(self.info)
 
-        coeff = 2*np.pi*a_inv/L
+        coeff = 2*np.pi/L
         self.total_momentum = coeff*(np.array(self.momentum)+np.array(self.twist))
         self.pslash = np.sum([self.total_momentum[i]*Gamma[dirs[i]]
                              for i in range(len(dirs))],axis=0)
         self.momentum_norm = np.linalg.norm(self.total_momentum)
-        self.momentum_squared = self.momentum_norm**2
+        self.momentum_squared = (a_inv*self.momentum_norm)**2
         
         self.propagator = np.empty(shape=(self.N_cf,12,12),dtype='complex128')
         for cf in range(self.N_cf):

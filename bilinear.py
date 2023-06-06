@@ -91,7 +91,9 @@ class bilinear:
             Z_A = 12*q_sq*Z_q/A2
         else:   
             Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
-        Z_m = (S+Z_A*A1*1j/2)/(12*m_q*Z_q)
+        Z_m = (S+(Z_A*A1*1j)/2)/(12*m_q*Z_q)
+        if 'printval' in kwargs:
+            print(f'mu={q_sq**0.5}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}')
                 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P
@@ -123,7 +125,8 @@ class bilinear:
         else:
             Z_q = self.prop_in.Z_q_avg_qslash
             S_inv = self.prop_in.inv_avg_propagator
-            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv, **kwargs) 
+            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv,
+                                   printval=True, **kwargs) 
         #==bootstrap===
         self.Z_btsp = {c:np.zeros(self.N_boot) for c in self.Z.keys()}
         self.btsp_projected = {c:np.zeros(self.N_boot,dtype=object)
