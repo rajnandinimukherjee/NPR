@@ -71,7 +71,7 @@ for ens in ens_list:
     ainv = ens_dict[ens]['bl_obj'].ainv
     eta_star_dict = {eta:interpolate_eta_c(ens,eta)
                      for eta in eta_stars}
-    x, y, e = ens_dict[ens]['bl_obj'].massive_Z_plots(
+    x, y, e = ens_dict[ens]['bl_obj'].massive_Z_plots(m='mam_q',
                                       mu=mu_chosen, passinfo=True)
 
     ax[ens_idx].set_title(ens)

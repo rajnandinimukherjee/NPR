@@ -190,21 +190,12 @@ class bilinear_analysis:
     def massive_Z_plots(self, mu=2, action=(0,0), key='m', passinfo=False, **kwargs):
         x = np.array([float(m) for m in self.all_masses])
 
-        m_nsm_0 = self.non_sea_masses[0]
-        if mu in self.momenta[action][(m_nsm_0,m_nsm_0)]:
-            mu_idx = self.momenta[action][(m_nsm_0,m_nsm_0)].index(mu)
-            y = np.array([self.avg_results[(0,0)][(m,m)][mu_idx][key]
-                          for m in self.all_masses])
-            e = np.array([self.avg_errs[(0,0)][(m,m)][mu_idx][key]
-                          for m in self.all_masses])
-            
-        else:
-            y = np.array([self.extrap_Z(mu=mu, masses=(m,m),
-                          action=action)[0][key]
-                          for m in self.all_masses])
-            e = np.array([self.extrap_Z(mu=mu, masses=(m,m),
-                          action=action)[1][key]
-                          for m in self.all_masses])
+        y = np.array([self.extrap_Z(mu=mu, masses=(m,m),
+                      action=action)[0][key]
+                      for m in self.all_masses])
+        e = np.array([self.extrap_Z(mu=mu, masses=(m,m),
+                      action=action)[1][key]
+                      for m in self.all_masses])
 
         if passinfo:
             return x, y, e
