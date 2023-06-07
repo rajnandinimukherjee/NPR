@@ -51,112 +51,119 @@ for fig in figs:
     fig.savefig(pp, format='pdf')
 pp.close()
 plt.close('all')
-os.system("open plots/eta_c.pdf")
+#os.system("open plots/eta_c.pdf")
 
 #====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
-def Z_m_ansatz(params, am, **kwargs):
-    return params[0] + (am**2)*params[1]+ params[2]*am*np.log(am)
+def Z_m_ansatz(params, am, key='m', **kwargs):
+    if key=='m':
+        return params[0] + (am**2)*params[1]+ params[2]*am*np.log(am)
+    else:
+        return params[0]*am + (am**2)*params[1]
 
-fig, ax = plt.subplots(1,len(ens_list),figsize=(15,6))
-plt.suptitle('$Z_m(\mu=${:.3f} GeV)'.format(
-             mu_chosen)+'\n$ Z_m(am_q)=k_1+k_2\,am_q\,\log(am_q)+k_3(am_q)^2$')
 filename = 'plots/combined_massive_Z.pdf'
 pdf = PdfPages(filename)
 
-ens_dict = {}
-for ens in ens_list:
-    ens_idx = ens_list.index(ens)
-    ens_dict[ens] = {'bl_obj':bilinear_analysis(ens, 
-                     loadpath=f'pickles/{ens}_bl_massive.p')}
-    ainv = ens_dict[ens]['bl_obj'].ainv
-    eta_star_dict = {eta:interpolate_eta_c(ens,eta)
-                     for eta in eta_stars}
-    x, y, e = ens_dict[ens]['bl_obj'].massive_Z_plots(m='mam_q',
-                                      mu=mu_chosen, passinfo=True)
+ens_dict = {ens:{'bl_obj':bilinear_analysis(ens,
+                          loadpath=f'pickles/{ens}_bl_massive.p')}
+            for ens in ens_list}
 
-    ax[ens_idx].set_title(ens)
-    ax[ens_idx].errorbar(x**1,y,yerr=e,fmt='o',capsize=4,
-                         label='simulated $am_q$',
-                         color=color_list[ens_idx])
-    ax[ens_idx].set_xlabel(r'$am_q$')#'$(am_q)^2$')
+for key in ['m','mam_q']:
+    fig, ax = plt.subplots(1,len(ens_list),figsize=(15,6))
+    plt.suptitle('$Z_'+key+'(\mu=${:.3f} GeV)'.format(
+                 mu_chosen))#+'\n$ Z_m(am_q)=k_1+k_2\,am_q\,\log(am_q)+k_3(am_q)^2$')
 
-    def diff(params):
-        return y[1:] - Z_m_ansatz(params, x[1:])
-    
-    COV = np.diag(e[1:]**2)
-    L_inv = np.linalg.cholesky(COV)
-    L = np.linalg.inv(L_inv)
+    for ens in ens_list:
+        ens_idx = ens_list.index(ens)
+        ainv = ens_dict[ens]['bl_obj'].ainv
+        eta_star_dict = {eta:interpolate_eta_c(ens,eta)
+                         for eta in eta_stars}
+        x, y, e = ens_dict[ens]['bl_obj'].massive_Z_plots(key=key,
+                                          mu=mu_chosen, passinfo=True)
 
-    def LD(params, **akwargs):
-        return L.dot(diff(params))
-    
-    guess = [1,-1,1]
-    res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
-    chi_sq = LD(res.x).dot(LD(res.x))
-    dof = len(x)-len(guess)
-    pvalue = gammaincc(dof/2,chi_sq/2)
+        ax[ens_idx].set_title(ens)
+        ax[ens_idx].errorbar(x**1,y,yerr=e,fmt='o',capsize=4,
+                             label='simulated $am_q$',
+                             color=color_list[ens_idx])
+        ax[ens_idx].set_xlabel(r'$am_q$')#'$(am_q)^2$')
 
-    xmin, xmax = ax[ens_idx].get_xlim()
-    x_grain = np.linspace(x[1],xmax,50)
-    ax[ens_idx].plot(x_grain,Z_m_ansatz(res.x,x_grain**1),#**0.5),
-                label='fit $p$-value:{:.2f}'.format(pvalue),
-                color='tab:gray')
+        def diff(params):
+            return y[1:] - Z_m_ansatz(params, x[1:], key=key)
+        
+        COV = np.diag(e[1:]**2)
+        L_inv = np.linalg.cholesky(COV)
+        L = np.linalg.inv(L_inv)
 
-    m_q_stars = np.array([v[0] for k,v in eta_star_dict.items()])
-    Z_ms = Z_m_ansatz(res.x,m_q_stars)
-    np.random.seed(seed)
-    m_q_btsp = np.array([np.random.normal(v[0],v[1],N_boot)
-                       for k,v in eta_star_dict.items()])
-    Z_m_btsp = np.array([Z_m_ansatz(res.x,m_q_btsp[:,k])
-                           for k in range(N_boot)])
-    Z_m_errs = [st_dev(Z_m_btsp[:,i],mean=Z_ms[i])
-            for i in range(len(Z_ms))]
+        def LD(params, **akwargs):
+            return L.dot(diff(params))
+        
+        guess = [1,-1,1]
+        res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
+        chi_sq = LD(res.x).dot(LD(res.x))
+        dof = len(x)-len(guess)
+        pvalue = gammaincc(dof/2,chi_sq/2)
 
-    ymin, ymax = ax[ens_idx].get_ylim()
-    for eta in eta_stars:
-        eta_idx = eta_stars.index(eta)
-        val, err = eta_star_dict[eta]
-        eta_label = 'PDG' if eta==eta_PDG else str(eta)+' GeV'
-        ax[ens_idx].vlines(val**1,ymin,ymax,linestyle='dashed',
-                   color=color_list[eta_idx+3],
-                   label='$am_q^*(M_{\eta_c}^*=$'+eta_label+'$)$')
-        ax[ens_idx].axvspan((val-err)**1,(val+err)**1,
-                            color=color_list[eta_idx+3],alpha=0.1)
-        ax[ens_idx].errorbar(val**1,Z_ms[eta_idx],yerr=Z_m_errs[eta_idx],
-                     color=color_list[eta_idx+3],fmt='o',capsize=4)
-    ax[ens_idx].legend()
+        xmin, xmax = ax[ens_idx].get_xlim()
+        x_grain = np.linspace(x[1],xmax,50)
+        ax[ens_idx].plot(x_grain,Z_m_ansatz(res.x,x_grain**1,key=key),#**0.5),
+                    label='fit $p$-value:{:.2f}'.format(pvalue),
+                    color='tab:gray')
 
-    ens_dict[ens]['Z_m'] = Z_ms
-    ens_dict[ens]['Z_m_err'] = Z_m_errs
-    
-    #===m_C renormalisation=====================
-    m_C, m_C_err = interpolate_eta_c(ens,eta_PDG)
-    ens_dict[ens]['m_C_ren'] = Z_ms*m_C*ainv
-    np.random.seed(seed)
-    m_C_btsp = np.random.normal(m_C, m_C_err, N_boot)
-    m_C_ren_btsp = np.array([Z_m_btsp[k,:]*m_C_btsp[k]*ainv
-                             for k in range(N_boot)])
-    ens_dict[ens]['m_C_ren_err'] = [st_dev(m_C_ren_btsp[:,i],Z_ms[i]*m_C*ainv)
-                    for i in range(len(Z_ms))]
-    ens_dict[ens]['m_C_ren_chiral'] = y[0]*m_C*ainv
-    np.random.seed(seed)
-    Z_m_chiral_btsp = np.random.normal(y[0], e[0], N_boot)
-    m_C_chiral_btsp = np.array([Z_m_chiral_btsp[k]*m_C_btsp[k]*ainv
-                                for k in range(N_boot)])
-    ens_dict[ens]['m_C_ren_chiral_err'] = st_dev(m_C_chiral_btsp,
-                                          mean=y[0]*m_C*ainv)
+        m_q_stars = np.array([v[0] for k,v in eta_star_dict.items()])
+        Z_ms = Z_m_ansatz(res.x,m_q_stars,key=key)
+        np.random.seed(seed)
+        m_q_btsp = np.array([np.random.normal(v[0],v[1],N_boot)
+                           for k,v in eta_star_dict.items()])
+        Z_m_btsp = np.array([Z_m_ansatz(res.x,m_q_btsp[:,k],key=key)
+                               for k in range(N_boot)])
+        Z_m_errs = [st_dev(Z_m_btsp[:,i],mean=Z_ms[i])
+                for i in range(len(Z_ms))]
 
-    #===m_q renormalisation=====================
-    ens_dict[ens]['m_q_ren'] = Z_ms*m_q_stars*ainv 
-    m_q_ren_btsp = np.array([Z_m_btsp[k,:]*m_q_btsp[:,k]*ainv
-                             for k in range(N_boot)])
-    ens_dict[ens]['m_q_ren_err'] = np.array([st_dev(m_q_ren_btsp[:,i],
-                               mean=(Z_ms*m_q_stars*ainv)[i])
-                               for i in range(len(m_q_stars))])
-    ens_dict[ens]['m_q_ren_chiral'] = y[0]*x[0]*ainv
-    m_q_chiral_btsp = Z_m_chiral_btsp*x[0]*ainv
-    ens_dict[ens]['m_C_ren_chiral_err'] = st_dev(m_q_chiral_btsp,
-                                          mean=y[0]*x[0]*ainv)
+        ymin, ymax = ax[ens_idx].get_ylim()
+        for eta in eta_stars:
+            eta_idx = eta_stars.index(eta)
+            val, err = eta_star_dict[eta]
+            eta_label = 'PDG' if eta==eta_PDG else str(eta)+' GeV'
+            ax[ens_idx].vlines(val**1,ymin,ymax,linestyle='dashed',
+                       color=color_list[eta_idx+3],
+                       label='$am_q^*(M_{\eta_c}^*=$'+eta_label+'$)$')
+            ax[ens_idx].axvspan((val-err)**1,(val+err)**1,
+                                color=color_list[eta_idx+3],alpha=0.1)
+            ax[ens_idx].errorbar(val**1,Z_ms[eta_idx],yerr=Z_m_errs[eta_idx],
+                         color=color_list[eta_idx+3],fmt='o',capsize=4)
+        ax[ens_idx].legend()
+
+        ens_dict[ens][f'Z_{key}'] = Z_ms
+        ens_dict[ens][f'Z_{key}_err'] = Z_m_errs
+        
+        if key=='m':
+            #===m_C renormalisation=====================
+            m_C, m_C_err = interpolate_eta_c(ens,eta_PDG)
+            ens_dict[ens]['m_C_ren'] = Z_ms*m_C*ainv
+            np.random.seed(seed)
+            m_C_btsp = np.random.normal(m_C, m_C_err, N_boot)
+            m_C_ren_btsp = np.array([Z_m_btsp[k,:]*m_C_btsp[k]*ainv
+                                     for k in range(N_boot)])
+            ens_dict[ens]['m_C_ren_err'] = [st_dev(m_C_ren_btsp[:,i],Z_ms[i]*m_C*ainv)
+                            for i in range(len(Z_ms))]
+            ens_dict[ens]['m_C_ren_chiral'] = y[0]*m_C*ainv
+            np.random.seed(seed)
+            Z_m_chiral_btsp = np.random.normal(y[0], e[0], N_boot)
+            m_C_chiral_btsp = np.array([Z_m_chiral_btsp[k]*m_C_btsp[k]*ainv
+                                        for k in range(N_boot)])
+            ens_dict[ens]['m_C_ren_chiral_err'] = st_dev(m_C_chiral_btsp,
+                                                  mean=y[0]*m_C*ainv)
+
+            #===m_q renormalisation=====================
+            ens_dict[ens]['m_q_ren'] = Z_ms*m_q_stars*ainv 
+            m_q_ren_btsp = np.array([Z_m_btsp[k,:]*m_q_btsp[:,k]*ainv
+                                     for k in range(N_boot)])
+            ens_dict[ens]['m_q_ren_err'] = np.array([st_dev(m_q_ren_btsp[:,i],
+                                       mean=(Z_ms*m_q_stars*ainv)[i])
+                                       for i in range(len(m_q_stars))])
+            ens_dict[ens]['m_q_ren_chiral'] = y[0]*x[0]*ainv
+            m_q_chiral_btsp = Z_m_chiral_btsp*x[0]*ainv
+            ens_dict[ens]['m_q_ren_chiral_err'] = st_dev(m_q_chiral_btsp,
+                                                  mean=y[0]*x[0]*ainv)
 
 fig_nums = plt.get_fignums()
 figs = [plt.figure(n) for n in fig_nums]
@@ -185,9 +192,9 @@ for key in ['m_C','m_q']:
         plt.errorbar(x,y,yerr=e,fmt='o',capsize=4,
                      color=color_list[ens_idx],label=ens)
         #===massless scheme renorm====================
-        plt.errorbar([ens_dict[ens]['bl_obj'].asq],
-                     [ens_dict[ens][f'{key}_ren_chiral']],
-                     fmt='D',capsize=4,color=color_list[ens_idx])
+        #plt.errorbar([ens_dict[ens]['bl_obj'].asq],
+        #             [ens_dict[ens][f'{key}_ren_chiral']],
+        #             fmt='D',capsize=4,color=color_list[ens_idx])
                      
 
     x = np.array([v['bl_obj'].asq for k,v in ens_dict.items()])

@@ -35,7 +35,7 @@ eta_c_data = {#'C0':{'central':{0.30:1.249409,
 
 eta_PDG = 2983.9/1000
 eta_PDG_err = 0.5/1000
-eta_stars = [2.4,2.6,eta_PDG]
+eta_stars = [1.2,2.4,2.6,eta_PDG]
 
 def interpolate_eta_c(ens,find_y,**kwargs):
     x = np.array(list(eta_c_data[ens]['central'].keys()))
@@ -85,7 +85,8 @@ class etaCvalence:
         folded_avg_data = 0.5*(avg_data + np.roll(avg_data[::-1],1))
 
         btsp_data = bootstrap(folded_data, K=self.N_boot)
-        COV = COV(btsp_data, 'center'=folded_avg_data)
+        pdb.set_trace()
+        #cov = COV(btsp_data, 'center'=folded_avg_data)
 
         def ansatz(params, t, **kwargs):
             return params[0]*np.exp(-params[1]*self.T)

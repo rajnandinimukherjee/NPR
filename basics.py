@@ -96,7 +96,7 @@ def COV(data, **kwargs):
         center = np.mean(data, axis=0)
         norm = C-1 
 
-    COV = np.array([[((data[,t1]-center[t1]).dot(data[:,t2]-center[t2]))/norm
+    COV = np.array([[((data[:,t1]-center[t1]).dot(data[:,t2]-center[t2]))/norm
                     for t2 in range(T)] for t1 in range(T)])
 
     return COV
