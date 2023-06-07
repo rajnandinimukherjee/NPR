@@ -59,7 +59,7 @@ class etaCvalence:
     vpath = 'valence/'
     eta_C_gamma = ('Gamma5','Gamma5')
     eta_C_file = h5py.File('eta_C.h5','a')
-    N_btsp = 200
+    N_boot = 200
     def __init__(self, ens, create=False):
         self.ens = ens
         self.NPR_masses = params[self.ens]['masses'][1:]
@@ -69,7 +69,7 @@ class etaCvalence:
         if ens not in self.eta_C_file or create:
             self.createH5()
         else:
-            self.T, self.N_cf = self.eta_C_file[self.ens][str(
+            self.N_cf, self.T = self.eta_C_file[self.ens][str(
                                 self.NPR_mass_deg[0])]['corr'].shape
             self.eta_C_corr = {k:np.zeros(shape=(self.N_cf,self.T),dtype=float)
                                for k in self.NPR_mass_deg}
@@ -85,8 +85,8 @@ class etaCvalence:
         folded_avg_data = 0.5*(avg_data + np.roll(avg_data[::-1],1))
 
         btsp_data = bootstrap(folded_data, K=self.N_boot)
+        cov = COV(btsp_data, center=folded_avg_data)
         pdb.set_trace()
-        #cov = COV(btsp_data, 'center'=folded_avg_data)
 
         def ansatz(params, t, **kwargs):
             return params[0]*np.exp(-params[1]*self.T)
