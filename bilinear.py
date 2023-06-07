@@ -93,9 +93,9 @@ class bilinear:
             Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
         Z_m = (S+(Z_A*A1*1j)/2)/(12*m_q*Z_q)
         Z_mm_q = (S+(Z_A*A1*1j)/2)/(12*Z_q)
-        #if 'printval' in kwargs:
-        #    print(f'mu={q_sq**0.5*self.a_inv}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}'+
-        #        f'\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}\nZ_m*m_q:{Z_mm_q}')
+        if 'printval' in kwargs:
+            print(f'mu={q_sq**0.5*self.a_inv}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}'+
+                f'\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}\nZ_m*m_q:{Z_mm_q}')
                 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P

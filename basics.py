@@ -83,6 +83,23 @@ def bootstrap(data, seed=1, K=N_boot, sigma=None, **kwargs):
                                 for ax in range(data.ndim))],axis=1)
     return np.array(samples,dtype='complex128')
 
+def COV(data, **kwargs):
+    ''' covariance matrix calculator - accounts for cov matrices
+        centered around sample avg vs data avg and accordingly normalises'''
+
+    C, T = data.shape
+
+    if 'center' in kwargs.keys():
+        center = kwargs['center']
+        norm = C
+    else:
+        center = np.mean(data, axis=0)
+        norm = C-1 
+
+    COV = np.array([[((data[,t1]-center[t1]).dot(data[:,t2]-center[t2]))/norm
+                    for t2 in range(T)] for t1 in range(T)])
+
+    return COV
 #=====parsing filenames===================================================
 def common_cf_files(data, corr, prefix=None):
     cfgs = os.listdir(data)[1:]

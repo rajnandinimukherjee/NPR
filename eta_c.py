@@ -59,6 +59,7 @@ class etaCvalence:
     vpath = 'valence/'
     eta_C_gamma = ('Gamma5','Gamma5')
     eta_C_file = h5py.File('eta_C.h5','a')
+    N_btsp = 200
     def __init__(self, ens, create=False):
         self.ens = ens
         self.NPR_masses = params[self.ens]['masses'][1:]
@@ -70,13 +71,26 @@ class etaCvalence:
         else:
             self.T, self.N_cf = self.eta_C_file[self.ens][str(
                                 self.NPR_mass_deg[0])]['corr'].shape
-            self.eta_C_corr = {k:np.zeros(shape=(self.T,self.N_cf),dtype=float)
+            self.eta_C_corr = {k:np.zeros(shape=(self.N_cf,self.T),dtype=float)
                                for k in self.NPR_mass_deg}
             for key in self.eta_C_corr.keys():
                 self.eta_C_corr[key][:,:] = np.array(self.eta_C_file[self.ens][str(
                                                    self.NPR_mass_deg[0])]['corr'])
 
-    def createH5(self):
+    def massfit(self, t, key, **kwargs):
+        corr_data = self.eta_C_corr[key]
+        avg_data = np.mean(corr_data,axis=0)
+
+        folded_data = 0.5*(corr_data + np.roll(corr_data[:,::-1],1,axis=0))
+        folded_avg_data = 0.5*(avg_data + np.roll(avg_data[::-1],1))
+
+        btsp_data = bootstrap(folded_data, K=self.N_boot)
+        COV = COV(btsp_data, 'center'=folded_avg_data)
+
+        def ansatz(params, t, **kwargs):
+            return params[0]*np.exp(-params[1]*self.T)
+
+    def createH5(self, **kwargs):
         self.datapath = path+self.vpath+self.ens
         self.cf_list = sorted(next(os.walk(self.datapath))[1])[:-4]
         self.N_cf = len(self.cf_list)
@@ -103,7 +117,7 @@ class etaCvalence:
             self.gammas.append((gamma_src,gamma_snk))
         self.eta_C_idx = self.gammas.index(self.eta_C_gamma) 
 
-        self.eta_C_corr = {k:np.zeros(shape=(self.T,self.N_cf),dtype=float)
+        self.eta_C_corr = {k:np.zeros(shape=(self.N_cf,self.T),dtype=float)
                            for k in self.NPR_mass_deg}
 
         for key in self.eta_C_corr.keys():
@@ -116,7 +130,7 @@ class etaCvalence:
                     datafile = h5py.File(filename,'r')['meson'][f'meson_{self.eta_C_idx}']
                     data = np.array(datafile['corr'])['re']
                     config_data[t,:] = np.roll(data, -int(self.T/self.T_src)*t)
-                self.eta_C_corr[key][:,c] = np.mean(config_data,axis=0)
+                self.eta_C_corr[key][c,:] = np.mean(config_data,axis=0)
 
         if self.ens in self.eta_C_file:
             del self.eta_C_file[self.ens]
