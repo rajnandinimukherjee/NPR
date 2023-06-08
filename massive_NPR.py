@@ -89,8 +89,8 @@ for key in ['m','mam_q']:
         def diff(params):
             return y[1:] - Z_m_ansatz(params, x[1:], key=key)
         
-        COV = np.diag(e[1:]**2)
-        L_inv = np.linalg.cholesky(COV)
+        cov = np.diag(e[1:]**2)
+        L_inv = np.linalg.cholesky(cov)
         L = np.linalg.inv(L_inv)
 
         def LD(params, **akwargs):

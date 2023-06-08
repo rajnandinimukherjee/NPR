@@ -65,31 +65,65 @@ class etaCvalence:
         self.NPR_masses = params[self.ens]['masses'][1:]
         self.N_mass = len(self.NPR_masses)
         self.NPR_mass_deg = [(f'c{m}',f'c{m}') for m in range(self.N_mass)]
+        self.eta_C_corr = {key:{} for key in self.NPR_mass_deg}
 
         if ens not in self.eta_C_file or create:
             self.createH5()
         else:
             self.N_cf, self.T = self.eta_C_file[self.ens][str(
                                 self.NPR_mass_deg[0])]['corr'].shape
-            self.eta_C_corr = {k:np.zeros(shape=(self.N_cf,self.T),dtype=float)
-                               for k in self.NPR_mass_deg}
+            self.eta_C_corr = {k:{'corr':np.zeros(shape=(self.N_cf,self.T),
+                               dtype=float)} for k in self.NPR_mass_deg}
             for key in self.eta_C_corr.keys():
-                self.eta_C_corr[key][:,:] = np.array(self.eta_C_file[self.ens][str(
+                self.eta_C_corr[key]['corr'][:,:] = np.array(self.eta_C_file[self.ens][str(
                                                    self.NPR_mass_deg[0])]['corr'])
 
-    def massfit(self, t, key, **kwargs):
+    def massfit(self, t_info, key, **kwargs):
+
+        (start, end, thin) = t_info 
+        t = np.arange(start, end+thin, thin)
+        def ansatz(params, t, **kwargs):
+            return params[0]*(np.exp(-params[1]*t)+np.exp(-params[1]*(self.T-t)))
+
         corr_data = self.eta_C_corr[key]
         avg_data = np.mean(corr_data,axis=0)
 
-        folded_data = 0.5*(corr_data + np.roll(corr_data[:,::-1],1,axis=0))
-        folded_avg_data = 0.5*(avg_data + np.roll(avg_data[::-1],1))
-
+        T_half = int(self.T/2)
+        folded_data = 0.5*(corr_data + np.roll(corr_data[:,::-1],1,axis=0))[:,:T_half]
+        folded_avg_data = 0.5*(avg_data + np.roll(avg_data[::-1],1))[:T_half]
         btsp_data = bootstrap(folded_data, K=self.N_boot)
-        cov = COV(btsp_data, center=folded_avg_data)
-        pdb.set_trace()
 
-        def ansatz(params, t, **kwargs):
-            return params[0]*np.exp(-params[1]*self.T)
+        def diff(params, fit='central', k=0, **kwargs):
+            if fit=='central':
+                y = folded_avg_data[t]
+            else:
+                y = btsp_data[k,t]
+            return y - ansatz(params, t)
+
+        cov = COV(btsp_data[:,t], center=folded_avg_data[t])
+        L_inv = np.linalg.cholesky(cov)
+        L = np.linalg.inv(L_inv)
+        def LD(params, fit='central', k=0):
+            return L.dot(diff(params, fit=fit, k=k))
+
+        guess = [1e+2,0.1]
+        res = least_squares(LD, guess, args=('central', 0))
+        chi_sq = LD(res.x).dot(LD(res.x))
+        dof = len(t)-len(guess)
+        pdb.set_trace()
+        pvalue = gammaincc(dof/2,chi_sq/2)
+        print(pvalue)
+
+        params = res.x
+
+        params_btsp = np.zeros(shape=(self.N_boot,len(guess)))
+        for k in range(self.N_boot):
+            res_k = least_squares(LD, guess, args=('btsp',k))
+            params_btsp[k,:] = res_k.x
+
+        params_err = np.array([st_dev(params_btsp[:,i], mean=params[i])
+                               for i in range(len(params))])
+
 
     def createH5(self, **kwargs):
         self.datapath = path+self.vpath+self.ens
@@ -118,8 +152,8 @@ class etaCvalence:
             self.gammas.append((gamma_src,gamma_snk))
         self.eta_C_idx = self.gammas.index(self.eta_C_gamma) 
 
-        self.eta_C_corr = {k:np.zeros(shape=(self.N_cf,self.T),dtype=float)
-                           for k in self.NPR_mass_deg}
+        self.eta_C_corr = {k:{'corr':np.zeros(shape=(self.N_cf,self.T),
+                           dtype=float)} for k in self.NPR_mass_deg}
 
         for key in self.eta_C_corr.keys():
             for c in range(self.N_cf):
@@ -131,13 +165,13 @@ class etaCvalence:
                     datafile = h5py.File(filename,'r')['meson'][f'meson_{self.eta_C_idx}']
                     data = np.array(datafile['corr'])['re']
                     config_data[t,:] = np.roll(data, -int(self.T/self.T_src)*t)
-                self.eta_C_corr[key][c,:] = np.mean(config_data,axis=0)
+                self.eta_C_corr[key]['corr'][c,:] = np.mean(config_data,axis=0)
 
         if self.ens in self.eta_C_file:
             del self.eta_C_file[self.ens]
         ens_group = self.eta_C_file.create_group(self.ens)
         for key in self.eta_C_corr.keys():
             key_group = ens_group.create_group(str(key))
-            key_group.create_dataset('corr',data=self.eta_C_corr[key])
+            key_group.create_dataset('corr',data=self.eta_C_corr[key]['corr'])
             key_group.attrs['mass'] = self.NPR_masses[int(key[0][1])]
         print(f'Added correlator data to {self.ens} group in eta_C.h5 file')
