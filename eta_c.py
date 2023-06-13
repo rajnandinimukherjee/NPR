@@ -74,42 +74,45 @@ class etaCvalence:
         else:
             self.N_cf, self.T = self.eta_C_file[self.ens][str(
                                 list(self.mass_comb.keys())[0])]['corr'].shape
-            self.data = {k:{'corr':np.zeros(shape=(self.N_cf,self.T),
-                               dtype=float)} for k in self.mass_comb.keys()}
+            self.data = {k:{obj:{'data':np.zeros(shape=(self.N_cf,self.T),
+                                 dtype=float)} for obj in ['corr','PJ5q']}
+                                 for k in self.mass_comb.keys()}
             for key in self.data.keys():
-                self.data[key]['corr'][:,:] = np.array(self.eta_C_file[self.ens][str(key)]['corr'])
+                for obj in ['corr','PJ5q']:
+                    self.data[key][obj]['data'][:,:] = np.array(self.eta_C_file[self.ens][str(key)][obj])
 
         self.T_half = int(self.T/2)
         for key in self.data.keys():
-            corr_data = self.data[key]['corr']
-            avg_data = np.mean(corr_data,axis=0)
-            err = np.array([st_dev(corr_data[:,t], mean=avg_data[t])
-                            for t in range(self.T)])
+            for obj in ['corr','PJ5q']:
+                data = self.data[key][obj]['data']
+                avg_data = np.mean(data,axis=0)
+                err = np.array([st_dev(data[:,t], mean=avg_data[t])
+                                for t in range(self.T)])
 
-            folded_data = 0.5*(corr_data[:,1:] + corr_data[:,::-1][:,:-1])[:,:self.T_half]
-            folded_avg_data = np.mean(folded_data,axis=0)
-            folded_err = np.array([st_dev(folded_data[:,t]) for t in range(self.T_half)])
-            
-            btsp_data = bootstrap(folded_data, K=self.N_boot)
-            cov = COV(btsp_data, center=folded_avg_data)
+                folded_data = 0.5*(data[:,1:] + data[:,::-1][:,:-1])[:,:self.T_half]
+                folded_avg_data = np.mean(folded_data,axis=0)
+                folded_err = np.array([st_dev(folded_data[:,t]) for t in range(self.T_half)])
+                
+                btsp_data = bootstrap(folded_data, K=self.N_boot)
+                cov = COV(btsp_data, center=folded_avg_data)
 
-            self.data[key].update({'avg':avg_data,
-                                   'err':err,
-                                   'folded':folded_data,
-                                   'folded_avg':folded_avg_data,
-                                   'folded_err':folded_err,
-                                   'btsp':btsp_data,
-                                   'COV':cov})
+                self.data[key][obj].update({'avg':avg_data,
+                                            'err':err,
+                                            'folded':folded_data,
+                                            'folded_avg':folded_avg_data,
+                                            'folded_err':folded_err,
+                                            'btsp':btsp_data,
+                                            'COV':cov})
 
     def plot(self, key='all', **kwargs):
-        keylist = [key] if key!='all' else self.NPR_mass_deg
+        keylist = [key] if key!='all' else self.mass_comb.keys()
         
         fig = plt.figure()
         x = np.arange(self.T_half)
         for k in keylist:
-            y = m_eff(self.data[k]['folded_avg'],ansatz='cosh')
-            btsp = np.array([m_eff(self.data[k]['btsp'][b,:],ansatz='cosh')
-                             for b in range(self.N_boot)])
+            y = m_eff(self.data[k]['corr']['folded_avg'],ansatz='cosh')
+            btsp = np.array([m_eff(self.data[k]['corr']['btsp'][b,:],
+                             ansatz='cosh') for b in range(self.N_boot)])
             e = np.array([st_dev(btsp[:,t], mean=y[t]) for t in range(len(y))])
             plt.errorbar(x[:-2], y, yerr=e, fmt='o',
                          capsize=4, label=str(self.mass_comb[k]))
@@ -136,9 +139,9 @@ class etaCvalence:
 
         def diff(params, fit='central', k=0, **kwargs):
             if fit=='central':
-                y = self.data[key]['folded_avg'][t]
+                y = self.data[key]['corr']['folded_avg'][t]
             else:
-                y = self.data[key]['btsp'][k,t]
+                y = self.data[key]['corr']['btsp'][k,t]
             return y - self.ansatz(params, t)
 
         cov = self.data[key]['COV'][start:end+thin:thin,
@@ -194,8 +197,8 @@ class etaCvalence:
             self.gammas.append((gamma_src,gamma_snk))
         self.eta_C_idx = self.gammas.index(self.eta_C_gamma) 
 
-        self.data = {k:{'corr':np.zeros(shape=(self.N_cf,self.T),dtype=float),
-                        'PJ5q':np.zeros(shape=(self.N_cf,self.T),dtype=float)}
+        self.data = {k:{obj:{'data':np.zeros(shape=(self.N_cf,self.T),dtype=float)}
+                        for obj in ['corr','PJ5q']}
                         for k in self.mass_comb.keys()}
 
         for key in self.data.keys():
@@ -212,7 +215,7 @@ class etaCvalence:
                                    if obj=='corr' else h5py.File(filename,'r')['wardIdentity']
                         data = np.array(datafile[obj])['re']
                         config_data[t,:] = np.roll(data, -int(self.T/self.T_src)*t)
-                    self.data[key][obj][c,:] = np.mean(config_data,axis=0)
+                    self.data[key][obj]['data'][c,:] = np.mean(config_data,axis=0)
 
 
         if self.ens in self.eta_C_file:
