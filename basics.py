@@ -100,6 +100,13 @@ def COV(data, **kwargs):
                     for t2 in range(T)] for t1 in range(T)])
 
     return COV
+
+def m_eff(data, ansatz='cosh', **kwargs):
+    if ansatz=='cosh':
+        m_eff = np.arccosh(0.5*(data[2:]+data[:-2])/data[1:-1])
+    elif ansatz=='exp':
+        m_eff = np.abs(np.log(data[1:]/data[:-1]))
+    return m_eff
 #=====parsing filenames===================================================
 def common_cf_files(data, corr, prefix=None):
     cfgs = os.listdir(data)[1:]
