@@ -224,6 +224,6 @@ class etaCvalence:
         for key in self.data.keys():
             key_group = ens_group.create_group(str(key))
             for obj in ['corr','PJ5q']:
-                key_group.create_dataset(obj,data=self.data[key][obj])
+                key_group.create_dataset(obj,data=self.data[key][obj]['data'])
             key_group.attrs['mass'] = self.mass_comb[key]
         print(f'Added correlator data to {self.ens} group in eta_C.h5 file')
