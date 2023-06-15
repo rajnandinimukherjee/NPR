@@ -7,6 +7,7 @@ from ensemble_parameters import *
 from tqdm import tqdm
 plt.rcParams.update(plotparams)
 import os
+import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.colors as mc
 import pickle
@@ -106,7 +107,7 @@ def m_eff(data, ansatz='cosh', **kwargs):
         m_eff = np.arccosh(0.5*(data[2:]+data[:-2])/data[1:-1])
     elif ansatz=='exp':
         m_eff = np.abs(np.log(data[1:]/data[:-1]))
-    return m_eff
+    return m_eff.real
 #=====parsing filenames===================================================
 def common_cf_files(data, corr, prefix=None):
     cfgs = os.listdir(data)[1:]

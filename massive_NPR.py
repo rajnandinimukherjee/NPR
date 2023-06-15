@@ -3,6 +3,14 @@ from basics import *
 from eta_c import *
 
 ens_list = list(eta_c_data.keys())
+
+argument = sys.argv[1] if len(sys.argv)>1 else ''
+if argument=='with_resids':
+    for ens in ens_list:
+        if ens in valence_ens:
+            e = etaCvalence(ens)
+            e.toDict(keys=list(e.mass_comb.keys())[:-1])
+
 mu_chosen = 2.0
 
 #====plotting eta_c data from f_D paper=========================================
@@ -44,14 +52,15 @@ for ax_i in ax:
 plt.text(1.03,0.3,'Using data from $f_D$ paper',
          transform=plt.gca().transAxes,color='r',rotation=90)
                 
-pp = PdfPages('plots/eta_c.pdf')
+filename = f'plots/eta_c{argument}.pdf'
+pp = PdfPages(filename)
 fig_nums = plt.get_fignums()
 figs = [plt.figure(n) for n in fig_nums]
 for fig in figs:
     fig.savefig(pp, format='pdf')
 pp.close()
 plt.close('all')
-#os.system("open plots/eta_c.pdf")
+os.system("open "+filename)
 
 #====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
 def Z_m_ansatz(params, am, key='m', **kwargs):
@@ -60,7 +69,7 @@ def Z_m_ansatz(params, am, key='m', **kwargs):
     else:
         return params[0]*am + (am**2)*params[1]
 
-filename = 'plots/combined_massive_Z.pdf'
+filename = f'plots/combined_massive_Z{argument}.pdf'
 pdf = PdfPages(filename)
 
 ens_dict = {ens:{'bl_obj':bilinear_analysis(ens,
@@ -288,7 +297,8 @@ plt.xlabel(r'$\overline{m}$ (GeV)')
 plt.ylabel(r'$m_C^{ren}$ (GeV)')
 plt.title(r'$m_C^{ren}(\overline{m},\mu='+str(mu_chosen)+'$ GeV$)$')
 
-pq = PdfPages('plots/m_c_ren.pdf') 
+filename = f'plots/m_c_ren{argument}.pdf'
+pq = PdfPages(filename) 
 fig_nums = plt.get_fignums()
 figs = [plt.figure(n) for n in fig_nums]
 for fig in figs:
@@ -296,7 +306,7 @@ for fig in figs:
 pq.close()
 plt.close('all')
 
-os.system("open plots/m_c_ren.pdf")
+os.system("open "+filename)
 
 #===make table==========================
 

@@ -55,6 +55,7 @@ def interpolate_eta_c(ens,find_y,**kwargs):
     pred_x_err = ((pred_x_k[:]-pred_x).dot(pred_x_k[:]-pred_x)/100)**0.5
     return [pred_x.item(), pred_x_err]
 
+valence_ens = ['C1']
 class etaCvalence:
     vpath = 'valence/'
     eta_C_gamma = ('Gamma5','Gamma5')
@@ -79,7 +80,8 @@ class etaCvalence:
                                  for k in self.mass_comb.keys()}
             for key in self.data.keys():
                 for obj in ['corr','PJ5q']:
-                    self.data[key][obj]['data'][:,:] = np.array(self.eta_C_file[self.ens][str(key)][obj])
+                    self.data[key][obj]['data'][:,:] = np.array(
+                            self.eta_C_file[self.ens][str(key)][obj])
 
         self.T_half = int(self.T/2)
         for key in self.data.keys():
@@ -88,12 +90,15 @@ class etaCvalence:
                 avg_data = np.mean(data,axis=0)
                 err = np.array([st_dev(data[:,t], mean=avg_data[t])
                                 for t in range(self.T)])
+                btsp_expanded = bootstrap(data, K=self.N_boot).real
 
-                folded_data = 0.5*(data[:,1:] + data[:,::-1][:,:-1])[:,:self.T_half]
+                folded_data = 0.5*(data[:,1:] + data[:,::-1][:,:-1])\
+                              [:,:self.T_half]
                 folded_avg_data = np.mean(folded_data,axis=0)
-                folded_err = np.array([st_dev(folded_data[:,t]) for t in range(self.T_half)])
+                folded_err = np.array([st_dev(folded_data[:,t])
+                                       for t in range(self.T_half)])
                 
-                btsp_data = bootstrap(folded_data, K=self.N_boot)
+                btsp_data = bootstrap(folded_data, K=self.N_boot).real
                 cov = COV(btsp_data, center=folded_avg_data)
 
                 self.data[key][obj].update({'avg':avg_data,
@@ -102,25 +107,105 @@ class etaCvalence:
                                             'folded_avg':folded_avg_data,
                                             'folded_err':folded_err,
                                             'btsp':btsp_data,
+                                            'btsp_exp':btsp_expanded,
                                             'COV':cov})
+                if obj=='corr':
+                    meff = m_eff(folded_avg_data, ansatz='cosh')
+                    self.data[key]['mccbar'] = meff[-2]
+                    m_btsp = np.array([m_eff(btsp_data[b,:])[-2]
+                                       for b in range(self.N_boot)])
+                    self.data[key]['mccbar_err'] = st_dev(m_btsp, meff[-2])
 
-    def plot(self, key='all', **kwargs):
-        keylist = [key] if key!='all' else self.mass_comb.keys()
+
+            ratio = self.data[key]['PJ5q']['avg']/\
+                    self.data[key]['corr']['avg']
+            btsp_ratio = np.array([self.data[key]['PJ5q']['btsp_exp'][k,:]/\
+                                   self.data[key]['corr']['btsp_exp'][k,:]
+                                   for k in range(self.N_boot)])
+            cov_ratio = COV(btsp_ratio, center=ratio)
+            err_ratio = np.diag(cov_ratio)**0.5
+            self.data[key]['ratio'] = {'avg':ratio,
+                                       'err':err_ratio,
+                                       'btsp':btsp_ratio,
+                                       'COV':cov_ratio}
+            self.data[key]['mres'] = ratio[self.T_half]
+
+    def toDict(self, keys='all'):
+        ens_dict = {'central':{}, 'errors':{}} 
+        keylist = keys if keys!='all' else self.mass_comb.keys()
+        
+        for key in keylist:
+            q_mass = self.mass_comb[key]+self.data[key]['mres']
+            ens_dict['central'][q_mass] = self.data[key]['mccbar']
+            ens_dict['errors'][q_mass] = self.data[key]['mccbar_err']
+
+        eta_c_data[self.ens] = ens_dict
+        print(f'modified eta_c_data dictionary for {self.ens} ensemble')
+            
+
+    def plot(self, keys='all', plotfits=False, **kwargs):
+        keylist = keys if keys!='all' else self.mass_comb.keys()
         
         fig = plt.figure()
         x = np.arange(self.T_half)
         for k in keylist:
+            mass = self.mass_comb[k]
+            mass_idx = self.NPR_masses.index(mass)
             y = m_eff(self.data[k]['corr']['folded_avg'],ansatz='cosh')
             btsp = np.array([m_eff(self.data[k]['corr']['btsp'][b,:],
                              ansatz='cosh') for b in range(self.N_boot)])
             e = np.array([st_dev(btsp[:,t], mean=y[t]) for t in range(len(y))])
             plt.errorbar(x[:-2], y, yerr=e, fmt='o',
-                         capsize=4, label=str(self.mass_comb[k]))
-        plt.title('C1 meff')
-        plt.xlabel('t')
+                         capsize=4, label=str(mass),
+                         c=color_list[mass_idx])
+
+            if plotfits:
+                (s,e,t) = (15,27,2)
+                p, perr, pbtsp = self.objfit(k, (s,e,t), obj='corr')
+                x_fit = np.arange(s, e+1, t)
+                y_fit = p[1]*np.ones(len(x_fit))
+                y_plus = y_fit+perr[1]
+                y_minus = y_fit-perr[1]
+                plt.plot(x_fit, y_fit, c=color_list[mass_idx])
+                plt.fill_between(x_fit, y_plus, y_minus,
+                                 color=color_list[mass_idx],
+                                 alpha=0.5)
+                
+        plt.title(f'{self.ens} meff')
+        plt.xlabel(r'$t$')
+        plt.legend()
+        
+        fig = plt.figure()
+        x = np.arange(self.T)
+        for k in keylist:
+            mass = self.mass_comb[k]
+            mass_idx = self.NPR_masses.index(mass)
+            y = self.data[k]['ratio']['avg']
+            e = self.data[k]['ratio']['err']
+            plt.errorbar(x, y, yerr=e, fmt='o',
+                         capsize=4,label=str(mass), 
+                         c=color_list[mass_idx])
+
+            if plotfits:
+                (s,e,t) = (25,40,2)
+                p, perr, pbtsp = self.objfit(k, (s,e,t), obj='ratio')
+                x_fit = np.arange(s, e+1, t)
+                y_fit = self.ansatz(p, x_fit, obj='ratio')
+                y_plus = self.ansatz(p+perr, x_fit, obj='ratio')
+                y_minus = self.ansatz(p-perr, x_fit, obj='ratio')
+                plt.plot(x_fit, y_fit, c=color_list[mass_idx])
+                plt.fill_between(x_fit, y_plus, y_minus,
+                                 color=color_list[mass_idx],
+                                 alpha=0.5)
+
+        plt.title(f'{self.ens} mres')
+        plt.xlabel(r'$t$')
+        plt.ylabel(r'$am_{res} = \langle 0|J_{5q}|\pi\rangle/'+\
+                   r'\langle 0|J_{5}|\pi\rangle$')
         plt.legend()
 
-        filename = f'plots/{self.ens}_meff.pdf'
+
+        filename = f'plots/{self.ens}_masses.pdf'
         pdf = PdfPages(filename)
         fig_nums = plt.get_fignums()
         figs = [plt.figure(n) for n in fig_nums]
@@ -130,44 +215,51 @@ class etaCvalence:
         plt.close('all')
         os.system('open '+filename)
 
-    def ansatz(self, params, t, **kwargs):
-        return params[0]*np.exp(-params[1]*t)
+    def ansatz(self, params, t, obj='corr', **kwargs):
+        if obj=='corr':
+            return params[0]*np.exp(-params[1]*t)
+        elif obj=='ratio':
+            return params[0]*0+params[1]*np.ones(len(t))
 
-    def massfit(self, key, t_info, **kwargs):
+    def objfit(self, key, t_info, obj='corr', **kwargs):
         (start, end, thin) = t_info 
-        t = np.arange(start, end+thin, thin)
+        t = np.arange(start, end+1, thin)
 
         def diff(params, fit='central', k=0, **kwargs):
             if fit=='central':
-                y = self.data[key]['corr']['folded_avg'][t]
+                y = self.data[key]['corr']['folded_avg'\
+                    if obj=='corr' else 'avg'][t]
             else:
-                y = self.data[key]['corr']['btsp'][k,t]
-            return y - self.ansatz(params, t)
+                y = self.data[key][obj]['btsp'][k,t]
+            return y - self.ansatz(params, t, obj=obj)
 
-        cov = self.data[key]['COV'][start:end+thin:thin,
-                                    start:end+thin:thin]
+        cov = self.data[key][obj]['COV'][start:end+1:thin,
+                                         start:end+1:thin]
         L_inv = np.linalg.cholesky(cov)
         L = np.linalg.inv(L_inv)
         def LD(params, fit='central', k=0):
             return L.dot(diff(params, fit=fit, k=k))
 
-        guess = [1e+2,0.1]
-        res = least_squares(LD, guess, args=('central', 0))
-        chi_sq = LD(res.x).dot(LD(res.x))
-        dof = len(t)-len(guess)
-        pdb.set_trace()
+        guess = [1e+2,0.1] if obj=='corr' else [0,0.003]
+        res = least_squares(LD, guess, args=('central', 0),
+                            ftol=1e-10, gtol=1e-10)
+        chi_sq = LD(res.x).dot(LD(res.x)).real
+        dof = len(t)-np.count_nonzero(np.array(guess))
         pvalue = gammaincc(dof/2,chi_sq/2)
-        print(pvalue)
 
-        params = res.x
+        params_central = np.array(res.x).real
+        print(key, params_central)
+        pdb.set_trace()
 
         params_btsp = np.zeros(shape=(self.N_boot,len(guess)))
         for k in range(self.N_boot):
             res_k = least_squares(LD, guess, args=('btsp',k))
-            params_btsp[k,:] = res_k.x
+            params_btsp[k,:] = np.array(res_k.x).real
 
-        params_err = np.array([st_dev(params_btsp[:,i], mean=params[i])
-                               for i in range(len(params))])
+        params_err = np.array([st_dev(params_btsp[:,i], 
+                               mean=params_central[i])
+                               for i in range(len(params_central))])
+        return params_central, params_err, params_btsp
 
 
     def createH5(self, **kwargs):
