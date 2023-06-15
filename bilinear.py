@@ -1,4 +1,5 @@
 from externalleg import *
+from eta_c import *
 
 #=====bilinear projectors==============================
 bl_gamma_proj = {'S':[Gamma['I']],
@@ -62,6 +63,14 @@ class bilinear:
         self.btsp_bilinear = np.array([bootstrap(self.bilinears[i], K=self.N_boot)
                                        for i in range(self.N_bl)])
 
+        self.m_q = float(self.prop_in.info['am'])
+        self.mres = 0
+        if ensemble in valence_ens:
+            ens = etaCvalence(ensemble)
+            mres_key = next((key for key, val in ens.mass_comb.items() if val==self.m_q), None) 
+            self.mres = ens.data[mres_key]['mres']
+        self.m_q += self.mres
+
     def gamma_Z(self, operators, **kwargs):
         projected = {c:np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]
                         for i in range(len(operators[c]))],axis=0))
@@ -78,8 +87,7 @@ class bilinear:
         Z_T = Z_q*self.gamma_Z(operators)[1]['T']
         Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                        for i in range(len(dirs))],axis=0)@qslash).real/(12*q_sq))
-
-        m_q = float(self.prop_in.info['am'])
+        m_q = self.m_q
         A1 = np.trace(np.sum([q_vec[i]*operators['A'][i]
              for i in range(len(dirs))],axis=0)@Gamma['5'])
         A2 = np.trace(np.sum([q_vec[i]*operators['A'][i]
