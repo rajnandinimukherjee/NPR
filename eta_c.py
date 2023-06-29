@@ -55,7 +55,7 @@ def interpolate_eta_c(ens,find_y,**kwargs):
     pred_x_err = ((pred_x_k[:]-pred_x).dot(pred_x_k[:]-pred_x)/100)**0.5
     return [pred_x.item(), pred_x_err]
 
-valence_ens = ['C1']
+valence_ens = ['C1','M1']
 class etaCvalence:
     vpath = 'valence/'
     eta_C_gamma = ('Gamma5','Gamma5')
@@ -265,7 +265,6 @@ class etaCvalence:
     def createH5(self, **kwargs):
         self.datapath = path+self.vpath+self.ens
         self.cf_list = sorted(next(os.walk(self.datapath))[1])[:-4]
-        self.N_cf = len(self.cf_list)
 
         self.meson_combos = []
         test_path = self.datapath+f'/{self.cf_list[0]}/mesons/'
@@ -281,6 +280,18 @@ class etaCvalence:
         self.testfile = h5py.File(testfile_path,'r')['meson']
         self.T = len(np.array(self.testfile['meson_0']['corr'])['re'])
         T_src_list = ['%02d'%t for t in np.arange(0,self.T,self.T/self.T_src)]
+
+        for cf in self.cf_list.copy():
+            try:
+                key0, key1 = list(self.mass_comb.keys())[0]
+                filepath = self.datapath+'/'+str(cf)+'/mesons/'
+                filepath = glob.glob(filepath+f'{key0}_R*{key1}_R*')[0]+'/'
+                for t__ in T_src_list:
+                    filename = glob.glob(filepath+f'*{key0}_R*{t__}*')[0]
+            except IndexError:
+                self.cf_list.remove(cf)
+
+        self.N_cf = len(self.cf_list)
 
         self.gammas = []
         for mes_idx in range(16**2):
