@@ -107,7 +107,6 @@ class Z_analysis:
                           self.Z_err[m,i,j], self.N_boot) for j in range(5)]
                           for i in range(5)] for m in range(self.N_mom)])
         if self.bag:
-            print('bag parameters')
             bl = bilinear_analysis(self.ens, loadpath=f'pickles/{self.ens}_bl.p')
             Z_bl = bl.avg_results[self.action][self.masses]
             Z_bl_err = bl.avg_errs[self.action][self.masses]

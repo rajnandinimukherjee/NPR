@@ -217,7 +217,7 @@ class bag_fits:
             ax[i,1].text(0.4,0.05,r'$p$-value:'+'{:.3f}'.format(pvalue),
                          transform=ax[i,1].transAxes)
 
-        title = r'$B_i^{ren}(a^2,am_\pi)=Z_{ij}(\mu=2$ GeV$)B_{j}^{lat}(a^2,am_\pi)$'
+        title = r'$B_i^{ren}(a^2,am_\pi)=Z_{ij}(\mu='+str(np.around(mu,2))+'$ GeV$)B_{j}^{lat}(a^2,am_\pi)$'
         plt.suptitle(title,y=0.90)
             
         filename = f'bag_fits.pdf'

@@ -4,12 +4,11 @@ from eta_c import *
 
 ens_list = list(eta_c_data.keys())
 
-argument = sys.argv[1] if len(sys.argv)>1 else ''
-if argument=='with_resids':
-    for ens in ens_list:
-        if ens in valence_ens:
-            e = etaCvalence(ens)
-            e.toDict(keys=list(e.mass_comb.keys())[:-1])
+argument = ''
+for ens in ens_list:
+    if ens in valence_ens:
+        e = etaCvalence(ens)
+        e.toDict(keys=list(e.mass_comb.keys())[1:-1])
 
 mu_chosen = 2.0
 
@@ -65,7 +64,7 @@ os.system("open "+filename)
 #====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
 def Z_m_ansatz(params, am, key='m', **kwargs):
     if key=='m':
-        return params[0] + (am**2)*params[1]+ params[2]*am*np.log(am)
+        return params[0] + (am**2)*params[1] + params[2]*am*np.log(am)
     else:
         return params[0]*am + (am**2)*params[1]
 
@@ -93,7 +92,10 @@ for key in ['m','mam_q']:
         ax[ens_idx].errorbar(x**1,y,yerr=e,fmt='o',capsize=4,
                              label='simulated $am_q$',
                              color=color_list[ens_idx])
-        ax[ens_idx].set_xlabel(r'$am_q$')#'$(am_q)^2$')
+        if ens in valence_ens:
+            ax[ens_idx].set_xlabel(r'$am_{eff}$')
+        else:
+            ax[ens_idx].set_xlabel(r'$am_q$')
 
         def diff(params):
             return y[1:] - Z_m_ansatz(params, x[1:], key=key)
@@ -105,7 +107,7 @@ for key in ['m','mam_q']:
         def LD(params, **akwargs):
             return L.dot(diff(params))
         
-        guess = [1,-1,1]
+        guess = [1,1,1]
         res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
         chi_sq = LD(res.x).dot(LD(res.x))
         dof = len(x)-len(guess)
@@ -161,18 +163,17 @@ for key in ['m','mam_q']:
                                         for k in range(N_boot)])
             ens_dict[ens]['m_C_ren_chiral_err'] = st_dev(m_C_chiral_btsp,
                                                   mean=y[0]*m_C*ainv)
-
+        if key=='mam_q':
             #===m_q renormalisation=====================
-            ens_dict[ens]['m_q_ren'] = Z_ms*m_q_stars*ainv 
-            m_q_ren_btsp = np.array([Z_m_btsp[k,:]*m_q_btsp[:,k]*ainv
-                                     for k in range(N_boot)])
+            ens_dict[ens]['m_q_ren'] = Z_ms*ainv 
+            m_q_ren_btsp = Z_m_btsp*ainv
             ens_dict[ens]['m_q_ren_err'] = np.array([st_dev(m_q_ren_btsp[:,i],
-                                       mean=(Z_ms*m_q_stars*ainv)[i])
-                                       for i in range(len(m_q_stars))])
-            ens_dict[ens]['m_q_ren_chiral'] = y[0]*x[0]*ainv
-            m_q_chiral_btsp = Z_m_chiral_btsp*x[0]*ainv
+                                       mean=(Z_ms*ainv)[i])
+                                       for i in range(len(Z_ms))])
+            ens_dict[ens]['m_q_ren_chiral'] = y[0]*ainv
+            m_q_chiral_btsp = Z_m_chiral_btsp*ainv
             ens_dict[ens]['m_q_ren_chiral_err'] = st_dev(m_q_chiral_btsp,
-                                                  mean=y[0]*x[0]*ainv)
+                                                  mean=y[0]*ainv)
 
 fig_nums = plt.get_fignums()
 figs = [plt.figure(n) for n in fig_nums]
