@@ -6,9 +6,9 @@ ens_list = list(eta_c_data.keys())
 
 argument = ''
 for ens in ens_list:
-    if ens in valence_ens:
+    if ens in ['C1','M1']:
         e = etaCvalence(ens)
-        e.toDict(keys=list(e.mass_comb.keys()))
+        e.toDict(keys=list(e.mass_comb.keys()),mres=False)
 
 mu_chosen = 2.0
 filename = f'plots/combined_massive_Z{argument}.pdf'
@@ -93,7 +93,7 @@ for key in ['m','mam_q']:
         plt.text(1.03, 0.2,r'$y=\alpha + \beta x + \gamma x^2$',
                 transform=plt.gca().transAxes,color='gray',rotation=90)
 
-    for ens in ['M1','C1','F1S']:
+    for ens in ['C1','M1','F1S']:
         ens_idx = ens_list.index(ens)
         ainv = ens_dict[ens]['mSMOM'].ainv
         eta_star_dict = {eta:interpolate_eta_c(ens,eta)
@@ -156,7 +156,7 @@ for key in ['m','mam_q']:
         Z_m_errs = [st_dev(Z_m_btsp[:,i],mean=Z_ms[i])
                 for i in range(len(Z_ms))]
 
-        ymin, ymax = ax[key_idx,1].get_ylim()
+        ymin, ymax = ax[key_idx,0].get_ylim()
         for eta in eta_stars:
             eta_idx = eta_stars.index(eta)
             val, err = eta_star_dict[eta]
