@@ -49,8 +49,7 @@ def interpolate_eta_c(ens,find_y,**kwargs):
     pred_x_err = ((pred_x_k[:]-pred_x).dot(pred_x_k[:]-pred_x)/100)**0.5
     return [pred_x.item(), pred_x_err]
 
-#valence_ens = ['C1','M1']
-valence_ens = ['C2']
+valence_ens = ['C1','M1']
 class etaCvalence:
     vpath = 'valence/'
     eta_C_gamma = ('Gamma5','Gamma5')
