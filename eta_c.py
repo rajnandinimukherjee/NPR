@@ -264,7 +264,7 @@ class etaCvalence:
 
     def createH5(self, **kwargs):
         self.datapath = path+self.vpath+self.ens
-        self.cf_list = sorted(next(os.walk(self.datapath))[1])[:-4]
+        self.cf_list = sorted(next(os.walk(self.datapath))[1])
 
         self.meson_combos = []
         test_path = self.datapath+f'/{self.cf_list[0]}/mesons/'
