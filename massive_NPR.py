@@ -8,12 +8,18 @@ argument = ''
 for ens in ens_list:
     if ens in valence_ens:
         e = etaCvalence(ens)
-        e.toDict(keys=list(e.mass_comb.keys())[1:-1])
+        e.toDict(keys=list(e.mass_comb.keys()))
 
 mu_chosen = 2.0
+filename = f'plots/combined_massive_Z{argument}.pdf'
+pdf = PdfPages(filename)
+fig, ax = plt.subplots(nrows=3,ncols=len(ens_list),
+                       sharex='col',sharey='row',
+                       squeeze=True,figsize=(12,15))
+plt.subplots_adjust(hspace=0,wspace=0)
+
 
 #====plotting eta_c data from f_D paper=========================================
-fig, ax = plt.subplots(1,len(ens_list),sharey=True)
 for ens in ens_list:
     ens_idx = ens_list.index(ens)
     x = np.array(list(eta_c_data[ens]['central'].keys()))
@@ -21,45 +27,41 @@ for ens in ens_list:
     yerr = np.array([eta_c_data[ens]['errors'][x_q] for x_q in x])
     ainv = params[ens]['ainv']
 
-    ax[ens_idx].errorbar(x, y*ainv, yerr=yerr*ainv,
-                fmt='o', capsize=4, mfc='None')   
-    xmin, xmax = ax[ens_idx].get_xlim()
-    ymin0, ymax0 = ax[0].get_ylim()
-    ymin, ymax = ax[ens_idx].get_ylim()
-    if ymin0>ymin:
-        ymin0 = ymin
+    ax[0,ens_idx].errorbar(x, y*ainv, yerr=yerr*ainv,
+                           fmt='o', capsize=4, mfc='None',
+                           color=color_list[ens_idx])   
+    ax[0,ens_idx].scatter(x[:-1], y[:-1]*ainv, 
+                          marker='x',lw=1,color='k',
+                          label='used in extrap')   
+    ymin0, ymax0 = ax[0,0].get_ylim()
+    ymin, ymax = ax[0,ens_idx].get_ylim()
+    xmin, xmax = ax[0,ens_idx].get_xlim()
     if ymax0<ymax:
         ymax0 = ymax
 
     for eta in eta_stars:
+        eta_idx = eta_stars.index(eta)
         m_q_star, m_q_star_err = interpolate_eta_c(ens,eta)
 
-        ax[ens_idx].axvspan(m_q_star-m_q_star_err,
+        ax[0,ens_idx].axvspan(m_q_star-m_q_star_err,
                             m_q_star+m_q_star_err,
                             color='k', alpha=0.1)
-        label = 'PDG' if eta==eta_PDG else str(eta)
-        ax[ens_idx].hlines(eta,xmin,m_q_star,label=label,color='k')
-        ax[ens_idx].vlines(m_q_star,ymin,eta,linestyle='dashed',color='k')
-    ax[ens_idx].legend()
-    ax[ens_idx].set_xlabel(r'$a_{'+ens+r'}m_q$')
-    ax[ens_idx].set_title(ens)
+        label = 'PDG' if eta==eta_PDG else str(eta)+' GeV'
+        ax[0,ens_idx].hlines(eta,-0.05,m_q_star,label=label,
+                             color=color_list[eta_idx+3])
+        ax[0,ens_idx].vlines(m_q_star,0,eta,linestyle='dashed',
+                           color=color_list[eta_idx+3])
+    ax[0,ens_idx].set_title(ens)
+    ax[0,ens_idx].legend(loc='lower right')
+    ax[0,ens_idx].set_xlim([-0.05,xmax])
 
-ax[0].set_ylabel(r'$M_{\eta_C}$ (GeV)')
-for ax_i in ax:
-    ax_i.set_ylim([ymin0,ymax0])
+ax[0,0].set_ylabel(r'$M_{\eta_C}$ (GeV)')
+for ax_i in ax[0,:]:
+    ax_i.set_ylim([0,ymax0])
 
-plt.text(1.03,0.3,'Using data from $f_D$ paper',
+plt.text(1.03,2.3,'F1S using data from $f_D$ paper',
          transform=plt.gca().transAxes,color='r',rotation=90)
                 
-filename = f'plots/eta_c{argument}.pdf'
-pp = PdfPages(filename)
-fig_nums = plt.get_fignums()
-figs = [plt.figure(n) for n in fig_nums]
-for fig in figs:
-    fig.savefig(pp, format='pdf')
-pp.close()
-plt.close('all')
-os.system("open "+filename)
 
 #====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
 def Z_m_ansatz(params, am, key='m', **kwargs):
@@ -68,11 +70,11 @@ def Z_m_ansatz(params, am, key='m', **kwargs):
     else:
         return params[0]*am + (am**2)*params[1] + params[2]
 
-filename = f'plots/combined_massive_Z{argument}.pdf'
-pdf = PdfPages(filename)
 
-ens_dict = {ens:{'bl_obj':bilinear_analysis(ens,
-                          loadpath=f'pickles/{ens}_bl_massive.p')}
+ens_dict = {ens:{'mSMOM':bilinear_analysis(ens,
+                 loadpath=f'pickles/{ens}_bl_massive_mSMOM.p'),
+                 'SMOM':bilinear_analysis(ens,
+                 loadpath=f'pickles/{ens}_bl_massive_SMOM.p')}
             for ens in ens_list}
 
 #====fit choices=======
@@ -81,31 +83,46 @@ ens_dict['M1']['fit_idx'] = [0,1,2,3,4]
 ens_dict['F1S']['fit_idx'] = [0,1,2,3,4]
 
 for key in ['m','mam_q']:
-    fig, ax = plt.subplots(1,len(ens_list),figsize=(15,6))
-    plt.suptitle('$Z_'+key+'(\mu=${:.3f} GeV)'.format(
-                 mu_chosen))
+    key_idx = ['m','mam_q'].index(key)+1
+    ax[key_idx,0].set_ylabel('$Z_'+key+'(\mu=${:.3f} GeV)'.format(
+                         mu_chosen))
+    if key=='m':
+        plt.text(1.03, 1.2,r'$y=\alpha/x + \beta + \gamma x$',
+                transform=plt.gca().transAxes,color='gray',rotation=90)
+    else:
+        plt.text(1.03, 0.2,r'$y=\alpha + \beta x + \gamma x^2$',
+                transform=plt.gca().transAxes,color='gray',rotation=90)
 
-    for ens in ens_list:
+    for ens in ['M1','C1','F1S']:
         ens_idx = ens_list.index(ens)
-        ainv = ens_dict[ens]['bl_obj'].ainv
+        ainv = ens_dict[ens]['mSMOM'].ainv
         eta_star_dict = {eta:interpolate_eta_c(ens,eta)
                          for eta in eta_stars}
-        x, y, e = ens_dict[ens]['bl_obj'].massive_Z_plots(key=key,
+        x, y, e = ens_dict[ens]['mSMOM'].massive_Z_plots(key=key,
                                           mu=mu_chosen, passinfo=True)
 
-        ax[ens_idx].set_title(ens)
-        ax[ens_idx].errorbar(x,y,yerr=e,fmt='o',capsize=4,
-                             label='simulated $am_q$',
+        x_, y_, e_ = ens_dict[ens]['SMOM'].massive_Z_plots(key=key,
+                                          mu=mu_chosen, passinfo=True)
+
+        ax[key_idx,ens_idx].errorbar(x,y,yerr=e,fmt='o',capsize=4,
+                             label='mSMOM',
                              color=color_list[ens_idx],
                              zorder=1)
+        adjusted_x = (x[1]+x[0])/2.0
+        ax[key_idx,ens_idx].errorbar(adjusted_x,y_[[0]],yerr=e_[[0]],
+                             fmt='o',capsize=4,
+                             label='SMOM',
+                             color='k',
+                             zorder=0)
         if ens in valence_ens:
-            ax[ens_idx].set_xlabel(r'$am_{eff}$')
+            ax[2,ens_idx].set_xlabel(r'$a_{'+ens+r'}m_{eff}$')
         else:
-            ax[ens_idx].set_xlabel(r'$am_q$')
+            ax[2,ens_idx].set_xlabel(r'$a_{'+ens+r'}m_q$')
 
         fit_idx = ens_dict[ens]['fit_idx']
-        ax[ens_idx].scatter(x[fit_idx],y[fit_idx],
+        ax[key_idx,ens_idx].scatter(x[fit_idx],y[fit_idx],
                             color='k',marker='x',lw=1,
+                            label='included in fit',
                             zorder=2)
         def diff(params):
             return y[fit_idx] - Z_m_ansatz(params, x[fit_idx], key=key)
@@ -123,9 +140,9 @@ for key in ['m','mam_q']:
         dof = len(fit_idx)-len(guess)
         pvalue = gammaincc(dof/2,chi_sq/2)
 
-        xmin, xmax = ax[ens_idx].get_xlim()
+        xmin, xmax = ax[key_idx,ens_idx].get_xlim()
         x_grain = np.linspace(x[0],xmax,500)
-        ax[ens_idx].plot(x_grain,Z_m_ansatz(res.x,x_grain,key=key),#**0.5),
+        ax[key_idx,ens_idx].plot(x_grain,Z_m_ansatz(res.x,x_grain,key=key),#**0.5),
                     label='fit $p$-value:{:.2f}'.format(pvalue),
                     color='tab:gray',zorder=0)
 
@@ -139,22 +156,22 @@ for key in ['m','mam_q']:
         Z_m_errs = [st_dev(Z_m_btsp[:,i],mean=Z_ms[i])
                 for i in range(len(Z_ms))]
 
-        ymin, ymax = ax[ens_idx].get_ylim()
+        ymin, ymax = ax[key_idx,1].get_ylim()
         for eta in eta_stars:
             eta_idx = eta_stars.index(eta)
             val, err = eta_star_dict[eta]
             eta_label = 'PDG' if eta==eta_PDG else str(eta)+' GeV'
-            ax[ens_idx].vlines(val**1,ymin,ymax,linestyle='dashed',
-                       color=color_list[eta_idx+3],
-                       label='$am_q^*(M_{\eta_c}^*=$'+eta_label+'$)$')
-            ax[ens_idx].axvspan((val-err)**1,(val+err)**1,
+            ax[key_idx,ens_idx].vlines(val**1,0,ymax,linestyle='dashed',
+                       color=color_list[eta_idx+3])
+            ax[key_idx,ens_idx].axvspan((val-err)**1,(val+err)**1,
                                 color=color_list[eta_idx+3],
                                 alpha=0.1,zorder=3)
-            ax[ens_idx].errorbar(val**1,Z_ms[eta_idx],
+            ax[key_idx,ens_idx].errorbar(val**1,Z_ms[eta_idx],
                                  yerr=Z_m_errs[eta_idx],
                                  color=color_list[eta_idx+3],
                                  fmt='o',capsize=4,zorder=4)
-        ax[ens_idx].legend()
+        ax[key_idx,ens_idx].legend()
+        ax[key_idx,ens_idx].set_ylim([0,ymax])
 
         ens_dict[ens][f'Z_{key}'] = Z_ms
         ens_dict[ens][f'Z_{key}_err'] = Z_m_errs
@@ -211,7 +228,7 @@ for key in ['m_C','m_q']:
         ens_idx = ens_list.index(ens)
         y = ens_dict[ens][f'{key}_ren']
         e = ens_dict[ens][f'{key}_ren_err']
-        x = [ens_dict[ens]['bl_obj'].asq]*len(y)
+        x = [ens_dict[ens]['mSMOM'].asq]*len(y)
         plt.errorbar(x,y,yerr=e,fmt='o',capsize=4,
                      color=color_list[ens_idx],label=ens)
         #===massless scheme renorm====================
@@ -220,7 +237,7 @@ for key in ['m_C','m_q']:
         #             fmt='D',capsize=4,color=color_list[ens_idx])
                      
 
-    x = np.array([v['bl_obj'].asq for k,v in ens_dict.items()])
+    x = np.array([v['mSMOM'].asq for k,v in ens_dict.items()])
     for eta in eta_stars:
         eta_idx = eta_stars.index(eta)
         y = np.array([v[f'{key}_ren'][eta_idx] for k,v in ens_dict.items()])

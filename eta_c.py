@@ -32,7 +32,7 @@ eta_PDG_err = 0.5/1000
 eta_stars = [1.2,2.4,2.6,eta_PDG]
 
 def interpolate_eta_c(ens,find_y,**kwargs):
-    x = np.array(list(eta_c_data[ens]['central'].keys()))
+    x = np.array(list(eta_c_data[ens]['central'].keys()))[:-1]
     y = np.array([eta_c_data[ens]['central'][x_q] for x_q in x])
     yerr = np.array([eta_c_data[ens]['errors'][x_q] for x_q in x])
     ainv = params[ens]['ainv']
