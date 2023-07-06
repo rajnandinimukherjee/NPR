@@ -79,7 +79,8 @@ class bilinear:
         gamma_Z = {c:(bl_gamma_F[c]/projected[c]).real for c in bilinear.currents}
         return projected, gamma_Z 
 
-    def qslash_Z(self, operators, q_vec, Z_q, S_inv, massless=False, **kwargs):
+    def qslash_Z(self, operators, q_vec, Z_q, S_inv, 
+                 renorm='mSMOM', printval=False, **kwargs):
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
         q_sq = np.linalg.norm(q_vec)**2
@@ -95,19 +96,20 @@ class bilinear:
         P = np.trace(operators['P'][0]@Gamma['5']@qslash)
         S = np.trace(S_inv)
 
-        if massless:
+        if renorm=='SMOM':
             Z_A = 12*q_sq*Z_q/A2
         else:   
             Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
         Z_m = (S+(Z_A*A1*1j)/2)/(12*m_q*Z_q)
         Z_mm_q = (S+(Z_A*A1*1j)/2)/(12*Z_q)
-        if 'printval' in kwargs:
+
+        if printval:
             print(f'mu={q_sq**0.5*self.a_inv}\nZ_q:{Z_q}\nS:{S}\nA1:{A1}'+
                 f'\nZ_qm:{Z_q*m_q}\n[]:{(S+(Z_A*A1*1j)/2)}\nZ_m:{Z_m}\nZ_m*m_q:{Z_mm_q}')
                 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P
-        if massless:
+        if renorm=='SMOM':
             Z_S = 12*Z_q/s_term
         else:
             Z_S = (12*q_sq*Z_q-mass_term)/(q_sq*s_term)
@@ -140,7 +142,7 @@ class bilinear:
             Z_q = self.prop_in.Z_q_avg_qslash
             S_inv = self.prop_in.inv_avg_propagator
             self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv,
-                                   printval=True, **kwargs) 
+                                   printval=False, **kwargs) 
         #==bootstrap===
         self.Z_btsp = {c:np.zeros(self.N_boot) for c in self.Z.keys()}
         self.btsp_projected = {c:np.zeros(self.N_boot,dtype=object)

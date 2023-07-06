@@ -80,16 +80,18 @@ class bilinear_analysis:
                     open(filename,'wb'))
         print('Saved bilinear NPR results to '+filename)
 
-    def NPR_all(self, massive=False, save=True, **kwargs):
+    def NPR_all(self, massive=False, save=True, renorm='mSMOM', **kwargs):
         addl_txt = ''
         r_actions = range(len(self.actions))
         for a1, a2 in itertools.product(r_actions,r_actions):
             self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
         if massive:
-            self.NPR((self.sea_mass,self.sea_mass),massive=True,massless=True)
+            self.NPR((self.sea_mass,self.sea_mass),
+                     massive=True,renorm=renorm)
             for mass in self.non_sea_masses:
-                self.NPR((mass, mass),massive=True)
-            addl_txt = '_massive'
+                self.NPR((mass, mass),massive=True,
+                         renorm=renorm)
+            addl_txt = '_massive_'+renorm
 
         if save:
             self.save_NPR(addl_txt=addl_txt)
