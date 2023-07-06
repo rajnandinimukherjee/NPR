@@ -49,7 +49,8 @@ def interpolate_eta_c(ens,find_y,**kwargs):
     pred_x_err = ((pred_x_k[:]-pred_x).dot(pred_x_k[:]-pred_x)/100)**0.5
     return [pred_x.item(), pred_x_err]
 
-valence_ens = ['C1','M1']
+#valence_ens = ['C1','M1']
+valence_ens = ['C2']
 class etaCvalence:
     vpath = 'valence/'
     eta_C_gamma = ('Gamma5','Gamma5')
@@ -124,12 +125,12 @@ class etaCvalence:
                                        'COV':cov_ratio}
             self.data[key]['mres'] = ratio[self.T_half]
 
-    def toDict(self, keys='all'):
+    def toDict(self, mres=True, keys='all'):
         ens_dict = {'central':{}, 'errors':{}} 
         keylist = keys if keys!='all' else self.mass_comb.keys()
         
         for key in keylist:
-            q_mass = self.mass_comb[key]+self.data[key]['mres']
+            q_mass = self.mass_comb[key]+mres*self.data[key]['mres']
             ens_dict['central'][q_mass] = self.data[key]['mccbar']
             ens_dict['errors'][q_mass] = self.data[key]['mccbar_err']
 
