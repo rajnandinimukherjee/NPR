@@ -64,9 +64,9 @@ os.system("open "+filename)
 #====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
 def Z_m_ansatz(params, am, key='m', **kwargs):
     if key=='m':
-        return params[0] + (am**2)*params[1] + params[2]*am*np.log(am)
+        return params[0] + params[1]*am + params[2]/am
     else:
-        return params[0]*am + (am**2)*params[1]
+        return params[0]*am + (am**2)*params[1] + params[2]
 
 filename = f'plots/combined_massive_Z{argument}.pdf'
 pdf = PdfPages(filename)
@@ -75,10 +75,15 @@ ens_dict = {ens:{'bl_obj':bilinear_analysis(ens,
                           loadpath=f'pickles/{ens}_bl_massive.p')}
             for ens in ens_list}
 
+#====fit choices=======
+ens_dict['C1']['fit_idx'] = [0,1,2,3]
+ens_dict['M1']['fit_idx'] = [0,1,2,3,4]
+ens_dict['F1S']['fit_idx'] = [0,1,2,3,4]
+
 for key in ['m','mam_q']:
     fig, ax = plt.subplots(1,len(ens_list),figsize=(15,6))
     plt.suptitle('$Z_'+key+'(\mu=${:.3f} GeV)'.format(
-                 mu_chosen))#+'\n$ Z_m(am_q)=k_1+k_2\,am_q\,\log(am_q)+k_3(am_q)^2$')
+                 mu_chosen))
 
     for ens in ens_list:
         ens_idx = ens_list.index(ens)
@@ -89,18 +94,23 @@ for key in ['m','mam_q']:
                                           mu=mu_chosen, passinfo=True)
 
         ax[ens_idx].set_title(ens)
-        ax[ens_idx].errorbar(x**1,y,yerr=e,fmt='o',capsize=4,
+        ax[ens_idx].errorbar(x,y,yerr=e,fmt='o',capsize=4,
                              label='simulated $am_q$',
-                             color=color_list[ens_idx])
+                             color=color_list[ens_idx],
+                             zorder=1)
         if ens in valence_ens:
             ax[ens_idx].set_xlabel(r'$am_{eff}$')
         else:
             ax[ens_idx].set_xlabel(r'$am_q$')
 
+        fit_idx = ens_dict[ens]['fit_idx']
+        ax[ens_idx].scatter(x[fit_idx],y[fit_idx],
+                            color='k',marker='x',lw=1,
+                            zorder=2)
         def diff(params):
-            return y[1:] - Z_m_ansatz(params, x[1:], key=key)
+            return y[fit_idx] - Z_m_ansatz(params, x[fit_idx], key=key)
         
-        cov = np.diag(e[1:]**2)
+        cov = np.diag(e[fit_idx]**2)
         L_inv = np.linalg.cholesky(cov)
         L = np.linalg.inv(L_inv)
 
@@ -110,14 +120,14 @@ for key in ['m','mam_q']:
         guess = [1,1,1]
         res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
         chi_sq = LD(res.x).dot(LD(res.x))
-        dof = len(x)-len(guess)
+        dof = len(fit_idx)-len(guess)
         pvalue = gammaincc(dof/2,chi_sq/2)
 
         xmin, xmax = ax[ens_idx].get_xlim()
-        x_grain = np.linspace(x[1],xmax,50)
-        ax[ens_idx].plot(x_grain,Z_m_ansatz(res.x,x_grain**1,key=key),#**0.5),
+        x_grain = np.linspace(x[0],xmax,500)
+        ax[ens_idx].plot(x_grain,Z_m_ansatz(res.x,x_grain,key=key),#**0.5),
                     label='fit $p$-value:{:.2f}'.format(pvalue),
-                    color='tab:gray')
+                    color='tab:gray',zorder=0)
 
         m_q_stars = np.array([v[0] for k,v in eta_star_dict.items()])
         Z_ms = Z_m_ansatz(res.x,m_q_stars,key=key)
@@ -138,9 +148,12 @@ for key in ['m','mam_q']:
                        color=color_list[eta_idx+3],
                        label='$am_q^*(M_{\eta_c}^*=$'+eta_label+'$)$')
             ax[ens_idx].axvspan((val-err)**1,(val+err)**1,
-                                color=color_list[eta_idx+3],alpha=0.1)
-            ax[ens_idx].errorbar(val**1,Z_ms[eta_idx],yerr=Z_m_errs[eta_idx],
-                         color=color_list[eta_idx+3],fmt='o',capsize=4)
+                                color=color_list[eta_idx+3],
+                                alpha=0.1,zorder=3)
+            ax[ens_idx].errorbar(val**1,Z_ms[eta_idx],
+                                 yerr=Z_m_errs[eta_idx],
+                                 color=color_list[eta_idx+3],
+                                 fmt='o',capsize=4,zorder=4)
         ax[ens_idx].legend()
 
         ens_dict[ens][f'Z_{key}'] = Z_ms
