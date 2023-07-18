@@ -52,6 +52,7 @@ def interpolate_eta_c(ens,find_y,**kwargs):
 valence_ens = ['C1','M1']
 class etaCvalence:
     vpath = 'valence/'
+    eta_C_file = h5py.File('eta_C.h5','a')
     eta_C_gamma = ('Gamma5','Gamma5')
     N_boot = 200
     def __init__(self, ens, create=False, mres=True):
@@ -62,8 +63,6 @@ class etaCvalence:
         self.mass_comb.update({(f'c{m-1}',f'c{m-1}'):self.NPR_masses[m]
                                 for m in range(1,self.N_mass)})
         self.data = {key:{} for key in self.mass_comb.keys()}
-        self.folder = 'mres' if mres else 'no_mres'
-        self.eta_C_file = h5py.File(f'{self.folder}/eta_C.h5','a')
 
         if ens not in self.eta_C_file or create:
             self.createH5()

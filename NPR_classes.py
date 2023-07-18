@@ -4,7 +4,7 @@ from basics import *
 class bilinear_analysis:
     keys = ['S','P', 'V', 'A', 'T', 'm']
     N_boot = 200
-    def __init__(self, ensemble, loadpath=None, **kwargs):
+    def __init__(self, ensemble, loadpath=None, mres=True, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
@@ -18,6 +18,7 @@ class bilinear_analysis:
         self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
                         i in range(gauge_count)]
         self.all_masses = [self.sea_mass]+self.non_sea_masses
+        self.mres = mres
 
         if loadpath==None:
             self.momenta, self.avg_results, self.avg_errs = {}, {}, {}
@@ -61,7 +62,7 @@ class bilinear_analysis:
                     condition4 = prop1.momentum_squared==scheme*np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
-                        bl = bilinear(self.ens, prop1, prop2)
+                        bl = bilinear(self.ens, prop1, prop2, mres=self.mres)
                         bl.NPR(massive=massive, **kwargs)
                         mom = bl.q*bl.a_inv
                         if mom not in results.keys():
@@ -75,7 +76,8 @@ class bilinear_analysis:
                             for mom in self.momenta[action][(m1,m2)]])
     
     def save_NPR(self, addl_txt='', **kwargs):
-        filename = 'pickles/'+self.ens+f'_bl{addl_txt}.p'
+        folder = 'mres' if self.mres else 'no_mres'
+        filename = f'{folder}/'+self.ens+f'_bl{addl_txt}.p'
         pickle.dump([self.momenta, self.avg_results, self.avg_errs],
                     open(filename,'wb'))
         print('Saved bilinear NPR results to '+filename)

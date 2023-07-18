@@ -19,7 +19,8 @@ class bilinear:
     obj = 'bilinears'
     prefix = 'bi_'
     N_boot = N_boot
-    def __init__(self, ensemble, prop1, prop2, scheme='gamma', **kwargs):
+    def __init__(self, ensemble, prop1, prop2, scheme='gamma',
+                 mres=True, **kwargs):
 
         data = path+ensemble
         self.a_inv = params[ensemble]['ainv'] 
@@ -65,7 +66,7 @@ class bilinear:
 
         self.m_q = float(self.prop_in.info['am'])
         self.mres = 0
-        if ensemble in valence_ens:
+        if ensemble in valence_ens and mres:
             ens = etaCvalence(ensemble)
             mres_key = next((key for key, val in ens.mass_comb.items() if val==self.m_q), None) 
             self.mres = ens.data[mres_key]['mres']
