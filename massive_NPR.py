@@ -4,10 +4,10 @@ from eta_c import *
 
 ens_list = list(eta_c_data.keys())
 
-argument = ''
+argument = ''#int(sys.argv[1])
 for ens in ens_list:
     if ens in valence_ens:
-        e = etaCvalence(ens)
+        e = etaCvalence(ens, mres=False)
         e.toDict(keys=list(e.mass_comb.keys()))
 
 mu_chosen = 2.0
