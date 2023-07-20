@@ -193,11 +193,11 @@ class bilinear_analysis:
 
     def massive_Z_plots(self, mu=2, action=(0,0), key='m', passinfo=False, **kwargs):
         x = np.array([float(m) for m in self.all_masses])
-        self.mres = np.zeros(len(x))
-        if self.ens in valence_ens:
+        self.mres_list = np.zeros(len(x))
+        if self.ens in valence_ens and self.mres:
             ens = etaCvalence(self.ens)
-            self.mres = np.array([ens.data[k]['mres'] for k in ens.data])
-        x += self.mres
+            self.mres_list = np.array([ens.data[k]['mres'] for k in ens.data])
+        x += self.mres_list
 
         y = np.array([self.extrap_Z(mu=mu, masses=(m,m),
                       action=action)[0][key]
