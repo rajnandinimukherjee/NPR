@@ -2,10 +2,11 @@ from NPR_classes import *
 from basics import *
 from eta_c import *
 
-mres = True
+mres = False
 folder = 'mres' if mres else 'no_mres'
 
 ens_list = list(eta_c_data.keys())
+valence_ens = []
 for ens in ens_list:
     if ens in valence_ens:
         e = etaCvalence(ens)
@@ -182,7 +183,7 @@ for key in ['mam_q', 'm']:
         axes[1,idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
 
 axes[0,0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
-axes[1,0].set_ylabel(r'$Z_m\cdot am$', fontsize=18)
+axes[1,0].set_ylabel(r'$Z_m\cdot m$', fontsize=18)
 
 #===STEP 3 ================================================================
 
