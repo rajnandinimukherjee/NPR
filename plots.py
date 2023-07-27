@@ -2,11 +2,10 @@ from NPR_classes import *
 from basics import *
 from eta_c import *
 
-mres = False
+mres = True
 folder = 'mres' if mres else 'no_mres'
 
 ens_list = list(eta_c_data.keys())
-valence_ens = []
 for ens in ens_list:
     if ens in valence_ens:
         e = etaCvalence(ens)
@@ -290,7 +289,8 @@ plot_dict['M1']['fit_idx'] = [0,1,2,3,4]
 plot_dict['F1S']['fit_idx'] = [0,1,2,3,4]
 def Zm_ansatz(params, am, key='m', **kwargs):
     if key=='m':
-        return params[0] + params[1]*am + params[2]/am
+        #return params[0] + params[1]*am + params[2]/am
+        return params[0] + params[1]*(am**2) + params[2]*np.log(am)*am
     else:
         return params[0]*am + (am**2)*params[1] + params[2]
 
@@ -573,7 +573,7 @@ plt.ylim(ren_yaxes)
 #===STEP4 plot 2: m_C continuum extrap for 3 eta_star=============
 plt.figure(figsize=(h,w))
 plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
-for eta_C_star_idx in range(len(eta_stars)):
+for eta_C_star_idx in range(1,len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'\
@@ -605,7 +605,7 @@ plt.xlim(ren_xaxes)
 #===STEP4 plot 4: mbar continuum extrap for eta_stars=============
 plt.figure(figsize=(h,w))
 plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
-for eta_C_star_idx in range(len(eta_stars)):
+for eta_C_star_idx in range(1,len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'\

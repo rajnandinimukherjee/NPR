@@ -8,6 +8,7 @@ mres=False
 argument = '_with_mres' if mres==True else '_no_mres'
 folder = 'mres' if mres==True else 'no_mres'
 
+valence_ens = []
 for ens in ens_list:
     if ens in valence_ens:
         e = etaCvalence(ens)
@@ -69,7 +70,8 @@ plt.text(1.03,2.3,'F1S using data from $f_D$ paper',
 #====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
 def Z_m_ansatz(params, am, key='m', **kwargs):
     if key=='m':
-        return params[0] + params[1]*am + params[2]/am
+        #return params[0] + params[1]*am + params[2]/am
+        return params[0] + params[1]*(am**2) + params[2]*np.log(am)*am
     else:
         return params[0]*am + (am**2)*params[1] + params[2]
 
