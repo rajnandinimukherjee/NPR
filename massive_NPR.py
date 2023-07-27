@@ -4,11 +4,14 @@ from eta_c import *
 
 ens_list = list(eta_c_data.keys())
 
-argument = ''#int(sys.argv[1])
+mres=False
+argument = '_with_mres' if mres==True else '_no_mres'
+folder = 'mres' if mres==True else 'no_mres'
+
 for ens in ens_list:
     if ens in valence_ens:
-        e = etaCvalence(ens, mres=False)
-        e.toDict(keys=list(e.mass_comb.keys()))
+        e = etaCvalence(ens)
+        e.toDict(keys=list(e.mass_comb.keys()),mres=mres)
 
 mu_chosen = 2.0
 filename = f'plots/combined_massive_Z{argument}.pdf'
@@ -71,10 +74,10 @@ def Z_m_ansatz(params, am, key='m', **kwargs):
         return params[0]*am + (am**2)*params[1] + params[2]
 
 
-ens_dict = {ens:{'mSMOM':bilinear_analysis(ens,
-                 loadpath=f'pickles/{ens}_bl_massive_mSMOM.p'),
-                 'SMOM':bilinear_analysis(ens,
-                 loadpath=f'pickles/{ens}_bl_massive_SMOM.p')}
+ens_dict = {ens:{'mSMOM':bilinear_analysis(ens,mres=mres,
+                 loadpath=f'{folder}/{ens}_bl_massive_mSMOM.p'),
+                 'SMOM':bilinear_analysis(ens,mres=mres,
+                 loadpath=f'{folder}/{ens}_bl_massive_SMOM.p')}
             for ens in ens_list}
 
 #====fit choices=======

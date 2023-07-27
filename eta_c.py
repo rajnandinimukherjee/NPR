@@ -55,7 +55,7 @@ class etaCvalence:
     eta_C_file = h5py.File('eta_C.h5','a')
     eta_C_gamma = ('Gamma5','Gamma5')
     N_boot = 200
-    def __init__(self, ens, create=False, mres=True):
+    def __init__(self, ens, create=False, **kwargs):
         self.ens = ens
         self.NPR_masses = params[self.ens]['masses']
         self.N_mass = len(self.NPR_masses)
