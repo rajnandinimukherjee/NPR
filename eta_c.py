@@ -268,11 +268,16 @@ class etaCvalence:
         self.cf_list = sorted(next(os.walk(self.datapath))[1])
         for cf in self.cf_list.copy():
             try:
-                key0, key1 = list(self.mass_comb.keys())[0]
-                filepath = self.datapath+'/'+str(cf)+'/mesons/'
-                filepath = glob.glob(filepath+f'{key0}_R*{key1}_R*')[0]+'/'
+                for keys in list(self.mass_comb.keys()):
+                    key0, key1 = keys
+                    filepath = self.datapath+'/'+str(cf)+'/mesons/'
+                    filepath = glob.glob(filepath+f'{key0}_R*{key1}_R*')[0]+'/'
+
+                    filepath = self.datapath+'/'+str(cf)+'/conserved/'
+                    filepath = glob.glob(filepath+f'*{key0}_R*t*')[0]+'/'
             except IndexError:
                 self.cf_list.remove(cf)
+                print(f'removed {cf}')
 
         self.N_cf = len(self.cf_list)
     
@@ -299,6 +304,7 @@ class etaCvalence:
                     suffix = 'mesons/' if obj=='corr' else 'conserved/'
                     filepath = self.datapath+f'/{self.cf_list[c]}/'+suffix
                     if obj=='corr':
+                        print(key, obj, filepath)
                         filepath = glob.glob(filepath+f'{key[0]}_R*{key[1]}_R*')[0]+'/'
                     filenames = glob.glob(filepath+f'*{key[0]}_R*t*')
                     T_src = len(filenames)
