@@ -90,7 +90,7 @@ class etaCvalence:
                               [:,:self.T_half]
                 folded_avg_data = np.mean(folded_data,axis=0)
                 if data.shape[0]==1:
-                    folded_err = np.array([folded_avg_data[t]*0.01
+                    folded_err = np.array([folded_avg_data[t]*0.0001
                                           for t in range(self.T_half)])
                     btsp_data = np.array([np.random.normal(folded_avg_data[t],
                                          folded_err[t],self.N_boot)
