@@ -68,8 +68,14 @@ class bilinear:
         self.mres = 0
         if ensemble in valence_ens and mres:
             ens = etaCvalence(ensemble)
-            mres_key = next((key for key, val in ens.mass_comb.items() if val==self.m_q), None) 
-            self.mres = ens.data[mres_key]['mres']
+            try:
+                sig_figs = len(str(self.m_q))-2
+                mres_key = next((key for key, val in ens.mass_comb.items() if round(val,sig_figs)==self.m_q), None) 
+                self.mres = ens.data[mres_key]['mres']
+            except KeyError:
+                print(f'no mres info for am_q={self.m_q}')
+                self.mres = 0
+
         self.m_q += self.mres
 
     def gamma_Z(self, operators, **kwargs):

@@ -49,7 +49,7 @@ def interpolate_eta_c(ens,find_y,**kwargs):
     pred_x_err = ((pred_x_k[:]-pred_x).dot(pred_x_k[:]-pred_x)/100)**0.5
     return [pred_x.item(), pred_x_err]
 
-valence_ens = ['C1','M1']
+valence_ens = ['C1','M1','F1S']
 class etaCvalence:
     vpath = 'valence/'
     eta_C_file = h5py.File('eta_C.h5','a')
@@ -89,10 +89,17 @@ class etaCvalence:
                 folded_data = 0.5*(data[:,1:] + data[:,::-1][:,:-1])\
                               [:,:self.T_half]
                 folded_avg_data = np.mean(folded_data,axis=0)
-                folded_err = np.array([st_dev(folded_data[:,t])
-                                       for t in range(self.T_half)])
+                if data.shape[0]==1:
+                    folded_err = np.array([folded_avg_data[t]*0.01
+                                          for t in range(self.T_half)])
+                    btsp_data = np.array([np.random.normal(folded_avg_data[t],
+                                         folded_err[t],self.N_boot)
+                                         for t in range(self.T_half)]).T
+                else:
+                    folded_err = np.array([st_dev(folded_data[:,t])
+                                           for t in range(self.T_half)])
+                    btsp_data = bootstrap(folded_data, K=self.N_boot).real
                 
-                btsp_data = bootstrap(folded_data, K=self.N_boot).real
                 cov = COV(btsp_data, center=folded_avg_data)
 
                 self.data[key][obj].update({'avg':avg_data,
@@ -259,33 +266,21 @@ class etaCvalence:
     def createH5(self, **kwargs):
         self.datapath = path+self.vpath+self.ens
         self.cf_list = sorted(next(os.walk(self.datapath))[1])
-
-        self.meson_combos = []
-        test_path = self.datapath+f'/{self.cf_list[0]}/mesons/'
-        for foldername in next(os.walk(test_path))[1]:
-            str_m1, str_m2 = foldername.rsplit('__')
-            self.meson_combos.append((str_m1.rsplit('_R')[0], str_m2.rsplit('_R')[0]))
-        self.N_mc = len(self.meson_combos)
-
-        testfile_path = glob.glob(test_path+'c0*c0*')[0]+'/'
-        self.T_src = len(os.listdir(testfile_path))
-
-        testfile_path = glob.glob(testfile_path+'*c0*t00*')[0]
-        self.testfile = h5py.File(testfile_path,'r')['meson']
-        self.T = len(np.array(self.testfile['meson_0']['corr'])['re'])
-        T_src_list = ['%02d'%t for t in np.arange(0,self.T,self.T/self.T_src)]
-
         for cf in self.cf_list.copy():
             try:
                 key0, key1 = list(self.mass_comb.keys())[0]
                 filepath = self.datapath+'/'+str(cf)+'/mesons/'
                 filepath = glob.glob(filepath+f'{key0}_R*{key1}_R*')[0]+'/'
-                for t__ in T_src_list:
-                    filename = glob.glob(filepath+f'*{key0}_R*{t__}*')[0]
             except IndexError:
                 self.cf_list.remove(cf)
 
         self.N_cf = len(self.cf_list)
+    
+        test_path = self.datapath+f'/{self.cf_list[0]}/mesons/'
+        testfile_path = glob.glob(test_path+'c0*c0*')[0]+'/'
+        testfile_path = glob.glob(testfile_path+'*c0*t00*')[0]
+        self.testfile = h5py.File(testfile_path,'r')['meson']
+        self.T = len(np.array(self.testfile['meson_0']['corr'])['re'])
 
         self.gammas = []
         for mes_idx in range(16**2):
@@ -305,15 +300,17 @@ class etaCvalence:
                     filepath = self.datapath+f'/{self.cf_list[c]}/'+suffix
                     if obj=='corr':
                         filepath = glob.glob(filepath+f'{key[0]}_R*{key[1]}_R*')[0]+'/'
-                    config_data = np.zeros(shape=(self.T_src, self.T))
-                    for t in range(self.T_src):
-                        filename = glob.glob(filepath+f'*{key[0]}_R*t{T_src_list[t]}*')[0]
+                    filenames = glob.glob(filepath+f'*{key[0]}_R*t*')
+                    T_src = len(filenames)
+                    config_data = np.zeros(shape=(T_src, self.T))
+                    for t in range(T_src):
+                        filename = filenames[t]
                         datafile = h5py.File(filename,'r')['meson'][f'meson_{self.eta_C_idx}']\
                                    if obj=='corr' else h5py.File(filename,'r')['wardIdentity']
                         data = np.array(datafile[obj])['re']
-                        config_data[t,:] = np.roll(data, -int(self.T/self.T_src)*t)
+                        t_val = int(filename.rsplit('/')[-1].rsplit('_t')[1].rsplit('_')[0])
+                        config_data[t,:] = np.roll(data, -t_val)
                     self.data[key][obj]['data'][c,:] = np.mean(config_data,axis=0)
-
 
         if self.ens in self.eta_C_file:
             del self.eta_C_file[self.ens]
@@ -323,4 +320,5 @@ class etaCvalence:
             for obj in ['corr','PJ5q']:
                 key_group.create_dataset(obj,data=self.data[key][obj]['data'])
             key_group.attrs['mass'] = self.mass_comb[key]
+            
         print(f'Added correlator data to {self.ens} group in eta_C.h5 file')
