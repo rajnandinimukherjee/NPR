@@ -89,15 +89,31 @@ class bilinear_analysis:
             self.NPR((self.sea_mass, self.sea_mass),
                      action=(a1,a2), renorm=renorm)
         if massive:
-            self.NPR((self.sea_mass,self.sea_mass),
-                     massive=True,renorm=renorm)
+            self.NPR((self.sea_mass,self.sea_mass), massive=massive,renorm=renorm)
             for mass in self.non_sea_masses:
-                self.NPR((mass, mass),massive=True,
-                         renorm=renorm)
+                self.NPR((mass, mass),massive=massive,renorm=renorm)
             addl_txt = '_massive_'+renorm
 
         if save:
             self.save_NPR(addl_txt=addl_txt)
+
+    def merge_mixed(self, **kwargs):
+        mass_combinations = self.avg_results[(0,1)].keys()
+
+        for masses in list(mass_combinations):
+            momenta = self.momenta[(0,1)][masses]
+            res1 = self.avg_results[(0,1)][masses]
+            res2 = self.avg_results[(1,0)][masses]
+            self.avg_results[(0,1)][masses] = [{c:(res1[c]+res2[c])/2.0 for c in res1[m].keys()}
+                                               for m in range(len(momenta))]
+
+            err1 = self.avg_errs[(0,1)][masses]
+            err2 = self.avg_errs[(1,0)][masses]
+            self.avg_errs[(0,1)][masses] = [{c:err1[c]+err2[c] for c in err1.keys()}
+                                            for m in range(len(momenta))]
+
+        self.avg_results.pop((1,0))
+        self.avg_errs.pop((1,0))
 
     def extrap_Z(self, mu, masses, action=(0,0), **kwargs):
         Z = {}
@@ -171,6 +187,7 @@ class bilinear_analysis:
     def plot_actionwise(self, mass, save=False, **kwargs):
         fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12,6))
         action_combinations = self.momenta.keys()
+        m1, m2 = mass
         for i in range(5):
             val_col, err_col = ax[:,i]
             err_col.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
