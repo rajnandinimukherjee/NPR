@@ -3,28 +3,21 @@ from basics import *
 
 from scipy.special import spence
 def C0(u):
-    term1 = (-2*1j*np.pi - 2*np.log(1+u))*np.pi/3
     
-    log1 = (2*u+1-np.sqrt(1+4*u))/2
-    log2 = (4+(1j*np.sqrt(3)-1)*(1-np.sqrt(4*u+1)))
-    log2 = log2/(4-(1j*np.sqrt(3)+1)*(1-np.sqrt(4*u+1)))
-    term2 = (np.log(log1)+1j*np.pi)*np.log(log2)
+    term1 = (-1j+np.sqrt(3))
+    term1 = term1/(np.sqrt(3)-1j*np.sqrt(4*u+1))
 
-    log3 = ((1+np.sqrt(4*u+1))**2)/4
-    log4 = (4+(1j*np.sqrt(3)-1)*(1+np.sqrt(4*u+1)))
-    log4 = log2/(4-(1j*np.sqrt(3)+1)*(1+np.sqrt(4*u+1)))
-    term3 = (np.log(log3)+1j*np.pi)*np.log(log4)
+    term2 = (1j+np.sqrt(3))
+    term2 = term2/(np.sqrt(3)-1j*np.sqrt(4*u+1))
 
-    li1 = 4*u/(4*u-(1j*np.sqrt(3)-1)*(1+np.sqrt(4*u+1)))
-    div = (4*u+(1j*np.sqrt(3)+1)*(1+np.sqrt(4*u+1)))
-    li2 = 4*u/div
-    term3 = 2*spence(li1) - spence(li2)
+    term3 = (-1j+np.sqrt(3))
+    term3 = term3/(1j*np.sqrt(4*u+1)+np.sqrt(3))
 
-    li3 = (4*u+2+2*np.sqrt(4*u+1))/div
-    li4 = div/(4*(1+u))
-    term4 = spence(li3)-spence(li4)
+    term4 = (1j+np.sqrt(3)) 
+    term4 = term4/(1j*np.sqrt(4*u+1)+np.sqrt(3)) 
 
-    return -(term1+term2+term3+term4)/np.sqrt(3)
+    li = spence(term1)-spence(term2)+spence(term3)-spence(term4)
+    return -real(li*2*1j/np.sqrt(3))
 
 from scipy.integrate import quad
 from scipy import real, imag
@@ -70,7 +63,7 @@ def R_mSMOM_to_MSbar(mu, mbar):
     sq = (mbar/mu)**2
     mrat = (mbar**2)/(mbar**2 + mu**2)
 
-    cons = -4-(C0_int(0)/2)+2*C0_int(sq)
+    cons = -4-(C0(0)/2)+2*C0(sq)
     mass = 1+4*np.log(mrat)-sq*np.log(mrat)
     mass = -sq*mass-3*np.log(sq/mrat)
     return 1 + (alpha_s(mu)*CF/(4*np.pi))*(cons+mass)

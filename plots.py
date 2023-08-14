@@ -2,16 +2,17 @@ from NPR_classes import *
 from basics import *
 from eta_c import *
 
-mres = True
+mres = False
 folder = 'mres' if mres else 'no_mres'
 
 ens_list = list(eta_c_data.keys())
-for ens in ens_list:
-    if ens in valence_ens:
-        e = etaCvalence(ens)
-        e.toDict(keys=list(e.mass_comb.keys()),mres=mres)
+if mres:
+    for ens in ['C1','M1','F1S']:
+        if ens in valence_ens:
+            e = etaCvalence(ens)
+            e.toDict(keys=list(e.mass_comb.keys()),mres=mres)
 
-mu_chosen = 2.0
+mu_chosen = 3.0
 filename = '/Users/rajnandinimukherjee/Desktop/LatPlots.pdf'
 pdf = PdfPages(filename)
 
@@ -234,7 +235,7 @@ fig, axes = plt.subplots(nrows=2,ncols=num_ens,
                          sharex='col',sharey='row',
                          figsize=(w*num_ens,h*2))
 plt.subplots_adjust(hspace=0,wspace=0)
-eta_C_star_idx = 1
+eta_C_star_idx = 2
 
 for ens in ['C1','M1','F1S']:
     idx = ens_list.index(ens)
@@ -284,13 +285,13 @@ axes[0,0].text(-0.03,eta_C_star*1.05,r'$M_{\eta_C}^\star$',fontsize=16)
 
 #===fitting===================================================================
 
-plot_dict['C1']['fit_idx'] = [0,1,2,3]
-plot_dict['M1']['fit_idx'] = [0,1,2,3,4]
-plot_dict['F1S']['fit_idx'] = [0,1,2,3,4]
+plot_dict['C1']['fit_idx'] = [1,2,3]
+plot_dict['M1']['fit_idx'] = [1,2,3,4]
+plot_dict['F1S']['fit_idx'] = [1,2,3,4]
 def Zm_ansatz(params, am, key='m', **kwargs):
     if key=='m':
-        #return params[0] + params[1]*am + params[2]/am
-        return params[0] + params[1]*(am**2) + params[2]*np.log(am)*am
+        return params[0] + params[1]*am + params[2]/am
+        #return params[0] + params[1]*(am**2) + params[2]*np.log(am)*am
     else:
         return params[0]*am + (am**2)*params[1] + params[2]
 
@@ -362,7 +363,7 @@ fig, axes = plt.subplots(nrows=2,ncols=num_ens,
                          figsize=(w*num_ens,h*2))
 
 plt.subplots_adjust(hspace=0,wspace=0)
-eta_C_star_idx = 1
+eta_C_star_idx = 2
 
 for ens in ['C1','M1','F1S']:
     idx = ens_list.index(ens)
@@ -520,7 +521,7 @@ for star in eta_stars:
                                    
 #===plot 1: m_C continuum extrap for 1 eta_star=============
 plt.figure(figsize=(h,w))
-eta_C_star_idx = 1
+eta_C_star_idx = 2
 eta_star_chosen = eta_stars[eta_C_star_idx]
 
 label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'
@@ -553,7 +554,7 @@ plt.xlim(ren_xaxes)
 
 #===STEP3 plot 1: m_c^ren from 3 lattice spacings============
 plt.figure(figsize=(h,w))
-eta_C_star_idx = 1
+eta_C_star_idx = 2
 
 plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
 for ens in ens_list:
@@ -573,7 +574,7 @@ plt.ylim(ren_yaxes)
 #===STEP4 plot 2: m_C continuum extrap for 3 eta_star=============
 plt.figure(figsize=(h,w))
 plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
-for eta_C_star_idx in range(1,len(eta_stars)):
+for eta_C_star_idx in range(len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'\
@@ -596,7 +597,7 @@ for eta_C_star_idx in range(1,len(eta_stars)):
                  yerr = [plot_dict['fits'][eta_star_chosen]['m_C_cont_err']],
                  fmt='o',capsize=4,color=color_list[3+eta_C_star_idx])
 
-plt.legend(loc='upper right')
+plt.legend(loc='center')
 plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
 plt.ylabel(r'$m_{C}^S(am^\star,a\mu)$', fontsize=18)
 plt.xlim(ren_xaxes)
@@ -605,7 +606,7 @@ plt.xlim(ren_xaxes)
 #===STEP4 plot 4: mbar continuum extrap for eta_stars=============
 plt.figure(figsize=(h,w))
 plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
-for eta_C_star_idx in range(1,len(eta_stars)):
+for eta_C_star_idx in range(len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'\
@@ -632,17 +633,58 @@ plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
 plt.ylabel(r'$\overline{m}(am^\star,a\mu)$', fontsize=18)
 plt.xlim(ren_xaxes)
 
+#===STEP5================================================================================================
+from matching import *
+for eta_C_star_idx in range(1,len(eta_stars)):
+    eta_star_chosen = eta_stars[eta_C_star_idx]
+    mbar = plot_dict['fits'][eta_star_chosen]['m_q_cont']
+    mbar_btsp = plot_dict['fits'][eta_star_chosen]['m_q_cont_btsp']
 
+    m_C_ren = plot_dict['fits'][eta_star_chosen]['m_C_cont']
+    m_C_ren_btsp = plot_dict['fits'][eta_star_chosen]['m_C_cont_btsp']
 
-        
+    m_C_MS = R_mSMOM_to_MSbar(mu_chosen, mbar)*m_C_ren
+    m_C_MS_btsp = np.array([R_mSMOM_to_MSbar(mu_chosen, 
+                           mbar_btsp[k])*m_C_ren_btsp[k]
+                           for k in range(N_boot)]).reshape((200,))
+    m_C_MS_err = st_dev(m_C_MS_btsp, m_C_MS)
+    plot_dict['fits'][eta_star_chosen].update({'m_C_MS':m_C_MS,
+                                               'm_C_MS_err':m_C_MS_err,
+                                               'm_C_MS_btsp':m_C_MS_btsp})
+#===STEP5 plot 1: mbar vs m_C_ren==================================
+plt.figure(figsize=(h,w))
+for eta_C_star_idx in range(1,len(eta_stars)):
+    eta_star_chosen = eta_stars[eta_C_star_idx]
 
+    mbar = plot_dict['fits'][eta_star_chosen]['m_q_cont']
+    mbar_err = plot_dict['fits'][eta_star_chosen]['m_q_cont_err']
 
+    m_C_ren = plot_dict['fits'][eta_star_chosen]['m_C_cont']
+    m_C_ren_err = plot_dict['fits'][eta_star_chosen]['m_C_cont_err']
+    plt.errorbar([mbar],[m_C_ren],yerr=[m_C_ren_err],xerr=[mbar_err],
+                 capsize=2, markerfacecolor='None', fmt='o', 
+                 color=color_list[3+eta_C_star_idx])
 
+plt.xlabel(r'$\overline{m}$ (GeV)')
+plt.ylabel(r'$m_{C,cont}^S(\overline{m},\mu=2.0$ GeV$)$')
 
+#===STEP5 plot 2: matching to MSbar================================= 
+plt.figure(figsize=(h,w))
+for eta_C_star_idx in range(1,len(eta_stars)):
+    eta_star_chosen = eta_stars[eta_C_star_idx]
 
+    mbar = plot_dict['fits'][eta_star_chosen]['m_q_cont']
+    mbar_err = plot_dict['fits'][eta_star_chosen]['m_q_cont_err']
 
+    m_C_MS = plot_dict['fits'][eta_star_chosen]['m_C_MS']
+    m_C_MS_err = plot_dict['fits'][eta_star_chosen]['m_C_MS_err']
 
+    plt.errorbar([eta_star_chosen],[m_C_MS],yerr=[m_C_MS_err],xerr=[mbar_err],
+                 capsize=2, markerfacecolor='None', fmt='o', 
+                 color=color_list[3+eta_C_star_idx])
 
+plt.xlabel(r'$\overline{m}$ (GeV)')
+plt.ylabel(r'$m_{C,cont}^{\overline{MS}}(\mu=2.0$ GeV$)$')
 
 
 

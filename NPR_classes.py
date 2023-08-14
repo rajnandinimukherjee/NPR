@@ -86,7 +86,8 @@ class bilinear_analysis:
         addl_txt = ''
         r_actions = range(len(self.actions))
         for a1, a2 in itertools.product(r_actions,r_actions):
-            self.NPR((self.sea_mass, self.sea_mass), action=(a1,a2))
+            self.NPR((self.sea_mass, self.sea_mass),
+                     action=(a1,a2), renorm=renorm)
         if massive:
             self.NPR((self.sea_mass,self.sea_mass),
                      massive=True,renorm=renorm)
