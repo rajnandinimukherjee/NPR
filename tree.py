@@ -1,4 +1,4 @@
-from NPR_structures import *
+from NPR_classes import *
 currents = ['S','P','V','A','T']
 from numpy.linalg import norm
 from tqdm import tqdm
@@ -26,6 +26,8 @@ p_in = np.array([int(x) for x in tree_fq_file[f'{fqstr}_0']['info'].attrs['pIn']
 p_out = np.array([int(x) for x in tree_fq_file[f'{fqstr}_0']['info'].attrs['pOut'][0].decode().rsplit(' ')])
 q = p_out-p_in
 
+a = 1.7848
+L = 24
 p_in, p_out, q = (2*np.pi*a/L)*p_in, (2*np.pi*a/L)*p_out, (2*np.pi*a/L)*q
 
 org_gammas = [[tree_fq_file[f'{fqstr}_{i}']['info'].attrs['gammaA'][0].decode(),
