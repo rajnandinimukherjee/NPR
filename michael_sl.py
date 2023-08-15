@@ -7,7 +7,8 @@ file_h5 = h5py.File(filename,'a')
 for ens, bl_obj in sl_dict.items():
     for a1, a2 in itertools.product(range(2),range(2)):
         print(ens, (a1,a2))
-        bl_obj.NPR((bl_obj.sea_mass,bl_obj.sea_mass),action=(a1,a2),renorm='SMOM')
+        bl_obj.NPR((bl_obj.sea_mass,bl_obj.sea_mass),action=(a1,a2),
+                    massive=True,renorm='SMOM')
     bl_obj.merge_mixed()
 
 for action in [(0,0), (0,1), (1,1)]:
@@ -18,7 +19,7 @@ for action in [(0,0), (0,1), (1,1)]:
         mass = (bl_obj.sea_mass,bl_obj.sea_mass)
         ens_group = action_group.create_group(ens) 
         momenta = list(bl_obj.momenta[action][mass])
-        ens_group.create_dataset('momenta',data=momenta)
+        ens_group.create_dataset('mu',data=momenta)
         Z_V = [bl_obj.avg_results[action][mass][m]['V']
                for m in range(len(momenta))]
         ens_group.create_dataset('Z_V',data=Z_V)
