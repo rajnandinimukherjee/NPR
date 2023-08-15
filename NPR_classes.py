@@ -112,12 +112,12 @@ class bilinear_analysis:
             momenta = self.momenta[(0, 1)][masses]
             res1 = self.avg_results[(0, 1)][masses]
             res2 = self.avg_results[(1, 0)][masses]
-            self.avg_results[(0, 1)][masses] = [{c: (res1[c]+res2[c])/2.0 for c in res1[m].keys()}
+            self.avg_results[(0, 1)][masses] = [{c: (res1[m][c]+res2[m][c])/2.0 for c in res1[m].keys()}
                                                 for m in range(len(momenta))]
 
             err1 = self.avg_errs[(0, 1)][masses]
             err2 = self.avg_errs[(1, 0)][masses]
-            self.avg_errs[(0, 1)][masses] = [{c: err1[c]+err2[c] for c in err1.keys()}
+            self.avg_errs[(0, 1)][masses] = [{c: err1[m][c]+err2[m][c] for c in err1[m].keys()}
                                              for m in range(len(momenta))]
 
         self.avg_results.pop((1, 0))

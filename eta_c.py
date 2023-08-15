@@ -328,3 +328,20 @@ class etaCvalence:
             key_group.attrs['mass'] = self.mass_comb[key]
             
         print(f'Added correlator data to {self.ens} group in eta_C.h5 file')
+
+    def merge_mixed(self, **kwargs):
+        mass_combinations = self.avg_results[(0,1)].keys()
+
+        for masses in list(mass_combinations):
+            momenta = self.momenta[(0,1)][masses]
+            res1 = self.avg_results[(0,1)][masses]
+            res2 = self.avg_results[(1,0)][masses]
+            self.avg_results[(0,1)][masses] = (res1+res2)/2.0
+
+            err1 = self.avg_errs[(0,1)][masses]
+            err2 = self.avg_errs[(1,0)][masses]
+            self.avg_errs[(0,1)][masses] = err1+err2
+
+        self.avg_results.pop((1,0))
+        self.avg_errs.pop((1,0))
+
