@@ -26,5 +26,3 @@ for action in [(0,0), (0,1), (1,1)]:
         Z_V_err = [bl_obj.avg_errs[action][mass][m]['V']
                    for m in range(len(momenta))]
         ens_group.create_dataset('Z_V_err',data=Z_V_err)
-        
-

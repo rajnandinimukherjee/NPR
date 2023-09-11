@@ -35,7 +35,7 @@ f_pi_PDG_err = 0.23/1000
 
 dirs = ['X', 'Y', 'Z', 'T']
 currents = ['S', 'P', 'V', 'A', 'T']
-operators = ['VV+AA', 'VV-AA', 'SS-PP', 'SS+PP', 'TT']
+operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
 UKQCD_ens = ['C0', 'C1', 'C2',
              'M0', 'M1', 'M2', 'M3',
              'F1M', 'F1S']
