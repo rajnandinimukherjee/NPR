@@ -71,7 +71,8 @@ def plot_dep(mu, x_key='mpisq', y_key='sigma', xmax=1.7, **kwargs):
     os.system("open plots/"+filename)
 
 
-def chiral_continuum_ansatz(params, a_sq, mpi_f_m_sq, **kwargs):
+def chiral_continuum_ansatz(params, a_sq, mpi_f_m_sq, operator, **kwargs):
+    op_idx = bag_analysis.operators.index(operator)
     func = params[0]*(1+params[1]*a_sq + params[2]*mpi_f_m_sq)
     if 'addnl_terms' in kwargs.keys():
         if kwargs['addnl_terms'] == 'a4':
@@ -79,20 +80,35 @@ def chiral_continuum_ansatz(params, a_sq, mpi_f_m_sq, **kwargs):
         elif kwargs['addnl_terms'] == 'm4':
             func += params[0]*(params[3]*(mpi_f_m_sq**2))
         elif kwargs['addnl_terms'] == 'log':
-            lambda_f_m_sq = (1.0/f_pi_PDG)**2
-            mult = params[3]/(16*np.pi**2)
-            func += params[0] * \
-                (mult*mpi_f_m_sq*np.log(mpi_f_m_sq/lambda_f_m_sq))
+            # chiral log term included
+            chir_log_coeffs = np.array([-0.5, -0.5, -0.5, 0.5, 0.5])
+            chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
+            Lambda_QCD = 1.0
+            log_ratio = mpi_f_m_sq*(f_pi_PDG**2)/(Lambda_QCD**2)
+            log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
+            func += params[0]*log_term*mpi_f_m_sq
     return func
+
+
+def rotation_mtx(theta, phi, **kwargs):
+    num_ops = len(bag_analysis.operators)
+    A = np.zeros(shape=(num_ops, num_ops))
+    A[0, 0] = 1
+    ct, st = np.cos(theta), np.sin(theta)
+    A[1:3, 1:3] = np.array([[ct, -st], [st, ct]])
+    cp, sp = np.cos(phi), np.sin(phi)
+    A[3:, 3:] = np.array([[cp, -sp], [sp, cp]])
+    return A
 
 
 class bag_fits:
     N_boot = 200
     operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
 
-    def __init__(self, ens_list):
+    def __init__(self, ens_list, **kwargs):
         self.ens_list = ens_list
-        self.bag_dict = {e: bag_analysis(e) for e in self.ens_list}
+        self.bag_dict = {e: bag_analysis(e)
+                         for e in self.ens_list}
         self.colors = {list(self.bag_dict.keys())[k]: list(
                        mc.TABLEAU_COLORS.keys())[k]
                        for k in range(len(self.ens_list))}
@@ -105,37 +121,37 @@ class bag_fits:
         op_idx = bag_analysis.operators.index(operator)
         dof = len(ens_list)-len(guess)
 
-        def pred(params, **akwargs):
-            p = [self.bag_dict[e].ansatz(params, **kwargs)
+        def pred(params, operator, **akwargs):
+            p = [self.bag_dict[e].ansatz(params, operator, **kwargs)
                  for e in ens_list]
             return p
 
-        def diff(bag, params, **akwargs):
-            return np.array(bag) - np.array(pred(params, **kwargs))
+        def diff(bag, params, operator, **kwargs):
+            return np.array(bag) - np.array(pred(params, operator, **kwargs))
 
-        bags_central = np.array([self.bag_dict[e].interpolate(mu)[0][op_idx]
-                                for e in ens_list])
-        COV = np.diag([self.bag_dict[e].interpolate(mu)[1][op_idx]**2
-                       for e in ens_list])
+        bags_central = np.array([self.bag_dict[e].interpolate(
+            mu, **kwargs)[0][op_idx] for e in ens_list])
+        COV = np.diag([self.bag_dict[e].interpolate(
+            mu, **kwargs)[1][op_idx]**2 for e in ens_list])
         L_inv = np.linalg.cholesky(COV)
         L = np.linalg.inv(L_inv)
 
-        def LD(params, **akwargs):
-            return L.dot(diff(bags_central, params, fit='central',
-                              operator=operator))
+        def LD(params):
+            return L.dot(diff(bags_central, params, operator,
+                              fit='central', **kwargs))
 
         res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
         chi_sq = LD(res.x).dot(LD(res.x))
         pvalue = gammaincc(dof/2, chi_sq/2)
 
         res_btsp = np.zeros(shape=(self.N_boot, len(res.x)))
-        bag_btsp = np.array([self.bag_dict[e].interpolate(mu)[2][:, op_idx]
-                            for e in ens_list])
+        bag_btsp = np.array([self.bag_dict[e].interpolate(
+            mu, **kwargs)[2][:, op_idx] for e in ens_list])
         for k in range(self.N_boot):
 
             def LD_btsp(params):
-                return L.dot(diff(bag_btsp[:, k], params, fit='btsp',
-                                  operator=operator, k=k))
+                return L.dot(diff(bag_btsp[:, k], params, operator,
+                                  fit='btsp', k=k, **kwargs))
             res_k = least_squares(LD_btsp, guess,
                                   ftol=1e-10, gtol=1e-10)
             res_btsp[k, :] = res_k.x
@@ -163,19 +179,23 @@ class bag_fits:
             else:
                 ax0, ax1 = ax[i, 0], ax[i, 1]
 
-            ax0.title.set_text(ops[i])
-            ax1.title.set_text(ops[i])
-            op = ops[i]
-            op_idx = operators.index(op)
+            operator = ops[i]
+            op_idx = operators.index(operator)
+            ax0.title.set_text(operator)
+            ax1.title.set_text(operator)
             params, chi_sq_dof, pvalue, err, btsp = self.fit_operator(
-                op, mu, ens_list=ens_list, **kwargs)
+                operator, mu, ens_list=ens_list, **kwargs)
+
+            cc_coeffs = params[1:3]
+            cc_coeffs_err = err[1:3]
 
             x_asq = np.linspace(0, (1/1.7)**2, 50)
-            x_mpi_sq = np.linspace(0, 0.2, 50)
+            x_mpi_sq = np.linspace(0.01, 0.2, 50)
 
-            y_phys = chiral_continuum_ansatz(params, 0, (mpi_PDG/f_pi_PDG)**2)
+            y_phys = chiral_continuum_ansatz(params, 0,
+                                             (mpi_PDG/f_pi_PDG)**2, operator)
             y_phys_btsp = np.array([chiral_continuum_ansatz(btsp[k, :], 0,
-                                   (mpi_PDG/f_pi_PDG)**2)
+                                   (mpi_PDG/f_pi_PDG)**2, operator)
                 for k in range(self.N_boot)])
             y_phys_err = st_dev(y_phys_btsp, mean=y_phys)
 
@@ -199,9 +219,9 @@ class bag_fits:
                 subtract = params[0]*params[2]*mpi_f_m_sq if cont_adjust else 0
 
                 y_asq = np.array([chiral_continuum_ansatz(params, x,
-                                 mpi_f_m_sq, **kwargs) for x in x_asq])
+                                 mpi_f_m_sq, operator, **kwargs) for x in x_asq])
                 y_asq_btsp = np.array([[chiral_continuum_ansatz(btsp[k, :],
-                                      x_asq[a], mpi_f_m_sq, **kwargs)
+                                      x_asq[a], mpi_f_m_sq, operator, **kwargs)
                     for k in range(self.N_boot)]
                     for a in range(len(x_asq))])
                 y_asq_err = np.array([st_dev(y_asq_btsp[a, :], mean=y_asq[a])
@@ -212,10 +232,10 @@ class bag_fits:
                                  color=self.colors[e], alpha=0.2)
 
                 y_mpi = np.array([chiral_continuum_ansatz(params, a_sq,
-                                 x*a_sq/f_m_sq, **kwargs)
+                                 x*a_sq/f_m_sq, operator, **kwargs)
                                  for x in x_mpi_sq])
                 y_mpi_btsp = np.array([[chiral_continuum_ansatz(btsp[k, :], a_sq,
-                                      x_mpi_sq[p]*a_sq/f_m_sq, **kwargs)
+                                      x_mpi_sq[p]*a_sq/f_m_sq, operator, **kwargs)
                     for k in range(self.N_boot)]
                     for p in range(len(x_mpi_sq))])
                 y_mpi_err = np.array([st_dev(y_mpi_btsp[p, :], mean=y_mpi[p])
@@ -224,8 +244,8 @@ class bag_fits:
                 ax1.fill_between(x_mpi_sq, y_mpi+y_mpi_err, y_mpi-y_mpi_err,
                                  color=self.colors[e], alpha=0.2)
 
-                bag = self.bag_dict[e].interpolate(mu)[0][op_idx]
-                bag_err = self.bag_dict[e].interpolate(mu)[1][op_idx]
+                bag = self.bag_dict[e].interpolate(mu, **kwargs)[0][op_idx]
+                bag_err = self.bag_dict[e].interpolate(mu, **kwargs)[1][op_idx]
                 ax0.errorbar([a_sq], [(bag-subtract)*scaling],
                              yerr=[bag_err], fmt='o', label=e,
                              capsize=4, color=self.colors[e], mfc='None')
@@ -243,6 +263,8 @@ class bag_fits:
             ax1.text(0.4, 0.05, r'$p$-value:'+'{:.3f}'.format(pvalue),
                      transform=ax1.transAxes)
 
+        if title != '':
+            title += r', '
         title += r'$\mu='+str(np.around(mu, 2))+'$ GeV'
         plt.suptitle(title, y=0.95)
 
@@ -258,4 +280,4 @@ class bag_fits:
         if open:
             os.system("open "+filename)
         if passvals:
-            return y_phys, y_phys_err, chi_sq_dof, pvalue
+            return y_phys, y_phys_err, cc_coeffs, cc_coeffs_err, chi_sq_dof, pvalue
