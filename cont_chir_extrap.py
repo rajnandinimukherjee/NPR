@@ -1,4 +1,5 @@
 import pdb
+from coeffs import *
 from bag_param_renorm import *
 
 Z_dict = {ens: Z_analysis(ens) for ens in bag_ensembles}
@@ -164,7 +165,7 @@ class bag_fits:
 
     def plot_fits(self, mu, ops=None, ens_list=None, cont_adjust=False,
                   title='', filename='plots/bag_fits.pdf', open=False,
-                  passvals=True, **kwargs):
+                  passvals=True, save=True, **kwargs):
         if ens_list == None:
             ens_list = self.ens_list
 
@@ -181,8 +182,23 @@ class bag_fits:
 
             operator = ops[i]
             op_idx = operators.index(operator)
-            ax0.title.set_text(operator)
-            ax1.title.set_text(operator)
+            if 'rotate' in kwargs:
+                N = len(operators)
+                rot_str = np.empty(N, dtype=object)
+                for r in range(N):
+                    rot_str[r] = []
+                    for c in range(N):
+                        val = np.around(kwargs['rotate'][r, c], 2)
+                        if val != 0.0 and val != 1.0:
+                            rot_str[r].append('('+str(val)+')*'+operators[c])
+                        elif val == 1.0:
+                            rot_str[r].append(operators[c])
+                    rot_str[r] = ' + '.join(rot_str[r])
+                ax0.title.set_text(rot_str[op_idx])
+                ax1.title.set_text(rot_str[op_idx])
+            else:
+                ax0.title.set_text(operator)
+                ax1.title.set_text(operator)
             params, chi_sq_dof, pvalue, err, btsp = self.fit_operator(
                 operator, mu, ens_list=ens_list, **kwargs)
 
@@ -268,16 +284,18 @@ class bag_fits:
         title += r'$\mu='+str(np.around(mu, 2))+'$ GeV'
         plt.suptitle(title, y=0.95)
 
-        pp = PdfPages(filename)
-        fig_nums = plt.get_fignums()
-        figs = [plt.figure(n) for n in fig_nums]
-        for fig in figs:
-            fig.savefig(pp, format='pdf')
-        pp.close()
-        plt.close('all')
-        print(f'Saved plot to {filename}.')
+        if save:
+            pp = PdfPages(filename)
+            fig_nums = plt.get_fignums()
+            figs = [plt.figure(n) for n in fig_nums]
+            for fig in figs:
+                fig.savefig(pp, format='pdf')
+            pp.close()
+            plt.close('all')
 
-        if open:
-            os.system("open "+filename)
+            if open:
+                print(f'Saved plot to {filename}.')
+                os.system("open "+filename)
         if passvals:
-            return y_phys, y_phys_err, cc_coeffs, cc_coeffs_err, chi_sq_dof, pvalue
+            return y_phys, y_phys_err, y_phys_btsp, \
+                cc_coeffs, cc_coeffs_err, chi_sq_dof, pvalue

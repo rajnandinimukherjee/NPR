@@ -170,6 +170,28 @@ def st_dev(data, mean=None, **kwargs):
     return np.sqrt(((data-mean).dot(data-mean))/n)
 
 
+def err_disp(num, err, n=2, **kwargs):
+    ''' converts num and err into num(err) in scientific notation upto n digits
+    in error, can be extended for accepting arrays of nums and errs as well, for
+    now only one at a time'''
+
+    err_dec_place = int(np.floor(np.log10(np.abs(err))))
+    err_n_digits = int(err*10**(-(err_dec_place+1-n)))
+    num_dec_place = int(np.floor(np.log10(np.abs(num))))
+    if num_dec_place < err_dec_place:
+        # print('Error is larger than measurement')
+        return str(np.around(num, 3))
+    else:
+        num_sf = num*10**(-(num_dec_place))
+        num_trunc = round(num_sf, num_dec_place-(err_dec_place+1-n))
+        digs = -err_dec_place+n-1
+        str_num_trunc = str(num)[:digs+2]
+        # num_nontrunc = round(num,-err_dec_place+n-1)
+        # pdb.set_trace()
+        # return str(num_trunc)+'('+str(err_n_digits)+')E%+d'%num_dec_place
+        return str_num_trunc+'('+str(err_n_digits)+')'
+
+
 # ====coloring and markers=================================================
 color_list = list(mc.TABLEAU_COLORS.keys())
 marker_list = ['o', 's', 'D', 'x', '*', 'v', '^', 'h', '8']

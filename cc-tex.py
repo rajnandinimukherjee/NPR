@@ -1,28 +1,61 @@
 from cont_chir_extrap import *
 b = bag_fits(bag_ensembles)
 mu_list = [2.4, 2.0, 1.8, 1.5]
+MS_bar_mu = 3.0
 
 
-def err_disp(num, err, n=2, **kwargs):
-    ''' converts num and err into num(err) in scientific notation upto n digits
-    in error, can be extended for accepting arrays of nums and errs as well, for
-    now only one at a time'''
+def convert_to_MSbar(bags, bags_err, bag_btsp, mu1, mu2, **kwargs):
+    F1M_Z = Z_analysis('F1M', bag=True)
+    sig, sig_err, sig_btsp = F1M_Z.scale_evolve(mu1, mu2)
+    R_conv = R_RISMOM_MSbar(mu2)
+    bag_MS = R_conv@sig@bag
+    bag_MS_btsp = np.array([R_conv@sig_btsp[k,]@bag_btsp[:, k]
+                            for k in range(bag_analysis.N_boot)])
+    bag_MS_err = np.array([st_dev(bag_MS_btsp[:, i], bag_MS[i])
+                           for i in range(len(bag_MS))])
+    return bag_MS, bag_MS_err, bag_MS_btsp
 
-    err_dec_place = int(np.floor(np.log10(np.abs(err))))
-    err_n_digits = int(err*10**(-(err_dec_place+1-n)))
-    num_dec_place = int(np.floor(np.log10(np.abs(num))))
-    if num_dec_place < err_dec_place:
-        print('Error is larger than measurement')
-        return str(np.around(num, 3))
-    else:
-        num_sf = num*10**(-(num_dec_place))
-        num_trunc = round(num_sf, num_dec_place-(err_dec_place+1-n))
-        digs = -err_dec_place+n-1
-        str_num_trunc = str(num)[:digs+2]
-        # num_nontrunc = round(num,-err_dec_place+n-1)
-        # pdb.set_trace()
-        # return str(num_trunc)+'('+str(err_n_digits)+')E%+d'%num_dec_place
-        return str_num_trunc+'('+str(err_n_digits)+')'
+
+def operator_summary(operator, mu, filename=None,
+                     open=True, **kwargs):
+    ansatze = list(fits[operator].keys())
+    ansatz_desc = [fits[operator][a]['kwargs']['title']
+                   for a in ansatze]
+    vals = [fits[operator][fit][mu]['phys'] for fit in ansatze]
+    errs = [fits[operator][fit][mu]['err'] for fit in ansatze]
+    chis = [fits[operator][fit][mu]['chi_sq_dof'] for fit in ansatze]
+    cont_slope = [fits[operator][fit][mu]['coeffs'][0] for fit in ansatze]
+
+    fig = plt.subplots(figsize=(5, 4))
+    plt.title(r'$\mu='+str(np.around(mu, 2))+'$ GeV')
+    plt.errorbar(np.arange(len(ansatze)), vals, yerr=errs, fmt='o', capsize=2)
+    # plt.gca().set_xticklabels(ansatze)
+    plt.xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
+               ha='right')
+    plt.ylabel(r'$B(a=0, m_\pi=m_\pi^{phys})$ in RI/SMOM')
+    tick = min(errs)*0.1
+    for i in range(len(ansatze)):
+        plt.annotate(str(np.around(chis[i], 2)),
+                     (i, vals[i]+errs[i]+tick),
+                     ha='center', va='bottom')
+        plt.annotate(str(int(100*np.around(cont_slope[i], 2)))+r'%',
+                     (i, vals[i]-errs[i]-tick), fontsize=9,
+                     ha='center', va='top')
+
+    if filename == None:
+        filename = f'plots/{operator}_fit_summary.pdf'
+
+    pp = PdfPages(filename)
+    fig_nums = plt.get_fignums()
+    figs = [plt.figure(n) for n in fig_nums]
+    for fig in figs:
+        fig.savefig(pp, format='pdf')
+    pp.close()
+    plt.close('all')
+
+    if open:
+        print(f'Plot saved to {filename}.')
+        os.system("open "+filename)
 
 
 run = input('Generate new plots? (True:1/False:0): ')
@@ -50,14 +83,16 @@ if bool(int(run)):
                                            'addnl_terms': 'log'}
 
     for op in fits.keys():
+        print(f'Generating plots for operator {op}')
         for fit in fits[op].keys():
             kwargs = fits[op][fit]['kwargs']
             for mu in mu_list:
                 filename = fits[op][fit][mu]['filename']
-                phys, err, coeffs, coeffs_err, chi_sq_dof, pvalue = b.plot_fits(
-                    mu, ops=[op], filename=filename, **kwargs)
+                phys, err, btsp, coeffs, coeffs_err, chi_sq_dof, pvalue = \
+                    b.plot_fits(mu, ops=[op], filename=filename, **kwargs)
                 fits[op][fit][mu].update({'phys': phys,
                                           'err': err,
+                                          'btsp': btsp,
                                           'coeffs': coeffs,
                                           'coeffs_err': coeffs_err,
                                           'disp': err_disp(phys, err),
@@ -72,6 +107,17 @@ if bool(int(run)):
 else:
     fits = pickle.load(open('cc_extrap_dict.p', 'rb'))
 
+for fit in fits['VVpAA'].keys():
+    for mu in mu_list:
+        bag = np.array([fits[op][fit][mu]['phys'] for op in operators])
+        bag_err = np.array([fits[op][fit][mu]['err'] for op in operators])
+        bag_btsp = np.array([fits[op][fit][mu]['btsp'] for op in operators])
+        MS, MS_err, MS_btsp = convert_to_MSbar(bag, bag_err, bag_btsp,
+                                               mu, MS_bar_mu)
+        for op_idx, op in enumerate(operators):
+            fits[op][fit][mu]['MS'] = {'val': MS[op_idx],
+                                       'err': MS_err[op_idx],
+                                       'btsp': MS_btsp[:, op_idx]}
 
 rv = [r'\documentclass[12pt]{extarticle}']
 rv += [r'\usepackage[paperwidth=15in,paperheight=7.2in]{geometry}']

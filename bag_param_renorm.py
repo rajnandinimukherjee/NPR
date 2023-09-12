@@ -71,8 +71,8 @@ class Z_analysis:
         self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
         self.masses = (self.sea_m, self.sea_m)
         if self.ens in bag_ensembles:
-            self.mpi, self.mpi_err, self.mpi_btsp = load_info('m_0', self.ens,
-                                                              self.operators, meson='ll')
+            self.mpi, self.mpi_err, self.mpi_btsp = \
+                load_info('m_0', self.ens, self.operators, meson='ll')
         self.f_m_ren = f_pi_PDG/self.ainv
         np.random.seed(seed)
         self.f_m_ren_btsp = np.random.normal(
@@ -85,24 +85,30 @@ class Z_analysis:
 
         if self.action == (0, 1) or self.action == (1, 0):
             self.action == (0, 1)
-            print('Actions (0,1) and (1,0) have been averaged into group called "(0,1)"')
+            print('Actions (0,1) and (1,0) have been averaged' +
+                  ' into group called "(0,1)"')
 
             Z1 = Z_data[1][(0, 1)][self.masses]
             Z1_err = Z_data[2][(0, 1)][self.masses]
             np.random.seed(seed)
             Z1_btsp = np.array([[[np.random.normal(Z1[m, i, j],
-                                                   Z1_err[m, i, j], self.N_boot) for j in range(5)]
+                                                   Z1_err[m, i, j],
+                                                   self.N_boot)
+                                  for j in range(5)]
                                  for i in range(5)] for m in range(self.N_mom)])
             Z2 = Z_data[1][(1, 0)][self.masses]
             Z2_err = Z_data[2][(1, 0)][self.masses]
             np.random.seed(seed)
             Z2_btsp = np.array([[[np.random.normal(Z2[m, i, j],
-                                                   Z2_err[m, i, j], self.N_boot) for j in range(5)]
+                                                   Z2_err[m, i, j],
+                                                   self.N_boot)
+                                  for j in range(5)]
                                  for i in range(5)] for m in range(self.N_mom)])
             self.Z = (Z1+Z2)/2.0
             self.Z_btsp = np.array([(Z1_btsp[m,]+Z2_btsp[m,])/2.0
                                     for m in range(self.N_mom)])
-            self.Z_err = np.array([[[st_dev(self.Z_btsp[m, i, j, :], self.Z[m, i, j])
+            self.Z_err = np.array([[[st_dev(self.Z_btsp[m, i, j, :],
+                                            self.Z[m, i, j])
                                      for j in range(5)] for i in range(5)]
                                    for m in range(self.N_mom)])
         else:
@@ -110,8 +116,11 @@ class Z_analysis:
             self.Z_err = Z_data[2][self.action][self.masses]
             np.random.seed(seed)
             self.Z_btsp = np.array([[[np.random.normal(self.Z[m, i, j],
-                                                       self.Z_err[m, i, j], self.N_boot) for j in range(5)]
-                                     for i in range(5)] for m in range(self.N_mom)])
+                                                       self.Z_err[m, i, j],
+                                                       self.N_boot)
+                                      for j in range(5)]
+                                     for i in range(5)]
+                                    for m in range(self.N_mom)])
         if self.bag:
             bl = bilinear_analysis(
                 self.ens, loadpath=f'pickles/{self.ens}_bl.p')
@@ -131,7 +140,8 @@ class Z_analysis:
                                                             1:, 1:, k]*(mult**2)
                     self.Z_btsp[m, :, :, k] = mask*self.Z_btsp[m, :, :, k]
                 self.Z_err[m, :, :] = np.array([[st_dev(self.Z_btsp[m, i, j, :],
-                                                        self.Z[m, i, j]) for j in range(5)]
+                                                        self.Z[m, i, j])
+                                                 for j in range(5)]
                                                 for i in range(5)])
 
     def interpolate(self, mu, **kwargs):

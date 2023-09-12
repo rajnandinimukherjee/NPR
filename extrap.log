@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.16)  12 SEP 2023 10:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.16)  12 SEP 2023 15:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -3696,7 +3696,7 @@ fonts/cm/cmr12.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmr17.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmr6.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/pu
 blic/amsfonts/cm/cmr8.pfb>
-Output written on extrap.pdf (106 pages, 4097105 bytes).
+Output written on extrap.pdf (106 pages, 4097080 bytes).
 PDF statistics:
  6518 PDF objects out of 7423 (max. 8388607)
  1553 compressed objects within 16 object streams
