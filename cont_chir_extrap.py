@@ -10,68 +10,6 @@ cmap = plt.cm.tab20b
 norm = mc.BoundaryNorm(np.linspace(0, 1, len(bag_ensembles)), cmap.N)
 
 
-def plot_dep(mu, x_key='mpisq', y_key='sigma', xmax=1.7, **kwargs):
-    ref = {e: {'mpisq': (Z_dict[e].mpi*Z_dict[e].ainv)**2,
-           'sigma': Z_dict[e].scale_evolve(mu, 3)[0],
-               'bag': np.diag(bag_dict[e].bag_ren[mu]),
-               'asq': (1/Z_dict[e].ainv)**2}
-           for e in bag_ensembles}
-    ref_err = {e: {'sigma': Z_dict[e].scale_evolve(mu, 3)[1],
-               'bag': np.diag(bag_dict[e].bag_ren_err[mu])}
-               for e in bag_ensembles}
-
-    # pdb.set_trace()
-    fig = plt.figure()
-    ax = plt.subplot(111)
-    ax.set_xlim([0, xmax])
-    for e in bag_ensembles:
-        x, y = ref[e][x_key], ref[e][y_key][0, 0]
-        y_err = ref_err[e][y_key][0, 0]
-        ax.errorbar(x, y, yerr=y_err, color=cmap(norm(bag_ensembles.index(
-            e)/len(bag_ensembles))), label=e, fmt='o')
-
-    ax.set_xlabel(x_key)
-    ax.legend(bbox_to_anchor=(1.02, 1.03))
-
-    fig, ax = plt.subplots(2, 2, sharex=True)
-    ax[0, 0].set_xlim([0, xmax])
-    for i, j in itertools.product(range(2), range(2)):
-        k, l = i+1, j+1
-        for e in bag_ensembles:
-            x, y = ref[e][x_key], ref[e][y_key][k, l]
-            y_err = ref_err[e][y_key][k, l]
-            ax[i, j].errorbar(x, y, yerr=y_err, color=cmap(norm(
-                bag_ensembles.index(e)/len(bag_ensembles))),
-                label=e, fmt='o')
-            if i == 1:
-                ax[i, j].set_xlabel(x_key)
-    handles, labels = ax[0, 0].get_legend_handles_labels()
-
-    fig, ax = plt.subplots(2, 2, sharex=True)
-    ax[0, 0].set_xlim([0, xmax])
-    for i, j in itertools.product(range(2), range(2)):
-        k, l = i+3, j+3
-        for e in bag_ensembles:
-            x, y = ref[e][x_key], ref[e][y_key][k, l]
-            y_err = ref_err[e][y_key][k, l]
-            ax[i, j].errorbar(x, y, yerr=y_err, color=cmap(norm(
-                bag_ensembles.index(e)/len(bag_ensembles))),
-                label=e, fmt='o')
-            if i == 1:
-                ax[i, j].set_xlabel(x_key)
-    handles, labels = ax[0, 0].get_legend_handles_labels()
-
-    filename = f'{y_key}_{x_key}_dep.pdf'
-    pp = PdfPages('plots/'+filename)
-    fig_nums = plt.get_fignums()
-    figs = [plt.figure(n) for n in fig_nums]
-    for fig in figs:
-        fig.savefig(pp, format='pdf')
-    pp.close()
-    plt.close('all')
-    os.system("open plots/"+filename)
-
-
 def chiral_continuum_ansatz(params, a_sq, mpi_f_m_sq, operator, **kwargs):
     op_idx = bag_analysis.operators.index(operator)
     func = params[0]*(1+params[1]*a_sq + params[2]*mpi_f_m_sq)
@@ -103,8 +41,6 @@ def rotation_mtx(theta, phi, **kwargs):
 
 
 class bag_fits:
-    N_boot = 200
-    operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
 
     def __init__(self, ens_list, **kwargs):
         self.ens_list = ens_list
@@ -145,10 +81,10 @@ class bag_fits:
         chi_sq = LD(res.x).dot(LD(res.x))
         pvalue = gammaincc(dof/2, chi_sq/2)
 
-        res_btsp = np.zeros(shape=(self.N_boot, len(res.x)))
+        res_btsp = np.zeros(shape=(N_boot, len(res.x)))
         bag_btsp = np.array([self.bag_dict[e].interpolate(
             mu, **kwargs)[2][:, op_idx] for e in ens_list])
-        for k in range(self.N_boot):
+        for k in range(N_boot):
 
             def LD_btsp(params):
                 return L.dot(diff(bag_btsp[:, k], params, operator,
@@ -158,7 +94,7 @@ class bag_fits:
             res_btsp[k, :] = res_k.x
 
         res_err = [((res_btsp[:, i]-res.x[i]).dot(
-            res_btsp[:, i]-res.x[i])/self.N_boot)**0.5
+            res_btsp[:, i]-res.x[i])/N_boot)**0.5
             for i in range(len(res.x))]
 
         return res.x, chi_sq/dof, pvalue, res_err, res_btsp
@@ -170,7 +106,7 @@ class bag_fits:
             ens_list = self.ens_list
 
         if ops == None:
-            ops = self.operators
+            ops = operators
         num_ops = len(ops)
 
         fig, ax = plt.subplots(num_ops, 2, figsize=(15, 6*num_ops))
@@ -199,6 +135,10 @@ class bag_fits:
             else:
                 ax0.title.set_text(operator)
                 ax1.title.set_text(operator)
+            if 'names' in kwargs:
+                ax0.title.set_text(kwargs['names'][i])
+                ax1.title.set_text(kwargs['names'][i])
+
             params, chi_sq_dof, pvalue, err, btsp = self.fit_operator(
                 operator, mu, ens_list=ens_list, **kwargs)
 
@@ -212,7 +152,7 @@ class bag_fits:
                                              (mpi_PDG/f_pi_PDG)**2, operator)
             y_phys_btsp = np.array([chiral_continuum_ansatz(btsp[k, :], 0,
                                    (mpi_PDG/f_pi_PDG)**2, operator)
-                for k in range(self.N_boot)])
+                for k in range(N_boot)])
             y_phys_err = st_dev(y_phys_btsp, mean=y_phys)
 
             subtract = params[0]*params[2] * \
@@ -238,7 +178,7 @@ class bag_fits:
                                  mpi_f_m_sq, operator, **kwargs) for x in x_asq])
                 y_asq_btsp = np.array([[chiral_continuum_ansatz(btsp[k, :],
                                       x_asq[a], mpi_f_m_sq, operator, **kwargs)
-                    for k in range(self.N_boot)]
+                    for k in range(N_boot)]
                     for a in range(len(x_asq))])
                 y_asq_err = np.array([st_dev(y_asq_btsp[a, :], mean=y_asq[a])
                                      for a in range(len(x_asq))])
@@ -252,7 +192,7 @@ class bag_fits:
                                  for x in x_mpi_sq])
                 y_mpi_btsp = np.array([[chiral_continuum_ansatz(btsp[k, :], a_sq,
                                       x_mpi_sq[p]*a_sq/f_m_sq, operator, **kwargs)
-                    for k in range(self.N_boot)]
+                    for k in range(N_boot)]
                     for p in range(len(x_mpi_sq))])
                 y_mpi_err = np.array([st_dev(y_mpi_btsp[p, :], mean=y_mpi[p])
                                      for p in range(len(x_mpi_sq))])
@@ -296,6 +236,41 @@ class bag_fits:
             if open:
                 print(f'Saved plot to {filename}.')
                 os.system("open "+filename)
-        if passvals:
+        if passvals and num_ops == 1:
             return y_phys, y_phys_err, y_phys_btsp, \
                 cc_coeffs, cc_coeffs_err, chi_sq_dof, pvalue
+
+
+class Z_fits:
+
+    def __init__(self, ens_list, bag=False, **kwargs):
+        self.ens_list = ens_list
+        self.Z_dict = {e: Z_analysis(e, bag=bag)
+                       for e in self.ens_list}
+        self.colors = {list(self.Z_dict.keys())[k]: list(
+                       mc.TABLEAU_COLORS.keys())[k]
+                       for k in range(len(self.ens_list))}
+
+    def plot_sigma(self, mu2, mu1, i, j,
+                   filename='plots/sigma_fits.pdf', **kwargs):
+        fig = plt.figure(figsize=(4, 4))
+        for e in self.ens_list:
+            a_sq = self.Z_dict[e].ainv**(-2)
+            sig, sig_err, sig_btsp = self.Z_dict[e].scale_evolve(mu2, mu1)
+            sig, sig_err = sig[i, j], sig_err[i, j]
+            plt.errorbar([a_sq], [sig], yerr=[sig_err],
+                         fmt='o', capsize=4, c=self.colors[e])
+        plt.xlabel(r'$a^2$ (GeV${}^2$)')
+        plt.title(r'$\sigma_{npt}('+str(np.around(mu2, 2)) +
+                  ','+str(np.around(mu1, 2))+r')['+str(i)+','+str(j)+r']$')
+
+        pp = PdfPages(filename)
+        fig_nums = plt.get_fignums()
+        figs = [plt.figure(n) for n in fig_nums]
+        for fig in figs:
+            fig.savefig(pp, format='pdf')
+        pp.close()
+        plt.close('all')
+
+        print(f'Saved plot to {filename}.')
+        os.system("open "+filename)

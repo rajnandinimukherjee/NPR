@@ -46,6 +46,12 @@ KEK_ens = ['KEKC1L', 'KEKC1S',
 all_ens = UKQCD_ens+KEK_ens
 phys_ens = ['C0', 'M0']
 
+NPR_to_SUSY = np.zeros(shape=(len(operators), len(operators)))
+NPR_to_SUSY[0, 0] = 1
+NPR_to_SUSY[1, 3] = 1
+NPR_to_SUSY[2, 3:] = -0.5, 0.5
+NPR_to_SUSY[3, 2] = 1
+NPR_to_SUSY[4, 1] = -0.5
 # =====gamma matrices=============================================
 gamma = {'I': np.identity(N_d, dtype='complex128'),
          'X': np.zeros(shape=(N_d, N_d), dtype='complex128'),
