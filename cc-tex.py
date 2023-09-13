@@ -102,6 +102,7 @@ def operator_summary(operator, mu=2.0, filename=None,
 
 run = input('Generate new plots? (True:1/False:0): ')
 if bool(int(run)):
+    basis = str(input('Choose basis (SUSY/NPR): '))
     fits = {}
     for op in operators:
         fits[op] = {}
@@ -128,10 +129,12 @@ if bool(int(run)):
         print(f'Generating plots for operator B{i+1}')
         for fit in fits[op].keys():
             kwargs = fits[op][fit]['kwargs']
+            if basis == 'SUSY':
+                kwargs['rotate'] = NPR_to_SUSY
             for mu in mu_list:
                 filename = fits[op][fit][mu]['filename']
-                phys, err, btsp, coeffs, coeffs_err, chi_sq_dof, pvalue = b.plot_fits(mu, ops=[op], filename=filename,
-                                                                                      rotate=NPR_to_SUSY, **kwargs)
+                phys, err, btsp, coeffs, coeffs_err, chi_sq_dof, pvalue = \
+                    b.plot_fits(mu, ops=[op], filename=filename, **kwargs)
                 fits[op][fit][mu].update({'phys': phys,
                                           'err': err,
                                           'btsp': btsp,
@@ -158,7 +161,11 @@ if bool(int(run)):
                                            'err': MS_err[op_idx],
                                            'btsp': MS_btsp[:, op_idx]}
     for op in operators:
-        operator_summary(op, FLAG=True, open=False)
+        if basis == 'SUSY':
+            show_flag = True
+        else:
+            show_flag = False
+        operator_summary(op, FLAG=show_flag, open=False)
     pickle.dump(fits, open('cc_extrap_dict.p', 'wb'))
 else:
     fits = pickle.load(open('cc_extrap_dict.p', 'rb'))
