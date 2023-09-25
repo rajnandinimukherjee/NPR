@@ -9,6 +9,7 @@ import h5py
 import matplotlib.colors as mc
 import matplotlib.pyplot as plt
 import numpy as np
+from progress.bar import Bar
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.ticker import FormatStrFormatter
 from scipy.interpolate import interp1d
@@ -28,10 +29,6 @@ N_boot = 200  # number of bootstrap samples
 N_fq = 16  # number of fourquarks
 seed = 1  # random seed
 
-mpi_PDG = 139.5709/1000
-# mpi_PDG_err =
-f_pi_PDG = 130.41/1000
-f_pi_PDG_err = 0.23/1000
 
 dirs = ['X', 'Y', 'Z', 'T']
 currents = ['S', 'P', 'V', 'A', 'T']
@@ -79,11 +76,10 @@ def commutator(str1, str2, g=Gamma):
 
 def anticommutator(str1, str2, g=Gamma):
     return (g[str1]@g[str2]+g[str2]@g[str1])
+# ====bootstrap sampling==============================================
 
-# =====bootstrap sampling========================================
 
-
-def bootstrap(data, seed=1, K=N_boot, sigma=None, **kwargs):
+def bootstrap(data, seed=1, K=N_boot, **kwargs):
     ''' bootstrap samples generator - if input data has same size as K,
     assumes it's already a bootstrap sample and does no further sampling '''
 
@@ -95,7 +91,7 @@ def bootstrap(data, seed=1, K=N_boot, sigma=None, **kwargs):
         slicing = np.random.randint(0, C, size=(C, K))
         samples = np.mean(data[tuple(slicing.T if ax == 0 else slice(None)
                                      for ax in range(data.ndim))], axis=1)
-    return np.array(samples, dtype='complex128')
+    return np.array(samples, dtype=self.dtype)
 
 
 def COV(data, **kwargs):
@@ -163,7 +159,7 @@ def encode_prop(prop_info):
         prop_name += f'{k}_{v}_'
     return prop_name[:-1]
 
-# =====misc functions======================================================
+# ====misc functions ==================================================
 
 
 def st_dev(data, mean=None, **kwargs):
@@ -197,6 +193,44 @@ def err_disp(num, err, n=2, **kwargs):
         # return str(num_trunc)+'('+str(err_n_digits)+')E%+d'%num_dec_place
         return str_num_trunc+'('+str(err_n_digits)+')'
 
+
+# =====statistical obj class======================================
+
+
+class stat:
+    def __init__(self, val, err=None, btsp=None,
+                 dtype=None, **kwargs):
+        self.val = np.array(val)
+        self.shape = self.val.shape
+        self.dtype = self.val.dtype if dtype == None else dtype
+
+        self.err = np.array(err)
+        self.btsp = np.array(btsp)
+
+        if type(btsp) == str:
+            if btsp == 'fill':
+                self.btsp = np.zeros(shape=self.shape+(N_boot,))
+                for idx, central in np.ndenumerate(self.val):
+                    np.random.seed(1)
+                    self.btsp[idx] = np.random.normal(
+                        central, self.err[idx], N_boot)
+                self.btsp = np.moveaxis(self.btsp, -1, 0)
+
+        if type(err) == str:
+            if err == 'fill':
+                self.err = np.zeros(shape=self.shape)
+                btsp = np.moveaxis(self.btsp, 0, -1)
+                for idx, central in np.ndenumerate(self.val):
+                    self.err[idx] = st_dev(btsp[idx], central)
+
+
+m_pi_PDG = stat(val=139.5709/1000, err=0.00018/1000, btsp='fill')
+f_pi_PDG = stat(val=130.41/1000, err=0.23/1000, btsp='fill')
+
+m_f_sq_PDG = stat(
+    val=(m_pi_PDG.val/f_pi_PDG.val)**2,
+    err='fill',
+    btsp=(m_pi_PDG.btsp/f_pi_PDG.btsp)**2)
 
 # ====coloring and markers=================================================
 color_list = list(mc.TABLEAU_COLORS.keys())

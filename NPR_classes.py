@@ -4,7 +4,7 @@ from fourquark import *
 
 class bilinear_analysis:
     keys = ['S', 'P', 'V', 'A', 'T', 'm']
-    N_boot = 200
+    N_boot = N_boot
 
     def __init__(self, ensemble, loadpath=None, mres=True, **kwargs):
 
@@ -77,10 +77,10 @@ class bilinear_analysis:
                             errs[mom] = bl.Z_err
 
             self.momenta[action][(m1, m2)] = sorted(results.keys())
-            self.avg_results[action][(m1, m2)] = np.array([results[mom]
-                                                           for mom in self.momenta[action][(m1, m2)]])
-            self.avg_errs[action][(m1, m2)] = np.array([errs[mom]
-                                                        for mom in self.momenta[action][(m1, m2)]])
+            self.avg_results[action][(m1, m2)] = np.array(
+                [results[mom] for mom in self.momenta[action][(m1, m2)]])
+            self.avg_errs[action][(m1, m2)] = np.array(
+                [errs[mom] for mom in self.momenta[action][(m1, m2)]])
 
     def save_NPR(self, addl_txt='', **kwargs):
         folder = 'mres' if self.mres else 'no_mres'
@@ -112,13 +112,17 @@ class bilinear_analysis:
             momenta = self.momenta[(0, 1)][masses]
             res1 = self.avg_results[(0, 1)][masses]
             res2 = self.avg_results[(1, 0)][masses]
-            self.avg_results[(0, 1)][masses] = [{c: (res1[m][c]+res2[m][c])/2.0 for c in res1[m].keys()}
-                                                for m in range(len(momenta))]
+            self.avg_results[(0, 1)][masses] = [
+                {c: (res1[m][c]+res2[m][c])/2.0
+                 for c in res1[m].keys()}
+                for m in range(len(momenta))]
 
             err1 = self.avg_errs[(0, 1)][masses]
             err2 = self.avg_errs[(1, 0)][masses]
-            self.avg_errs[(0, 1)][masses] = [{c: err1[m][c]+err2[m][c] for c in err1[m].keys()}
-                                             for m in range(len(momenta))]
+            self.avg_errs[(0, 1)][masses] = [
+                {c: err1[m][c]+err2[m][c]
+                 for c in err1[m].keys()}
+                for m in range(len(momenta))]
 
         self.avg_results.pop((1, 0))
         self.avg_errs.pop((1, 0))
@@ -136,8 +140,8 @@ class bilinear_analysis:
             Z_es = [self.avg_errs[action][masses][i][c]
                     for i in range(len(momentas))]
             np.random.seed(1)
-            Z_btsp = np.random.multivariate_normal(Zs,
-                                                   np.diag(Z_es)**2, self.N_boot)
+            Z_btsp = np.random.multivariate_normal(
+                Zs, np.diag(Z_es)**2, self.N_boot)
             store = []
             for k in range(self.N_boot):
                 f = interp1d(momentas, Z_btsp[k, :],
@@ -217,7 +221,8 @@ class bilinear_analysis:
             plt.savefig('plots/'+self.ens+'_action_comp_bl.pdf')
             print('Plot saved to plots/'+self.ens+'_action_comp_bl.pdf')
 
-    def massive_Z_plots(self, mu=2, action=(0, 0), key='m', passinfo=False, **kwargs):
+    def massive_Z_plots(self, mu=2, action=(0, 0), key='m',
+                        passinfo=False, **kwargs):
         x = np.array([float(m) for m in self.all_masses])
         self.mres_list = np.zeros(len(x))
         if self.ens in valence_ens and self.mres:
@@ -320,10 +325,10 @@ class fourquark_analysis:
                             errs[fq.q] = fq.Z_A_errs
 
                 self.momenta[action][(m1, m2)] = sorted(results.keys())
-                self.avg_results[action][(m1, m2)] = np.array([results[mom]
-                                                               for mom in self.momenta[action][(m1, m2)]])
-                self.avg_errs[action][(m1, m2)] = np.array([errs[mom]
-                                                            for mom in self.momenta[action][(m1, m2)]])
+                self.avg_results[action][(m1, m2)] = np.array(
+                    [results[mom] for mom in self.momenta[action][(m1, m2)]])
+                self.avg_errs[action][(m1, m2)] = np.array(
+                    [errs[mom] for mom in self.momenta[action][(m1, m2)]])
 
     def save_NPR(self, addl_txt='', **kwargs):
         filename = 'pickles/'+self.ens+'_fq'+addl_txt+'.p'
@@ -360,8 +365,8 @@ class fourquark_analysis:
 
             Z_es = [e[i, j] for e in Z_errs]
             np.random.seed(1)
-            Z_btsp = np.random.multivariate_normal(Zs,
-                                                   np.diag(Z_es)**2, self.N_boot)
+            Z_btsp = np.random.multivariate_normal(
+                Zs, np.diag(Z_es)**2, self.N_boot)
             store = []
             for k in range(self.N_boot):
                 f = interp1d(momentas, Z_btsp[k, :],
@@ -384,6 +389,7 @@ class fourquark_analysis:
             err2 = self.avg_errs[(1, 0)][masses]
             self.avg_errs[(0, 1)][masses] = err1+err2
 
+        self.momenta.pop((1, 0))
         self.avg_results.pop((1, 0))
         self.avg_errs.pop((1, 0))
 

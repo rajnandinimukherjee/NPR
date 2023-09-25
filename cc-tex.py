@@ -1,29 +1,104 @@
 from cont_chir_extrap import *
-b = bag_fits(bag_ensembles)
-F1M = Z_analysis('F1M', bag=True)
-mu_list = [2.4, 2.0, 1.8, 1.5]
-MS_bar_mu = 3.0
+mu_list = [2.0, 2.2, 2.3, 2.4]
 flag_mus = [2.0, 3.0, 3.0, 3.0, 3.0]
-flag_vals = [0.524*F1M.scale_evolve(3.0, 2.0)[0][0, 0],
-             0.46, 0.79, 0.78, 0.49]
-flag_errs = [0.025, 0.04, 0.07, 0.06, 0.06]
-bag_signs = np.diag([1, -1, 1, -1, -1])
+flag_vals = [0.5570, 0.502, 0.766, 0.926, 0.720]
+flag_errs = [0.0071, 0.014, 0.032, 0.019, 0.038]
+
+basis = str(input('Choose basis (SUSY/NPR): '))
+run = input('Generate new plots? (True:1/False:0): ')
+
+Z = Z_fits(bag_ensembles, bag=True)
+sigma_file = 'sigmas_SUSY.p' if basis == 'SUSY' else 'sigmas_NPR.p'
+Z.store = pickle.load(open(sigma_file, 'rb'))
 
 
-def convert_to_MSbar(bags, bags_err, bag_btsp, mu1, mu2, **kwargs):
-    F1M_Z = Z_analysis('F1M', bag=True)
-    sig, sig_err, sig_btsp = F1M_Z.scale_evolve(mu2, mu1)
+def convert_to_MSbar(bag, mu2, mu1, **kwargs):
+    if mu1 == mu2:
+        sigma = stat(
+            val=np.eye(len(operators)),
+            btsp=np.array([np.eye(len(operators))
+                           for k in range(N_boot)])
+        )
+    else:
+        try:
+            sign = np.sign(mu2-mu1)
+            mus_temp = np.around(np.arange(int(mu1*10),
+                                           int(mu2*10)+sign,
+                                           sign)*0.1, 1)
+            sigma = stat(
+                val=np.eye(len(operators)),
+                btsp=np.array([np.eye(len(operators))
+                               for k in range(N_boot)])
+            )
+            sig_str = f'B({mu1})'
+            for m in range(1, len(mus_temp)):
+                mu2_temp, mu1_temp = mus_temp[m], mus_temp[m-1]
+                sig_str = f'sig({mu2_temp},{mu1_temp})' + sig_str
+                sigma_temp = Z.store[(mu2_temp, mu1_temp)]
+
+                sigma.val = sigma_temp.val@sigma.val
+                sigma.btsp = np.array([sigma_temp.btsp[k,]@sigma.btsp[k,]
+                                       for k in range(N_boot)])
+            # print(sig_str)
+        except KeyError:
+            rot_mtx = NPR_to_SUSY if basis == 'SUSY'\
+                else np.eye(len(operators))
+            sigma = z.extrap_sigma(mu2, mu1, rotate=rot_mtx)
+
     R_conv = R_RISMOM_MSbar(mu2)
-    bag_MS = R_conv@sig@bag
-    bag_MS_btsp = np.array([R_conv@sig_btsp[k,]@bag_btsp[:, k]
-                            for k in range(bag_analysis.N_boot)])
-    bag_MS_err = np.array([st_dev(bag_MS_btsp[:, i], bag_MS[i])
-                           for i in range(len(bag_MS))])
-    return bag_MS, bag_MS_err, bag_MS_btsp
+    if basis == 'SUSY':
+        R_conv = NPR_to_SUSY@R_conv@np.linalg.inv(NPR_to_SUSY)
+
+    bag_MS = stat(
+        val=R_conv@sigma.val@bag.val,
+        err='fill',
+        btsp=np.array([R_conv@sigma.btsp[k,]@bag.btsp[k,]
+                       for k in range(N_boot)])
+    )
+    return bag_MS
 
 
-def operator_summary(operator, mu=2.0, filename=None,
-                     open=True, FLAG=False, **kwargs):
+def rotate_to_SUSY(**kwargs):
+    NPR_fits = pickle.load(open('cc_extrap_dict_NPR.p', 'rb'))
+
+    from_NPR = {op: {fit: {mu: {} for mu in mu_list}
+                     for fit in NPR_fits['VVpAA'].keys()}
+                for op in operators}
+    for fit in NPR_fits['VVpAA'].keys():
+        for mu in mu_list:
+            NPR_MS_Bs = stat(
+                val=[NPR_fits[op][fit][mu]['MS']['val']
+                     for op in operators],
+                btsp=np.array([NPR_fits[op][fit][mu]['MS']['btsp']
+                               for op in operators]).T
+            )
+            NPR_MS_Bs = stat(
+                val=NPR_to_SUSY@NPR_MS_Bs.val,
+                err='fill',
+                btsp=np.array([NPR_to_SUSY@NPR_MS_Bs.btsp[k, :]
+                               for k in range(N_boot)])
+            )
+            for op_idx, op in enumerate(operators):
+                from_NPR[op][fit][mu] = {
+                    'val': NPR_MS_Bs.val[op_idx],
+                    'err': NPR_MS_Bs.err[op_idx],
+                    'btsp': NPR_MS_Bs.btsp[:, op_idx],
+                    'GOF': True}
+
+            for op_idx, j in itertools.product(range(len(operators)),
+                                               range(len(operators))):
+                if NPR_to_SUSY[op_idx, j] != 0 and \
+                        NPR_fits[operators[j]][fit][mu]['pvalue'] < 0.05:
+                    from_NPR[operators[op_idx]][fit][mu]['GOF'] = False
+
+    return from_NPR
+
+
+fits_NPR = rotate_to_SUSY()
+
+
+def operator_summary(operator, basis='NPR', filename=None,
+                     open=True, with_alt=True, **kwargs):
     op_idx = operators.index(operator)
     ansatze = list(fits[operator].keys())
     ansatz_desc = [fits[operator][a]['kwargs']['title']
@@ -37,55 +112,61 @@ def operator_summary(operator, mu=2.0, filename=None,
 
         vals = [fits[operator][fit][mu]['phys'] for fit in ansatze]
         errs = [fits[operator][fit][mu]['err'] for fit in ansatze]
-        chis = [fits[operator][fit][mu]['chi_sq_dof'] for fit in ansatze]
         pvals = [fits[operator][fit][mu]['pvalue'] for fit in ansatze]
         cont_slope = [fits[operator][fit][mu]['coeffs'][0] for fit in ansatze]
 
         MS_vals = [fits[operator][fit][mu]['MS']['val'] for fit in ansatze]
         MS_errs = [fits[operator][fit][mu]['MS']['err'] for fit in ansatze]
-        pvals = [fits[operator][fit][mu]['pvalue'] for fit in ansatze]
 
         ax[0].errorbar(np.arange(len(ansatze))+offset, vals,
-                       yerr=errs, fmt='o', capsize=2)
+                       yerr=errs, fmt='o', capsize=2,
+                       label=r'$\mu='+str(np.around(mu, 2)) + '$ GeV')
         ax[1].errorbar(np.arange(len(ansatze))+offset, MS_vals, yerr=MS_errs,
-                       fmt='o', capsize=2, label=r'$\mu='+str(np.around(mu, 2))
-                       + '$ GeV')
+                       fmt='o', capsize=2)
 
-        tick = min(errs)*0.1
+        if basis == 'SUSY' and with_alt:
+            alt_MS_vals = [fits_NPR[operator][fit][mu]['val']
+                           for fit in ansatze]
+            alt_MS_errs = [fits_NPR[operator][fit][mu]['err']
+                           for fit in ansatze]
+            alt_MS_GOF = [fits_NPR[operator][fit][mu]['GOF']
+                          for fit in ansatze]
+
+            ax[1].errorbar(np.arange(len(ansatze))+offset+0.1, alt_MS_vals,
+                           yerr=alt_MS_errs, fmt='d', capsize=2,
+                           color=color_list[m])
+
         for i in range(len(ansatze)):
-            # ax[0].annotate(str(np.around(chis[i], 2)),
-            #               (i, vals[i]+errs[i]+tick),
-            #               ha='center', va='bottom')
-            # ax[0].annotate(str(np.around(cont_slope[i], 2)),
-            #               (i+offset, vals[i]-errs[i]-4*tick), fontsize=9,
-            #               ha='center', va='top')
             if pvals[i] < 0.05:
                 ax[0].annotate(r'$\times $', (i+offset, vals[i]), ha='center',
                                va='center', c='white')
                 ax[1].annotate(r'$\times $', (i+offset, MS_vals[i]), ha='center',
                                va='center', c='white')
+            if basis == 'SUSY' and with_alt and not alt_MS_GOF[i]:
+                ax[1].annotate(r'$\times $', (i+offset+0.1, alt_MS_vals[i]),
+                               ha='center', va='center', c='white')
 
     ax[0].set_title(r'$B_{phys}^{SMOM}(\mu)$')
     ax[0].set_xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
                      ha='right')
 
-    if FLAG:
+    if basis == 'SUSY':
         ansatze.append('FLAG')
-        ansatz_desc.append(r'FLAG $N_f=2+1+1$')
+        ansatz_desc.append(r'FLAG $N_f=2+1$')
         op_idx = operators.index(operator)
         FLAG_val, FLAG_err = flag_vals[op_idx], flag_errs[op_idx]
         ax[1].errorbar([len(ansatze)-1], [FLAG_val], yerr=[FLAG_err],
-                       fmt='o', capsize=2, c='k', label=r'$\mu=' +
-                       str(np.around(flag_mus[op_idx]))+r'$ GeV')
+                       fmt='o', capsize=2, c='k')
 
-    ax[1].set_title(r'$B_{phys}^{\overline{MS}}(\mu\to 3.0$ GeV)')
+    ax[1].set_title(r'$B_{phys}^{\overline{MS}}(' +
+                    str(np.around(flag_mus[op_idx], 2))+'$ GeV)')
     ax[1].yaxis.set_label_position("right")
     ax[1].yaxis.tick_right()
     ax[1].set_xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
                      ha='right')
-    ax[1].legend()
+    ax[0].legend()
     if filename == None:
-        filename = f'plots/{operator}_fit_summary.pdf'
+        filename = f'{operator}/{basis}/fit_summary.pdf'
 
     pp = PdfPages(filename)
     fig_nums = plt.get_fignums()
@@ -100,14 +181,14 @@ def operator_summary(operator, mu=2.0, filename=None,
         os.system("open "+filename)
 
 
-run = input('Generate new plots? (True:1/False:0): ')
 if bool(int(run)):
-    basis = str(input('Choose basis (SUSY/NPR): '))
     fits = {}
+    b = bag_fits(bag_ensembles)
+
     for op in operators:
         fits[op] = {}
-        for key in ['a2m2', 'a2m2noC', 'a2a4m2', 'a2m2m4', 'a2m2logm2']:
-            fits[op][key] = {mu: {'filename': op+'/'+key+'_'+str(
+        for key in ['a2m2', 'a2m2noC', 'a2a4m2', 'a2m2m4']:  # , 'a2m2logm2']:
+            fits[op][key] = {mu: {'filename': op+'/'+basis+'/'+key+'_'+str(
                 int(mu*10))+'.pdf'}
                 for mu in mu_list}
 
@@ -121,9 +202,9 @@ if bool(int(run)):
         fits[op]['a2m2m4']['kwargs'] = {'title': r'$a^2$, $m_\pi^2$, ' +
                                         r'$m_\pi^4$',
                                         'guess': guess, 'addnl_terms': 'm4'}
-        fits[op]['a2m2logm2']['kwargs'] = {'title': r'$a^2$, $m_\pi^2$, ' +
-                                           r'$\log(m_\pi^2/\Lambda^2)$',
-                                           'addnl_terms': 'log'}
+        # fits[op]['a2m2logm2']['kwargs'] = {'title': r'$a^2$, $m_\pi^2$, ' +
+        #                                   r'$\log(m_\pi^2/\Lambda^2)$',
+        #                                   'addnl_terms': 'log'}
 
     for i, op in enumerate(operators):
         print(f'Generating plots for operator B{i+1}')
@@ -133,42 +214,47 @@ if bool(int(run)):
                 kwargs['rotate'] = NPR_to_SUSY
             for mu in mu_list:
                 filename = fits[op][fit][mu]['filename']
-                phys, err, btsp, coeffs, coeffs_err, chi_sq_dof, pvalue = \
-                    b.plot_fits(mu, ops=[op], filename=filename, **kwargs)
-                fits[op][fit][mu].update({'phys': phys,
-                                          'err': err,
-                                          'btsp': btsp,
-                                          'coeffs': coeffs,
-                                          'coeffs_err': coeffs_err,
-                                          'disp': err_disp(phys, err),
-                                          'coeff_disp': [err_disp(coeffs[0],
-                                                                  coeffs_err[0]),
-                                                         err_disp(coeffs[1],
-                                                                  coeffs_err[1])],
+                phys, coeffs, chi_sq_dof, pvalue = b.plot_fits(
+                    mu, ops=[op], filename=filename, **kwargs)
+                fits[op][fit][mu].update({'phys': phys.val,
+                                          'err': phys.err,
+                                          'btsp': phys.btsp,
+                                          'coeffs': coeffs.val,
+                                          'coeffs_err': coeffs.err,
+                                          'disp': err_disp(phys.val, phys.err),
+                                          'coeff_disp': [err_disp(coeffs.val[0],
+                                                                  coeffs.err[0]),
+                                                         err_disp(coeffs.val[1],
+                                                                  coeffs.err[1])],
                                           'chi_sq_dof': chi_sq_dof,
                                           'pvalue': pvalue})
 
+    bar = Bar('Converting to MS-bar',
+              max=len(operators)*len(mu_list)*len(list(fits['VVpAA'].keys())))
     for fit in fits['VVpAA'].keys():
         for mu in mu_list:
-            bag = np.array([fits[op][fit][mu]['phys'] for op in operators])
-            bag_err = np.array([fits[op][fit][mu]['err'] for op in operators])
-            bag_btsp = np.array([fits[op][fit][mu]['btsp']
-                                 for op in operators])
-            MS, MS_err, MS_btsp = convert_to_MSbar(bag, bag_err, bag_btsp,
-                                                   mu, MS_bar_mu)
+            bag = stat(
+                val=np.array([fits[op][fit][mu]['phys']
+                              for op in operators]),
+                err=np.array([fits[op][fit][mu]['err']
+                              for op in operators]),
+                btsp=np.array([fits[op][fit][mu]['btsp']
+                               for op in operators]).T,
+            )
             for op_idx, op in enumerate(operators):
-                fits[op][fit][mu]['MS'] = {'val': MS[op_idx],
-                                           'err': MS_err[op_idx],
-                                           'btsp': MS_btsp[:, op_idx]}
+                MS = convert_to_MSbar(bag, flag_mus[op_idx], mu)
+                fits[op][fit][mu].update({'MS': {'val': MS.val[op_idx],
+                                                 'err': MS.err[op_idx],
+                                                 'btsp': MS.btsp[:, op_idx]}})
+                bar.next()
+    bar.finish()
+
     for op in operators:
-        if basis == 'SUSY':
-            show_flag = True
-        else:
-            show_flag = False
-        operator_summary(op, FLAG=show_flag, open=False)
-    pickle.dump(fits, open('cc_extrap_dict.p', 'wb'))
+        operator_summary(op, basis=basis, open=False)
+
+    pickle.dump(fits, open('cc_extrap_dict_'+basis+'.p', 'wb'))
 else:
-    fits = pickle.load(open('cc_extrap_dict.p', 'rb'))
+    fits = pickle.load(open('cc_extrap_dict_'+basis+'.p', 'rb'))
 
 
 rv = [r'\documentclass[12pt]{extarticle}']
@@ -183,9 +269,24 @@ rv += [r'\author{R Mukherjee}'+'\n'+r'\date{\today}']
 rv += [r'\begin{document}']
 rv += [r'\maketitle']
 rv += [r'\tableofcontents']
+rv += [r'\clearpage']
 
 for i, op in enumerate(operators):
+    mu_str = str(np.around(flag_mus[i]))
+    rv += [r'\begin{figure}']
+    rv += [r'\centering']
+    rv += [r'\includegraphics[page=1, width=1.1\textwidth]{'+op+r'/' +
+           basis+'/fit_summary.pdf}']
+    rv += [r'\caption{$B_{'+str(i+1)+r'}$\\(left) $B_{phys}$' +
+           r' in RI/SMOM scheme from fit variations ' +
+           r'(fits with $p$-value $<0.05$ marked with ``$\times$"). \\' +
+           r'(right) $B_{phys}$ in $\overline{MS}$ computed using ' +
+           r'$B^{\overline{MS}} = R^{\overline{MS}\leftarrow SMOM}('+mu_str+')' +
+           r'\sigma_{npt}('+mu_str+r',\mu) B^{SMOM}(\mu)$.}']
+    rv += [r'\end{figure}']
     rv += [r'\clearpage']
+
+for i, op in enumerate(operators):
     ansatze = [fits[op][fit]['kwargs']['title'] for fit in fits[op].keys()]
     rv += [r'\section{$B_'+str(i+1)+r'$}']
     rv += [r'\begin{table}[h!]']
@@ -225,33 +326,24 @@ for i, op in enumerate(operators):
             'coeff_disp'][1] for fit in fits[op].keys()])+r'\\']
         rv += [r'\hline']
     rv += [r'\end{tabular}']
-    rv += [r'\caption{Fit values of coefficients in $B = B_0(1 + \mathbf{\alpha}'
-           + r' a^2 + \mathbf{\beta} \frac{m_\pi^2}{f_\pi^2} + \ldots)$.}']
+    rv += [r'\caption{Fit values of coefficients in $B = B_{phys} + \mathbf{\alpha}'
+           + r' a^2 + \mathbf{\beta}\left(\frac{m_\pi^2}{f_\pi^2}-'
+           + r'\frac{m_{\pi,PDG}^2}{f_\pi^2}\right) + \ldots$.}']
     rv += [r'\end{center}']
     rv += [r'\end{table}']
-
-    rv += [r'\begin{figure}']
-    rv += [r'\centering']
-    rv += [r'\includegraphics[page=1, width=1.1\textwidth]{plots/' +
-           op+'_fit_summary.pdf}']
-    rv += [r'\caption{\\(left) $B_{phys}$ in RI/SMOM scheme from fit variations ' +
-           r'(fits with $p$-value $<0.05$ marked with ``$\times$"). \\' +
-           r'(right) $B_{phys}$ in $\overline{MS}$ computed using ' +
-           r'$B^{\overline{MS}} = R^{\overline{MS}\leftarrow SMOM}(3.0)' +
-           r'\sigma_{npt}^{F1M}(3.0, 2.0) B^{SMOM}$.}']
-    rv += [r'\end{figure}']
-    rv += [r'\clearpage']
 
     for fit in fits[op].keys():
         for mu in mu_list:
             filename = fits[op][fit][mu]['filename']
             rv += [r'\includepdf[link, pages=-]{'+filename+'}']
+    rv += [r'\clearpage']
 
 rv += [r'\end{document}']
 
-f = open('tex/extrap.tex', 'w')
+filename = f'extrap_{basis}'
+f = open('tex/'+filename+'.tex', 'w')
 f.write('\n'.join(rv))
 f.close()
 
-os.system("pdflatex tex/extrap.tex")
-os.system("open extrap.pdf")
+os.system(f"pdflatex tex/{filename}.tex")
+os.system(f"open {filename}.pdf")
