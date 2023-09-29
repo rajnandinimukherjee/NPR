@@ -310,7 +310,8 @@ class Z_fits:
 
         return params[0] + params[1]*a_sq
 
-    def extrap_ij(self, mu2, mu1, i, j, guess=[1, 1e-1], **kwargs):
+    def extrap_ij(self, mu2, mu1, i, j, guess=[1, 1e-1],
+                  include_C=False, **kwargs):
 
         # ==== Step 1: chiral extrapolation of M ensembles=================
         sigma = stat(
@@ -373,11 +374,23 @@ class Z_fits:
             btsp=sigma_M0.btsp[:, i, j]
         )
 
+        phys_sigma = [sigma_F0, sigma_M0]
+        cont_ens = self.cont_ens.copy()
+        if include_C:
+            sigma_C0 = self.Z_dict['C0'].scale_evolve(mu2, mu1, **kwargs)
+            sigma_C0 = stat(
+                val=sigma_C0.val[i, j],
+                err=sigma_C0.err[i, j],
+                btsp=sigma_C0.btsp[:, i, j]
+            )
+            phys_sigma.append(sigma_C0)
+            cont_ens.append('C0')
+
         # ==== Step 3: continuum extrapolate F0 and M0=======================
         sigma = stat(
-            val=[sig.val for sig in [sigma_F0, sigma_M0]],
+            val=[sig.val for sig in phys_sigma],
             err='fill',
-            btsp=np.array([[sig.btsp[k] for sig in [sigma_F0, sigma_M0]]
+            btsp=np.array([[sig.btsp[k] for sig in phys_sigma]
                            for k in range(N_boot)])
         )
 
@@ -387,7 +400,7 @@ class Z_fits:
 
         def diff(sigma, params, **kwargs):
             return np.array(sigma) - self.continuum_ansatz(
-                params, self.cont_ens, **kwargs)
+                params, cont_ens, **kwargs)
 
         def LD(params):
             return L.dot(diff(sigma.val, params, fit='central'))

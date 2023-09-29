@@ -49,6 +49,17 @@ NPR_to_SUSY[1, 3] = 1
 NPR_to_SUSY[2, 3:] = -0.5, 0.5
 NPR_to_SUSY[3, 2] = 1
 NPR_to_SUSY[4, 1] = -0.5
+
+umx_to_mx = np.zeros(shape=(len(operators), len(operators)))
+umx_to_mx[0, 0] = 1
+umx_to_mx[1, 2], umx_to_mx[2, 1] = -2, -0.5
+umx_to_mx[3, 3], umx_to_mx[3, 4] = -0.5, 0.5
+umx_to_mx[4, 3], umx_to_mx[4, 4] = 1.5, 0.5
+
+
+flag_mus = [2.0, 3.0, 3.0, 3.0, 3.0]
+flag_vals = [0.5570, 0.502, 0.766, 0.926, 0.720]
+flag_errs = [0.0071, 0.014, 0.032, 0.019, 0.038]
 # =====gamma matrices=============================================
 gamma = {'I': np.identity(N_d, dtype='complex128'),
          'X': np.zeros(shape=(N_d, N_d), dtype='complex128'),
