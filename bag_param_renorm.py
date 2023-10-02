@@ -3,7 +3,7 @@ from scipy.interpolate import interp1d
 from NPR_classes import *
 
 all_bag_data = h5py.File('kaon_bag_fits.h5', 'r')
-bag_ensembles = list(all_bag_data.keys())
+bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
 
 
 def load_info(key, ens, ops, meson='ls', **kwargs):

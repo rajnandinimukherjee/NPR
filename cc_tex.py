@@ -197,11 +197,31 @@ def operator_summary(operator, fits, basis='SUSY', filename=None,
         os.system("open "+filename)
 
 
-def full_summary(basis='SUSY', run=False, include_C=False, **kwargs):
+def full_summary(basis='SUSY', run=False, include_C=False,
+                 with_FLAG=False, calc_running=False, **kwargs):
     rot_mtx = basis_rotation(basis)
     C_folder = 'with_C' if include_C else 'without_C'
-    sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
-    Z.store = pickle.load(open(sigma_file, 'rb'))
+
+    if calc_running:
+        Z.store = {}
+        mus = np.around(np.arange(16, 31, 1)*0.1, 1)
+        N_mus = len(mus)
+
+        for i in tqdm(range(1, N_mus)):
+            Z.store[(mus[i], mus[i-1])] = Z.extrap_sigma(
+                mus[i], mus[i-1], rotate=rot_mtx,
+                include_C=include_C)
+
+            Z.store[(mus[i-1], mus[i])] = Z.extrap_sigma(
+                mus[i-1], mus[i], rotate=rot_mtx,
+                include_C=include_C)
+
+        pickle.dump(Z.store, open(f'sigmas/{C_folder}/sigmas_{basis}.p', 'wb'))
+        print(
+            f'Saved npt running matrices to sigmas/{C_folder}/sigmas_{basis}.p')
+    else:
+        sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
+        Z.store = pickle.load(open(sigma_file, 'rb'))
 
     dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{basis}.p'
     if run:
@@ -257,7 +277,7 @@ def full_summary(basis='SUSY', run=False, include_C=False, **kwargs):
 
     for op in operators:
         operator_summary(op, fits, basis=basis, open=False, with_alt=False,
-                         with_FLAG=False, rot_mtx=rot_mtx)
+                         with_FLAG=with_FLAG, rot_mtx=rot_mtx)
 
     rv = [r'\documentclass[12pt]{extarticle}']
     rv += [r'\usepackage[paperwidth=15in,paperheight=7.2in]{geometry}']
@@ -406,15 +426,15 @@ def basis_summary(include_C=False, with_FLAG=False, comp_NPR=False, **kwargs):
                     ax[b_idx, 1].errorbar(np.arange(len(ansatze))+offset+0.1, alt_MS_vals,
                                           yerr=alt_MS_errs, fmt='d', capsize=2,
                                           color=color_list[m])
-            for i in range(len(ansatze)):
-                if pvals[i] < 0.05:
-                    ax[b_idx, 0].annotate(r'$\times $', (i+offset, vals[i]), ha='center',
-                                          va='center', c='white')
-                    ax[b_idx, 1].annotate(r'$\times $', (i+offset, MS_vals[i]), ha='center',
-                                          va='center', c='white')
-                if basis != 'NPR' and comp_NPR and not alt_MS_GOF[i]:
-                    ax[b_idx, 1].annotate(r'$\times $', (i+offset+0.1, alt_MS_vals[i]),
-                                          ha='center', va='center', c='white')
+                for i in range(len(ansatze)):
+                    if pvals[i] < 0.05:
+                        ax[b_idx, 0].annotate(r'$\times $', (i+offset, vals[i]), ha='center',
+                                              va='center', c='white')
+                        ax[b_idx, 1].annotate(r'$\times $', (i+offset, MS_vals[i]), ha='center',
+                                              va='center', c='white')
+                    if basis != 'NPR' and comp_NPR and not alt_MS_GOF[i]:
+                        ax[b_idx, 1].annotate(r'$\times $', (i+offset+0.1, alt_MS_vals[i]),
+                                              ha='center', va='center', c='white')
 
             ax[b_idx, 0].set_xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
                                     ha='right')
