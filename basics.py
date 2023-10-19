@@ -50,11 +50,10 @@ NPR_to_SUSY[2, 3:] = -0.5, 0.5
 NPR_to_SUSY[3, 2] = 1
 NPR_to_SUSY[4, 1] = -0.5
 
-umx_to_mx = np.zeros(shape=(len(operators), len(operators)))
-umx_to_mx[0, 0] = 1
-umx_to_mx[1, 2], umx_to_mx[2, 1] = -2, -0.5
-umx_to_mx[3, 3], umx_to_mx[3, 4] = -0.5, 0.5
-umx_to_mx[4, 3], umx_to_mx[4, 4] = 1.5, 0.5
+
+def norm_factors(rotate=np.eye(len(operators)), **kwargs):
+    N_NPR = np.array([8/3, -4/3, 2, -5/3, -1])
+    return rotate@N_NPR
 
 
 flag_mus = [2.0, 3.0, 3.0, 3.0, 3.0]

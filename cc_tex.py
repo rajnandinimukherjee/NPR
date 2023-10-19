@@ -58,7 +58,12 @@ def convert_to_MSbar(bag, mu2, mu1, rot_mtx=np.eye(len(operators)),
         except KeyError:
             sigma = z.extrap_sigma(mu2, mu1, rotate=rot_mtx)
 
-    R_conv = rot_mtx@R_RISMOM_MSbar(mu2)@np.linalg.inv(rot_mtx)
+    R_conv = rot_mtx@R_RISMOM_MSbar(mu2, **kwargs)@np.linalg.inv(rot_mtx)
+    if kwargs['mult_norm']:
+        Ni = norm_factors(rotate=rot_mtx)
+        # pre_mtx, post_mtx = np.diag(Ni), np.diag(1/Ni)
+        pre_mtx, post_mtx = np.eye(len(operators)), np.diag(1/Ni)
+        R_conv = post_mtx@R_conv@pre_mtx
 
     bag_MS = stat(
         val=R_conv@sigma.val@bag.val,
@@ -198,7 +203,8 @@ def operator_summary(operator, fits, basis='SUSY', filename=None,
 
 
 def full_summary(basis='SUSY', run=False, include_C=False,
-                 with_FLAG=False, calc_running=False, **kwargs):
+                 with_FLAG=False, calc_running=False,
+                 alt_fit=False, **kwargs):
     rot_mtx = basis_rotation(basis)
     C_folder = 'with_C' if include_C else 'without_C'
 
@@ -223,7 +229,10 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
         Z.store = pickle.load(open(sigma_file, 'rb'))
 
-    dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{basis}.p'
+    if alt_fit:
+        dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{basis}_with_alt.p'
+    else:
+        dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{basis}.p'
     if run:
         fits = {}
         b = bag_fits(bag_ensembles)
@@ -239,7 +248,9 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                 for mu in mu_list:
                     filename = fits[op][fit][mu]['filename']
                     phys, coeffs, chi_sq_dof, pvalue = b.plot_fits(
-                        mu, ops=[op], filename=filename, **kwargs)
+                        mu, ops=[op], filename=filename,
+                        mult_norm=alt_fit, **kwargs)
+
                     fits[op][fit][mu].update({'phys': phys,
                                               'coeffs': coeffs,
                                               'disp': err_disp(phys.val, phys.err),
@@ -262,7 +273,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                 )
                 for op_idx, op in enumerate(operators):
                     MS = convert_to_MSbar(
-                        bag, flag_mus[op_idx], mu, rot_mtx=rot_mtx)
+                        bag, flag_mus[op_idx], mu, rot_mtx=rot_mtx, mult_norm=alt_fit)
                     fits[op][fit][mu].update({'MS': stat(
                         val=MS.val[op_idx],
                         err=MS.err[op_idx],
@@ -363,6 +374,8 @@ def full_summary(basis='SUSY', run=False, include_C=False,
     rv += [r'\end{document}']
 
     filename = f'extrap_{basis}'
+    if alt_fit:
+        filename += '_with_Ns'
     f = open('tex/'+filename+'.tex', 'w')
     f.write('\n'.join(rv))
     f.close()

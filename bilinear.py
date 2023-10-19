@@ -69,19 +69,33 @@ class bilinear:
                                        for i in range(self.N_bl)])
 
         self.m_q = float(self.prop_in.info['am'])
-        self.mres = 0
-        if ensemble in valence_ens and mres:
-            ens = etaCvalence(ensemble)
-            try:
-                sig_figs = len(str(self.m_q))-2
-                mres_key = next((key for key, val in ens.mass_comb.items()
-                                 if round(val, sig_figs) == self.m_q), None)
-                self.mres = ens.data[mres_key]['mres']
-            except KeyError:
-                print(f'no mres info for am_q={self.m_q}')
-                self.mres = 0
+        self.m_pole = self.pole_mass()
+        # self.mres = 0
+        # if ensemble in valence_ens and mres:
+        #    ens = etaCvalence(ensemble)
+        #    try:
+        #        sig_figs = len(str(self.m_q))-2
+        #        mres_key = next((key for key, val in ens.mass_comb.items()
+        #                         if round(val, sig_figs) == self.m_q), None)
+        #        self.mres = ens.data[mres_key]['mres']
+        #    except KeyError:
+        #        print(f'no mres info for am_q={self.m_q}')
+        #        self.mres = 0
 
-        self.m_q += self.mres
+        # self.m_q += self.mres
+
+    def pole_mass(self):
+        p_hat = 2*np.sin(self.tot_mom/2)
+        p_hat_sq = np.linalg.norm(p_hat)**2
+        p_dash = np.sin(self.tot_mom)
+        p_dash_sq = np.linalg.norm(p_dash)**2
+
+        M = float(self.prop_in.info['M5'])
+        L = float(self.prop_in.info['Ls'])
+
+        W = 1 - M + p_hat_sq/2
+        pdb.set_trace()
+        # Z = np.abs(W)*np.exp(alpha)
 
     def gamma_Z(self, operators, **kwargs):
         projected = {c: np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]

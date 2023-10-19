@@ -9,29 +9,30 @@ bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
 def load_info(key, ens, ops, meson='ls', **kwargs):
     h5_data = all_bag_data[ens][meson]
     if meson == 'ls':
-        central_val = np.array([np.array(h5_data[
+        central = np.array([np.array(h5_data[
             op][key]['central']).item()
             for op in ops])
         error = np.array([np.array(h5_data[
             op][key]['error']).item()
             for op in ops])
-        bootstraps = np.zeros(shape=(N_boot, 5))
-        for i in range(5):
+        bootstraps = np.zeros(shape=(N_boot, len(operators)))
+        for i in range(len(operators)):
             op = ops[i]
             bootstraps[:, i] = np.array(h5_data[op][key][
                 'Bootstraps'])[:, 0]
 
     elif meson == 'll':
-        central_val = np.array(h5_data[key]['central']).item()
+        central = np.array(h5_data[key]['central']).item()
         error = np.array(h5_data[key]['error']).item()
         bootstraps = np.array(h5_data[key]['Bootstraps'])[:, 0]
 
     if key == 'bag':
-        central_val[1] *= -1
-        bootstraps[:, 1] = -1*bootstraps[:, 1]
-        central_val[-1] *= 2
-        bootstraps[:, -1] = 2*bootstraps[:, -1]
-    return stat(val=central_val, err='fill', btsp=bootstraps)
+        central[1] *= -2
+        bootstraps[:, 1] = -2*bootstraps[:, 1]
+        central[-1] *= 4
+        bootstraps[:, -1] = 4*bootstraps[:, -1]
+
+    return stat(val=central, err='fill', btsp=bootstraps)
 
 
 class Z_analysis:
@@ -307,6 +308,18 @@ class bag_analysis:
 
     def interpolate(self, mu, **kwargs):
         Z_mu = self.Z_info.interpolate(mu, **kwargs)
+
+        if kwargs['mult_norm']:
+            Ni = norm_factors(**kwargs)
+            pre_mtx = np.diag(Ni)
+            # post_mtx = np.diag(1/Ni)
+            post_mtx = np.eye(len(operators))
+            Z_mu = stat(
+                val=post_mtx@Z_mu.val@pre_mtx,
+                btsp=np.array([post_mtx@Z_mu.btsp[k, :, :]@pre_mtx
+                               for k in range(N_boot)])
+            )
+
         if 'rotate' in kwargs:
             rot_mtx = kwargs['rotate']
             bag = self.rotate_bag(rot_mtx, self.bag)

@@ -126,6 +126,7 @@ class bilinear_analysis:
 
         self.avg_results.pop((1, 0))
         self.avg_errs.pop((1, 0))
+        self.momenta.pop((1, 0))
 
     def extrap_Z(self, mu, masses, action=(0, 0), **kwargs):
         Z = {}
@@ -196,18 +197,21 @@ class bilinear_analysis:
         print('Plot saved to plots/'+self.ens+'_mass_comp_bl.pdf')
         os.system('open '+filename)
 
-    def plot_actionwise(self, mass, save=False, **kwargs):
+    def plot_actionwise(self, mass, save=False, plot_lambda=False, **kwargs):
         fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(12, 6))
         action_combinations = self.momenta.keys()
-        m1, m2 = mass
         for i in range(5):
             val_col, err_col = ax[:, i]
             err_col.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
             c = currents[i]
             for action in action_combinations:
-                mom = self.momenta[action][(m1, m2)]
-                res = self.avg_results[action][(m1, m2)][c]
-                err = self.avg_errs[action][(m1, m2)][c]
+                mom = self.momenta[action][mass]
+                res = [self.avg_results[action][mass][m][c]
+                       for m in range(len(mom))]
+                err = [self.avg_errs[action][mass][m][c]
+                       for m in range(len(mom))]
+                if plot_lambda == True:
+                    res = 1/np.array(res)
                 val_col.scatter(mom, res, label=action)
                 err_col.scatter(mom, err, label=action)
             val_col.title.set_text(c)

@@ -104,8 +104,18 @@ r_mtx[3, 3], r_mtx[3, 4] = r_44, r_45
 r_mtx[4, 4], r_mtx[4, 3] = r_55, r_54
 
 
-def R_RISMOM_MSbar(mu):
-    return np.identity(5) - (g(mu)**2)*r_mtx/(16*np.pi**2)
+def R_RISMOM_MSbar(mu, **kwargs):
+    R_ij = np.identity(5) - (g(mu)**2)*r_mtx/(16*np.pi**2)
+    if kwargs['mult_norm']:
+        if mu == 3.0:
+            R_P_3 = 1.05259  # actually R_S
+        elif mu == 2.0:
+            R_P_3 = 1.06689
+        else:
+            R_P_3 = 1
+
+        R_ij[1:, 1:] = R_ij[1:, 1:]/(R_P_3**2)
+    return R_ij
 
 
 # ====gamma_0 matrix elements============================
