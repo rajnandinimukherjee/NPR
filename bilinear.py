@@ -112,6 +112,7 @@ class bilinear:
 
     def qslash_Z(self, operators, q_vec, Z_q, S_inv,
                  renorm='mSMOM', printval=False, **kwargs):
+        q_vec = np.sin(q_vec)
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
         q_sq = np.linalg.norm(q_vec)**2
