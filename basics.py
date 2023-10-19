@@ -101,7 +101,7 @@ def bootstrap(data, seed=1, K=N_boot, **kwargs):
         slicing = np.random.randint(0, C, size=(C, K))
         samples = np.mean(data[tuple(slicing.T if ax == 0 else slice(None)
                                      for ax in range(data.ndim))], axis=1)
-    return np.array(samples, dtype=self.dtype)
+    return np.array(samples, dtype=data.dtype)
 
 
 def COV(data, **kwargs):

@@ -71,7 +71,7 @@ class bilinear_analysis:
                     if (condition3 and condition4):
                         bl = bilinear(self.ens, prop1, prop2, mres=self.mres)
                         bl.NPR(massive=massive, **kwargs)
-                        mom = bl.q*bl.a_inv
+                        mom = bl.q*self.ainv
                         if mom not in results.keys():
                             results[mom] = bl.Z
                             errs[mom] = bl.Z_err

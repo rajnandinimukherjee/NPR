@@ -43,8 +43,7 @@ class external:
             shape=(self.N_cf, 12, 12), dtype='complex128'))
         for cf in range(self.N_cf):
             c = cfgs[cf]
-            h5_path = f'{data}/{c}/NPR/{self.obj}/\
-                    {self.prefix}{self.filename}.{c}.h5'
+            h5_path = f'{data}/{c}/NPR/{self.obj}/{self.prefix}{self.filename}.{c}.h5'
             h5_data = h5py.File(h5_path, 'r')['ExternalLeg']['corr'][0, 0, :]
             self.propagator.val[cf, :] = np.array(h5_data['re'] +
                                                   h5_data['im']*1j).swapaxes(
@@ -67,8 +66,8 @@ class external:
 
         self.inv_outgoing_propagator = stat(
             val=np.linalg.inv(self.outgoing_propagator.val),
-            btsp=np.array([np.linalg.inv(self.btsp_outgoing_propgator[k])
-                           for k in range(self.N_boot)]))
+            btsp=np.array([np.linalg.inv(self.outgoing_propagator.btsp[k,])
+                           for k in range(N_boot)]))
 
         self.Z_q_qslash = stat(
             val=np.trace(-1j*self.inv_propagator.val @

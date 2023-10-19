@@ -29,8 +29,7 @@ class bilinear:
         cfgs = sorted(os.listdir(data)[1:])
         self.N_cf = len(cfgs)
         self.filename = prop1.filename+'__'+prop2.filename
-        h5_path = f'{data}/{cfgs[0]}/NPR/{self.obj}/\
-                {self.prefix}{self.filename}.{cfgs[0]}.h5'
+        h5_path = f'{data}/{cfgs[0]}/NPR/{self.obj}/{self.prefix}{self.filename}.{cfgs[0]}.h5'
         self.N_bl = len(h5py.File(h5_path, 'r')['Bilinear'].keys())
 
         self.bilinears = np.array([np.empty(shape=(self.N_cf, 12, 12),
@@ -38,8 +37,7 @@ class bilinear:
                                   dtype=object)
         for cf in range(self.N_cf):
             c = cfgs[cf]
-            h5_path = f'{data}/{c}/NPR/{self.obj}/\
-                    {self.prefix}{self.filename}.{c}.h5'
+            h5_path = f'{data}/{c}/NPR/{self.obj}/{self.prefix}{self.filename}.{c}.h5'
             h5_data = h5py.File(h5_path, 'r')['Bilinear']
             for i in range(self.N_bl):
                 bilinear_i = h5_data[f'Bilinear_{i}']['corr'][0, 0, :]
@@ -70,19 +68,19 @@ class bilinear:
 
         self.m_q = float(self.prop_in.info['am'])
         self.m_pole = self.pole_mass()
-        # self.mres = 0
-        # if ensemble in valence_ens and mres:
-        #    ens = etaCvalence(ensemble)
-        #    try:
-        #        sig_figs = len(str(self.m_q))-2
-        #        mres_key = next((key for key, val in ens.mass_comb.items()
-        #                         if round(val, sig_figs) == self.m_q), None)
-        #        self.mres = ens.data[mres_key]['mres']
-        #    except KeyError:
-        #        print(f'no mres info for am_q={self.m_q}')
-        #        self.mres = 0
+        self.mres = 0
+        if ensemble in valence_ens and mres:
+           ens = etaCvalence(ensemble)
+           try:
+               sig_figs = len(str(self.m_q))-2
+               mres_key = next((key for key, val in ens.mass_comb.items()
+                                if round(val, sig_figs) == self.m_q), None)
+               self.mres = ens.data[mres_key]['mres']
+           except KeyError:
+               print(f'no mres info for am_q={self.m_q}')
+               self.mres = 0
 
-        # self.m_q += self.mres
+        self.m_pole += self.mres
 
     def pole_mass(self):
         p_hat = 2*np.sin(self.tot_mom/2)
@@ -90,12 +88,17 @@ class bilinear:
         p_dash = np.sin(self.tot_mom)
         p_dash_sq = np.linalg.norm(p_dash)**2
 
-        M = float(self.prop_in.info['M5'])
-        L = float(self.prop_in.info['Ls'])
+        M5 = float(self.prop_in.info['M5'])
+        Ls = float(self.prop_in.info['Ls'])
 
-        W = 1 - M + p_hat_sq/2
-        pdb.set_trace()
-        # Z = np.abs(W)*np.exp(alpha)
+        W = 1 - M5 + p_hat_sq/2
+        alpha = np.arccosh((1+W**2+p_dash_sq)/(2*np.abs(W)))
+        Z = np.abs(W)*np.exp(alpha)
+        delta = (W/Z)**Ls
+        R =  1-(W**2)/Z + (delta**2)*(Z-(W**2)/Z)/(1-delta**2)
+
+        E = np.arcsinh(self.m_q*R + delta*(Z-(W**2)/Z)/(1-delta**2))
+        return E
 
     def gamma_Z(self, operators, **kwargs):
         projected = {c: np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]
@@ -117,7 +120,7 @@ class bilinear:
         Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                                     for i in range(len(dirs))],
                                    axis=0)@qslash).real/(12*q_sq))
-        m_q = self.m_q
+        m_q = self.m_pole
         A1 = np.trace(np.sum([q_vec[i]*operators['A'][i]
                               for i in range(len(dirs))],
                              axis=0)@Gamma['5'])
