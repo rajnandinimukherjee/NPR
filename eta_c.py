@@ -29,7 +29,7 @@ eta_c_data = {'C1': {'central': {0.30: 1.24641,
 
 eta_PDG = 2983.9/1000
 eta_PDG_err = 0.5/1000
-eta_stars = [1.2, 2.4, 2.6, eta_PDG]
+eta_stars = [2.0, 2.1, 2.2, eta_PDG]
 
 
 def interpolate_eta_c(ens, find_y, **kwargs):

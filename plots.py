@@ -3,7 +3,7 @@ from NPR_classes import *
 from basics import *
 from eta_c import *
 
-mres = True
+mres = bool(input('Include mres?(0:False/1:True): '))
 folder = 'mres' if mres else 'no_mres'
 
 ens_list = list(eta_c_data.keys())
