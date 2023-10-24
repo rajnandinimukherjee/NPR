@@ -31,6 +31,9 @@ eta_PDG = 2983.9/1000
 eta_PDG_err = 0.5/1000
 eta_stars = [2.0, 2.1, 2.2, eta_PDG]
 
+m_C_PDG = 1.27
+m_C_PDG_err = 0.02
+
 
 def interpolate_eta_c(ens, find_y, **kwargs):
     x = np.array(list(eta_c_data[ens]['central'].keys()))[:-1]
@@ -58,7 +61,6 @@ class etaCvalence:
     vpath = 'valence/'
     eta_C_file = h5py.File('eta_C.h5', 'a')
     eta_C_gamma = ('Gamma5', 'Gamma5')
-    N_boot = 200
 
     def __init__(self, ens, create=False, **kwargs):
         self.ens = ens
@@ -74,8 +76,10 @@ class etaCvalence:
         else:
             self.N_cf, self.T = self.eta_C_file[self.ens][str(
                 list(self.mass_comb.keys())[0])]['corr'].shape
-            self.data = {k: {obj: {'data': np.zeros(shape=(self.N_cf, self.T),
-                                                    dtype=float)} for obj in ['corr', 'PJ5q']}
+            self.data = {k: {obj: {
+                'data': np.zeros(shape=(self.N_cf, self.T),
+                                 dtype=float)}
+                             for obj in ['corr', 'PJ5q']}
                          for k in self.mass_comb.keys()}
             for key in self.data.keys():
                 for obj in ['corr', 'PJ5q']:
@@ -89,7 +93,7 @@ class etaCvalence:
                 avg_data = np.mean(data, axis=0)
                 err = np.array([st_dev(data[:, t], mean=avg_data[t])
                                 for t in range(self.T)])
-                btsp_expanded = bootstrap(data, K=self.N_boot).real
+                btsp_expanded = bootstrap(data, K=N_boot).real
 
                 folded_data = 0.5 * \
                     (data[:, 1:] + data[:, ::-1][:, :-1])[:, :self.T_half]
@@ -97,13 +101,13 @@ class etaCvalence:
                 if data.shape[0] == 1:
                     folded_err = np.array([folded_avg_data[t]*0.0001
                                           for t in range(self.T_half)])
-                    btsp_data = np.array([np.random.normal(folded_avg_data[t],
-                                         folded_err[t], self.N_boot)
+                    btsp_data = np.array([np.random.normal(
+                        folded_avg_data[t], folded_err[t], N_boot)
                         for t in range(self.T_half)]).T
                 else:
                     folded_err = np.array([st_dev(folded_data[:, t])
                                            for t in range(self.T_half)])
-                    btsp_data = bootstrap(folded_data, K=self.N_boot).real
+                    btsp_data = bootstrap(folded_data, K=N_boot).real
 
                 cov = COV(btsp_data, center=folded_avg_data)
 
@@ -119,14 +123,14 @@ class etaCvalence:
                     meff = m_eff(folded_avg_data, ansatz='cosh')
                     self.data[key]['mccbar'] = meff[-2]
                     m_btsp = np.array([m_eff(btsp_data[b, :])[-2]
-                                       for b in range(self.N_boot)])
+                                       for b in range(N_boot)])
                     self.data[key]['mccbar_err'] = st_dev(m_btsp, meff[-2])
 
             ratio = self.data[key]['PJ5q']['avg'] /\
                 self.data[key]['corr']['avg']
             btsp_ratio = np.array([self.data[key]['PJ5q']['btsp_exp'][k, :] /
                                    self.data[key]['corr']['btsp_exp'][k, :]
-                                   for k in range(self.N_boot)])
+                                   for k in range(N_boot)])
             cov_ratio = COV(btsp_ratio, center=ratio)
             err_ratio = np.diag(cov_ratio)**0.5
             self.data[key]['ratio'] = {'avg': ratio,
@@ -157,7 +161,7 @@ class etaCvalence:
             mass_idx = self.NPR_masses.index(mass)
             y = m_eff(self.data[k]['corr']['folded_avg'], ansatz='cosh')
             btsp = np.array([m_eff(self.data[k]['corr']['btsp'][b, :],
-                             ansatz='cosh') for b in range(self.N_boot)])
+                             ansatz='cosh') for b in range(N_boot)])
             e = np.array([st_dev(btsp[:, t], mean=y[t])
                          for t in range(len(y))])
             plt.errorbar(x[:-2], y, yerr=e, fmt='o',
@@ -256,8 +260,8 @@ class etaCvalence:
         print(key, params_central)
         pdb.set_trace()
 
-        params_btsp = np.zeros(shape=(self.N_boot, len(guess)))
-        for k in range(self.N_boot):
+        params_btsp = np.zeros(shape=(N_boot, len(guess)))
+        for k in range(N_boot):
             res_k = least_squares(LD, guess, args=('btsp', k))
             params_btsp[k, :] = np.array(res_k.x).real
 

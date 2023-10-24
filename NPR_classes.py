@@ -6,7 +6,7 @@ class bilinear_analysis:
     keys = ['S', 'P', 'V', 'A', 'T', 'm']
     N_boot = N_boot
 
-    def __init__(self, ensemble, loadpath=None, mres=True, **kwargs):
+    def __init__(self, ensemble, loadpath=None, mres=False, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
@@ -129,28 +129,28 @@ class bilinear_analysis:
         self.momenta.pop((1, 0))
 
     def extrap_Z(self, mu, masses, action=(0, 0), **kwargs):
-        Z = {}
-        Z_err = {}
         momentas = self.momenta[action][masses]
+        Z_pred = {}
         for c in self.avg_results[action][masses][0].keys():
-            Zs = [self.avg_results[action][masses][i][c]
-                  for i in range(len(momentas))]
-            f = interp1d(momentas, Zs, fill_value='extrapolate')
-            Z[c] = f(mu)
+            Zs = stat(
+                val=[self.avg_results[action][masses][i][c]
+                     for i in range(len(momentas))],
+                err=[self.avg_errs[action][masses][i][c]
+                     for i in range(len(momentas))],
+                btsp='fill')
 
-            Z_es = [self.avg_errs[action][masses][i][c]
-                    for i in range(len(momentas))]
-            np.random.seed(1)
-            Z_btsp = np.random.multivariate_normal(
-                Zs, np.diag(Z_es)**2, self.N_boot)
-            store = []
-            for k in range(self.N_boot):
-                f = interp1d(momentas, Z_btsp[k, :],
-                             fill_value='extrapolate')
-                store.append(f(mu))
-            Z_err[c] = st_dev(np.array(store), mean=Z[c])
+            Z_pred[c] = stat(
+                val=interp1d(momentas, Zs.val,
+                             fill_value='extrapolate')(mu),
+                err='fill',
+                btsp=np.array([interp1d(momentas,
+                                        Zs.btsp[k, :],
+                                        fill_value='extrapolate'
+                                        )(mu)
+                               for k in range(N_boot)])
+            )
 
-        return Z, Z_err
+        return Z_pred
 
     def plot_masswise(self, action=(0, 0), save=True, **kwargs):
         if 'mass_combination' in kwargs.keys():
@@ -225,28 +225,34 @@ class bilinear_analysis:
             plt.savefig('plots/'+self.ens+'_action_comp_bl.pdf')
             print('Plot saved to plots/'+self.ens+'_action_comp_bl.pdf')
 
-    def massive_Z_plots(self, mu=2, action=(0, 0), key='m',
+    def massive_Z_plots(self, mu=2.0, action=(0, 0), key='m',
                         passinfo=False, **kwargs):
         x = np.array([float(m) for m in self.all_masses])
         self.mres_list = np.zeros(len(x))
         if self.ens in valence_ens and self.mres:
             ens = etaCvalence(self.ens)
-            self.mres_list = np.array([ens.data[k]['mres'] for k in ens.data])
+            self.mres_list = np.array([ens.data[k]['mres']
+                                       for k in ens.data])
         x += self.mres_list
 
-        y = np.array([self.extrap_Z(mu=mu, masses=(m, m),
-                      action=action)[0][key]
+        Zs = np.array([self.extrap_Z(mu=mu, masses=(m, m),
+                      action=action)[key]
                       for m in self.all_masses])
-        e = np.array([self.extrap_Z(mu=mu, masses=(m, m),
-                      action=action)[1][key]
-                      for m in self.all_masses])
+        Zs = stat(
+            val=np.array([Zs[m].val
+                          for m in range(len(self.all_masses))]),
+            err=np.array([Zs[m].err
+                          for m in range(len(self.all_masses))]),
+            btsp=np.array([Zs[m].btsp
+                           for m in range(len(self.all_masses))]).T,
+        )
 
         if passinfo:
-            return x, y, e
+            return x, Zs
         else:
             plt.figure()
             plt.title(self.ens+' $Z_'+key+'(\mu=${:.3f} GeV)'.format(mu))
-            plt.errorbar(x, y, yerr=e, fmt='o', capsize=4)
+            plt.errorbar(x, Zs.val, yerr=Zs.err, fmt='o', capsize=4)
             plt.xlabel(r'$am_q$')
             filename = 'plots/'+self.ens+'_massive_Z.pdf'
             # print('Plot saved to '+filename)

@@ -1,3 +1,6 @@
+from scipy.integrate import quad
+from scipy import real, imag
+from scipy.special import spence
 from scipy.integrate import odeint
 from scipy.special import polygamma
 import numpy as np
@@ -67,10 +70,12 @@ gmc = odeint(ODE, gmz, [m_z, m_c], args=(None,))[-1]
 def g(mu, **kwargs):
     return odeint(ODE, gmc, [m_c, mu], args=(3,))[-1]
 
-#====C0 function================================================
-from scipy.special import spence
+
+# ====C0 function================================================
+
+
 def C0(u):
-    
+
     term1 = (-1j+np.sqrt(3))
     term1 = term1/(np.sqrt(3)-1j*np.sqrt(4*u+1))
 
@@ -80,22 +85,22 @@ def C0(u):
     term3 = (-1j+np.sqrt(3))
     term3 = term3/(1j*np.sqrt(4*u+1)+np.sqrt(3))
 
-    term4 = (1j+np.sqrt(3)) 
-    term4 = term4/(1j*np.sqrt(4*u+1)+np.sqrt(3)) 
+    term4 = (1j+np.sqrt(3))
+    term4 = term4/(1j*np.sqrt(4*u+1)+np.sqrt(3))
 
     li = spence(term1)-spence(term2)+spence(term3)-spence(term4)
     return -real(li*2*1j/np.sqrt(3))
 
-from scipy.integrate import quad
-from scipy import real, imag
+
 def mylog(x):
-    if x<0:
+    if x < 0:
         return np.log(-x)+1j*np.pi
     else:
         return np.log(x)
 
+
 def C0_int(u):
-    if u==0:
+    if u == 0:
         return 2.34239
     else:
         d1 = (-1+1j*np.sqrt(3))/2
@@ -111,16 +116,19 @@ def C0_int(u):
             num += -mylog(u+1)
             den = (y+(y-1)*d1)*(y+(y-1)/d1)
             return num/den
-        
+
         def real_func(y):
             return real(func(y))
+
         def imag_func(y):
             return imag(func(y))
 
-        return -quad(real_func,0,1)[0]
-    
+        return -quad(real_func, 0, 1)[0]
+
+
 def alpha_s(mu):
     return (g(mu)**2)/(4*np.pi)
+
 
 def R_mSMOM_to_MSbar(mu, mbar):
     CF = 4/3
@@ -131,6 +139,7 @@ def R_mSMOM_to_MSbar(mu, mbar):
     mass = 1+4*np.log(mrat)-sq*np.log(mrat)
     mass = -sq*mass-3*np.log(sq/mrat)
     return 1 + (alpha_s(mu)*CF/(4*np.pi))*(cons+mass)
+
 
 # ====computing RISMOM(gamma-gamma)->MSbar matching factors======
 C_0 = (2/3)*polygamma(1, 1/3) - (2*np.pi/3)**2
@@ -171,12 +180,13 @@ r_mtx[4, 4], r_mtx[4, 3] = r_55, r_54
 def R_RISMOM_MSbar(mu, **kwargs):
     R_ij = np.identity(5) - (g(mu)**2)*r_mtx/(16*np.pi**2)
     if kwargs['mult_norm']:
-        R_P = 1 + alpha_s(mu)/(4*np.pi)*(4 - 3*C_0(0)/2)
-        #if mu == 3.0:
+        CF = 4/3
+        R_P = 1 + alpha_s(mu)/(4*np.pi)*CF*(4 - 3*C_0(0)/2)
+        # if mu == 3.0:
         #    R_P_3 = 1.05259  # actually R_S
-        #elif mu == 2.0:
+        # elif mu == 2.0:
         #    R_P_3 = 1.06689
-        #else:
+        # else:
         #    R_P_3 = 1
 
         R_ij[1:, 1:] = R_ij[1:, 1:]/(R_P_3**2)
@@ -231,5 +241,3 @@ def gamma_1_MS(f):
 beta_0 = Bcoeffs(3)[0]
 gamma_1_RISMOM = r_mtx@gamma_0 - gamma_0@r_mtx + \
     gamma_1_MS(f=3) - 2*beta_0*r_mtx
-
-

@@ -70,15 +70,15 @@ class bilinear:
         self.m_pole = self.pole_mass()
         self.mres = 0
         if ensemble in valence_ens and mres:
-           ens = etaCvalence(ensemble)
-           try:
-               sig_figs = len(str(self.m_q))-2
-               mres_key = next((key for key, val in ens.mass_comb.items()
-                                if round(val, sig_figs) == self.m_q), None)
-               self.mres = ens.data[mres_key]['mres']
-           except KeyError:
-               print(f'no mres info for am_q={self.m_q}')
-               self.mres = 0
+            ens = etaCvalence(ensemble)
+            try:
+                sig_figs = len(str(self.m_q))-2
+                mres_key = next((key for key, val in ens.mass_comb.items()
+                                 if round(val, sig_figs) == self.m_q), None)
+                self.mres = ens.data[mres_key]['mres']
+            except KeyError:
+                print(f'no mres info for am_q={self.m_q}')
+                self.mres = 0
 
         self.m_pole += self.mres
 
@@ -95,7 +95,7 @@ class bilinear:
         alpha = np.arccosh((1+W**2+p_dash_sq)/(2*np.abs(W)))
         Z = np.abs(W)*np.exp(alpha)
         delta = (W/Z)**Ls
-        R =  1-(W**2)/Z + (delta**2)*(Z-(W**2)/Z)/(1-delta**2)
+        R = 1-(W**2)/Z + (delta**2)*(Z-(W**2)/Z)/(1-delta**2)
 
         E = np.arcsinh(self.m_q*R + delta*(Z-(W**2)/Z)/(1-delta**2))
         return E
@@ -146,7 +146,7 @@ class bilinear:
             Z_S = (12*q_sq*Z_q-mass_term)/(q_sq*s_term)
         qslash_Z = {'S': Z_S.real, 'P': Z_P.real, 'V': Z_V.real,
                     'A': Z_A.real, 'T': Z_T.real, 'm': Z_m.real,
-                    'mam_q': Z_mm_q.real}
+                    'mam_q': Z_mm_q.real, 'q': Z_q}
         return qslash_Z
 
     def construct_operators(self, S_in, S_out, Gs, **kwargs):

@@ -1,19 +1,17 @@
 from NPR_classes import *
-from basics import *
 from eta_c import *
 from coeffs import *
 
-mres = bool(input('Include mres?(0:False/1:True): '))
+mres = bool(int(input('Include mres?(0:False/1:True): ')))
 folder = 'mres' if mres else 'no_mres'
 
 ens_list = list(eta_c_data.keys())
-if mres:
-    for ens in ['C1', 'M1', 'F1S']:
-        if ens in valence_ens:
-            e = etaCvalence(ens)
-            e.toDict(keys=list(e.mass_comb.keys()), mres=mres)
+for ens in ['C1', 'M1', 'F1S']:
+    if ens in valence_ens:
+        e = etaCvalence(ens)
+        e.toDict(keys=list(e.mass_comb.keys()), mres=True)
 
-mu_chosen = 3.0
+mu_chosen = 2.0
 filename = '/Users/rajnandinimukherjee/Desktop/LatPlots.pdf'
 pdf = PdfPages(filename)
 
@@ -649,7 +647,7 @@ plt.ylabel(r'$\overline{m}(am^\star,a\mu)$', fontsize=18)
 plt.xlim(ren_xaxes)
 
 # ===STEP5================================================================================================
-for eta_C_star_idx in range(1, len(eta_stars)):
+for eta_C_star_idx in range(len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
     mbar = plot_dict['fits'][eta_star_chosen]['m_q_cont']
     mbar_btsp = plot_dict['fits'][eta_star_chosen]['m_q_cont_btsp']
@@ -667,7 +665,7 @@ for eta_C_star_idx in range(1, len(eta_stars)):
                                                'm_C_MS_btsp': m_C_MS_btsp})
 # ===STEP5 plot 1: mbar vs m_C_ren==================================
 plt.figure(figsize=(h, w))
-for eta_C_star_idx in range(1, len(eta_stars)):
+for eta_C_star_idx in range(len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     mbar = plot_dict['fits'][eta_star_chosen]['m_q_cont']
@@ -680,11 +678,11 @@ for eta_C_star_idx in range(1, len(eta_stars)):
                  color=color_list[3+eta_C_star_idx])
 
 plt.xlabel(r'$\overline{m}$ (GeV)')
-plt.ylabel(r'$m_{C,cont}^S(\overline{m},\mu=2.0$ GeV$)$')
+plt.ylabel(r'$m_{C,cont}^S(\overline{m},\mu='+str(mu_chosen)+r'$ GeV$)$')
 
 # ===STEP5 plot 2: matching to MSbar=================================
 plt.figure(figsize=(h, w))
-for eta_C_star_idx in range(1, len(eta_stars)):
+for eta_C_star_idx in range(len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     mbar = plot_dict['fits'][eta_star_chosen]['m_q_cont']
@@ -698,7 +696,7 @@ for eta_C_star_idx in range(1, len(eta_stars)):
                  color=color_list[3+eta_C_star_idx])
 
 plt.xlabel(r'$\overline{m}$ (GeV)')
-plt.ylabel(r'$m_{C,cont}^{\overline{MS}}(\mu=2.0$ GeV$)$')
+plt.ylabel(r'$m_{C,cont}^{\overline{MS}}(\mu='+str(mu_chosen)+r'$ GeV$)$')
 
 
 fig_nums = plt.get_fignums()

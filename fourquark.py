@@ -91,8 +91,6 @@ class fourquark:
         data = path+ensemble
         cfgs = os.listdir(data)[1:]
         cfgs.sort()
-        N_cf = len(cfgs)  # number of configs)
-        L = params[ensemble]['XX']
         self.filename = prop1.filename+'__'+prop2.filename
         self.scheme = scheme
 
