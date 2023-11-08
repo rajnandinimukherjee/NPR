@@ -20,14 +20,192 @@ from tqdm import tqdm
 from ensemble_parameters import *
 from plot_settings import plotparams
 
+# ====misc functions ==================================================
+
+
+def err_disp(num, err, n=2, **kwargs):
+    ''' converts num and err into num(err) in scientific notation upto n digits
+    in error, can be extended for accepting arrays of nums and errs as well, for
+    now only one at a time'''
+
+    err_dec_place = int(np.floor(np.log10(np.abs(err))))
+    err_n_digits = int(err*10**(-(err_dec_place+1-n)))
+    num_dec_place = int(np.floor(np.log10(np.abs(num))))
+    if num_dec_place < err_dec_place:
+        # print('Error is larger than measurement')
+        return str(np.around(num, 3))
+    else:
+        num_sf = num*10**(-(num_dec_place))
+        num_trunc = round(num_sf, num_dec_place-(err_dec_place+1-n))
+        digs = -err_dec_place+n-1
+        str_num_trunc = str(num)[:digs+2]
+        return str_num_trunc+'('+str(err_n_digits)+')'
+
+
+def st_dev(data, mean=None, **kwargs):
+    '''standard deviation function - finds stdev around data mean or mean
+    provided as input'''
+
+    n = len(data)
+    if mean is None:
+        mean = np.mean(data)
+    return np.sqrt(((data-mean).dot(data-mean))/n)
+
+# =====statistical obj class======================================
+
+
+class stat:
+    N_boot = 200
+    seed = 1
+
+    def __init__(self, val, err=None, btsp=None,
+                 dtype=None, **kwargs):
+        self.val = np.array(val)
+        self.shape = self.val.shape
+        self.dtype = self.val.dtype if dtype is None else dtype
+
+        self.err = np.array(err)
+        self.btsp = np.array(btsp)
+
+        if type(btsp) == str:
+            if btsp == 'fill':
+                self.calc_btsp()
+
+        if type(err) == str:
+            if err == 'fill':
+                self.calc_err()
+
+    def calc_err(self):
+        if type(self.btsp) == np.ndarray:
+            self.err = np.zeros(shape=self.shape)
+            btsp = np.moveaxis(self.btsp, 0, -1)
+            for idx, central in np.ndenumerate(self.val):
+                self.err[idx] = st_dev(btsp[idx], central)
+        else:
+            self.err = np.zeros(shape=self.shape)
+
+    def calc_btsp(self):
+        if type(self.err) != np.ndarray:
+            self.err = np.zeros(shape=self.shape)
+
+        self.btsp = np.zeros(shape=self.shape+(self.N_boot,))
+        for idx, central in np.ndenumerate(self.val):
+            np.random.seed(self.seed)
+            self.btsp[idx] = np.random.normal(
+                central, self.err[idx], self.N_boot)
+        self.btsp = np.moveaxis(self.btsp, -1, 0)
+
+    def __getitem__(self, arg):
+        new_stat = stat(
+            val=self.val[arg],
+            err=self.err[arg],
+            btsp=np.array([self.btsp[k, arg]
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+    def __add__(self, other):
+        if not isinstance(other, stat):
+            other = np.array(other)
+            other = stat(
+                val=other,
+                btsp='fill'
+            )
+        new_stat = stat(
+            val=self.val+other.val,
+            err='fill',
+            btsp=np.array([self.btsp[k,]+other.btsp[k,]
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+    def __sub__(self, other):
+        if not isinstance(other, stat):
+            other = np.array(other)
+            other = stat(
+                val=other,
+                btsp='fill'
+            )
+        new_stat = stat(
+            val=self.val-other.val,
+            err='fill',
+            btsp=np.array([self.btsp[k,]-other.btsp[k,]
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+    def __mul__(self, other):
+        if not isinstance(other, stat):
+            other = np.array(other)
+            other = stat(
+                val=other,
+                btsp='fill'
+            )
+        new_stat = stat(
+            val=self.val*other.val,
+            err='fill',
+            btsp=np.array([self.btsp[k,]*other.btsp[k,]
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+    def __matmul__(self, other):
+        if not isinstance(other, stat):
+            other = np.array(other)
+            other = stat(
+                val=other,
+                btsp='fill'
+            )
+        new_stat = stat(
+            val=self.val@other.val,
+            err='fill',
+            btsp=np.array([self.btsp[k,]@other.btsp[k,]
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+    def __truediv__(self, other):
+        if not isinstance(other, stat):
+            other = np.array(other)
+            other = stat(
+                val=other,
+                btsp='fill'
+            )
+        new_stat = stat(
+            val=self.val/other.val,
+            err='fill',
+            btsp=np.array([self.btsp[k,]/other.btsp[k,]
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+    def __pow__(self, num):
+        new_stat = stat(
+            val=self.val**num,
+            err='fill',
+            btsp=np.array([self.btsp[k,]**num
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+    def __neg__(self, num):
+        new_stat = stat(
+            val=-self.val,
+            err='fill',
+            btsp=np.array([-self.btsp[k,]
+                           for k in range(self.N_boot)])
+        )
+        return new_stat
+
+
 plt.rcParams.update(plotparams)
 path = '/home/rm/external/NPR/'
 N_d = 4  # Dirac indices
 N_c = 3  # Color indices
 # N_bl = 16 # number of bilinears
-N_boot = 200  # number of bootstrap samples
 N_fq = 16  # number of fourquarks
-seed = 1  # random seed
+N_boot = stat.N_boot  # number of bootstrap samples
+seed = stat.seed  # random seed
 
 
 dirs = ['X', 'Y', 'Z', 'T']
@@ -169,78 +347,11 @@ def encode_prop(prop_info):
         prop_name += f'{k}_{v}_'
     return prop_name[:-1]
 
-# ====misc functions ==================================================
-
-
-def st_dev(data, mean=None, **kwargs):
-    '''standard deviation function - finds stdev around data mean or mean
-    provided as input'''
-
-    n = len(data)
-    if mean is None:
-        mean = np.mean(data)
-    return np.sqrt(((data-mean).dot(data-mean))/n)
-
-
-def err_disp(num, err, n=2, **kwargs):
-    ''' converts num and err into num(err) in scientific notation upto n digits
-    in error, can be extended for accepting arrays of nums and errs as well, for
-    now only one at a time'''
-
-    err_dec_place = int(np.floor(np.log10(np.abs(err))))
-    err_n_digits = int(err*10**(-(err_dec_place+1-n)))
-    num_dec_place = int(np.floor(np.log10(np.abs(num))))
-    if num_dec_place < err_dec_place:
-        # print('Error is larger than measurement')
-        return str(np.around(num, 3))
-    else:
-        num_sf = num*10**(-(num_dec_place))
-        num_trunc = round(num_sf, num_dec_place-(err_dec_place+1-n))
-        digs = -err_dec_place+n-1
-        str_num_trunc = str(num)[:digs+2]
-        # num_nontrunc = round(num,-err_dec_place+n-1)
-        # pdb.set_trace()
-        # return str(num_trunc)+'('+str(err_n_digits)+')E%+d'%num_dec_place
-        return str_num_trunc+'('+str(err_n_digits)+')'
-
-
-# =====statistical obj class======================================
-
-
-class stat:
-    def __init__(self, val, err=None, btsp=None,
-                 dtype=None, **kwargs):
-        self.val = np.array(val)
-        self.shape = self.val.shape
-        self.dtype = self.val.dtype if dtype == None else dtype
-
-        self.err = np.array(err)
-        self.btsp = np.array(btsp)
-
-        if type(btsp) == str:
-            if btsp == 'fill':
-                self.btsp = np.zeros(shape=self.shape+(N_boot,))
-                for idx, central in np.ndenumerate(self.val):
-                    np.random.seed(1)
-                    self.btsp[idx] = np.random.normal(
-                        central, self.err[idx], N_boot)
-                self.btsp = np.moveaxis(self.btsp, -1, 0)
-
-        if type(err) == str:
-            if err == 'fill':
-                self.err = np.zeros(shape=self.shape)
-                btsp = np.moveaxis(self.btsp, 0, -1)
-                for idx, central in np.ndenumerate(self.val):
-                    self.err[idx] = st_dev(btsp[idx], central)
-
 
 m_pi_PDG = stat(val=139.5709/1000, err=0.00018/1000, btsp='fill')
 f_pi_PDG = stat(val=130.41/1000, err=0.23/1000, btsp='fill')
 
-m_f_sq_PDG = stat(
-    val=(m_pi_PDG.val/f_pi_PDG.val)**2,
-    err='fill',
-    btsp=(m_pi_PDG.btsp/f_pi_PDG.btsp)**2)
+m_f_sq_PDG = (m_pi_PDG/f_pi_PDG)**2
 
 # ====coloring and markers=================================================
 color_list = list(mc.TABLEAU_COLORS.keys())

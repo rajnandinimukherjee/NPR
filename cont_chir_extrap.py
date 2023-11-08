@@ -40,7 +40,7 @@ def chiral_continuum_ansatz(params, a_sq, m_f_sq, PDG, operator, **kwargs):
 
 
 def rotation_mtx(theta, phi, **kwargs):
-    num_ops = len(bag_analysis.operators)
+    num_ops = len(operators)
     A = np.zeros(shape=(num_ops, num_ops))
     A[0, 0] = 1
     ct, st = np.cos(theta), np.sin(theta)
@@ -65,7 +65,7 @@ class bag_fits:
         if ens_list == None:
             ens_list = self.ens_list
 
-        op_idx = bag_analysis.operators.index(operator)
+        op_idx = operators.index(operator)
         dof = len(ens_list)-len(guess)
 
         def pred(params, operator, **kwargs):

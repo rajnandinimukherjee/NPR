@@ -6,7 +6,7 @@ all_bag_data = h5py.File('kaon_bag_fits.h5', 'r')
 bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
 
 
-def load_info(key, ens, ops, meson='ls', **kwargs):
+def load_info(key, ens, ops=operators, meson='ls', **kwargs):
     h5_data = all_bag_data[ens][meson]
     if meson == 'ls':
         central = np.array([np.array(h5_data[
@@ -26,11 +26,13 @@ def load_info(key, ens, ops, meson='ls', **kwargs):
         error = np.array(h5_data[key]['error']).item()
         bootstraps = np.array(h5_data[key]['Bootstraps'])[:, 0]
 
-    if key == 'bag':
-        central[1] *= -2
-        bootstraps[:, 1] = -2*bootstraps[:, 1]
-        central[-1] *= 4
-        bootstraps[:, -1] = 4*bootstraps[:, -1]
+    if key == 'gr-O-gr':
+        central[1] *= -1
+        bootstraps[:, 1] = -bootstraps[:, 1]
+        central[3] *= -1
+        bootstraps[:, 3] = -bootstraps[:, 3]
+        central[4] *= -1
+        bootstraps[:, 4] = -bootstraps[:, 4]
 
     return stat(val=central, err='fill', btsp=bootstraps)
 
@@ -59,7 +61,7 @@ class Z_analysis:
             val=f_pi_PDG.val/self.ainv.val,
             btsp=f_pi_PDG.btsp/self.ainv.btsp)
 
-        self.m_pi = load_info('m_0', self.ens, self.operators, meson='ll')
+        self.m_pi = load_info('m_0', self.ens, operators, meson='ll')
         self.m_f_sq = stat(
             val=(self.m_pi.val/self.f_pi.val)**2,
             err='fill',
@@ -266,8 +268,6 @@ class Z_analysis:
 
 
 class bag_analysis:
-    operators = operators
-    N_boot = N_boot
 
     def __init__(self, ensemble, action=(0, 0), **kwargs):
 
@@ -282,14 +282,16 @@ class bag_analysis:
             err='fill',
             btsp=self.ainv.btsp**(-2)
         )
-        self.bag = load_info('bag', self.ens, self.operators, meson='ls')
+        self.ra = ratio_analysis(self.ens)
+        self.bag = self.ra.bag
+        # self.bag = load_info('bag', self.ens, meson='ls')
 
         self.f_pi = stat(
             val=f_pi_PDG.val/self.ainv.val,
             err='fill',
             btsp=f_pi_PDG.btsp/self.ainv.btsp)
 
-        self.m_pi = load_info('m_0', self.ens, self.operators, meson='ll')
+        self.m_pi = load_info('m_0', self.ens, meson='ll')
         self.m_f_sq = stat(
             val=(self.m_pi.val/self.f_pi.val)**2,
             err='fill',
@@ -335,7 +337,7 @@ class bag_analysis:
         return bag_interp
 
     def ansatz(self, params, operator, fit='central', **kwargs):
-        op_idx = self.operators.index(operator)
+        op_idx = operators.index(operator)
         if fit == 'central':
             a_sq = self.ainv.val**(-2)
             m_f_sq = self.m_f_sq.val
@@ -369,3 +371,50 @@ class bag_analysis:
                 func += params[3]*(a_sq**2)
 
         return func
+
+
+class ratio_analysis:
+
+    def __init__(self, ens, action=(0, 0), **kwargs):
+        self.ens = ens
+        self.op_recon()
+
+    def op_recon(self, **kwargs):
+        self.ZP_L_0 = load_info('pLL_0', self.ens)
+        self.ZA_L_0 = load_info('aLL_0', self.ens)
+
+        self.gr_O_gr = load_info('gr-O-gr', self.ens)
+        gr1 = stat(
+            val=self.gr_O_gr.val[0],
+            err=self.gr_O_gr.err[0],
+            btsp=self.gr_O_gr.btsp[:, 0]
+        )
+        self.ratio = self.gr_O_gr/gr1
+
+        self.Ni = norm_factors()
+        B1 = stat(
+            val=self.gr_O_gr.val[0]/(
+                self.Ni[0]*self.ZA_L_0.val[0]**2),
+            err='fill',
+            btsp=np.array([self.gr_O_gr.btsp[k, 0]/(
+                self.Ni[0]*self.ZA_L_0.btsp[k, 0]**2)
+                for k in range(N_boot)])
+        )
+
+        B2_5 = [
+            stat(
+                val=self.gr_O_gr.val[i]/(
+                    self.Ni[i]*self.ZP_L_0.val[i]**2),
+                err='fill',
+                btsp=np.array([self.gr_O_gr.btsp[k, i]/(
+                    self.Ni[i]*self.ZP_L_0.btsp[k, i]**2)
+                    for k in range(N_boot)]))
+            for i in range(1, len(operators))]
+
+        Bs = [B1]+B2_5
+        self.bag = stat(
+            val=[B.val for B in Bs],
+            err=[B.err for B in Bs],
+            btsp=np.array([[B.btsp[k] for B in Bs]
+                           for k in range(N_boot)])
+        )

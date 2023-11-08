@@ -51,9 +51,10 @@ def convert_to_MSbar(bag, mu2, mu1, rot_mtx=np.eye(len(operators)),
                 sig_str = f'sig({mu2_temp},{mu1_temp})' + sig_str
                 sigma_temp = Z.store[(mu2_temp, mu1_temp)]
 
-                sigma.val = sigma_temp.val@sigma.val
-                sigma.btsp = np.array([sigma_temp.btsp[k,]@sigma.btsp[k,]
-                                       for k in range(N_boot)])
+                sigma = sigma_temp@sigma
+                # sigma.val = sigma_temp.val@sigma.val
+                # sigma.btsp = np.array([sigma_temp.btsp[k,]@sigma.btsp[k,]
+                #                       for k in range(N_boot)])
             # print(sig_str)
         except KeyError:
             sigma = z.extrap_sigma(mu2, mu1, rotate=rot_mtx)
