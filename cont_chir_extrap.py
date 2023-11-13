@@ -52,9 +52,9 @@ def rotation_mtx(theta, phi, **kwargs):
 
 class bag_fits:
 
-    def __init__(self, ens_list, **kwargs):
+    def __init__(self, ens_list, obj='bag', **kwargs):
         self.ens_list = ens_list
-        self.bag_dict = {e: bag_analysis(e)
+        self.bag_dict = {e: bag_analysis(e, obj=obj)
                          for e in self.ens_list}
         self.colors = {list(self.bag_dict.keys())[k]: list(
                        mc.TABLEAU_COLORS.keys())[k]

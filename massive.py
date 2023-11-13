@@ -72,9 +72,9 @@ class mNPR:
         eta_star_ax = self.interpolate_eta_c(find_y=eta_star)
 
     def load_eta(self, **kwargs):
-        self.valence = etaCvalence(self.ens)
-        self.valence.toDict(keys=list(
-            self.valence.mass_comb.keys()), mres=True)
+        # self.valence = etaCvalence(self.ens)
+        # self.valence.toDict(keys=list(
+        #    self.valence.mass_comb.keys()), mres=True)
         self.eta_c_data = eta_c_data[self.ens]
 
         ax = np.array(list(self.eta_c_data['central'].keys()))[:-1]

@@ -1,5 +1,0 @@
-\contentsline {section}{\numberline {1}$B_1$}{7}{section.1}%
-\contentsline {section}{\numberline {2}$B_2$}{28}{section.2}%
-\contentsline {section}{\numberline {3}$B_3$}{49}{section.3}%
-\contentsline {section}{\numberline {4}$B_4$}{70}{section.4}%
-\contentsline {section}{\numberline {5}$B_5$}{91}{section.5}%

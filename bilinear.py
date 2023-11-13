@@ -110,9 +110,9 @@ class bilinear:
                        ).real for c in bilinear.currents}
         return projected, gamma_Z
 
-    def qslash_Z(self, operators, q_vec, Z_q, S_inv,
+    def qslash_Z(self, operators, Z_q, S_inv,
                  renorm='mSMOM', printval=False, **kwargs):
-        q_vec = np.sin(q_vec)
+        q_vec = np.sin(self.tot_mom)
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
         q_sq = np.linalg.norm(q_vec)**2
@@ -173,7 +173,7 @@ class bilinear:
         else:
             Z_q = self.prop_in.Z_q_qslash.val
             S_inv = self.prop_in.inv_propagator.val
-            self.Z = self.qslash_Z(operators, self.tot_mom, Z_q, S_inv,
+            self.Z = self.qslash_Z(operators, Z_q, S_inv,
                                    printval=False, **kwargs)
         # ==bootstrap===
         self.Z_btsp = {c: np.zeros(N_boot) for c in self.Z.keys()}
@@ -192,8 +192,7 @@ class bilinear:
             else:
                 Z_q = self.prop_in.Z_q_qslash.btsp[k]
                 S_inv = self.prop_in.inv_propagator.btsp[k,]
-                Z_k = self.qslash_Z(operators, self.tot_mom,
-                                    Z_q, S_inv, **kwargs)
+                Z_k = self.qslash_Z(operators, Z_q, S_inv, **kwargs)
                 for c in Z_k.keys():
                     self.Z_btsp[c][k] = Z_k[c].real
 

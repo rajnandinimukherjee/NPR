@@ -64,8 +64,9 @@ class stat:
         self.shape = self.val.shape
         self.dtype = self.val.dtype if dtype is None else dtype
 
-        self.err = np.array(err)
-        self.btsp = np.array(btsp)
+        accept_types = [np.ndarray, list]
+        self.err = np.array(err) if type(err) in accept_types else err
+        self.btsp = np.array(btsp) if type(btsp) in accept_types else btsp
 
         if type(btsp) == str:
             if btsp == 'fill':
@@ -159,7 +160,7 @@ class stat:
         new_stat = stat(
             val=self.val@other.val,
             err='fill',
-            btsp=np.array([self.btsp[k,]@other.btsp[k,]
+            btsp=np.array([self.btsp[k]@other.btsp[k]
                            for k in range(self.N_boot)])
         )
         return new_stat
@@ -235,8 +236,19 @@ def norm_factors(rotate=np.eye(len(operators)), **kwargs):
 
 
 flag_mus = [2.0, 3.0, 3.0, 3.0, 3.0]
-flag_vals = [0.5570, 0.502, 0.766, 0.926, 0.720]
-flag_errs = [0.0071, 0.014, 0.032, 0.019, 0.038]
+flag = stat(
+    val=[0.5570, 0.502, 0.766, 0.926, 0.720],
+    err=[0.0071, 0.014, 0.032, 0.019, 0.038],
+    btsp='fill')
+
+flag_N = stat(
+    val=norm_factors(rotate=NPR_to_SUSY)*flag.val,
+    err='fill',
+    btsp=np.array([norm_factors(rotate=NPR_to_SUSY)*flag.btsp[k,]
+                   for k in range(N_boot)])
+)
+
+flag_vals, flag_errs = flag_N.val, flag_N.err
 # =====gamma matrices=============================================
 gamma = {'I': np.identity(N_d, dtype='complex128'),
          'X': np.zeros(shape=(N_d, N_d), dtype='complex128'),

@@ -179,10 +179,9 @@ r_mtx[4, 4], r_mtx[4, 3] = r_55, r_54
 
 def R_RISMOM_MSbar(mu, **kwargs):
     R_ij = np.identity(5) - (g(mu)**2)*r_mtx/(16*np.pi**2)
-    if kwargs['mult_norm']:
-        CF = 4/3
-        R_P = 1 + alpha_s(mu)/(4*np.pi)*CF*(4 - 3*C0(0)/2)
-        R_ij[1:, 1:] = R_ij[1:, 1:]/(R_P**2)
+    CF = 4/3
+    R_P = 1 + alpha_s(mu)/(4*np.pi)*CF*(4 - 3*C0(0)/2)
+    R_ij[1:, 1:] = R_ij[1:, 1:]/(R_P**2)
     return R_ij
 
 

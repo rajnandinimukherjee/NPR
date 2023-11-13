@@ -1,10 +1,31 @@
 from tqdm import tqdm
 from numpy.linalg import norm
 from NPR_classes import *
+
+
+def pole_mass(m_q, tot_mom, M5, Ls):
+    p_hat = 2*np.sin(tot_mom/2)
+    p_hat_sq = np.linalg.norm(p_hat)**2
+    p_dash = np.sin(tot_mom)
+    p_dash_sq = np.linalg.norm(p_dash)**2
+
+    W = 1 - M5 + p_hat_sq/2
+    alpha = np.arccosh((1+W**2+p_dash_sq)/(2*np.abs(W)))
+    Z = np.abs(W)*np.exp(alpha)
+    delta = (W/Z)**Ls
+    R = 1-(W**2)/Z + (delta**2)*(Z-(W**2)/Z)/(1-delta**2)
+
+    E = np.arcsinh(m_q*R + delta*(Z-(W**2)/Z)/(1-delta**2))
+    return E
+
+
 currents = ['S', 'P', 'V', 'A', 'T']
 
-direc = '/Users/rajnandinimukherjee/PhD/NPR/tree'
+direc = '/Users/rajnandinimukherjee/PhD/NPR/analysis/DWF_tree/npr_m0point005'
+m_in = 0.005
 L = 8
+M5 = 1.8
+Ls = 16
 N_bl = 16
 
 prop_in_file = h5py.File(f'{direc}/ExternalLeg_3300_wilson.1.h5', 'r')
@@ -72,8 +93,10 @@ q_sq = np.linalg.norm(q)**2
 Z_P = Z_q*gamma_Z['P']
 Z_T = Z_q*gamma_Z['T']
 Z_V = Z_q/(np.trace(np.sum([q[i]*bl_operators['V'][i]
-                           for i in range(len(dirs))], axis=0)@qslash).real/(12*q_sq))
-m_q = 0.2 + cos_term
+                           for i in range(len(dirs))],
+                           axis=0)@qslash).real/(12*q_sq))
+
+m_q = pole_mass(m_in, q, M5, Ls)
 A1 = np.trace(np.sum([q[i]*bl_operators['A'][i]
                      for i in range(len(dirs))], axis=0)@Gamma['5'])
 A2 = np.trace(np.sum([q[i]*bl_operators['A'][i]
@@ -94,6 +117,12 @@ qslash_Z = {'S': (Z_S).real,
             'T': (Z_T).real,
             'm': (Z_m).real,
             'q': Z_q.real}
+qslash_Z_Zq = {'S': (Z_S/Z_q).real,
+               'P': (Z_P/Z_q).real,
+               'V': (Z_V/Z_q).real,
+               'A': (Z_A/Z_q).real,
+               'T': (Z_T/Z_q).real,
+               'm': (Z_m*Z_q).real}
 
 
 def fq_SMOM():

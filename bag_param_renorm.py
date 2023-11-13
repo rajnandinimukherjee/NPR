@@ -269,7 +269,7 @@ class Z_analysis:
 
 class bag_analysis:
 
-    def __init__(self, ensemble, action=(0, 0), **kwargs):
+    def __init__(self, ensemble, obj='bag', action=(0, 0), **kwargs):
 
         self.ens = ensemble
         self.action = action
@@ -283,8 +283,10 @@ class bag_analysis:
             btsp=self.ainv.btsp**(-2)
         )
         self.ra = ratio_analysis(self.ens)
-        self.bag = self.ra.bag
-        # self.bag = load_info('bag', self.ens, meson='ls')
+        if obj == 'bag':
+            self.bag = self.ra.B_N
+        elif obj == 'fq_op':
+            self.bag = self.ra.gr_O_gr
 
         self.f_pi = stat(
             val=f_pi_PDG.val/self.ainv.val,
@@ -298,42 +300,24 @@ class bag_analysis:
             btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
         )
 
-        self.Z_info = Z_analysis(self.ens, bag=True)
-
-    def rotate_bag(self, rot_mtx, bag, **kwargs):
-        bag_rot = stat(
-            val=rot_mtx@bag.val,
-            err='fill',
-            btsp=[rot_mtx@bag.btsp[k,] for k in range(N_boot)]
-        )
-        return bag_rot
-
-    def interpolate(self, mu, **kwargs):
-        Z_mu = self.Z_info.interpolate(mu, **kwargs)
-
-        if kwargs['mult_norm']:
-            Ni = norm_factors(**kwargs)
-            pre_mtx = np.diag(Ni)
-            # post_mtx = np.diag(1/Ni)
-            post_mtx = np.eye(len(operators))
-            Z_mu = stat(
-                val=post_mtx@Z_mu.val@pre_mtx,
-                btsp=np.array([post_mtx@Z_mu.btsp[k, :, :]@pre_mtx
-                               for k in range(N_boot)])
-            )
-
-        if 'rotate' in kwargs:
-            rot_mtx = kwargs['rotate']
-            bag = self.rotate_bag(rot_mtx, self.bag)
+        if self.ens == 'C2':
+            ens = 'C1'
+        elif self.ens in ['M2', 'M3']:
+            ens = 'M1'
         else:
-            bag = self.bag
+            ens = self.ens
+        print('Using Z data from '+ens)
+        self.Z_info = Z_analysis(ens, bag=True)
 
-        bag_interp = stat(
-            val=Z_mu.val@bag.val,
-            err='fill',
-            btsp=[Z_mu.btsp[k, :, :]@bag.btsp[k, :]
-                  for k in range(N_boot)])
+    def interpolate(self, mu, rotate=np.eye(len(operators)), **kwargs):
+        Z_mu = self.Z_info.interpolate(mu, rotate=rotate, **kwargs)
+        rot_mtx = stat(
+            val=rotate,
+            btsp='fill'
+        )
 
+        bag = rot_mtx@self.bag
+        bag_interp = Z_mu@bag
         return bag_interp
 
     def ansatz(self, params, operator, fit='central', **kwargs):
@@ -418,3 +402,8 @@ class ratio_analysis:
             btsp=np.array([[B.btsp[k] for B in Bs]
                            for k in range(N_boot)])
         )
+        Ni_diag = stat(
+            val=np.diag(self.Ni),
+            btsp='fill'
+        )
+        self.B_N = Ni_diag@self.bag

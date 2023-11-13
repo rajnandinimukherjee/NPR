@@ -20,14 +20,12 @@ ansatz_kwargs = {
 def basis_rotation(basis):
     if basis == 'SUSY':
         return NPR_to_SUSY
-    elif basis == 'SUSY_F':
-        return umx_to_mx@NPR_to_SUSY
     else:
         return np.eye(len(operators))
 
 
-def convert_to_MSbar(bag, mu2, mu1, rot_mtx=np.eye(len(operators)),
-                     **kwargs):
+def convert_to_MSbar(B_N, mu2, mu1, rot_mtx=np.eye(len(operators)),
+                     obj='bag', **kwargs):
     if mu1 == mu2:
         sigma = stat(
             val=np.eye(len(operators)),
@@ -59,27 +57,19 @@ def convert_to_MSbar(bag, mu2, mu1, rot_mtx=np.eye(len(operators)),
         except KeyError:
             sigma = z.extrap_sigma(mu2, mu1, rotate=rot_mtx)
 
-    R_conv = rot_mtx@R_RISMOM_MSbar(mu2, **kwargs)@np.linalg.inv(rot_mtx)
-    if kwargs['mult_norm']:
-        Ni = norm_factors(rotate=rot_mtx)
-        # pre_mtx, post_mtx = np.diag(Ni), np.diag(1/Ni)
-        pre_mtx, post_mtx = np.eye(len(operators)), np.diag(1/Ni)
-        R_conv = post_mtx@R_conv@pre_mtx
-
-    bag_MS = stat(
-        val=R_conv@sigma.val@bag.val,
-        err='fill',
-        btsp=np.array([R_conv@sigma.btsp[k,]@bag.btsp[k,]
-                       for k in range(N_boot)])
-    )
-    return bag_MS
+    R_conv = stat(
+        val=rot_mtx@R_RISMOM_MSbar(
+            mu2, obj=obj, **kwargs)@np.linalg.inv(rot_mtx),
+        btsp='fill')
+    B_N_MS = R_conv@sigma@B_N
+    return B_N_MS
 
 
-def rotate_from_NPR(include_C=False, C_folder='with_C',
-                    rot_mtx=np.eye(len(operators)),
+def rotate_from_NPR(include_C=False, C_folder='without_C',
+                    obj='bag', rot_mtx=np.eye(len(operators)),
                     **kwargs):
     NPR_fits = pickle.load(
-        open(f'sigmas/{C_folder}/cc_extrap_dict_NPR.p', 'rb'))
+        open(f'sigmas/{C_folder}/cc_extrap_dict_{obj}_NPR.p', 'rb'))
 
     from_NPR = {op: {fit: {mu: {} for mu in mu_list}
                      for fit in NPR_fits['VVpAA'].keys()}
@@ -115,13 +105,13 @@ def rotate_from_NPR(include_C=False, C_folder='with_C',
     return from_NPR
 
 
-def operator_summary(operator, fits, basis='SUSY', filename=None,
-                     open=True, with_alt=True, with_FLAG=False,
-                     save=True, rot_mtx=np.eye(len(operators)),
+def operator_summary(operator, fits, basis='NPR', filename=None,
+                     open=True, with_FLAG=False, with_alt=True,
+                     save=True, obj='bag', rot_mtx=np.eye(len(operators)),
                      **kwargs):
 
     if basis != 'NPR' and with_alt:
-        fits_NPR = rotate_from_NPR(rot_mtx=rot_mtx)
+        fits_NPR = rotate_from_NPR(rot_mtx=rot_mtx, obj=obj, **kwargs)
 
     op_idx = operators.index(operator)
     ansatze = list(fits[operator].keys())
@@ -168,7 +158,7 @@ def operator_summary(operator, fits, basis='SUSY', filename=None,
                 ax[1].annotate(r'$\times $', (i+offset+0.1, alt_MS_vals[i]),
                                ha='center', va='center', c='white')
 
-    ax[0].set_title(r'$B_{'+str(op_idx+1)+',\, phys}^{SMOM}(\mu)$')
+    ax[0].set_title(r'$\mathcal{B}_{'+str(op_idx+1)+',\, phys}^{SMOM}(\mu)$')
     ax[0].set_xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
                      ha='right')
 
@@ -180,7 +170,12 @@ def operator_summary(operator, fits, basis='SUSY', filename=None,
         ax[1].errorbar([len(ansatze)-1], [FLAG_val], yerr=[FLAG_err],
                        fmt='o', capsize=2, c='k')
 
-    ax[1].set_title(r'$B_{'+str(op_idx+1)+',\, phys}^{\overline{MS}}(' +
+    if obj == 'bag':
+        char = r'\mathcal{B}'
+    elif obj == 'fq_op':
+        char = r'\langle O \rangle'
+
+    ax[1].set_title(r'$'+char+r'_{'+str(op_idx+1)+',\, phys}^{\overline{MS}}(' +
                     str(np.around(flag_mus[op_idx], 2))+'$ GeV)')
     ax[1].yaxis.set_label_position("right")
     ax[1].yaxis.tick_right()
@@ -188,7 +183,7 @@ def operator_summary(operator, fits, basis='SUSY', filename=None,
                      ha='right')
     ax[0].legend()
     if filename == None:
-        filename = f'{operator}/{basis}/fit_summary.pdf'
+        filename = f'{operator}/{basis}/fit_summary_{obj}.pdf'
 
     pp = PdfPages(filename)
     fig_nums = plt.get_fignums()
@@ -205,7 +200,7 @@ def operator_summary(operator, fits, basis='SUSY', filename=None,
 
 def full_summary(basis='SUSY', run=False, include_C=False,
                  with_FLAG=False, calc_running=False,
-                 alt_fit=False, **kwargs):
+                 obj='bag', **kwargs):
     rot_mtx = basis_rotation(basis)
     C_folder = 'with_C' if include_C else 'without_C'
 
@@ -230,18 +225,15 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
         Z.store = pickle.load(open(sigma_file, 'rb'))
 
-    if alt_fit:
-        dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{basis}_with_alt.p'
-    else:
-        dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{basis}.p'
+    dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{obj}_{basis}.p'
     if run:
         fits = {}
-        b = bag_fits(bag_ensembles)
+        b = bag_fits(bag_ensembles, obj=obj)
 
-        for op in tqdm(operators, desc='Bag fits'):
+        for op in tqdm(operators, desc=f'{obj} fits'):
             op_idx = operators.index(op)
             fits[op] = {}
-            for fit in list(ansatz_kwargs.keys())[:-1]:  # , 'a2m2logm2']:
+            for fit in list(ansatz_kwargs.keys())[:-1]:
                 fits[op][fit] = {mu: {'filename': op+'/'+basis+'/'+fit+'_' +
                                       str(int(mu*10))+'.pdf'} for mu in mu_list}
                 kwargs = ansatz_kwargs[fit]
@@ -249,8 +241,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                 for mu in mu_list:
                     filename = fits[op][fit][mu]['filename']
                     phys, coeffs, chi_sq_dof, pvalue = b.plot_fits(
-                        mu, ops=[op], filename=filename,
-                        mult_norm=alt_fit, **kwargs)
+                        mu, ops=[op], filename=filename, **kwargs)
 
                     fits[op][fit][mu].update({'phys': phys,
                                               'coeffs': coeffs,
@@ -264,7 +255,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
 
         for fit in fits['VVpAA'].keys():
             for mu in mu_list:
-                bag = stat(
+                obj_ = stat(
                     val=[fits[op][fit][mu]['phys'].val
                          for op in operators],
                     err=[fits[op][fit][mu]['phys'].err
@@ -274,7 +265,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                 )
                 for op_idx, op in enumerate(operators):
                     MS = convert_to_MSbar(
-                        bag, flag_mus[op_idx], mu, rot_mtx=rot_mtx, mult_norm=alt_fit)
+                        obj_, flag_mus[op_idx], mu, obj=obj, rot_mtx=rot_mtx)
                     fits[op][fit][mu].update({'MS': stat(
                         val=MS.val[op_idx],
                         err=MS.err[op_idx],
@@ -288,8 +279,13 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         fits = pickle.load(open(dict_filename, 'rb'))
 
     for op in operators:
-        operator_summary(op, fits, basis=basis, open=False, with_alt=False,
-                         with_FLAG=with_FLAG, rot_mtx=rot_mtx)
+        operator_summary(op, fits, obj=obj, basis=basis, open=False, with_alt=True,
+                         with_FLAG=with_FLAG, rot_mtx=rot_mtx, C_folder=C_folder)
+
+    if obj == 'bag':
+        char = r'\mathcal{B}'
+    elif obj == 'fq_op':
+        char = r'\langle O \rangle'
 
     rv = [r'\documentclass[12pt]{extarticle}']
     rv += [r'\usepackage[paperwidth=15in,paperheight=7.2in]{geometry}']
@@ -310,19 +306,19 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         rv += [r'\begin{figure}']
         rv += [r'\centering']
         rv += [r'\includegraphics[page=1, width=1.1\textwidth]{'+op+r'/' +
-               basis+'/fit_summary.pdf}']
-        rv += [r'\caption{$B_{'+str(i+1)+r'}$\\(left) $B_{phys}$' +
+               basis+'/fit_summary_'+obj+r'.pdf}']
+        rv += [r'\caption{$'+char+r'_{'+str(i+1)+r'}$\\(left) $'+char+r'_{phys}$' +
                r' in RI/SMOM scheme from fit variations ' +
                r'(fits with $p$-value $<0.05$ marked with ``$\times$"). \\' +
-               r'(right) $B_{phys}$ in $\overline{MS}$ computed using ' +
-               r'$B^{\overline{MS}} = R^{\overline{MS}\leftarrow SMOM}('+mu_str+')' +
-               r'\sigma_{npt}('+mu_str+r',\mu) B^{SMOM}(\mu)$.}']
+               r'(right) $'+char+r'_{phys}$ in $\overline{MS}$ computed using ' +
+               r'$'+char+r'^{\overline{MS}} = R^{\overline{MS}\leftarrow SMOM}('+mu_str+')' +
+               r'\sigma_{npt}('+mu_str+r',\mu) '+char+r'^{SMOM}(\mu)$.}']
         rv += [r'\end{figure}']
         rv += [r'\clearpage']
 
     for i, op in enumerate(operators):
         ansatze = [ansatz_kwargs[fit]['title'] for fit in fits[op].keys()]
-        rv += [r'\section{$B_'+str(i+1)+r'$}']
+        rv += [r'\section{$\mathcal{B}_'+str(i+1)+r'$}']
         rv += [r'\begin{table}[h!]']
         rv += [r'\begin{center}']
         rv += [r'\begin{tabular}{|' +
@@ -360,7 +356,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                 'coeff_disp'][1] for fit in fits[op].keys()])+r'\\']
             rv += [r'\hline']
         rv += [r'\end{tabular}']
-        rv += [r'\caption{Fit values of coefficients in $B = B_{phys} + \mathbf{\alpha}'
+        rv += [r'\caption{Fit values of coefficients in $Q = Q_{phys} + \mathbf{\alpha}'
                + r' a^2 + \mathbf{\beta}\left(\frac{m_\pi^2}{f_\pi^2}-'
                + r'\frac{m_{\pi,PDG}^2}{f_\pi^2}\right) + \ldots$.}']
         rv += [r'\end{center}']
@@ -374,107 +370,10 @@ def full_summary(basis='SUSY', run=False, include_C=False,
 
     rv += [r'\end{document}']
 
-    filename = f'extrap_{basis}'
-    if alt_fit:
-        filename += '_with_Ns'
+    filename = f'extrap_{obj}_{basis}'
     f = open('tex/'+filename+'.tex', 'w')
     f.write('\n'.join(rv))
     f.close()
 
     os.system(f"pdflatex tex/{filename}.tex")
     os.system(f"open {filename}.pdf")
-
-
-def basis_summary(include_C=False, with_FLAG=False, comp_NPR=False, **kwargs):
-    bases = ['NPR', 'SUSY', 'SUSY_F']
-    C_folder = 'with_C' if include_C else 'without_C'
-    fits = {basis: pickle.load(open(f'sigmas/{C_folder}/cc_extrap_dict_{basis}.p', 'rb'))
-            for basis in bases}
-
-    for op_idx, op in enumerate(operators):
-        fig, ax = plt.subplots(nrows=len(bases), ncols=2,
-                               figsize=(15, len(bases)*4),
-                               sharex='col')
-        plt.subplots_adjust(wspace=0, hspace=0)
-
-        ax[0, 0].set_title(
-            r'$B_{'+str(op_idx+1)+',\, phys}^{SMOM}(\mu)$')
-        ax[0, 1].set_title(r'$B_{'+str(op_idx+1)+',\, phys}^{\overline{MS}}(' +
-                           str(np.around(flag_mus[op_idx], 2))+'$ GeV)')
-
-        for b_idx, basis in enumerate(bases):
-            ylabel = basis if basis != 'SUSY_F' else r'MIX $\times$ SUSY'
-            ax[b_idx, 0].set_ylabel(ylabel)
-            ansatze = list(fits[basis]['VVpAA'].keys())
-            ansatz_desc = [ansatz_kwargs[a]['title'] for a in ansatze]
-            if basis != 'NPR' and comp_NPR:
-                fits_NPR = rotate_from_NPR(
-                    C_folder=C_folder, rot_mtx=basis_rotation(basis))
-            for m, mu in enumerate(mu_list):
-                offset = m*0.2
-
-                vals = [fits[basis][op][fit][mu]
-                        ['phys'].val for fit in ansatze]
-                errs = [fits[basis][op][fit][mu]
-                        ['phys'].err for fit in ansatze]
-                pvals = [fits[basis][op][fit][mu]['pvalue'] for fit in ansatze]
-                ax[b_idx, 0].errorbar(np.arange(len(ansatze))+offset, vals,
-                                      yerr=errs, fmt='o', capsize=2,
-                                      label=r'$\mu='+str(np.around(mu, 2)) + '$ GeV')
-
-                MS_vals = [fits[basis][op][fit][mu]
-                           ['MS'].val for fit in ansatze]
-                MS_errs = [fits[basis][op][fit][mu]
-                           ['MS'].err for fit in ansatze]
-                ax[b_idx, 1].errorbar(np.arange(len(ansatze))+offset, MS_vals,
-                                      yerr=MS_errs, fmt='o', capsize=2)
-
-                if basis != 'NPR' and comp_NPR:
-                    alt_MS_vals = [fits_NPR[op][fit][mu]['MS'].val
-                                   for fit in ansatze]
-                    alt_MS_errs = [fits_NPR[op][fit][mu]['MS'].err
-                                   for fit in ansatze]
-                    alt_MS_GOF = [fits_NPR[op][fit][mu]['GOF']
-                                  for fit in ansatze]
-
-                    ax[b_idx, 1].errorbar(np.arange(len(ansatze))+offset+0.1, alt_MS_vals,
-                                          yerr=alt_MS_errs, fmt='d', capsize=2,
-                                          color=color_list[m])
-                for i in range(len(ansatze)):
-                    if pvals[i] < 0.05:
-                        ax[b_idx, 0].annotate(r'$\times $', (i+offset, vals[i]), ha='center',
-                                              va='center', c='white')
-                        ax[b_idx, 1].annotate(r'$\times $', (i+offset, MS_vals[i]), ha='center',
-                                              va='center', c='white')
-                    if basis != 'NPR' and comp_NPR and not alt_MS_GOF[i]:
-                        ax[b_idx, 1].annotate(r'$\times $', (i+offset+0.1, alt_MS_vals[i]),
-                                              ha='center', va='center', c='white')
-
-            ax[b_idx, 0].set_xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
-                                    ha='right')
-
-            if basis != 'NPR' and with_FLAG:
-                ansatze.append('FLAG')
-                ansatz_desc.append(r'FLAG $N_f=2+1$')
-                FLAG_val, FLAG_err = flag_vals[op_idx], flag_errs[op_idx]
-                ax[b_idx, 1].errorbar([len(ansatze)-1], [FLAG_val], yerr=[FLAG_err],
-                                      fmt='o', capsize=2, c='k')
-
-            ax[b_idx, 1].yaxis.set_label_position("right")
-            ax[b_idx, 1].yaxis.tick_right()
-            ax[b_idx, 1].set_xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
-                                    ha='right')
-            ax[b_idx, 0].legend()
-
-    filename = f'plots/basis_summary.pdf'
-    pp = PdfPages(filename)
-    fig_nums = plt.get_fignums()
-    figs = [plt.figure(n) for n in fig_nums]
-    for fig in figs:
-        fig.savefig(pp, format='pdf')
-    pp.close()
-    plt.close('all')
-
-    if open:
-        print(f'Plot saved to {filename}.')
-        os.system("open "+filename)
