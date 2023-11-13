@@ -146,7 +146,7 @@ class bilinear:
             Z_S = (12*q_sq*Z_q-mass_term)/(q_sq*s_term)
         qslash_Z = {'S': Z_S.real, 'P': Z_P.real, 'V': Z_V.real,
                     'A': Z_A.real, 'T': Z_T.real, 'm': Z_m.real,
-                    'mam_q': Z_mm_q.real, 'q': Z_q}
+                    'mam_q': Z_mm_q.real, 'q': Z_q, 'm_q':m_q}
         return qslash_Z
 
     def construct_operators(self, S_in, S_out, Gs, **kwargs):
