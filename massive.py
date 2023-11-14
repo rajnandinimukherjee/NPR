@@ -4,10 +4,10 @@ from coeffs import *
 
 
 class mNPR:
-    mu = 2.0
 
-    def __init__(self, ens, **kwargs):
+    def __init__(self, ens, mu=2.0, **kwargs):
         self.ens = ens
+        self.mu = mu
         self.ainv = stat(
             val=float(params[ens]['ainv']),
             err=float(params[ens]['ainv_err']),
@@ -26,8 +26,10 @@ class mNPR:
         self.N_masses = len(self.all_masses)
 
         self.m_C = self.calc_m_C()
+        self.Z_SMOM, self.m_C_SMOM, self.m_bar_SMOM = self.load_SMOM()
+
         self.Z_m_mSMOM_map = self.mSMOM_func(key='m')
-        self.m_bar_mSMOM_map = self.mSMOM_func(key='mam_q')
+        self.am_bar_mSMOM_map = self.mSMOM_func(key='mam_q')
 
     def load_SMOM(self, **kwargs):
         sea_mass = self.SMOM_bl.sea_mass
@@ -38,28 +40,32 @@ class mNPR:
 
         m_C_SMOM = Z_SMOM*self.m_C
         m_bar_SMOM = am_bar_SMOM*self.ainv
-        return m_C_SMOM, m_bar_SMOM
+        return Z_SMOM, m_C_SMOM, m_bar_SMOM
 
-    def calc_mSMOM(self, eta_star, **kwargs):
-        am_star = self.interpolate_eta_c(eta_star)
-        m_C_mSMOM = self.Z_m_mSMOM_map(am_star)*self.m_C
-        m_bar_mSMOM = self.m_bar_mSMOM_map(am_star)
-        return m_C_mSMOM, m_bar_mSMOM
-
-    def mSMOM_func(self, key='m', **kwargs):
+    def load_mSMOM(self, key='m', **kwargs):
         am_in = stat(
             val=[float(m) for m in self.all_masses],
             btsp='fill'
         )
 
         mSMOM = np.array([self.mSMOM_bl.extrap_Z(
-            mu=self.mu, masses=(m, m))['m']
+            mu=self.mu, masses=(m, m))[key]
             for m in self.all_masses])
         mSMOM = stat(
             val=np.array([mSMOM[m].val for m in range(self.N_masses)]),
             err=np.array([mSMOM[m].err for m in range(self.N_masses)]),
             btsp=np.array([mSMOM[m].btsp for m in range(self.N_masses)]).T
         )
+        return am_in, mSMOM
+
+    def calc_mSMOM(self, eta_star, **kwargs):
+        am_star = self.interpolate_eta_c(eta_star)
+        m_C_mSMOM = self.Z_m_mSMOM_map(am_star)*self.m_C
+        m_bar_mSMOM = self.am_bar_mSMOM_map(am_star)*self.ainv
+        return m_C_mSMOM, m_bar_mSMOM
+
+    def mSMOM_func(self, key='m', start=1, **kwargs):
+        am_in, mSMOM = self.load_mSMOM(key=key)
 
         def ansatz(params, am):
             if key == 'm':
@@ -68,9 +74,9 @@ class mNPR:
                 return params[0]*am + params[1]*(am**2) + params[2]
 
         # central fit
-        x = am_in.val
-        y = mSMOM.val
-        COV = np.diag(mSMOM.err**2)
+        x = am_in.val[start:]
+        y = mSMOM.val[start:]
+        COV = np.diag(mSMOM.err[start:]**2)
 
         def diff(params):
             return y - ansatz(params, x)
@@ -87,8 +93,8 @@ class mNPR:
 
         btsp = np.zeros(shape=(N_boot, len(guess)))
         for k in range(N_boot):
-            x_k = am_in.btsp[k,]
-            y_k = mSMOM.btsp[k,]
+            x_k = am_in.btsp[k, start:]
+            y_k = mSMOM.btsp[k, start:]
 
             def diff_k(params):
                 return y_k - ansatz(params, x_k)
@@ -143,7 +149,7 @@ class mNPR:
             btsp=btsp
         )
         m_C_pole = am_C_pole*self.ainv
-        return am_C_pole
+        return m_C_pole
 
     def load_eta(self, **kwargs):
         self.valence = etaCvalence(self.ens)
@@ -187,3 +193,98 @@ class mNPR:
                            for k in range(N_boot)])
         )
         return pred
+
+
+class cont_extrap:
+    eta_stars = [2.4, 2.6, eta_PDG.val]
+
+    def __init__(self, ens_list, mu=2.0):
+        self.ens_list = ens_list
+        self.mNPR_dict = {ens: mNPR(ens, mu)
+                          for ens in ens_list}
+        self.a_sq = stat(
+            val=np.array([e.ainv.val**(-2)
+                          for ens, e in self.mNPR_dict.items()]),
+            err='fill',
+            btsp=np.array([[e.ainv.btsp[k,]**(-2)
+                           for ens, e in self.mNPR_dict.items()]
+                           for k in range(N_boot)])
+        )
+
+    def load_SMOM(self):
+        m_C = [e.m_C_SMOM for ens, e in self.mNPR_dict.items()]
+        self.m_C_SMOM = stat(
+            val=[m.val for m in m_C],
+            err=[m.err for m in m_C],
+            btsp=np.array([m.btsp for m in m_C]).T
+        )
+        m_bar = [e.m_bar_SMOM for ens, e in self.mNPR_dict.items()]
+        self.m_bar_SMOM = stat(
+            val=[m.val for m in m_bar],
+            err=[m.err for m in m_bar],
+            btsp=np.array([m.btsp for m in m_bar]).T
+        )
+
+    def load_mSMOM(self, eta_star):
+        m_C = np.empty(len(self.ens_list), dtype=object)
+        m_bar = np.empty(len(self.ens_list), dtype=object)
+
+        for idx, ens in enumerate(self.ens_list):
+            e = self.mNPR_dict[ens]
+            m_C[idx], m_bar[idx] = e.calc_mSMOM(eta_star)
+
+        m_C = stat(
+            val=np.array([m_C[i].val for i in range(len(self.ens_list))]),
+            err=np.array([m_C[i].err for i in range(len(self.ens_list))]),
+            btsp=np.array([m_C[i].btsp for i in range(len(self.ens_list))]).T
+        )
+        m_bar = stat(
+            val=np.array([m_bar[i].val for i in range(len(self.ens_list))]),
+            err=np.array([m_bar[i].err for i in range(len(self.ens_list))]),
+            btsp=np.array([m_bar[i].btsp for i in range(len(self.ens_list))]).T
+        )
+        return m_C, m_bar
+
+    def extrap_mapping(self, data):
+        def ansatz(params, a_sq):
+            return params[0] + params[1]*a_sq + params[2]*(a_sq**2)
+
+        # central fit
+        x = self.a_sq.val
+        y = data.val
+        COV = np.diag(data.err**2)
+
+        def diff(params):
+            return y - ansatz(params, x)
+
+        L_inv = np.linalg.cholesky(COV)
+        L = np.linalg.inv(L_inv)
+
+        def LD(params):
+            return L.dot(diff(params))
+
+        guess = [1, 1, 1]
+        res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
+        central = res.x
+
+        btsp = np.zeros(shape=(N_boot, len(guess)))
+        for k in range(N_boot):
+            x_k = self.a_sq.btsp[k,]
+            y_k = data.btsp[k,]
+
+            def diff_k(params):
+                return y_k - ansatz(params, x_k)
+
+            def LD_k(params):
+                return L.dot(diff_k(params))
+            res = least_squares(LD_k, guess, ftol=1e-10, gtol=1e-10)
+            btsp[k,] = res.x
+
+        def mapping(a_sq):
+            return stat(
+                val=ansatz(central, a_sq),
+                err='fill',
+                btsp=np.array([ansatz(btsp[k,], a_sq)
+                               for k in range(N_boot)])
+            )
+        return mapping

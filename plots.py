@@ -24,7 +24,7 @@ for ens in ens_list:
     y = np.array([eta_c_data[ens]['central'][x_q] for x_q in x])
     yerr = np.array([eta_c_data[ens]['errors'][x_q] for x_q in x])
     ainv = params[ens]['ainv']
-    am_C, am_C_err = interpolate_eta_c(ens, eta_PDG)
+    am_C, am_C_err = interpolate_eta_c(ens, eta_PDG.val)
     plot_dict[ens] = {'ainv': ainv,
                       'x': x,
                       'M_eta_C': y*ainv,
@@ -55,13 +55,13 @@ ymin, ymax = plt.ylim()
 xmin, xmax = plt.xlim()
 am_C = plot_dict['M1']['am_C']
 am_C_err = plot_dict['M1']['am_C_err']
-plt.hlines(eta_PDG, -0.05, am_C, color=color_list[
-    3+eta_stars.index(eta_PDG)])
+plt.hlines(eta_PDG.val, -0.05, am_C, color=color_list[
+    3+eta_stars.index(eta_PDG.val)])
 plt.axvspan(am_C-am_C_err, am_C+am_C_err,
             color='k', alpha=0.1)
-plt.vlines(am_C, 0, eta_PDG, linestyle='dashed',
-           color=color_list[3+eta_stars.index(eta_PDG)])
-plt.text(-0.03, eta_PDG*1.01, 'PDG', fontsize=18)
+plt.vlines(am_C, 0, eta_PDG.val, linestyle='dashed',
+           color=color_list[3+eta_stars.index(eta_PDG.val)])
+plt.text(-0.03, eta_PDG.val*1.01, 'PDG', fontsize=18)
 plt.text(am_C*1.01, 0.3, r'$am_C$',
          rotation=270, fontsize=18)
 plt.ylim([ymin, ymax])
@@ -79,14 +79,14 @@ for ens in ens_list:
     bl_mSMOM = bilinear_analysis(ens, mres=mres,
                                  loadpath=f'{folder}/{ens}_bl_massive_mSMOM.p')
     for key in ['m', 'mam_q']:
-        x, Zm_SMOM, Zm_SMOM_err = bl_SMOM.massive_Z_plots(key=key,
-                                                          mu=mu_chosen, passinfo=True)
-        Zm_SMOM, Zm_SMOM_err = Zm_SMOM[0], Zm_SMOM_err[0]
-        x, Zm, Zm_err = bl_mSMOM.massive_Z_plots(key=key,
-                                                 mu=mu_chosen, passinfo=True)
+        x, Zm_SMOM = bl_SMOM.massive_Z_plots(key=key,
+                                             mu=mu_chosen, passinfo=True)
+        Zm_SMOM, Zm_SMOM_err = Zm_SMOM.val[0], Zm_SMOM.err[0]
+        x, Zm = bl_mSMOM.massive_Z_plots(key=key,
+                                         mu=mu_chosen, passinfo=True)
         plot_dict[ens][key] = {'x_Z': x,
-                               'Zm': Zm,
-                               'Zm_err': Zm_err,
+                               'Zm': Zm.val,
+                               'Zm_err': Zm.err,
                                'Zm_SMOM': Zm_SMOM,
                                'Zm_SMOM_err': Zm_SMOM_err}
 
@@ -188,7 +188,7 @@ axes[1, 0].set_ylabel(r'$Z_m\cdot m$', fontsize=18)
 # ===STEP 3 ================================================================
 
 for ens in ens_list:
-    eta_star_dict = {eta: interpolate_eta_c(ens, eta)
+    eta_star_dict = {float(eta): interpolate_eta_c(ens, eta)
                      for eta in eta_stars}
     plot_dict[ens]['eta_stars'] = eta_star_dict
 
@@ -252,7 +252,7 @@ for ens in ['C1', 'M1', 'F1S']:
     ymin, ymax = axes_info[0, idx, 1, :]
 
     eta_C_star = eta_stars[eta_C_star_idx]
-    am_star, am_star_err = plot_dict[ens]['eta_stars'][eta_C_star]
+    am_star, am_star_err = plot_dict[ens]['eta_stars'][float(eta_C_star)]
     axes[0, idx].hlines(eta_C_star, xmin, xmax,
                         color=color_list[3+eta_C_star_idx])
     axes[0, idx].axvspan(am_star-am_star_err, am_star+am_star_err,
@@ -388,7 +388,7 @@ for ens in ['M1', 'C1', 'F1S']:
     ymin, ymax = axes_info[0, idx, 1, :]
 
     eta_C_star = eta_stars[eta_C_star_idx]
-    am_star, am_star_err = plot_dict[ens]['eta_stars'][eta_C_star]
+    am_star, am_star_err = plot_dict[ens]['eta_stars'][float(eta_C_star)]
     axes[0, idx].hlines(eta_C_star, xmin, xmax,
                         color=color_list[3+eta_C_star_idx])
     axes[0, idx].axvspan(am_star-am_star_err, am_star+am_star_err,
@@ -483,7 +483,7 @@ asq_grain = np.linspace(0, 0.3*1.5, 100)
 
 for star in eta_stars:
     eta_idx = eta_stars.index(star)
-    plot_dict['fits'][star] = {}
+    plot_dict['fits'][float(star)] = {}
 
     for key in ['m_C', 'm_q']:
         y = np.array([plot_dict[ens]['ren'][key+'_ren'][eta_idx]
@@ -534,7 +534,7 @@ for star in eta_stars:
 
 # ===plot 1: m_C continuum extrap for 1 eta_star=============
 plt.figure(figsize=(h, w))
-eta_C_star_idx = 2
+eta_C_star_idx = 1
 eta_star_chosen = eta_stars[eta_C_star_idx]
 
 label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'
@@ -591,7 +591,7 @@ for eta_C_star_idx in range(len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'\
-            if eta_star_chosen != eta_PDG else r'$M_{\eta_C}^{\star,PDG}$'
+            if eta_star_chosen != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
     plt.plot(asq_grain, plot_dict['fits'][eta_star_chosen]['m_C_grain'],
              linestyle='dashed', color=color_list[3+eta_C_star_idx], label=label)
     plt.fill_between(asq_grain, plot_dict['fits'][eta_star_chosen]['m_C_grain_up'],
@@ -623,7 +623,7 @@ for eta_C_star_idx in range(len(eta_stars)):
     eta_star_chosen = eta_stars[eta_C_star_idx]
 
     label = r'$M_{\eta_C}^\star='+str(eta_star_chosen)+'$ GeV'\
-            if eta_star_chosen != eta_PDG else r'$M_{\eta_C}^{\star,PDG}$'
+            if eta_star_chosen != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
     plt.plot(asq_grain, plot_dict['fits'][eta_star_chosen]['m_q_grain'],
              linestyle='dashed', color=color_list[3+eta_C_star_idx], label=label)
     plt.fill_between(asq_grain, plot_dict['fits'][eta_star_chosen]['m_q_grain_up'],

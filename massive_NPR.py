@@ -1,211 +1,438 @@
-from NPR_classes import *
-from basics import *
-from eta_c import *
-
-ens_list = list(eta_c_data.keys())
-
-mres = True
-argument = '_with_mres' if mres == True else '_no_mres'
-folder = 'mres' if mres == True else 'no_mres'
-
-for ens in ens_list:
-    if ens in valence_ens:
-        e = etaCvalence(ens)
-        e.toDict(keys=list(e.mass_comb.keys()), mres=mres)
+from massive import *
 
 mu_chosen = 2.0
-filename = f'plots/combined_massive_Z{argument}.pdf'
+ens_list = list(eta_c_data.keys())
+mNPR_dict = {ens: mNPR(ens, mu=mu_chosen)
+             for ens in ens_list}
+
+filename = '/Users/rajnandinimukherjee/Desktop/LatPlots.pdf'
 pdf = PdfPages(filename)
-fig, ax = plt.subplots(nrows=3, ncols=len(ens_list),
-                       sharex='col', sharey='row',
-                       squeeze=True, figsize=(12, 15))
+h, w = 4, 2.75
+num_ens = len(ens_list)
+
+# ===plot 1: M1 M_eta_C measurements==========================
+plt.figure(figsize=(w, h))
+M1 = mNPR_dict['M1']
+plt.errorbar(M1.eta_ax.val, M1.eta_y.val,
+             yerr=M1.eta_y.err,
+             fmt='o', capsize=4,
+             color=color_list[ens_list.index('M1')])
+xmin, xmax = plt.xlim()
+plt.xlim([-0.05, xmax])
+plt.xlabel(r'$am$', fontsize=18)
+plt.ylabel(r'$M_{\eta_C}$ (GeV)', fontsize=18)
+plt.title(r'M1 ($a^{-1}=2.38$ GeV)')
+
+
+# ===plot 2: M1 M_eta_C meas+ PDG interpolation=========
+plt.figure(figsize=(w, h))
+plt.errorbar(M1.eta_ax.val, M1.eta_y.val,
+             yerr=M1.eta_y.err,
+             fmt='o', capsize=4,
+             color=color_list[ens_list.index('M1')])
+ymin, ymax = plt.ylim()
+xmin, xmax = plt.xlim()
+plt.axhspan(eta_PDG.val-eta_PDG.err,
+            eta_PDG.val+eta_PDG.err,
+            -0.05, M1.am_C.val+M1.am_C.err, alpha=0.1,
+            color=color_list[3+eta_stars.index(eta_PDG.val)])
+plt.hlines(eta_PDG.val, -0.05, M1.am_C.val+M1.am_C.err,
+           color=color_list[3+eta_stars.index(eta_PDG.val)])
+
+plt.axvspan(M1.am_C.val-M1.am_C.err,
+            M1.am_C.val+M1.am_C.err,
+            color='k', alpha=0.1)
+plt.vlines(M1.am_C.val, 0, eta_PDG.val+eta_PDG.err,
+           linestyle='dashed',
+           color=color_list[3+eta_stars.index(eta_PDG.val)])
+plt.text(-0.03, eta_PDG.val*1.01, 'PDG', fontsize=18)
+plt.text(M1.am_C.val*1.01, 0.3, r'$am_C$',
+         rotation=270, fontsize=18)
+plt.ylim([ymin, ymax])
+plt.xlim([-0.05, xmax])
+plt.xlabel(r'$am$', fontsize=18)
+plt.ylabel(r'$M_{\eta_C}$ (GeV)', fontsize=18)
+plt.title(r'M1 ($a^{-1}=2.38$ GeV)')
+
+# ===plot 1: Zms vs am for M1========================
+key = 'm'
+plt.figure(figsize=(w, h))
+x, y = M1.load_mSMOM(key='m')
+plt.errorbar(x.val, y.val, yerr=y.err,
+             fmt='o', capsize=4, label='mSMOM',
+             color=color_list[ens_list.index('M1')])
+plt.legend(loc='center right')
+plt.xlim([-0.05, xmax])
+plt.xlabel(r'$am$', fontsize=18)
+plt.ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+plt.title(r'M1 ($a^{-1}=2.38$ GeV)')
+
+# ===plot 2: Zms vs am for M1 with SMOM===============
+plt.figure(figsize=(w, h))
+plt.errorbar(x.val, y.val, yerr=y.err,
+             fmt='o', capsize=4, label='mSMOM',
+             color=color_list[ens_list.index('M1')])
+plt.axhspan(M1.Z_SMOM.val-M1.Z_SMOM.err,
+            M1.Z_SMOM.val+M1.Z_SMOM.err,
+            color='k', alpha=0.1)
+plt.axhline(M1.Z_SMOM.val, color='k', label='SMOM')
+plt.legend(loc='center right')
+plt.xlim([-0.05, xmax])
+plt.xlabel(r'$am$', fontsize=18)
+plt.ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+plt.title(r'M1 ($a^{-1}=2.38$ GeV)')
+
+
+# ===plot 3: Zms vs am for all with SMOM==============
+fig, axes = plt.subplots(1, num_ens, sharey=True,
+                         figsize=(w*num_ens, h))
+plt.subplots_adjust(hspace=0, wspace=0)
+for ens in ['C1', 'M1', 'F1S']:
+    idx = ens_list.index(ens)
+    ax = axes[idx]
+
+    e = mNPR_dict[ens]
+    x, y = e.load_mSMOM(key='m')
+
+    ax.errorbar(x.val, y.val, yerr=y.err,
+                fmt='o', capsize=4, label='mSMOM',
+                color=color_list[idx])
+    ax.axhspan(e.Z_SMOM.val-e.Z_SMOM.err,
+               e.Z_SMOM.val+e.Z_SMOM.err,
+               color='k', alpha=0.1)
+    ax.axhline(e.Z_SMOM.val, color='k', label='SMOM')
+    ax.legend(loc='center right')
+    xmin, xmax = ax.get_xlim()
+    ax.set_xlim([-0.05, xmax])
+    ax.set_title(ens+r' ($a^{-1}='+'{:.2f}'.format(e.ainv.val)+r'$ GeV)')
+    ax.set_xlabel('$a_{'+ens+'}m$', fontsize=18)
+
+axes[0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+
+# ===backup 1: Zms, Zm*am_q vs am for all with SMOM======
+fig, axes = plt.subplots(nrows=2, ncols=num_ens,
+                         sharex='col', sharey='row',
+                         figsize=(w*num_ens, h*2))
+plt.subplots_adjust(hspace=0, wspace=0)
+for key in ['mam_q', 'm']:
+    key_idx = ['m', 'mam_q'].index(key)
+    for ens in ['C1', 'M1', 'F1S']:
+        idx = ens_list.index(ens)
+        e = mNPR_dict[ens]
+        x, y = e.load_mSMOM(key=key)
+        if key == 'mam_q':
+            y = y*e.ainv
+
+        ax = axes[key_idx, idx]
+        ax.errorbar(x.val, y.val, yerr=y.err,
+                    fmt='o', capsize=4, label='mSMOM',
+                    color=color_list[idx])
+
+        SMOM = e.Z_SMOM if key == 'm' else e.m_bar_SMOM
+        ax.axhspan(SMOM.val-SMOM.err,
+                   SMOM.val+SMOM.err,
+                   color='k', alpha=0.1)
+        ax.axhline(SMOM.val, color='k', label='SMOM')
+        xmin, xmax = ax.get_xlim()
+        ax.set_xlim([-0.05, xmax])
+
+        axes[1, idx].legend(loc='upper left')
+        axes[0, idx].set_title(
+            ens+r' ($a^{-1}='+'{:.2f}'.format(e.ainv.val)+r'$ GeV)')
+        axes[1, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
+
+axes[0, 0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+axes[1, 0].set_ylabel(r'$Z_m\cdot m$', fontsize=18)
+
+# ===plot 1: Zms and M_eta_C vs am============================
+axes_info = np.zeros(shape=(2, num_ens, 2, 2))
+fig, axes = plt.subplots(nrows=2, ncols=num_ens,
+                         sharex='col', sharey='row',
+                         figsize=(w*num_ens, h*2))
+plt.subplots_adjust(hspace=0, wspace=0)
+for ens in ['C1', 'M1', 'F1S']:
+    idx = ens_list.index(ens)
+    e = mNPR_dict[ens]
+
+    axes[0, idx].errorbar(e.eta_ax.val, e.eta_y.val,
+                          yerr=e.eta_y.err,
+                          fmt='o', capsize=4,
+                          color=color_list[idx])
+    xmin0, xmax0 = axes[0, idx].get_xlim()
+    axes[0, 0].set_ylabel(r'$M_{\eta_C}$ (GeV)', fontsize=18)
+    axes[0, idx].set_title(ens+r' ($a^{-1}='+'{:.2f}'.format(
+        e.ainv.val)+r'$ GeV)')
+    axes_info[0, idx, 1, :] = axes[0, idx].get_ylim()
+
+    x, y = e.load_mSMOM(key='m')
+    axes[1, idx].errorbar(x.val, y.val, yerr=y.err,
+                          fmt='o', capsize=4,
+                          color=color_list[idx])
+    axes[1, 0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+    axes[1, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
+    xmin1, xmax1 = axes[1, idx].get_xlim()
+    axes_info[1, idx, 0, :] = np.min([xmin0, xmin1]), np.max([xmax0, xmax1])
+    axes_info[0, idx, 0, :] = axes_info[1, idx, 0, :]
+    axes[0, idx].set_xlim([-0.05, np.max([xmax0, xmax1])])
+    axes_info[1, idx, 1, :] = axes[1, idx].get_ylim()
+
+axes_info_combined = np.array([[[np.min(axes_info[row_num, :, axis, 0]),
+                                 np.max(axes_info[row_num, :, axis, 1])]
+                                for axis in range(2)]
+                               for row_num in range(2)])
+xmax = np.max(axes_info_combined[:, 0, 1])
+axes_info_combined[:, 0, 1] = xmax, xmax
+
+# ===plot 2: Zms and M_eta_C vs am for some choice M_eta_C_star===
+fig, axes = plt.subplots(nrows=2, ncols=num_ens,
+                         sharex='col', sharey='row',
+                         figsize=(w*num_ens, h*2))
+plt.subplots_adjust(hspace=0, wspace=0)
+eta_C_star_idx = 1
+eta_C_star = eta_stars[eta_C_star_idx]
+
+for ens in ['C1', 'M1', 'F1S']:
+    idx = ens_list.index(ens)
+    e = mNPR_dict[ens]
+    am_star = e.interpolate_eta_c(eta_C_star)
+
+    axes[0, idx].errorbar(e.eta_ax.val, e.eta_y.val,
+                          yerr=e.eta_y.err,
+                          fmt='o', capsize=4,
+                          color=color_list[idx])
+    axes[0, 0].set_ylabel(r'$M_{\eta_C}$ (GeV)', fontsize=18)
+    axes[0, idx].set_title(ens+r' ($a^{-1}='+'{:.2f}'.format(
+        e.ainv.val)+r'$ GeV)')
+
+    xmin, xmax = axes_info_combined[0, 0, :]
+    axes[0, idx].hlines(eta_C_star, xmin, xmax,
+                        color=color_list[3+eta_C_star_idx])
+    axes[0, idx].axvspan(am_star.val-am_star.err,
+                         am_star.val+am_star.err,
+                         color='k', alpha=0.1)
+
+    ymin, ymax = axes_info_combined[0, 1, :]
+    axes[0, idx].vlines(am_star.val, ymin, eta_C_star,
+                        linestyle='dashed',
+                        color=color_list[3+eta_C_star_idx])
+    axes[0, idx].text(am_star.val*1.01, 0.3,
+                      r'$a_{'+ens+r'}m^\star$', rotation=270, fontsize=18)
+
+    axes[0, idx].set_xlim(axes_info_combined[0, 0, :])
+    axes[0, idx].set_ylim(axes_info_combined[0, 1, :])
+    axes[0, idx].set_title(
+        ens+r' ($a^{-1}='+'{:.2f}'.format(e.ainv.val)+r'$ GeV)')
+
+    x, y = e.load_mSMOM(key='m')
+    axes[1, idx].errorbar(x.val, y.val, yerr=y.err,
+                          fmt='o', capsize=4,
+                          color=color_list[idx])
+    axes[1, idx].set_xlim(axes_info_combined[1, 0, :])
+    axes[1, idx].set_ylim(axes_info_combined[1, 1, :])
+    axes[1, 0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+    axes[1, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
+
+
+axes[0, 0].set_ylabel(r'$M_{\eta_C}$ (GeV)', fontsize=18)
+axes[1, 0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+axes[0, 0].text(axes_info_combined[0, 0, 0]+0.1, eta_C_star *
+                1.05, r'$M_{\eta_C}^\star$', fontsize=16)
+
+
+# ===plot 3: Zms interpolate for some choice M_eta_C_star===
+fig, axes = plt.subplots(nrows=2, ncols=num_ens,
+                         sharex='col', sharey='row',
+                         figsize=(w*num_ens, h*2))
+
 plt.subplots_adjust(hspace=0, wspace=0)
 
+for idx, ens in enumerate(['C1', 'M1', 'F1S']):
+    e = mNPR_dict[ens]
+    am_star = e.interpolate_eta_c(eta_C_star)
 
-# ====plotting eta_c data from f_D paper=========================================
-for ens in ens_list:
-    ens_idx = ens_list.index(ens)
-    x = np.array(list(eta_c_data[ens]['central'].keys()))
-    y = np.array([eta_c_data[ens]['central'][x_q] for x_q in x])
-    yerr = np.array([eta_c_data[ens]['errors'][x_q] for x_q in x])
-    ainv = params[ens]['ainv']
+    axes[0, idx].errorbar(e.eta_ax.val, e.eta_y.val,
+                          yerr=e.eta_y.err,
+                          fmt='o', capsize=4,
+                          color=color_list[idx])
+    axes[0, 0].set_ylabel(r'$M_{\eta_C}$ (GeV)', fontsize=18)
+    axes[0, idx].set_title(ens+r' ($a^{-1}='+'{:.2f}'.format(
+        e.ainv.val)+r'$ GeV)')
 
-    ax[0, ens_idx].errorbar(x, y*ainv, yerr=yerr*ainv,
-                            fmt='o', capsize=4, mfc='None',
-                            color=color_list[ens_idx])
-    ax[0, ens_idx].scatter(x[:-1], y[:-1]*ainv,
-                           marker='x', lw=1, color='k',
-                           label='used in extrap')
-    ymin0, ymax0 = ax[0, 0].get_ylim()
-    ymin, ymax = ax[0, ens_idx].get_ylim()
-    xmin, xmax = ax[0, ens_idx].get_xlim()
-    if ymax0 < ymax:
-        ymax0 = ymax
+    xmin, xmax = axes_info_combined[0, 0, :]
+    axes[0, idx].hlines(eta_C_star, xmin, xmax,
+                        color=color_list[3+eta_C_star_idx])
+    axes[0, idx].axvspan(am_star.val-am_star.err,
+                         am_star.val+am_star.err,
+                         color='k', alpha=0.1)
 
-    for eta in eta_stars:
-        eta_idx = eta_stars.index(eta)
-        m_q_star, m_q_star_err = interpolate_eta_c(ens, eta)
+    ymin, ymax = axes_info_combined[0, 1, :]
+    axes[0, idx].vlines(am_star.val, ymin, eta_C_star,
+                        linestyle='dashed',
+                        color=color_list[3+eta_C_star_idx])
+    axes[0, idx].text(am_star.val*1.01, 0.3,
+                      r'$a_{'+ens+r'}m^\star$', rotation=270, fontsize=18)
 
-        ax[0, ens_idx].axvspan(m_q_star-m_q_star_err,
-                               m_q_star+m_q_star_err,
-                               color='k', alpha=0.1)
-        label = 'PDG' if eta == eta_PDG else str(eta)+' GeV'
-        ax[0, ens_idx].hlines(eta, -0.05, m_q_star, label=label,
-                              color=color_list[eta_idx+3])
-        ax[0, ens_idx].vlines(m_q_star, 0, eta, linestyle='dashed',
-                              color=color_list[eta_idx+3])
-    ax[0, ens_idx].set_title(ens)
-    ax[0, ens_idx].legend(loc='lower right')
-    ax[0, ens_idx].set_xlim([-0.05, xmax])
+    axes[0, idx].set_xlim(axes_info_combined[0, 0, :])
+    axes[0, idx].set_ylim(axes_info_combined[0, 1, :])
+    axes[0, idx].set_title(
+        ens+r' ($a^{-1}='+'{:.2f}'.format(e.ainv.val)+r'$ GeV)')
 
-ax[0, 0].set_ylabel(r'$M_{\eta_C}$ (GeV)')
-for ax_i in ax[0, :]:
-    ax_i.set_ylim([0, ymax0])
+    x, y = e.load_mSMOM(key='m')
+    axes[1, idx].errorbar(x.val, y.val, yerr=y.err,
+                          fmt='o', capsize=4,
+                          color=color_list[idx])
+    axes[1, 0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+    axes[1, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
+
+    xmin, xmax = axes_info_combined[1, 0, :]
+    ymin, ymax = axes_info_combined[1, 1, :]
+    am_grain = stat(
+        val=np.linspace(0.0001, xmax+0.5, 100),
+        err=np.zeros(100),
+        btsp='fill')
+    Zm_grain = e.Z_m_mSMOM_map(am_grain)
+    Zm_grain_up = Zm_grain.val+Zm_grain.err
+    Zm_grain_dn = Zm_grain.val-Zm_grain.err
+    axes[1, idx].fill_between(am_grain.val, Zm_grain_up, Zm_grain_dn,
+                              color='k', alpha=0.3, label='fit', zorder=0)
+
+    axes[1, idx].vlines(am_star.val, ymin, ymax, linestyle='dashed',
+                        color=color_list[3+eta_C_star_idx], zorder=0)
+    Zm_star = e.Z_m_mSMOM_map(am_star)
+    axes[1, idx].errorbar([am_star.val], [Zm_star.val],
+                          yerr=[Zm_star.err],
+                          fmt='o', capsize=4,
+                          color=color_list[3+eta_C_star_idx],
+                          zorder=2,)
+    axes[1, idx].set_xlim(axes_info_combined[1, 0, :])
+    axes[1, idx].set_ylim(axes_info_combined[1, 1, :])
 
 
-# ====plotting Z_m(mu_chosen) extrapolation at m_q_stars=========================
-def Z_m_ansatz(params, am, key='m', **kwargs):
-    if key == 'm':
-        return params[0] + params[1]*am + params[2]/am
-        # return params[0] + params[1]*(am**2) + params[2]*np.log(am)*am
-    else:
-        return params[0]*am + (am**2)*params[1] + params[2]
+axes[0, 0].set_ylabel(r'$M_{\eta_C}$ (GeV)', fontsize=18)
+axes[1, 0].set_ylabel(r'$Z_m(am,a\mu)$', fontsize=18)
+axes[0, 0].text(axes_info_combined[0, 0, 0]+0.1, eta_C_star *
+                1.05, r'$M_{\eta_C}^\star$', fontsize=16)
 
 
-ens_dict = {ens: {'mSMOM': bilinear_analysis(ens, mres=mres,
-                                             loadpath=f'{folder}/{ens}_bl_massive_mSMOM.p'),
-                  'SMOM': bilinear_analysis(ens, mres=mres,
-                                            loadpath=f'{folder}/{ens}_bl_massive_SMOM.p')}
-            for ens in ens_list}
+# ===plot 1: m_C continuum extrap for 1 eta_star=============
+plt.figure(figsize=(h, w))
 
-# ====fit choices=======
-ens_dict['C1']['fit_idx'] = [0, 1, 2, 3]
-ens_dict['M1']['fit_idx'] = [0, 1, 2, 3, 4]
-ens_dict['F1S']['fit_idx'] = [0, 1, 2, 3, 4]
+label = r'$M_{\eta_C}^\star='+str(eta_C_star)+'$ GeV'
+plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
 
-for key in ['m', 'mam_q']:
-    key_idx = ['m', 'mam_q'].index(key)+1
-    ax[key_idx, 0].set_ylabel('$Z_'+key+'(\mu=${:.3f} GeV)'.format(
-        mu_chosen))
-    if key == 'm':
-        plt.text(1.03, 1.2, r'$y=\alpha/x + \beta + \gamma x$',
-                 transform=plt.gca().transAxes, color='gray', rotation=90)
-    else:
-        plt.text(1.03, 0.2, r'$y=\alpha + \beta x + \gamma x^2$',
-                 transform=plt.gca().transAxes, color='gray', rotation=90)
+asq_grain = np.linspace(0, 0.45, 50)
+extrap = cont_extrap(ens_list, mu=mu_chosen)
 
-    for ens in ['M1', 'C1', 'F1S']:
-        ens_idx = ens_list.index(ens)
-        ainv = ens_dict[ens]['mSMOM'].ainv
-        eta_star_dict = {eta: interpolate_eta_c(ens, eta)
-                         for eta in eta_stars}
-        x, y, e = ens_dict[ens]['mSMOM'].massive_Z_plots(key=key,
-                                                         mu=mu_chosen, passinfo=True)
+m_C_mSMOM, mbar_mSMOM = extrap.load_mSMOM(eta_C_star)
+m_C_mSMOM_mapping = extrap.extrap_mapping(m_C_mSMOM)
+m_C_mSMOM_grain = m_C_mSMOM_mapping(asq_grain)
 
-        x_, y_, e_ = ens_dict[ens]['SMOM'].massive_Z_plots(key=key,
-                                                           mu=mu_chosen, passinfo=True)
+plt.plot(asq_grain, m_C_mSMOM_grain.val,
+         linestyle='dashed',
+         color=color_list[3+eta_C_star_idx],
+         label=label)
+plt.fill_between(asq_grain,
+                 m_C_mSMOM_grain.val - m_C_mSMOM_grain.err,
+                 m_C_mSMOM_grain.val + m_C_mSMOM_grain.err,
+                 color=color_list[3+eta_C_star_idx], alpha=0.5)
 
-        ax[key_idx, ens_idx].errorbar(x, y, yerr=e, fmt='o', capsize=4,
-                                      label='mSMOM',
-                                      color=color_list[ens_idx],
-                                      zorder=1)
-        adjusted_x = (x[1]+x[0])/2.0
-        ax[key_idx, ens_idx].errorbar(adjusted_x, y_[[0]], yerr=e_[[0]],
-                                      fmt='o', capsize=4,
-                                      label='SMOM',
-                                      color='k',
-                                      zorder=0)
-        if ens in valence_ens:
-            ax[2, ens_idx].set_xlabel(r'$a_{'+ens+r'}m_{eff}$')
-        else:
-            ax[2, ens_idx].set_xlabel(r'$a_{'+ens+r'}m_q$')
+for idx, ens in enumerate(ens_list):
 
-        fit_idx = ens_dict[ens]['fit_idx']
-        ax[key_idx, ens_idx].scatter(x[fit_idx], y[fit_idx],
-                                     color='k', marker='x', lw=1,
-                                     label='included in fit',
-                                     zorder=2)
+    plt.errorbar(extrap.a_sq.val[idx], m_C_mSMOM.val[idx],
+                 xerr=extrap.a_sq.err[idx],
+                 yerr=m_C_mSMOM.err[idx],
+                 fmt='o', capsize=4,
+                 color=color_list[idx])
 
-        def diff(params):
-            return y[fit_idx] - Z_m_ansatz(params, x[fit_idx], key=key)
+m_C_mSMOM_phys = m_C_mSMOM_mapping(0.0)
+plt.errorbar([0], m_C_mSMOM_phys.val,
+             yerr=m_C_mSMOM_phys.err,
+             fmt='o', capsize=4,
+             color=color_list[3+eta_C_star_idx])
 
-        cov = np.diag(e[fit_idx]**2)
-        L_inv = np.linalg.cholesky(cov)
-        L = np.linalg.inv(L_inv)
+plt.legend(loc='lower right')
+plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
+plt.ylabel(r'$m_{C}^S(am^\star,a\mu)$', fontsize=18)
+ren_xaxes = [-0.01, 0.35]
+ren_yaxes = plt.ylim()
+plt.xlim(ren_xaxes)
 
-        def LD(params, **akwargs):
-            return L.dot(diff(params))
 
-        guess = [1, 1, 1]
-        res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
-        chi_sq = LD(res.x).dot(LD(res.x))
-        dof = len(fit_idx)-len(guess)
-        pvalue = gammaincc(dof/2, chi_sq/2)
+# ===STEP4 plot 2: m_C continuum extrap for 3 eta_star=============
+plt.figure(figsize=(h, w))
+plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
+for eta_idx, eta in enumerate(eta_stars):
+    m_C_mSMOM, mbar_mSMOM = extrap.load_mSMOM(eta)
+    m_C_mSMOM_mapping = extrap.extrap_mapping(m_C_mSMOM)
+    m_C_mSMOM_grain = m_C_mSMOM_mapping(asq_grain)
 
-        xmin, xmax = ax[key_idx, ens_idx].get_xlim()
-        x_grain = np.linspace(x[0], xmax, 500)
-        ax[key_idx, ens_idx].plot(x_grain, Z_m_ansatz(res.x, x_grain, key=key),  # **0.5),
-                                  label='fit $p$-value:{:.2f}'.format(pvalue),
-                                  color='tab:gray', zorder=0)
+    label = r'$M_{\eta_C}^\star='+str(eta)+'$ GeV'\
+            if eta != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
 
-        m_q_stars = np.array([v[0] for k, v in eta_star_dict.items()])
-        Z_ms = Z_m_ansatz(res.x, m_q_stars, key=key)
-        np.random.seed(seed)
-        m_q_btsp = np.array([np.random.normal(v[0], v[1], N_boot)
-                             for k, v in eta_star_dict.items()])
-        Z_m_btsp = np.array([Z_m_ansatz(res.x, m_q_btsp[:, k], key=key)
-                             for k in range(N_boot)])
-        Z_m_errs = [st_dev(Z_m_btsp[:, i], mean=Z_ms[i])
-                    for i in range(len(Z_ms))]
+    plt.plot(asq_grain, m_C_mSMOM_grain.val,
+             linestyle='dashed',
+             color=color_list[3+eta_C_star_idx], label=label)
+    plt.fill_between(asq_grain,
+                     m_C_mSMOM_grain.val - m_C_mSMOM_grain.err,
+                     m_C_mSMOM_grain.val + m_C_mSMOM_grain.err,
+                     color=color_list[3+eta_idx], alpha=0.5)
 
-        ymin, ymax = ax[key_idx, 1].get_ylim()
-        for eta in eta_stars:
-            eta_idx = eta_stars.index(eta)
-            val, err = eta_star_dict[eta]
-            eta_label = 'PDG' if eta == eta_PDG else str(eta)+' GeV'
-            ax[key_idx, ens_idx].vlines(val**1, 0, ymax, linestyle='dashed',
-                                        color=color_list[eta_idx+3])
-            ax[key_idx, ens_idx].axvspan((val-err)**1, (val+err)**1,
-                                         color=color_list[eta_idx+3],
-                                         alpha=0.1, zorder=3)
-            ax[key_idx, ens_idx].errorbar(val**1, Z_ms[eta_idx],
-                                          yerr=Z_m_errs[eta_idx],
-                                          color=color_list[eta_idx+3],
-                                          fmt='o', capsize=4, zorder=4)
-        ax[key_idx, ens_idx].legend()
-        ax[key_idx, ens_idx].set_ylim([0, ymax])
+    for ens_idx, ens in enumerate(ens_list):
+        plt.errorbar(extrap.a_sq.val[ens_idx],
+                     m_C_mSMOM.val[ens_idx],
+                     m_C_mSMOM.err[ens_idx],
+                     fmt='o', capsize=4,
+                     color=color_list[ens_idx])
 
-        ens_dict[ens][f'Z_{key}'] = Z_ms
-        ens_dict[ens][f'Z_{key}_err'] = Z_m_errs
+    m_C_mSMOM_phys = m_C_mSMOM_mapping(0.0)
+    plt.errorbar([0], m_C_mSMOM_phys.val,
+                 yerr=m_C_mSMOM_phys.err,
+                 fmt='o', capsize=4,
+                 color=color_list[3+eta_idx])
 
-        if key == 'm':
-            # ===m_C renormalisation=====================
-            m_C, m_C_err = interpolate_eta_c(ens, eta_PDG)
-            ens_dict[ens]['m_C_ren'] = Z_ms*m_C*ainv
-            np.random.seed(seed)
-            m_C_btsp = np.random.normal(m_C, m_C_err, N_boot)
-            m_C_ren_btsp = np.array([Z_m_btsp[k, :]*m_C_btsp[k]*ainv
-                                     for k in range(N_boot)])
-            ens_dict[ens]['m_C_ren_err'] = [st_dev(m_C_ren_btsp[:, i], Z_ms[i]*m_C*ainv)
-                                            for i in range(len(Z_ms))]
-            ens_dict[ens]['m_C_ren_chiral'] = y[0]*m_C*ainv
-            np.random.seed(seed)
-            Z_m_chiral_btsp = np.random.normal(y[0], e[0], N_boot)
-            m_C_chiral_btsp = np.array([Z_m_chiral_btsp[k]*m_C_btsp[k]*ainv
-                                        for k in range(N_boot)])
-            ens_dict[ens]['m_C_ren_chiral_err'] = st_dev(m_C_chiral_btsp,
-                                                         mean=y[0]*m_C*ainv)
-        if key == 'mam_q':
-            # ===m_q renormalisation=====================
-            ens_dict[ens]['m_q_ren'] = Z_ms*ainv
-            m_q_ren_btsp = Z_m_btsp*ainv
-            ens_dict[ens]['m_q_ren_err'] = np.array([st_dev(m_q_ren_btsp[:, i],
-                                                            mean=(Z_ms*ainv)[i])
-                                                     for i in range(len(Z_ms))])
-            ens_dict[ens]['m_q_ren_chiral'] = y[0]*ainv
-            m_q_chiral_btsp = Z_m_chiral_btsp*ainv
-            ens_dict[ens]['m_q_ren_chiral_err'] = st_dev(m_q_chiral_btsp,
-                                                         mean=y[0]*ainv)
+plt.legend(loc='center')
+plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
+plt.ylabel(r'$m_{C}^S(am^\star,a\mu)$', fontsize=18)
+plt.xlim(ren_xaxes)
+
+
+# ===STEP4 plot 4: mbar continuum extrap for eta_stars=============
+plt.figure(figsize=(h, w))
+plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
+
+for eta_idx, eta in enumerate(eta_stars):
+    m_C_mSMOM, mbar_mSMOM = extrap.load_mSMOM(eta)
+    mbar_mSMOM_mapping = extrap.extrap_mapping(mbar_mSMOM)
+    mbar_mSMOM_grain = mbar_mSMOM_mapping(asq_grain)
+
+    label = r'$M_{\eta_C}^\star='+str(eta)+'$ GeV'\
+            if eta != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
+
+    plt.plot(asq_grain, mbar_mSMOM_grain.val,
+             linestyle='dashed',
+             color=color_list[3+eta_C_star_idx], label=label)
+    plt.fill_between(asq_grain,
+                     mbar_mSMOM_grain.val - mbar_mSMOM_grain.err,
+                     mbar_mSMOM_grain.val + mbar_mSMOM_grain.err,
+                     color=color_list[3+eta_idx], alpha=0.5)
+
+    for ens_idx, ens in enumerate(ens_list):
+        plt.errorbar(extrap.a_sq.val[ens_idx],
+                     mbar_mSMOM.val[ens_idx],
+                     mbar_mSMOM.err[ens_idx],
+                     fmt='o', capsize=4,
+                     color=color_list[ens_idx])
+
+    mbar_mSMOM_phys = mbar_mSMOM_mapping(0.0)
+    plt.errorbar([0], mbar_mSMOM_phys.val,
+                 yerr=mbar_mSMOM_phys.err,
+                 fmt='o', capsize=4,
+                 color=color_list[3+eta_idx])
+
+plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
+plt.ylabel(r'$\overline{m}(am^\star,a\mu)$', fontsize=18)
+plt.xlim(ren_xaxes)
+
 
 fig_nums = plt.get_fignums()
 figs = [plt.figure(n) for n in fig_nums]
@@ -214,133 +441,3 @@ for fig in figs:
 pdf.close()
 plt.close('all')
 os.system('open '+filename)
-
-
-# ====plotting renormalised charm quark mass and m_q for m-bar===================
-# ====continuum extrapolation for renormalised m=====
-def continuum_ansatz(params, a_sq, **kwargs):
-    return params[0]*(1 + params[1]*a_sq + params[2]*(a_sq**2))
-
-
-cont_dict = {'m_C': {'val': [], 'err': [], 'btsp': []},
-             'm_q': {'val': [], 'err': [], 'btsp': []}}
-
-for key in ['m_C', 'm_q']:
-    plt.figure()
-    for ens in ens_list:
-        ens_idx = ens_list.index(ens)
-        y = ens_dict[ens][f'{key}_ren']
-        e = ens_dict[ens][f'{key}_ren_err']
-        x = [ens_dict[ens]['mSMOM'].asq]*len(y)
-        plt.errorbar(x, y, yerr=e, fmt='o', capsize=4,
-                     color=color_list[ens_idx], label=ens)
-        # ===massless scheme renorm====================
-        # plt.errorbar([ens_dict[ens]['bl_obj'].asq],
-        #             [ens_dict[ens][f'{key}_ren_chiral']],
-        #             fmt='D',capsize=4,color=color_list[ens_idx])
-
-    x = np.array([v['mSMOM'].asq for k, v in ens_dict.items()])
-    for eta in eta_stars:
-        eta_idx = eta_stars.index(eta)
-        y = np.array([v[f'{key}_ren'][eta_idx] for k, v in ens_dict.items()])
-        e = np.array([v[f'{key}_ren_err'][eta_idx]
-                     for k, v in ens_dict.items()])
-
-        # ===central fit====
-        def diff(y, params):
-            return y - continuum_ansatz(params, x)
-
-        COV = np.diag(e**2)
-        L_inv = np.linalg.cholesky(COV)
-        L = np.linalg.inv(L_inv)
-
-        def LD(params):
-            return L.dot(diff(y, params))
-
-        guess = [1, -1, -1]
-        res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
-        chi_sq = LD(res.x).dot(LD(res.x))
-        dof = len(x)-len(guess)
-        pvalue = gammaincc(dof/2, chi_sq/2)
-
-        a0_pred = continuum_ansatz(res.x, 0)
-        cont_dict[key]['val'].append(a0_pred)
-
-        # ===bootstrap=====
-        np.random.seed(seed)
-        y_btsp = np.array([np.random.normal(y[i], e[i], N_boot)
-                           for i in range(len(y))])
-        a0_pred_btsp = np.zeros(N_boot)
-        res_btsp = np.zeros(shape=(N_boot, len(guess)))
-        for k in range(N_boot):
-            def LD_btsp(params):
-                return L.dot(diff(y_btsp[:, k], params))
-            res_k = least_squares(LD_btsp, guess, ftol=1e-10, gtol=1e-10)
-            a0_pred_btsp[k] = continuum_ansatz(res_k.x, 0)
-            res_btsp[k, :] = res_k.x
-        cont_dict[key]['btsp'].append(a0_pred_btsp)
-
-        a0_pred_err = st_dev(a0_pred_btsp, mean=a0_pred)
-        cont_dict[key]['err'].append(a0_pred_err)
-        eta_label = 'PDG' if eta == eta_PDG else str(eta)+' GeV'
-        plt.errorbar([0], [a0_pred], yerr=[a0_pred_err],
-                     capsize=4, color=color_list[eta_idx+3],
-                     label=eta_label,  # +' ($p$:{:.2f})'.format(pvalue),
-                     fmt='o')
-
-        x_grain = np.linspace(0, 1.1*max(x), 50)
-        y_grain = continuum_ansatz(res.x, x_grain)
-        plt.plot(x_grain, y_grain, color=color_list[eta_idx+3],
-                 linestyle='dashed')
-        y_grain_btsp = np.array([continuum_ansatz(res_btsp[k, :],
-                                 x_grain) for k in range(N_boot)])
-        y_grain_err = np.array([st_dev(y_grain_btsp[:, i], y_grain[i])
-                                for i in range(len(y_grain))])
-        plt.fill_between(x_grain, y_grain+y_grain_err,
-                         y_grain-y_grain_err, alpha=0.3,
-                         color=color_list[eta_idx+3])
-        text_mc = r'$m_C^{ren}(a^2)=m_C^{ren}(0)(1+\alpha a^2+\beta a^4)$'
-        text_mq = r'$m_q^{*ren}(a^2)=m_q^{*ren}(0)(1+\alpha a^2+\beta a^4)$'
-        plt.text(0.02, 0.02, text_mc if key == 'm_C' else text_mq,
-                 transform=plt.gca().transAxes)
-
-    plt.legend()
-    plt.xlabel(r'$a^2$ (GeV${}^{2})$')
-    ylabel_mc = r'$m_C^{ren}(\mu='+str(mu_chosen)+'$ GeV$)=Z_mm_C$'
-    ylabel_mq = r'$\overline{m}(\mu='+str(mu_chosen) + \
-        '$ GeV$)=m_q^{*ren}=Z_mm_q^*$'
-    plt.ylabel(ylabel_mc if key == 'm_C' else ylabel_mq)
-    title_mc = 'Renormalised charm quark mass'
-    title_mq = 'Renormalised quark mass'
-    plt.title(title_mc if key == 'm_C' else title_mq)
-
-# ===m_c_ren vs mbar=====================
-plt.figure()
-for eta_idx in range(len(eta_stars)):
-    x = cont_dict['m_q']['val'][eta_idx]
-    xerr = cont_dict['m_q']['err'][eta_idx]
-    y = cont_dict['m_C']['val'][eta_idx]
-    yerr = cont_dict['m_C']['err'][eta_idx]
-    eta = eta_stars[eta_idx]
-    eta_label = 'PDG' if eta == eta_PDG else str(eta)+' GeV'
-
-    plt.errorbar(x, y, yerr=yerr, xerr=xerr, fmt='o', markerfacecolor='none',
-                 color=color_list[eta_idx+3], label=eta_label)
-
-plt.legend()
-plt.xlabel(r'$\overline{m}$ (GeV)')
-plt.ylabel(r'$m_C^{ren}$ (GeV)')
-plt.title(r'$m_C^{ren}(\overline{m},\mu='+str(mu_chosen)+'$ GeV$)$')
-
-filename = f'plots/m_c_ren{argument}.pdf'
-pq = PdfPages(filename)
-fig_nums = plt.get_fignums()
-figs = [plt.figure(n) for n in fig_nums]
-for fig in figs:
-    fig.savefig(pq, format='pdf')
-pq.close()
-plt.close('all')
-
-os.system("open "+filename)
-
-# ===make table==========================

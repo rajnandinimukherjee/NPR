@@ -6,8 +6,8 @@ fig, ax = plt.subplots(nrows=len(operators),
                        figsize=(16, 16))
 plt.subplots_adjust(hspace=0, wspace=0)
 
-# ens_list = ['M0', 'M1', 'M2', 'M3']
-ens_list = ['C0', 'C1', 'C2']
+ens_list = ['M0', 'M1', 'M2', 'M3']
+# ens_list = ['C0', 'C1', 'C2']
 
 for ens in ens_list:
     Z_obj = Z_analysis(ens, bag=False)

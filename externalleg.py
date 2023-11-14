@@ -34,6 +34,8 @@ class external:
         coeff = 2*np.pi/L
         self.total_momentum = coeff * \
             (np.array(self.momentum)+np.array(self.twist))
+        self.tot_mom_hat = np.sin(self.total_momentum)
+        self.tot_mom_hat_sq = np.norm(self.tot_mom_hat)**2
         self.pslash = np.sum([self.total_momentum[i]*Gamma[dirs[i]]
                              for i in range(len(dirs))], axis=0)
         self.momentum_norm = np.linalg.norm(self.total_momentum)
@@ -71,8 +73,8 @@ class external:
 
         self.Z_q_qslash = stat(
             val=np.trace(-1j*self.inv_propagator.val @
-                         self.pslash).real/(12*self.momentum_squared),
+                         self.pslash).real/(12*self.tot_mom_hat_sq),
             btsp=np.array([np.trace(-1j*(self.inv_propagator.btsp[k,] @
                                          self.pslash)).real /
-                           (12*self.momentum_squared)
+                           (12*self.tot_mom_hat_sq)
                            for k in range(N_boot)]))

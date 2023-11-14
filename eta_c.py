@@ -32,7 +32,7 @@ eta_PDG = stat(
     err=0.5/1000,
     btsp='fill')
 
-eta_stars = [2.0, 2.1, 2.2, eta_PDG.val]
+eta_stars = [2.4, 2.6, float(eta_PDG.val)]
 
 m_C_PDG = 1.27
 m_C_PDG_err = 0.02

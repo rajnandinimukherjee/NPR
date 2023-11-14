@@ -81,7 +81,7 @@ class Z_analysis:
         self.momenta = stat(
             val=momenta,
             err='fill',
-            btsp=np.array([mom*self.ainv.val/self.ainv.btsp
+            btsp=np.array([mom*self.ainv.btsp/self.ainv.val
                            for mom in momenta]).T
         )
         self.Z = stat(
