@@ -126,7 +126,7 @@ class bilinear:
         Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                                     for i in range(len(dirs))],
                                    axis=0)@qslash).real/(12*q_sq))
-        m_q = self.m_pole
+        m_q = self.m_q+self.mres
         A1 = np.trace(np.sum([q_vec[i]*operators['A'][i]
                               for i in range(len(dirs))],
                              axis=0)@Gamma['5'])
