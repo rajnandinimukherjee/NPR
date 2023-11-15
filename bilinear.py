@@ -110,8 +110,13 @@ class bilinear:
                        ).real for c in bilinear.currents}
         return projected, gamma_Z
 
-    def qslash_Z(self, operators, Z_q, S_inv,
-                 renorm='mSMOM', printval=False, **kwargs):
+    def qslash_Z(self, operators, S_inv, renorm='mSMOM', **kwargs):
+        p_vec = np.sin(self.prop_in.total_momentum)
+        pslash = np.sum([p_vec[i]*Gamma[dirs[i]]
+                        for i in range(len(dirs))], axis=0)
+        p_sq = np.linalg.norm(p_vec)**2
+        Z_q = np.trace(-1j*S_inv@pslash)/(12*p_sq)
+
         q_vec = np.sin(self.tot_mom)
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
@@ -171,10 +176,8 @@ class bilinear:
         if not massive:
             self.avg_projected, self.Z = self.gamma_Z(operators)
         else:
-            Z_q = self.prop_in.Z_q_qslash.val
             S_inv = self.prop_in.inv_propagator.val
-            self.Z = self.qslash_Z(operators, Z_q, S_inv,
-                                   printval=False, **kwargs)
+            self.Z = self.qslash_Z(operators, S_inv, **kwargs)
         # ==bootstrap===
         self.Z_btsp = {c: np.zeros(N_boot) for c in self.Z.keys()}
         self.btsp_projected = {c: np.zeros(N_boot, dtype=object)
@@ -190,9 +193,8 @@ class bilinear:
                     self.btsp_projected[c][k] = proj_k[c]
                     self.Z_btsp[c][k] = Z_k[c]
             else:
-                Z_q = self.prop_in.Z_q_qslash.btsp[k]
                 S_inv = self.prop_in.inv_propagator.btsp[k,]
-                Z_k = self.qslash_Z(operators, Z_q, S_inv, **kwargs)
+                Z_k = self.qslash_Z(operators, S_inv, **kwargs)
                 for c in Z_k.keys():
                     self.Z_btsp[c][k] = Z_k[c].real
 
