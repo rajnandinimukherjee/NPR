@@ -101,8 +101,7 @@ class fourquark:
 
         for cf in range(self.N_cf):
             c = cfgs[cf]
-            h5_path = f'{data}/{c}/NPR/{self.obj}/\
-                    {self.prefix}{self.filename}.{c}.h5'
+            h5_path = f'{data}/{c}/NPR/{self.obj}/{self.prefix}{self.filename}.{c}.h5'
             h5_data = h5py.File(h5_path, 'r')[self.fq_str]
             for i in range(N_fq):
                 fourquark_i = h5_data[f'{self.fq_str}_{i}']['corr'][0, 0, :]
@@ -119,6 +118,7 @@ class fourquark:
         self.tot_mom = self.prop_out.total_momentum-self.prop_in.total_momentum
         self.mom_sq = self.prop_in.momentum_squared
         self.q = self.mom_sq**0.5
+        pdb.set_trace()
 
         self.org_gammas = [[h5_data[f'{self.fq_str}_{i}']['info'].
                             attrs['gammaA'][0].decode(
