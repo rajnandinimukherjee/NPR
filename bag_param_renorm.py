@@ -78,6 +78,11 @@ class Z_analysis:
             self.Z_obj.merge_mixed()
 
         momenta = self.Z_obj.momenta[self.action][self.masses]
+        self.am = stat(
+            val=np.array(momenta)/self.ainv.val,
+            err=np.zeros(len(momenta)),
+            btsp='fill'
+        )
         self.momenta = stat(
             val=momenta,
             err='fill',

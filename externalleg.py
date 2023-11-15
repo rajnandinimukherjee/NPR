@@ -39,7 +39,7 @@ class external:
         self.pslash = np.sum([self.total_momentum[i]*Gamma[dirs[i]]
                              for i in range(len(dirs))], axis=0)
         self.p_hat_slash = np.sum([self.tot_mom_hat[i]*Gamma[dirs[i]]
-                             for i in range(len(dirs))], axis=0)
+                                   for i in range(len(dirs))], axis=0)
         self.momentum_norm = np.linalg.norm(self.total_momentum)
         self.momentum_squared = (self.momentum_norm)**2
 
