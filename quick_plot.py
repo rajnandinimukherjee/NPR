@@ -23,20 +23,27 @@ for ens in ens_list:
         err='fill',
         btsp=1/ainv.btsp
     )
-    momenta = momenta*a
+    momenta = momenta
 
-    x = momenta.val[5:]
-    xerr = momenta.err[5:]
+    x = momenta.val[:5]
+    xerr = momenta.err[:5]
+    Z_2_pred = Z_obj.interpolate(2.0)
+    Z_25_pred = Z_obj.interpolate(2.5)
     for i, j in itertools.product(range(len(operators)), range(len(operators))):
         if mask[i, j]:
-            y = Z.val[:, i, j][5:]
-            yerr = Z.err[:, i, j][5:]
+            y = Z.val[:, i, j][:5]
+            yerr = Z.err[:, i, j][:5]
             ax[i, j].errorbar(x, y, yerr=yerr, xerr=xerr,
                               fmt='o:', capsize=4, label=ens)
+            ax[i, j].errorbar([2.0], Z_2_pred.val[i, j], yerr=Z_2_pred.err[i, j],
+                              fmt='o', capsize=4, color='k', label=r'$\mu=2.0$ GeV')
+            ax[i, j].errorbar([2.5], Z_25_pred.val[i, j], yerr=Z_25_pred.err[i, j],
+                              fmt='o', capsize=4, color='k', label=r'$\mu=2.0$ GeV')
             if j == 2 or j == 4:
                 ax[i, j].yaxis.tick_right()
         else:
             ax[i, j].axis('off')
+
 
 plt.suptitle(
     r'$Z_{ij}^{'+','.join(ens_list)+r'}/Z_A^2$ vs renormalisation scale $\mu$', y=0.9)

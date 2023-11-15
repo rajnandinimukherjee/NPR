@@ -32,11 +32,11 @@ class ens_table:
         self.ratio = self.Z_A/self.Z_P
 
     def create_Z_table(self):
-        rv = [r'\begin{table}'] if self.ens != 'F1M' else [
-            r'\begin{sidewaystable}']
+        table_type = 'table' if self.ens != 'F1M' else 'sidewaystable'
+        rv = [r'\begin{'+table_type+'}']
         rv += [r'\begin{center}']
         rv += [r'\caption{'+self.ens +
-               r': values of $Z_{ij}/Z_A^2$ and the ratios $Z_A/Z_P$ at various lattice momenta.}']
+               r': values of $Z_{ij}/Z_A^2$ and $Z_A/Z_P$ at various lattice momenta}']
         rv += [r'\begin{tabular}{c|'+' '.join(['c']*self.N_mom_half)+r'}']
         rv += [r'\hline']
         rv += [r'\hline']
@@ -61,7 +61,7 @@ class ens_table:
         rv += [r'\hline']
         rv += [r'\end{tabular}']
         rv += [r'\end{center}']
-        rv += [r'\end{table}'] is self.ens != 'F1M' else [r'\end{sidewaystable}']
+        rv += [r'\end{'+table_type+'}']
 
         filename = f'tex/{self.ens}_Z_table.tex'
         f = open(filename, 'w')
