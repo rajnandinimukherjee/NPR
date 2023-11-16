@@ -132,13 +132,15 @@ def alpha_s(mu):
 
 def R_mSMOM_to_MSbar(mu, mbar):
     CF = 4/3
-    sq = (mbar/mu)**2
+    sq = (mbar/mu)**2 if mbar != 0.0 else 0.0
     mrat = (mbar**2)/(mbar**2 + mu**2)
 
     cons = -4-(C0(0)/2)+2*C0(sq)
-    mass = 1+4*np.log(mrat)-sq*np.log(mrat)
-    mass = -sq*mass-3*np.log(sq/mrat)
-    return 1 + (alpha_s(mu)*CF/(4*np.pi))*(cons+mass)
+    if mbar != 0.0:
+        mass = 1+4*np.log(mrat)-sq*np.log(mrat)
+        mass = -sq*mass-3*np.log(sq/mrat)
+        cons += mass
+    return 1 + (alpha_s(mu)*CF/(4*np.pi))*(cons)
 
 
 # ====computing RISMOM(gamma-gamma)->MSbar matching factors======

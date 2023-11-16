@@ -25,7 +25,7 @@ class mNPR:
         self.all_masses = self.mSMOM_bl.all_masses
         self.N_masses = len(self.all_masses)
 
-        self.m_C = self.calc_m_C()
+        self.m_C = self.am_C*self.ainv
         self.Z_SMOM, self.m_C_SMOM, self.m_bar_SMOM = self.load_SMOM()
 
         self.Z_m_mSMOM_map = self.mSMOM_func(key='m')
@@ -43,8 +43,12 @@ class mNPR:
         return Z_SMOM, m_C_SMOM, m_bar_SMOM
 
     def load_mSMOM(self, key='m', **kwargs):
+        # am_in = stat(
+        #    val=[float(m) for m in self.all_masses],
+        #    btsp='fill'
+        # )
         am_in = stat(
-            val=[float(m) for m in self.all_masses],
+            val=list(eta_c_data[self.ens]['central'].keys()),
             btsp='fill'
         )
 
@@ -64,7 +68,7 @@ class mNPR:
         m_bar_mSMOM = self.am_bar_mSMOM_map(am_star)*self.ainv
         return m_C_mSMOM, m_bar_mSMOM
 
-    def mSMOM_func(self, key='m', start=1, **kwargs):
+    def mSMOM_func(self, key='m', start=0, **kwargs):
         am_in, mSMOM = self.load_mSMOM(key=key)
 
         def ansatz(params, am):
@@ -74,9 +78,9 @@ class mNPR:
                 return params[0]*am + params[1]*(am**2) + params[2]
 
         # central fit
-        x = am_in.val[start:]
-        y = mSMOM.val[start:]
-        COV = np.diag(mSMOM.err[start:]**2)
+        x = am_in.val[start:-1]
+        y = mSMOM.val[start:-1]
+        COV = np.diag(mSMOM.err[start:-1]**2)
 
         def diff(params):
             return y - ansatz(params, x)
@@ -93,8 +97,8 @@ class mNPR:
 
         btsp = np.zeros(shape=(N_boot, len(guess)))
         for k in range(N_boot):
-            x_k = am_in.btsp[k, start:]
-            y_k = mSMOM.btsp[k, start:]
+            x_k = am_in.btsp[k, start:-1]
+            y_k = mSMOM.btsp[k, start:-1]
 
             def diff_k(params):
                 return y_k - ansatz(params, x_k)
@@ -154,7 +158,7 @@ class mNPR:
     def load_eta(self, **kwargs):
         self.valence = etaCvalence(self.ens)
         self.valence.toDict(keys=list(
-            self.valence.mass_comb.keys()), mres=False)
+            self.valence.mass_comb.keys()), mres=True)
         self.eta_c_data = eta_c_data[self.ens]
 
         ax = np.array(list(self.eta_c_data['central'].keys()))[:-1]
@@ -245,9 +249,18 @@ class cont_extrap:
         )
         return m_C, m_bar
 
-    def extrap_mapping(self, data):
+    def extrap_mapping(self, data, fit='quad', **kwargs):
+
+        if fit == 'quad':
+            guess = [1, 0.1, 0.1]
+        else:
+            guess = [1, 0.1]
+
         def ansatz(params, a_sq):
-            return params[0] + params[1]*a_sq + params[2]*(a_sq**2)
+            if fit == 'quad':
+                return params[0] + params[1]*a_sq + params[2]*(a_sq**2)
+            elif fit == 'linear':
+                return params[0] + params[1]*a_sq
 
         # central fit
         x = self.a_sq.val
@@ -263,7 +276,6 @@ class cont_extrap:
         def LD(params):
             return L.dot(diff(params))
 
-        guess = [1, 1, 1]
         res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
         central = res.x
 

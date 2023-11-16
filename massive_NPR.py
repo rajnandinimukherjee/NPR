@@ -304,6 +304,7 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
                           fmt='o', capsize=4,
                           color=color_list[3+eta_C_star_idx],
                           zorder=2,)
+
     axes[1, idx].set_xlim(axes_info_combined[1, 0, :])
     axes[1, idx].set_ylim(axes_info_combined[1, 1, :])
 
@@ -358,12 +359,14 @@ ren_yaxes = plt.ylim()
 plt.xlim(ren_xaxes)
 
 
-# ===STEP4 plot 2: m_C continuum extrap for 3 eta_star=============
+# ===STEP4 plot 2: m_C quadratic continuum extrap for eta_star=============
 plt.figure(figsize=(h, w))
 plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
+phys_mSMOM = []
 for eta_idx, eta in enumerate(eta_stars):
     m_C_mSMOM, mbar_mSMOM = extrap.load_mSMOM(eta)
-    m_C_mSMOM_mapping = extrap.extrap_mapping(m_C_mSMOM)
+    m_C_mSMOM_mapping = extrap.extrap_mapping(m_C_mSMOM, fit='quad')
+    phys_mSMOM.append([m_C_mSMOM_mapping(0.0)])
     m_C_mSMOM_grain = m_C_mSMOM_mapping(asq_grain)
 
     label = r'$M_{\eta_C}^\star='+str(eta)+'$ GeV'\
@@ -371,7 +374,7 @@ for eta_idx, eta in enumerate(eta_stars):
 
     plt.plot(asq_grain, m_C_mSMOM_grain.val,
              linestyle='dashed',
-             color=color_list[3+eta_C_star_idx], label=label)
+             color=color_list[3+eta_idx], label=label)
     plt.fill_between(asq_grain,
                      m_C_mSMOM_grain.val - m_C_mSMOM_grain.err,
                      m_C_mSMOM_grain.val + m_C_mSMOM_grain.err,
@@ -390,7 +393,80 @@ for eta_idx, eta in enumerate(eta_stars):
                  fmt='o', capsize=4,
                  color=color_list[3+eta_idx])
 
-plt.legend(loc='center')
+extrap.load_SMOM()
+m_C_SMOM_mapping = extrap.extrap_mapping(extrap.m_C_SMOM, fit='quad')
+phys_SMOM = (m_C_SMOM_mapping(0.0), 0.0)
+m_C_SMOM_grain = m_C_SMOM_mapping(asq_grain)
+plt.plot(asq_grain, m_C_SMOM_grain.val,
+         linestyle='dashed',
+         color='k', label='SMOM')
+plt.fill_between(asq_grain,
+                 m_C_SMOM_grain.val - m_C_SMOM_grain.err,
+                 m_C_SMOM_grain.val + m_C_SMOM_grain.err,
+                 color='k', alpha=0.5)
+for ens_idx, ens in enumerate(ens_list):
+    plt.errorbar(extrap.a_sq.val[ens_idx],
+                 extrap.m_C_SMOM.val[ens_idx],
+                 extrap.m_C_SMOM.err[ens_idx],
+                 fmt='o', capsize=4,
+                 color=color_list[ens_idx])
+
+
+plt.legend(loc='lower right')
+plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
+plt.ylabel(r'$m_{C}^S(am^\star,a\mu)$', fontsize=18)
+plt.xlim(ren_xaxes)
+
+# ===STEP4 plot 2: m_C linear continuum extrap for eta_star=============
+plt.figure(figsize=(h, w))
+plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
+for eta_idx, eta in enumerate(eta_stars):
+    m_C_mSMOM, mbar_mSMOM = extrap.load_mSMOM(eta)
+    m_C_mSMOM_mapping = extrap.extrap_mapping(m_C_mSMOM, fit='linear')
+    m_C_mSMOM_grain = m_C_mSMOM_mapping(asq_grain)
+
+    label = r'$M_{\eta_C}^\star='+str(eta)+'$ GeV'\
+            if eta != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
+
+    plt.plot(asq_grain, m_C_mSMOM_grain.val,
+             linestyle='dashed',
+             color=color_list[3+eta_idx], label=label)
+    plt.fill_between(asq_grain,
+                     m_C_mSMOM_grain.val - m_C_mSMOM_grain.err,
+                     m_C_mSMOM_grain.val + m_C_mSMOM_grain.err,
+                     color=color_list[3+eta_idx], alpha=0.5)
+
+    for ens_idx, ens in enumerate(ens_list):
+        plt.errorbar(extrap.a_sq.val[ens_idx],
+                     m_C_mSMOM.val[ens_idx],
+                     m_C_mSMOM.err[ens_idx],
+                     fmt='o', capsize=4,
+                     color=color_list[ens_idx])
+
+    m_C_mSMOM_phys = m_C_mSMOM_mapping(0.0)
+    plt.errorbar([0], m_C_mSMOM_phys.val,
+                 yerr=m_C_mSMOM_phys.err,
+                 fmt='o', capsize=4,
+                 color=color_list[3+eta_idx])
+
+m_C_SMOM_lin_mapping = extrap.extrap_mapping(extrap.m_C_SMOM, fit='linear')
+m_C_SMOM_lin_grain = m_C_SMOM_lin_mapping(asq_grain)
+plt.plot(asq_grain, m_C_SMOM_lin_grain.val,
+         linestyle='dashed',
+         color='k', label='SMOM')
+plt.fill_between(asq_grain,
+                 m_C_SMOM_lin_grain.val - m_C_SMOM_lin_grain.err,
+                 m_C_SMOM_lin_grain.val + m_C_SMOM_lin_grain.err,
+                 color='k', alpha=0.5)
+for ens_idx, ens in enumerate(ens_list):
+    plt.errorbar(extrap.a_sq.val[ens_idx],
+                 extrap.m_C_SMOM.val[ens_idx],
+                 extrap.m_C_SMOM.err[ens_idx],
+                 fmt='o', capsize=4,
+                 color=color_list[ens_idx])
+
+
+plt.legend(loc='upper left')
 plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
 plt.ylabel(r'$m_{C}^S(am^\star,a\mu)$', fontsize=18)
 plt.xlim(ren_xaxes)
@@ -403,6 +479,7 @@ plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
 for eta_idx, eta in enumerate(eta_stars):
     m_C_mSMOM, mbar_mSMOM = extrap.load_mSMOM(eta)
     mbar_mSMOM_mapping = extrap.extrap_mapping(mbar_mSMOM)
+    phys_mSMOM[eta_idx].append(mbar_mSMOM_mapping(0.0))
     mbar_mSMOM_grain = mbar_mSMOM_mapping(asq_grain)
 
     label = r'$M_{\eta_C}^\star='+str(eta)+'$ GeV'\
@@ -410,7 +487,7 @@ for eta_idx, eta in enumerate(eta_stars):
 
     plt.plot(asq_grain, mbar_mSMOM_grain.val,
              linestyle='dashed',
-             color=color_list[3+eta_C_star_idx], label=label)
+             color=color_list[3+eta_idx], label=label)
     plt.fill_between(asq_grain,
                      mbar_mSMOM_grain.val - mbar_mSMOM_grain.err,
                      mbar_mSMOM_grain.val + mbar_mSMOM_grain.err,
@@ -433,6 +510,32 @@ plt.xlabel(r'$a^2$ (GeV${}^2$)', fontsize=18)
 plt.ylabel(r'$\overline{m}(am^\star,a\mu)$', fontsize=18)
 plt.xlim(ren_xaxes)
 
+
+# ===STEP5 plot 1: convert to MS-bar=============
+plt.figure(figsize=(h, w))
+phys_SMOM_MS = phys_SMOM*R_mSMOM_to_MSbar(mu_chosen, 0.0)
+plt.errorbar([phys_SMOM[1]], phys_SMOM[0].val, yerr=phys_SMOM[0].err,
+             fmt='o', capsize=4, color='k', label='SMOM')
+
+phys_mSMOM_MS = []
+for eta_idx, eta in enumerate(eta_stars):
+    R = stat(
+        val=R_mSMOM_to_MSbar(mu_chosen, phys_mSMOM[eta_idx][1].val),
+        err='fill',
+        btsp=np.array([R_mSMOM_to_MSbar(
+            mu_chosen, phys_mSMOM[eta_idx][1].btsp[k])
+            for k in range(N_boot)])
+    )
+    phys = phys_mSMOM[eta_idx][0]*R
+    phys_mSMOM_MS.append(phys)
+
+    label = r'$M_{\eta_C}^\star='+str(eta)+'$ GeV'\
+            if eta != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
+    plt.errorbar([eta], phys.val, yerr=phys.err,
+                 fmt='o', capsize=4, color=color_list[3+eta_idx])
+
+plt.xlabel(r'$M_{\eta_C}^\star$ (GeV)', fontsize=18)
+plt.ylabel(r'$m_C^{\overline{MS}}(\mu='+str(mu_chosen)+'$ GeV$)$', fontsize=18)
 
 fig_nums = plt.get_fignums()
 figs = [plt.figure(n) for n in fig_nums]
