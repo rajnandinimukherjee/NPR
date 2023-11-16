@@ -111,13 +111,13 @@ class bilinear:
         return projected, gamma_Z
 
     def qslash_Z(self, operators, S_inv, renorm='mSMOM', **kwargs):
-        p_vec = np.sin(self.prop_in.total_momentum)
+        p_vec = self.prop_in.total_momentum
         pslash = np.sum([p_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
         p_sq = np.linalg.norm(p_vec)**2
         Z_q = np.trace(-1j*S_inv@pslash)/(12*p_sq)
 
-        q_vec = np.sin(self.tot_mom)
+        q_vec = self.tot_mom
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
                         for i in range(len(dirs))], axis=0)
         q_sq = np.linalg.norm(q_vec)**2
