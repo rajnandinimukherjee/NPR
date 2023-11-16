@@ -305,13 +305,14 @@ class bag_analysis:
             btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
         )
 
-        if self.ens == 'C2':
-            ens = 'C1'
-        elif self.ens in ['M2', 'M3']:
-            ens = 'M1'
-        else:
-            ens = self.ens
-        print('Using Z data from '+ens)
+        # if self.ens == 'C2':
+        #    ens = 'C1'
+        # elif self.ens in ['M2', 'M3']:
+        #    ens = 'M1'
+        # else:
+        #    ens = self.ens
+        # print('Using Z data from '+ens)
+        ens = self.ens
         self.Z_info = Z_analysis(ens, bag=True)
 
     def interpolate(self, mu, rotate=np.eye(len(operators)), **kwargs):

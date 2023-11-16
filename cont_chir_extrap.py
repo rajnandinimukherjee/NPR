@@ -543,3 +543,143 @@ class Z_fits:
 
         print(f'Saved plot to {filename}.')
         os.system("open "+filename)
+
+    def Z_chiral_extrap(self, mu, **kwargs):
+        chiral_data = [self.Z_dict[ens].interpolate(mu)
+                       for ens in self.ens_list]
+        m_sq = [self.Z_dict[ens].m_pi**2
+                for ens in self.ens_list]
+        m_sq = stat(
+            val=[msq.val for msq in m_sq],
+            err=[msq.err for msq in m_sq],
+            btsp=np.array([msq.btsp for msq in m_sq]).T
+        )
+
+        def ansatz(params, msq):
+            return params[0] + params[1]*msq
+
+        N_ops = len(operators)
+        extrap = np.zeros(shape=(N_ops, N_ops))
+        extrap_btsp = np.zeros(shape=(N_boot, N_ops, N_ops))
+        extrap_map = np.empty(shape=(N_ops, N_ops), dtype=object)
+
+        param_save = np.zeros(shape=(2, N_ops, N_ops))
+        param_save_btsp = np.zeros(shape=(N_boot, 2, N_ops, N_ops))
+        for i, j in itertools.product(range(N_ops), range(N_ops)):
+            if mask[i, j]:
+
+                x = m_sq.val
+                y = np.array([cd.val[i, j] for cd in chiral_data])
+                y_err = np.array([cd.err[i, j] for cd in chiral_data])
+                COV = np.diag(y_err**2)
+                L_inv = np.linalg.cholesky(COV)
+                L = np.linalg.inv(L_inv)
+
+                def diff(x, y, params):
+                    return y - ansatz(params, x)
+
+                # ==central fit====
+                def LD(params):
+                    return L.dot(diff(x, y, params))
+                res = least_squares(LD, [1, 0.1], ftol=1e-10, gtol=1e-10)
+                param_save[:, i, j] = res.x
+
+                # ==btsp fit======
+                for k in range(N_boot):
+                    x_k = m_sq.btsp[k]
+                    y_k = np.array([cd.btsp[k, i, j] for cd in chiral_data])
+
+                    def LD_k(params):
+                        return L.dot(diff(x_k, y_k, params))
+
+                    res_k = least_squares(
+                        LD_k, [1, 0.1], ftol=1e-10, gtol=1e-10)
+                    param_save_btsp[k, :, i, j] = res_k.x
+
+                extrap[i, j] = ansatz(param_save[:, i, j], 0.0)
+                extrap_btsp[:, i, j] = np.array([ansatz(
+                    param_save_btsp[k, :, i, j], 0.0)
+                    for k in range(N_boot)])
+
+        fit_params = stat(
+            val=param_save,
+            err='fill',
+            btsp=param_save_btsp
+        )
+
+        def mapping(i, j, fit_params, m_sq):
+            if type(m_sq) is not stat:
+                m_sq = stat(
+                    val=m_sq,
+                    btsp='fill'
+                )
+            Z_map = stat(
+                val=ansatz(fit_params.val[:, i, j], m_sq.val),
+                err='fill',
+                btsp=np.array([ansatz(
+                    fit_params.btsp[k, :, i, j], m_sq.btsp[k])
+                    for k in range(N_boot)])
+            )
+            return Z_map
+
+        return stat(val=extrap, err='fill', btsp=extrap_btsp), mapping, fit_params
+
+    def Z_chiral_extrap_plot(self, mu,
+                             filename='plots/Z_chiral_extrap.pdf',
+                             **kwargs):
+        extrap, mapping, fit_params = self.Z_chiral_extrap(mu)
+        chiral_data = [self.Z_dict[ens].interpolate(mu)
+                       for ens in self.ens_list]
+        m_sq = [self.Z_dict[ens].m_pi**2
+                for ens in self.ens_list]
+        m_sq = stat(
+            val=[msq.val for msq in m_sq],
+            err=[msq.err for msq in m_sq],
+            btsp=np.array([msq.btsp for msq in m_sq]).T
+        )
+
+        x = m_sq.val
+        xerr = m_sq.err
+        msq_grain = np.linspace(-0.01, x[-1]*1.2, 50)
+
+        N_ops = len(operators)
+        fig, ax = plt.subplots(nrows=N_ops, ncols=N_ops,
+                               sharex='col',
+                               figsize=(16, 16))
+        plt.subplots_adjust(hspace=0, wspace=0)
+        pdb.set_trace
+
+        for i, j in itertools.product(range(N_ops), range(N_ops)):
+            if mask[i, j]:
+                y = np.array([cd.val[i, j] for cd in chiral_data])
+                yerr = np.array([cd.err[i, j] for cd in chiral_data])
+
+                ax[i, j].errorbar(x, y, yerr=yerr, xerr=xerr,
+                                  fmt='o', capsize=4)
+
+                y_grain = mapping(i, j, fit_params, msq_grain)
+                ax[i, j].fill_between(msq_grain,
+                                      y_grain.val-y_grain.err,
+                                      y_grain.val+y_grain.err,
+                                      alpha=0.1, color='k')
+                y_chiral = mapping(i, j, fit_params, 0.0)
+                ax[i, j].axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
+                ax[i, j].errorbar([0.0], y_chiral.val, yerr=y_chiral.err,
+                                  color='k', fmt='o', capsize=4)
+                if j == 2 or j == 4:
+                    ax[i, j].yaxis.tick_right()
+            else:
+                ax[i, j].axis('off')
+        plt.suptitle(r'$Z_{ij}^{'+','.join(self.ens_list) +
+                     '}(\mu='+str(mu)+'$ GeV$)/Z_A^2$', y=0.9)
+
+        pp = PdfPages(filename)
+        fig_nums = plt.get_fignums()
+        figs = [plt.figure(n) for n in fig_nums]
+        for fig in figs:
+            fig.savefig(pp, format='pdf')
+        pp.close()
+        plt.close('all')
+
+        print(f'Saved plot to {filename}.')
+        os.system("open "+filename)

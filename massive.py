@@ -16,12 +16,12 @@ class mNPR:
         self.load_eta()
 
         self.SMOM_bl = bilinear_analysis(
-            self.ens, mres=False,
-            loadpath=f'no_mres/{self.ens}_bl_massive_SMOM.p')
+            self.ens, mres=True,
+            loadpath=f'mres/{self.ens}_bl_massive_SMOM.p')
 
         self.mSMOM_bl = bilinear_analysis(
-            self.ens, mres=False,
-            loadpath=f'no_mres/{self.ens}_bl_massive_mSMOM.p')
+            self.ens, mres=True,
+            loadpath=f'mres/{self.ens}_bl_massive_mSMOM.p')
         self.all_masses = self.mSMOM_bl.all_masses
         self.N_masses = len(self.all_masses)
 
