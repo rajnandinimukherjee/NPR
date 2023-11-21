@@ -77,24 +77,16 @@ class Z_analysis:
                   ' into group called "(0,1)"')
             self.Z_obj.merge_mixed()
 
-        momenta = self.Z_obj.momenta[self.action][self.masses]
         self.am = stat(
-            val=np.array(momenta)/self.ainv.val,
-            err=np.zeros(len(momenta)),
-            btsp='fill'
-        )
-        self.momenta = stat(
-            val=momenta,
-            err='fill',
-            btsp=np.array([mom*self.ainv.btsp/self.ainv.val
-                           for mom in momenta]).T
-        )
+            val=self.Z_obj.momenta[self.action][self.masses],
+            btsp='fill')
+
         self.Z = stat(
             val=self.Z_obj.avg_results[self.action][self.masses],
             err=self.Z_obj.avg_errs[self.action][self.masses],
             btsp='fill'
         )
-        self.N_mom = len(self.momenta.val)
+        self.N_mom = len(self.am.val)
 
         if self.bag:
             bl = bilinear_analysis(
@@ -127,20 +119,27 @@ class Z_analysis:
                       for j in range(5)]
                      for i in range(5)])
 
-    def interpolate(self, mu, **kwargs):
+    def interpolate(self, m, type='mu', ainv=None, **kwargs):
+        if type == 'mu':
+            if ainv is None:
+                x = self.am*self.ainv
+            else:
+                x = self.am*ainv
+        elif type == 'amu':
+            x = self.am
+
         matrix = np.zeros(shape=(5, 5))
         btsp = np.zeros(shape=(N_boot, 5, 5))
         for i, j in itertools.product(range(5), range(5)):
             if mask[i, j]:
-                f = interp1d(
-                    self.momenta.val, self.Z.val[:, i, j], fill_value='extrapolate')
-                matrix[i, j] = f(mu)
+                f = interp1d(x.val, self.Z.val[:, i, j],
+                             fill_value='extrapolate')
+                matrix[i, j] = f(m)
 
                 for k in range(self.N_boot):
-                    f = interp1d(
-                        self.momenta.btsp[k,], self.Z.btsp[k, :, i, j],
-                        fill_value='extrapolate')
-                    btsp[k, i, j] = f(mu)
+                    f = interp1d(x.btsp[k,], self.Z.btsp[k, :, i, j],
+                                 fill_value='extrapolate')
+                    btsp[k, i, j] = f(m)
         Z = stat(
             val=matrix,
             err='fill',
@@ -157,7 +156,7 @@ class Z_analysis:
         return Z
 
     def scale_evolve(self, mu2, mu1, **kwargs):
-        Z1 = self.interpolate(mu1, **kwargs)
+        Z1 = self.interpolate(mu1, type='mu', **kwargs)
         Z2 = self.interpolate(mu2, **kwargs)
         sigma = stat(
             val=mask*Z2.val@np.linalg.inv(Z1.val),
@@ -166,9 +165,10 @@ class Z_analysis:
                            for k in range(N_boot)]))
         return sigma
 
-    def plot_Z(self, filename='plots/Z_scaling.pdf', **kwargs):
-        x = self.momenta.val
-        xerr = self.momenta.err
+    def plot_Z(self, xaxis='mu', filename='plots/Z_scaling.pdf', **kwargs):
+        x = self.am.val if xaxis == 'am' else (self.am*self.ainv).val
+        xerr = self.am.err if xaxis == 'am' else (self.am*self.ainv).err
+
         N_ops = len(operators)
         fig, ax = plt.subplots(nrows=N_ops, ncols=N_ops,
                                sharex='col',
@@ -203,9 +203,10 @@ class Z_analysis:
         print(f'Saved plot to {filename}.')
         os.system("open "+filename)
 
-    def plot_sigma(self, mu1=None, mu2=3.0, filename='plots/Z_running.pdf', **kwargs):
-        x = self.momenta.val
-        xerr = self.momenta.err
+    def plot_sigma(self, xaxis='mu', mu1=None, mu2=3.0,
+                   filename='plots/Z_running.pdf', **kwargs):
+        x = self.am.val if xaxis == 'am' else (self.am*self.ainv).val
+        xerr = self.am.err if xaxis == 'am' else (self.am*self.ainv).err
 
         if mu1 == None:
             sigmas = [self.scale_evolve(mu2, mom)
@@ -258,7 +259,7 @@ class Z_analysis:
         f = h5py.file(filename, 'r+')
         f_str = f'{self.action}/{self.ens}'
 
-        momenta = self.momenta.val
+        momenta = self.am.val
         Z, Z_err = self.Z.val, self.Z.err
 
         for mu in add_mu:
@@ -305,13 +306,6 @@ class bag_analysis:
             btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
         )
 
-        # if self.ens == 'C2':
-        #    ens = 'C1'
-        # elif self.ens in ['M2', 'M3']:
-        #    ens = 'M1'
-        # else:
-        #    ens = self.ens
-        # print('Using Z data from '+ens)
         ens = self.ens
         self.Z_info = Z_analysis(ens, bag=True)
 

@@ -91,7 +91,7 @@ class stat:
 
         self.btsp = np.zeros(shape=self.shape+(self.N_boot,))
         for idx, central in np.ndenumerate(self.val):
-            np.random.seed(self.seed)
+            # np.random.seed(self.seed)
             self.btsp[idx] = np.random.normal(
                 central, self.err[idx], self.N_boot)
         self.btsp = np.moveaxis(self.btsp, -1, 0)

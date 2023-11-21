@@ -236,22 +236,25 @@ def full_summary(basis='SUSY', run=False, include_C=False,
             for fit in list(ansatz_kwargs.keys())[:-1]:
                 fits[op][fit] = {mu: {'filename': op+'/'+basis+'/'+fit+'_' +
                                       str(int(mu*10))+'.pdf'} for mu in mu_list}
-                kwargs = ansatz_kwargs[fit]
-                kwargs['rotate'] = rot_mtx
+                akwargs = ansatz_kwargs[fit]
+                akwargs['rotate'] = rot_mtx
+                if 'chiral_extrap' in kwargs:
+                    akwargs['chiral_extrap'] = kwargs['chiral_extrap']
                 for mu in mu_list:
                     filename = fits[op][fit][mu]['filename']
                     phys, coeffs, chi_sq_dof, pvalue = b.plot_fits(
-                        mu, ops=[op], filename=filename, **kwargs)
+                        mu, ops=[op], filename=filename, **akwargs)
 
-                    fits[op][fit][mu].update({'phys': phys,
-                                              'coeffs': coeffs,
-                                              'disp': err_disp(phys.val, phys.err),
-                                              'coeff_disp': [err_disp(coeffs.val[0],
-                                                                      coeffs.err[0]),
-                                                             err_disp(coeffs.val[1],
-                                                                      coeffs.err[1])],
-                                              'chi_sq_dof': chi_sq_dof,
-                                              'pvalue': pvalue})
+                    fits[op][fit][mu].update(
+                        {'phys': phys,
+                         'coeffs': coeffs,
+                         'disp': err_disp(phys.val, phys.err),
+                         'coeff_disp': [err_disp(coeffs.val[0],
+                                                 coeffs.err[0]),
+                                        err_disp(coeffs.val[1],
+                                                 coeffs.err[1])],
+                         'chi_sq_dof': chi_sq_dof,
+                         'pvalue': pvalue})
 
         for fit in fits['VVpAA'].keys():
             for mu in mu_list:

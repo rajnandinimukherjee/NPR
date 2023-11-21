@@ -1,6 +1,6 @@
 from massive import *
 
-mu_chosen = 2.0
+mu_chosen = 3.0
 ens_list = list(eta_c_data.keys())
 mNPR_dict = {ens: mNPR(ens, mu=mu_chosen)
              for ens in ens_list}

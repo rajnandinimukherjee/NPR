@@ -3,7 +3,7 @@ from bag_param_renorm import *
 
 ens_list = ['M0', 'M1', 'M2', 'M3']
 # ens_list = ['C0', 'C1', 'C2']
-Z_dict = {ens: Z_analysis(ens, bag=False) for ens in ens_list}
+Z_dict = {ens: Z_analysis(ens, bag=True) for ens in ens_list}
 start, end = 3, -1
 
 for i, j in itertools.product(range(len(operators)), range(len(operators))):
@@ -14,19 +14,9 @@ for i, j in itertools.product(range(len(operators)), range(len(operators))):
         plt.subplots_adjust(wspace=0)
         for ens in ens_list:
             Z_obj = Z_dict[ens]
-            Z = Z_obj.Z
-            momenta = Z_obj.momenta
-            ainv = stat(
-                val=params[ens]['ainv'],
-                err=params[ens]['ainv_err'],
-                btsp='fill'
-            )
-            a = stat(
-                val=1/ainv.val,
-                err='fill',
-                btsp=1/ainv.btsp
-            )
+            Z, amom, ainv = Z_obj.Z, Z_obj.am, Z_obj.ainv
 
+            momenta = amom*ainv
             x = momenta.val[start:end]
             xerr = momenta.err[start:end]
             Z_2_pred = Z_obj.interpolate(2.0)
@@ -40,7 +30,6 @@ for i, j in itertools.product(range(len(operators)), range(len(operators))):
             # ax[0].errorbar([2.5], Z_25_pred.val[i, j], yerr=Z_25_pred.err[i, j],
             #             fmt='o', capsize=4, color='k')
 
-            amom = momenta*a
             x = amom.val[start:end]
             xerr = amom.err[start:end]
             ax[1].errorbar(x, y, yerr=yerr, xerr=xerr,

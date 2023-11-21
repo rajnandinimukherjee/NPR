@@ -268,28 +268,38 @@ class bilinear_analysis:
 
 class fourquark_analysis:
     N_boot = 200
+    filename = 'Z_ij_Z_A.h5'
 
-    def __init__(self, ensemble, loadpath=None, **kwargs):
+    def __init__(self, ensemble, loadpath=True, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
         self.sea_mass = '{:.4f}'.format(info['masses'][0])
-        self.non_sea_masses = ['{:.4f}'.format(info['masses'][k])
-                               for k in range(1, len(info['masses']))]
 
         self.actions = [info['gauges'][0]+'_'+info['baseactions'][0],
                         info['gauges'][-1]+'_'+info['baseactions'][-1]]
 
-        if loadpath == None:
+        if not loadpath:
             self.momenta, self.avg_results, self.avg_errs = {}, {}, {}
             for data in [self.momenta, self.avg_results, self.avg_errs]:
                 for a1, a2 in itertools.product([0, 1], [0, 1]):
                     data[(a1, a2)] = {}
 
         else:
-            # print('Loading NPR fourquark data from '+loadpath)
-            self.momenta, self.avg_results, self.avg_errs = pickle.load(
-                open(loadpath, 'rb'))
+            h5file = h5py.File(self.filename, 'r')[self.ens]
+
+            self.momenta, self.avg_results, self.avg_errs = {}, {}, {}
+            for group in h5file.keys():
+                action = (int(group[1]), int(group[4]))
+                masses = (self.sea_mass, self.sea_mass)
+                self.momenta[action] = {masses: np.array(
+                    h5file[group][str(masses)]['ap'])}
+                self.avg_results[action] = {masses: np.array(
+                    h5file[group][str(masses)]['Z']['Central'])}
+                self.avg_errs[action] = {masses: np.array(
+                    h5file[group][str(masses)]['Z']['Errors']
+                )}
+
             self.all_masses = list(self.momenta[(0, 0)].keys())
 
     def NPR(self, masses, action=(0, 0), scheme=1, **kwargs):

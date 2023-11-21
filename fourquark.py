@@ -118,7 +118,6 @@ class fourquark:
         self.tot_mom = self.prop_out.total_momentum-self.prop_in.total_momentum
         self.mom_sq = self.prop_in.momentum_squared
         self.q = self.mom_sq**0.5
-        pdb.set_trace()
 
         self.org_gammas = [[h5_data[f'{self.fq_str}_{i}']['info'].
                             attrs['gammaA'][0].decode(

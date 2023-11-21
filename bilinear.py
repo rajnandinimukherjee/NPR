@@ -140,8 +140,8 @@ class bilinear:
             Z_A = 12*q_sq*Z_q/A2
         else:
             Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
-        Z_m = (S-(Z_A*A1*1j)/2)/(12*m_q*Z_q) # added minus sign by hand
-        Z_mm_q = (S-(Z_A*A1*1j)/2)/(12*Z_q) # added minus sign by hand
+        Z_m = (S-(Z_A*A1*1j)/2)/(12*m_q*Z_q)  # added minus sign by hand
+        Z_mm_q = (S-(Z_A*A1*1j)/2)/(12*Z_q)  # added minus sign by hand
 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P
@@ -151,7 +151,7 @@ class bilinear:
             Z_S = (12*q_sq*Z_q-mass_term)/(q_sq*s_term)
         qslash_Z = {'S': Z_S.real, 'P': Z_P.real, 'V': Z_V.real,
                     'A': Z_A.real, 'T': Z_T.real, 'm': Z_m.real,
-                    'mam_q': Z_mm_q.real, 'q': Z_q, 'm_q':m_q}
+                    'mam_q': Z_mm_q.real, 'q': Z_q, 'm_q': m_q}
         return qslash_Z
 
     def construct_operators(self, S_in, S_out, Gs, **kwargs):
