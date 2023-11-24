@@ -5,9 +5,11 @@ from coeffs import *
 
 class mNPR:
 
-    def __init__(self, ens, mu=2.0, **kwargs):
+    def __init__(self, ens, mu=2.0, mres=True, **kwargs):
         self.ens = ens
         self.mu = mu
+        self.mres = mres
+
         self.ainv = stat(
             val=float(params[ens]['ainv']),
             err=float(params[ens]['ainv_err']),
@@ -15,13 +17,14 @@ class mNPR:
         )
         self.load_eta()
 
+        prefix = 'mres' if self.mres else 'no_mres'
         self.SMOM_bl = bilinear_analysis(
-            self.ens, mres=True,
-            loadpath=f'mres/{self.ens}_bl_massive_SMOM.p')
+            self.ens, mres=self.mres,
+            loadpath=f'{prefix}/{self.ens}_bl_massive_SMOM.p')
 
         self.mSMOM_bl = bilinear_analysis(
-            self.ens, mres=True,
-            loadpath=f'mres/{self.ens}_bl_massive_mSMOM.p')
+            self.ens, mres=self.mres,
+            loadpath=f'{prefix}/{self.ens}_bl_massive_mSMOM.p')
         self.all_masses = self.mSMOM_bl.all_masses
         self.N_masses = len(self.all_masses)
 
@@ -74,7 +77,7 @@ class mNPR:
         def ansatz(params, am):
             if key == 'm':
                 return params[0] + params[1]*am + params[2]/am
-            elif key == 'mam_q':
+            if key == 'mam_q':
                 return params[0]*am + params[1]*(am**2) + params[2]
 
         # central fit
@@ -158,7 +161,7 @@ class mNPR:
     def load_eta(self, **kwargs):
         self.valence = etaCvalence(self.ens)
         self.valence.toDict(keys=list(
-            self.valence.mass_comb.keys()), mres=True)
+            self.valence.mass_comb.keys()), mres=self.mres)
         self.eta_c_data = eta_c_data[self.ens]
 
         ax = np.array(list(self.eta_c_data['central'].keys()))[:-1]
@@ -202,9 +205,9 @@ class mNPR:
 class cont_extrap:
     eta_stars = [2.4, 2.6, eta_PDG.val]
 
-    def __init__(self, ens_list, mu=2.0):
+    def __init__(self, ens_list, mres=True, mu=2.0):
         self.ens_list = ens_list
-        self.mNPR_dict = {ens: mNPR(ens, mu)
+        self.mNPR_dict = {ens: mNPR(ens, mu, mres=mres)
                           for ens in ens_list}
         self.a_sq = stat(
             val=np.array([e.ainv.val**(-2)

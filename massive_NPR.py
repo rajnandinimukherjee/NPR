@@ -1,8 +1,9 @@
 from massive import *
 
-mu_chosen = 3.0
+mres = True
+mu_chosen = 2.0
 ens_list = list(eta_c_data.keys())
-mNPR_dict = {ens: mNPR(ens, mu=mu_chosen)
+mNPR_dict = {ens: mNPR(ens, mu=mu_chosen, mres=mres)
              for ens in ens_list}
 
 filename = '/Users/rajnandinimukherjee/Desktop/LatPlots.pdf'
@@ -322,7 +323,7 @@ label = r'$M_{\eta_C}^\star='+str(eta_C_star)+'$ GeV'
 plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
 
 asq_grain = np.linspace(0, 0.45, 50)
-extrap = cont_extrap(ens_list, mu=mu_chosen)
+extrap = cont_extrap(ens_list, mu=mu_chosen, mres=mres)
 
 m_C_mSMOM, mbar_mSMOM = extrap.load_mSMOM(eta_C_star)
 m_C_mSMOM_mapping = extrap.extrap_mapping(m_C_mSMOM)
