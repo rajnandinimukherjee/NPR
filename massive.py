@@ -29,27 +29,25 @@ class mNPR:
         self.N_masses = len(self.all_masses)
 
         self.m_C = self.am_C*self.ainv
-        self.Z_SMOM, self.m_C_SMOM, self.m_bar_SMOM = self.load_SMOM()
+        self.load_SMOM()
 
         self.Z_m_mSMOM_map = self.mSMOM_func(key='m')
         self.am_bar_mSMOM_map = self.mSMOM_func(key='mam_q')
 
     def load_SMOM(self, **kwargs):
         sea_mass = self.SMOM_bl.sea_mass
-        Z_SMOM = self.SMOM_bl.extrap_Z(
+        self.Z_SMOM = self.SMOM_bl.extrap_Z(
             self.mu, masses=(sea_mass, sea_mass))['m']
+        Z_P_SMOM = self.SMOM_bl.extrap_Z(
+            self.mu, masses=(sea_mass, sea_mass))['P']
+        self.Z_P_inv_SMOM = Z_P_SMOM**(-1)
         am_bar_SMOM = self.SMOM_bl.extrap_Z(
             self.mu, masses=(sea_mass, sea_mass))['mam_q']
 
-        m_C_SMOM = Z_SMOM*self.m_C
-        m_bar_SMOM = am_bar_SMOM*self.ainv
-        return Z_SMOM, m_C_SMOM, m_bar_SMOM
+        self.m_C_SMOM = self.Z_SMOM*self.m_C
+        self.m_bar_SMOM = am_bar_SMOM*self.ainv
 
     def load_mSMOM(self, key='m', **kwargs):
-        # am_in = stat(
-        #    val=[float(m) for m in self.all_masses],
-        #    btsp='fill'
-        # )
         am_in = stat(
             val=list(eta_c_data[self.ens]['central'].keys()),
             btsp='fill'
@@ -69,6 +67,8 @@ class mNPR:
         am_star = self.interpolate_eta_c(eta_star)
         m_C_mSMOM = self.Z_m_mSMOM_map(am_star)*self.m_C
         m_bar_mSMOM = self.am_bar_mSMOM_map(am_star)*self.ainv
+        # alternate fitting strategy
+        # m_C_mSMOM = m_bar_mSMOM*self.m_C/(am_star*self.ainv)
         return m_C_mSMOM, m_bar_mSMOM
 
     def mSMOM_func(self, key='m', start=0, **kwargs):
@@ -159,12 +159,9 @@ class mNPR:
         return m_C_pole
 
     def load_eta(self, **kwargs):
-        self.valence = etaCvalence(self.ens)
-        self.valence.toDict(keys=list(
-            self.valence.mass_comb.keys()), mres=self.mres)
         self.eta_c_data = eta_c_data[self.ens]
 
-        ax = np.array(list(self.eta_c_data['central'].keys()))[:-1]
+        ax = np.array(list(self.eta_c_data['central'].keys()))
         self.eta_ax = stat(
             val=ax,
             err=np.zeros(ax.shape[0]),
@@ -190,11 +187,11 @@ class mNPR:
             )
 
         pred = stat(
-            val=interp1d(self.eta_y.val, self.eta_ax.val,
+            val=interp1d(self.eta_y.val[:-1], self.eta_ax.val[:-1],
                          fill_value='extrapolate')(find_y.val),
             err='fill',
-            btsp=np.array([interp1d(self.eta_y.btsp[k, :],
-                                    self.eta_ax.btsp[k, :],
+            btsp=np.array([interp1d(self.eta_y.btsp[k, :-1],
+                                    self.eta_ax.btsp[k, :-1],
                                     fill_value='extrapolate'
                                     )(find_y.btsp[k])
                            for k in range(N_boot)])
@@ -232,13 +229,16 @@ class cont_extrap:
             btsp=np.array([m.btsp for m in m_bar]).T
         )
 
-    def load_mSMOM(self, eta_star):
+    def load_mSMOM(self, eta_star, alternate=False, **kwargs):
         m_C = np.empty(len(self.ens_list), dtype=object)
         m_bar = np.empty(len(self.ens_list), dtype=object)
 
         for idx, ens in enumerate(self.ens_list):
             e = self.mNPR_dict[ens]
             m_C[idx], m_bar[idx] = e.calc_mSMOM(eta_star)
+            if alternate:
+                m_star = e.interpolate_eta_c(eta_star)*e.ainv
+                m_C[idx] = m_bar[idx]*e.m_C/m_star
 
         m_C = stat(
             val=np.array([m_C[i].val for i in range(len(self.ens_list))]),
