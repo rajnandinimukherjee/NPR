@@ -81,9 +81,10 @@ class mNPR:
                 return params[0]*am + params[1]*(am**2) + params[2]
 
         # central fit
-        x = am_in.val[start:-1]
-        y = mSMOM.val[start:-1]
-        COV = np.diag(mSMOM.err[start:-1]**2)
+        e = 2 if self.ens == 'C1' else 1
+        x = am_in.val[start:-e]
+        y = mSMOM.val[start:-e]
+        COV = np.diag(mSMOM.err[start:-e]**2)
 
         def diff(params):
             return y - ansatz(params, x)
@@ -100,8 +101,8 @@ class mNPR:
 
         btsp = np.zeros(shape=(N_boot, len(guess)))
         for k in range(N_boot):
-            x_k = am_in.btsp[k, start:-1]
-            y_k = mSMOM.btsp[k, start:-1]
+            x_k = am_in.btsp[k, start:-e]
+            y_k = mSMOM.btsp[k, start:-e]
 
             def diff_k(params):
                 return y_k - ansatz(params, x_k)
@@ -187,11 +188,11 @@ class mNPR:
             )
 
         pred = stat(
-            val=interp1d(self.eta_y.val[:-1], self.eta_ax.val[:-1],
+            val=interp1d(self.eta_y.val[1:-1], self.eta_ax.val[1:-1],
                          fill_value='extrapolate')(find_y.val),
             err='fill',
-            btsp=np.array([interp1d(self.eta_y.btsp[k, :-1],
-                                    self.eta_ax.btsp[k, :-1],
+            btsp=np.array([interp1d(self.eta_y.btsp[k, 1:-1],
+                                    self.eta_ax.btsp[k, 1:-1],
                                     fill_value='extrapolate'
                                     )(find_y.btsp[k])
                            for k in range(N_boot)])
