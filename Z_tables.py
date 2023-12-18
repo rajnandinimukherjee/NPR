@@ -13,30 +13,28 @@ class ens_table:
         self.N_mom = len(self.am)
         self.N_mom_half = int(self.N_mom/2)
 
-        self.bl = bilinear_analysis(self.ens,
-                                    loadpath=f'pickles/{self.ens}_bl.p')
-        masses = (self.bl.sea_mass, self.bl.sea_mass)
-        Z_bl = self.bl.avg_results[(0, 0)][masses]
-        Z_bl_err = self.bl.avg_errs[(0, 0)][masses]
-
+        self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
+        self.masses = (self.sea_m, self.sea_m)
+        bl_data = h5py.File('bilinear_Z_gamma.h5', 'r')[
+            str((0, 0))][self.ens][str(self.masses)]
         self.Z_A = stat(
-            val=[Z_bl[m]['A'] for m in range(self.N_mom)],
-            err=[Z_bl_err[m]['A'] for m in range(self.N_mom)],
-            btsp='fill'
+            val=bl_data['A']['central'][:],
+            err=bl_data['A']['errors'][:],
+            btsp=bl_data['A']['bootstrap'][:]
         )
-        self.Z_P = stat(
-            val=[Z_bl[m]['P'] for m in range(self.N_mom)],
-            err=[Z_bl_err[m]['P'] for m in range(self.N_mom)],
-            btsp='fill'
+        self.Z_S = stat(
+            val=bl_data['S']['central'][:],
+            err=bl_data['S']['errors'][:],
+            btsp=bl_data['S']['bootstrap'][:]
         )
-        self.ratio = self.Z_A/self.Z_P
+        self.ratio = self.Z_A/self.Z_S
 
     def create_Z_table(self):
         table_type = 'table' if self.ens != 'F1M' else 'sidewaystable'
         rv = [r'\begin{'+table_type+'}']
         rv += [r'\begin{center}']
         rv += [r'\caption{'+self.ens +
-               r': values of $Z_{ij}/Z_A^2$ and $Z_A/Z_P$ at various lattice momenta}']
+               r': values of $Z_{ij}/Z_A^2$ and $Z_A/Z_S$ at various lattice momenta}']
         rv += [r'\begin{tabular}{c|'+' '.join(['c']*self.N_mom_half)+r'}']
         rv += [r'\hline']
         rv += [r'\hline']
@@ -55,7 +53,7 @@ class ens_table:
             rv += [r'\hline']
             ratio_disp = [err_disp(self.ratio.val[m], self.ratio.err[m])
                           for m in range(start, end)]
-            rv += [r'A/P & $' +
+            rv += [r'A/S & $' +
                    r'$ & $'.join(ratio_disp)+r'$ \\']
             rv += [r'\hline']
         rv += [r'\hline']

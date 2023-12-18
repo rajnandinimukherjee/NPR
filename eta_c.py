@@ -62,7 +62,7 @@ valence_ens = ['C1', 'M1', 'F1S']
 
 class etaCvalence:
     vpath = 'valence/'
-    eta_C_file = h5py.File('eta_C.h5', 'a')
+    eta_C_filename = 'eta_C.h5'
     eta_C_gamma = ('Gamma5', 'Gamma5')
 
     def __init__(self, ens, create=False, **kwargs):
@@ -73,6 +73,7 @@ class etaCvalence:
         self.mass_comb.update({(f'c{m-1}', f'c{m-1}'): self.NPR_masses[m]
                                for m in range(1, self.N_mass)})
         self.data = {key: {} for key in self.mass_comb.keys()}
+        self.eta_C_file = h5py.File(self.eta_C_filename, 'a')
 
         if ens not in self.eta_C_file or create:
             self.createH5()

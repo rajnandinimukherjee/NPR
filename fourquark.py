@@ -154,7 +154,6 @@ class fourquark:
                          'SSpPP': self.doublets['SS']+self.doublets['PP'],
                          'TT': self.doublets['TT']}
 
-
         self.amputated = {}
         in_ = self.prop_in.inv_propagator.val
         out_ = self.prop_out.inv_outgoing_propagator.val
@@ -168,12 +167,12 @@ class fourquark:
             self.F = fq_gamma_F
 
         projected = np.array([[np.einsum('abcd,badc', self.projector[k1],
-                                    self.amputated[k2], optimize=True)
-                                    for k2 in operators]
-                                   for k1 in operators])
-        Z = self.F@np.linalg.inv(projected.T)
+                                         self.amputated[k2], optimize=True)
+                               for k2 in operators]
+                              for k1 in operators])
+        Z = (self.F@np.linalg.inv(projected.T)).real
 
-        #===bootstrap====
+        # ===bootstrap====
         self.samples = {k: bootstrap(
             self.operator[k], K=N_boot) for k in operators}
 
@@ -191,17 +190,17 @@ class fourquark:
                      self.samples[key][k,].swapaxes(1, 3))
                 samples_amp[key] = self.amputation(out_, in_, samples_op)
             proj_btsp = np.array([[np.einsum('abcd,badc', self.projector[k1],
-                                                samples_amp[k2], optimize=True)
-                                                for k2 in operators]
-                                     for k1 in operators])
-            Z_btsp[k] = self.F@np.linalg.inv(proj_btsp.T)
+                                             samples_amp[k2], optimize=True)
+                                   for k2 in operators]
+                                  for k1 in operators])
+            Z_btsp[k] = (self.F@np.linalg.inv(proj_btsp.T)).real
 
         self.Z = stat(
-                val=Z,
-                err='fill',
-                btsp=Z_btsp)
+            val=Z,
+            err='fill',
+            btsp=Z_btsp)
 
     def amputation(self, out_, in_, op_, **kwargs):
         amputated = np.einsum('ea,bf,gc,dh,abcd->efgh',
-                out_, in_, out_, in_, op_, optimize=True)
+                              out_, in_, out_, in_, op_, optimize=True)
         return amputated

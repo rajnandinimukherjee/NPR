@@ -40,6 +40,7 @@ def load_info(key, ens, ops=operators, meson='ls', **kwargs):
 class Z_analysis:
     operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
     N_boot = N_boot
+    filename = 'fourquarks_Z.h5'
 
     def __init__(self, ensemble, action=(0, 0), bag=False, **kwargs):
 
@@ -68,56 +69,8 @@ class Z_analysis:
             btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
         )
 
-        self.Z_obj = fourquark_analysis(
-            ensemble, loadpath=f'RISMOM/{self.ens}.p')
-
-        if self.action == (0, 1) or self.action == (1, 0):
-            self.action == (0, 1)
-            print('actions (0,1) and (1,0) have been averaged' +
-                  ' into group called "(0,1)"')
-            self.Z_obj.merge_mixed()
-
-        self.am = stat(
-            val=self.Z_obj.momenta[self.action][self.masses],
-            btsp='fill')
-
-        self.Z = stat(
-            val=self.Z_obj.avg_results[self.action][self.masses],
-            err=self.Z_obj.avg_errs[self.action][self.masses],
-            btsp='fill'
-        )
-        self.N_mom = len(self.am.val)
-
-        if self.bag:
-            bl = bilinear_analysis(
-                self.ens, loadpath=f'pickles/{self.ens}_bl.p')
-            Z_bl = bl.avg_results[self.action][self.masses]
-            Z_bl_err = bl.avg_errs[self.action][self.masses]
-            for m in range(self.N_mom):
-                z_a = stat(
-                    val=Z_bl[m]['A'],
-                    err=Z_bl_err[m]['A'],
-                    btsp='fill')
-                z_p = stat(
-                    val=Z_bl[m]['P'],
-                    err=Z_bl_err[m]['P'],
-                    btsp='fill')
-                mult = stat(
-                    val=z_a.val/z_p.val,
-                    btsp=z_a.btsp/z_p.btsp)
-
-                self.Z.val[m, 1:, 1:] = self.Z.val[m, 1:, 1:]*(mult.val**2)
-                self.Z.val[m, :, :] = mask*self.Z.val[m, :, :]
-
-                for k in range(self.N_boot):
-                    self.Z.btsp[k, m, 1:, 1:] = self.Z.btsp[
-                        k, m, 1:, 1:]*(mult.btsp[k]**2)
-                    self.Z.btsp[k, m, :, :] = mask*self.Z.btsp[k, m, :, :]
-
-                self.Z.err[m, :, :] = np.array(
-                    [[st_dev(self.Z.btsp[:, m, i, j], self.Z.val[m, i, j])
-                      for j in range(5)]
-                     for i in range(5)])
+        norm = 'bag' if self.bag else 'V'
+        self.load_fq_Z(norm=norm)
 
     def interpolate(self, m, type='mu', ainv=None, **kwargs):
         if type == 'mu':
@@ -187,10 +140,10 @@ class Z_analysis:
                 ax[i, j].axis('off')
         if self.bag:
             plt.suptitle(
-                r'$Z_{ij}^{'+self.ens+r'}/Z_{A/P}^2$ vs renormalisation scale $\mu$', y=0.9)
+                r'$Z_{ij}^{'+self.ens+r'}/Z_{A/S}^2$ vs renormalisation scale $\mu$', y=0.9)
         else:
             plt.suptitle(
-                r'$Z_{ij}^{'+self.ens+r'}/Z_A^2$ vs renormalisation scale $\mu$', y=0.9)
+                r'$Z_{ij}^{'+self.ens+r'}/Z_V^2$ vs renormalisation scale $\mu$', y=0.9)
 
         pp = PdfPages(filename)
         fig_nums = plt.get_fignums()
@@ -254,23 +207,67 @@ class Z_analysis:
         print(f'Saved plot to {filename}.')
         os.system("open "+filename)
 
-    def output_h5(self, add_mu=[2.0, 3.0], **kwargs):
-        filename = 'Z_fq_bag.h5' if self.bag else 'Z_fq_a.h5'
-        f = h5py.file(filename, 'r+')
-        f_str = f'{self.action}/{self.ens}'
+    def load_fq_Z(self, norm='A', **kwargs):
+        fq_data = h5py.File(self.filename, 'r')[
+            str(self.action)][self.ens][str(self.masses)]
+        self.am = stat(
+            val=fq_data['momenta'][:],
+            err=np.zeros(len(fq_data['momenta'][:])),
+            btsp='fill'
+        )
+        self.N_mom = len(self.am.val)
+        Z_ij_Z_q_2 = stat(
+            val=(fq_data['central'][:]).real,
+            err=fq_data['errors'][:],
+            btsp=(fq_data['bootstrap'][:]).real
+        )
+        bl_data = h5py.File('bilinear_Z_gamma.h5', 'r')[
+            str(self.action)][self.ens][str(self.masses)]
 
-        momenta = self.am.val
-        Z, Z_err = self.Z.val, self.Z.err
+        if norm == 'bag':
+            Z_ij_bag = Z_ij_Z_q_2.val
+            Z_ij_bag[:, 0, 0] = np.array(
+                    [Z_ij_bag[m, 0, 0] *
+                     (bl_data['A']['central'][m]**(-2))
+                     for m in range(self.N_mom)])
+            Z_ij_bag[:, 1:, 1:] = np.array(
+                    [Z_ij_bag[m, 1:, 1:] *
+                     (bl_data['S']['central'][m]**(-2))
+                     for m in range(self.N_mom)])
 
-        for mu in add_mu:
-            momenta = np.append(momenta, mu)
-            Z_mu = self.interpolate(mu)
-            Z = np.append(Z, np.resize(Z_mu.val, (1, 5, 5)), axis=0)
-            Z_err = np.append(Z_err, np.resize(Z_mu.err, (1, 5, 5)), axis=0)
+            Z_ij_bag_btsp = Z_ij_Z_q_2.btsp
+            for k in range(N_boot):
+                Z_ij_bag_btsp[k, :, 0, 0] = np.array(
+                    [Z_ij_bag_btsp[k, m, 0, 0] *
+                     (bl_data['A']['bootstrap']
+                      [k, m]**(-2))
+                     for m in range(self.N_mom)])
+                Z_ij_bag_btsp[k, :, 1:, 1:] = np.array(
+                    [Z_ij_bag_btsp[k, m, 1:, 1:] *
+                     (bl_data['S']['bootstrap']
+                      [k, m]**(-2))
+                     for m in range(self.N_mom)])
+            self.Z = stat(
+                val=Z_ij_bag,
+                err='fill',
+                btsp=Z_ij_bag_btsp
+            )
 
-        f.create_dataset(f_str+'/momenta', data=momenta)
-        f.create_dataset(f_str+'/Z', data=Z)
-        f.create_dataset(f_str+'/Z_err', data=Z_err)
+        else:
+            Z_bl_Z_q = stat(
+                val=bl_data[norm]['central'][:],
+                err=bl_data[norm]['errors'][:],
+                btsp=bl_data[norm]['bootstrap'][:]
+            )
+            self.Z = stat(
+                val=[Z_ij_Z_q_2.val[m, :, :]*(Z_bl_Z_q.val[m]**(-2))
+                     for m in range(self.N_mom)],
+                err='fill',
+                btsp=np.array([[Z_ij_Z_q_2.btsp[k, m, :, :] *
+                               (Z_bl_Z_q.btsp[k, m]**(-2))
+                               for m in range(self.N_mom)]
+                               for k in range(N_boot)])
+            )
 
 
 class bag_analysis:
@@ -348,8 +345,8 @@ class bag_analysis:
                     f += log_term*m_f_sq
             return f
 
-        func = params[0] + params[1]*a_sq + \
-            mpi_dep(m_f_sq)-mpi_dep(PDG)
+        func = params[0] + params[1]*a_sq +\
+            (mpi_dep(m_f_sq)-mpi_dep(PDG))
         if 'addnl_terms' in kwargs:
             if kwargs['addnl_terms'] == 'a4':
                 func += params[3]*(a_sq**2)

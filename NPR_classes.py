@@ -6,7 +6,7 @@ class bilinear_analysis:
     keys = ['S', 'P', 'V', 'A', 'T', 'm']
     N_boot = N_boot
 
-    def __init__(self, ensemble, loadpath=None, mres=False, **kwargs):
+    def __init__(self, ensemble, mres=False, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
@@ -22,20 +22,15 @@ class bilinear_analysis:
         self.all_masses = [self.sea_mass]+self.non_sea_masses
         self.mres = mres
 
-        if loadpath == None:
-            self.momenta, self.Z = {}, {}
-
-        else:
-            self.momenta, self.avg_results, self.avg_errs = pickle.load(
-                open(loadpath, 'rb'))
+        self.momenta, self.Z = {}, {}
 
     def NPR(self, masses, action=(0, 0), scheme=1, massive=False, **kwargs):
         m1, m2 = masses
         a1, a2 = action
         a1, a2 = self.actions[a1], self.actions[a2]
 
-        self.momenta[action] = {masses:{}}
-        self.Z[action] = {masses:{}}
+        self.momenta[action] = {masses: {}}
+        self.Z[action] = {masses: {}}
 
         self.data = path+self.ens
         if not os.path.isdir(self.data):
@@ -77,22 +72,24 @@ class bilinear_analysis:
                 [results[mom] for mom in self.momenta[action][(m1, m2)]])
 
     def save_NPR(self, filename, **kwargs):
-        f = h5py.File(filename,'a')
+        f = h5py.File(filename, 'a')
         for action in self.Z.keys():
             for masses in self.Z[action].keys():
                 if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
                     del f[str(action)][self.ens][str(masses)]
-                m_grp = f.create_group(str(action)+'/'+self.ens+'/'+str(masses))
-                mom = m_grp.create_dataset('momenta', data=self.momenta[action][masses])
+                m_grp = f.create_group(
+                    str(action)+'/'+self.ens+'/'+str(masses))
+                mom = m_grp.create_dataset(
+                    'momenta', data=self.momenta[action][masses])
                 for current in self.Z[action][masses][0].keys():
                     c_grp = m_grp.create_group(current)
                     Zs = stat(
-                            val=[self.Z[action][masses][mom][current].val
-                                for mom in range(len(self.Z[action][masses]))],
-                            err=[self.Z[action][masses][mom][current].err
-                                for mom in range(len(self.Z[action][masses]))],
-                            btsp=np.array([self.Z[action][masses][mom][current].btsp
-                                for mom in range(len(self.Z[action][masses]))]).swapaxes(0,1))
+                        val=[self.Z[action][masses][mom][current].val
+                             for mom in range(len(self.Z[action][masses]))],
+                        err=[self.Z[action][masses][mom][current].err
+                             for mom in range(len(self.Z[action][masses]))],
+                        btsp=np.array([self.Z[action][masses][mom][current].btsp
+                                       for mom in range(len(self.Z[action][masses]))]).swapaxes(0, 1))
 
                     central = c_grp.create_dataset('central', data=Zs.val)
                     err = c_grp.create_dataset('errors', data=Zs.err)
@@ -133,10 +130,11 @@ class bilinear_analysis:
         self.Z.pop((1, 0))
         self.momenta.pop((1, 0))
 
+
 class fourquark_analysis:
     N_boot = 200
 
-    def __init__(self, ensemble, loadpath=False, **kwargs):
+    def __init__(self, ensemble, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
@@ -151,9 +149,9 @@ class fourquark_analysis:
         m1, m2 = masses
         a1, a2 = action
         a1, a2 = self.actions[a1], self.actions[a2]
-        
-        self.momenta[action] = {masses:{}}
-        self.Z[action] = {masses:{}}
+
+        self.momenta[action] = {masses: {}}
+        self.Z[action] = {masses: {}}
 
         self.data = path+self.ens
         if not os.path.isdir(self.data):
@@ -195,25 +193,26 @@ class fourquark_analysis:
                     [results[mom] for mom in self.momenta[action][masses]])
 
     def save_NPR(self, filename='fourquarks_Z.h5', **kwargs):
-        f = h5py.File(filename,'a')
+        f = h5py.File(filename, 'a')
         for action in self.Z.keys():
             for masses in self.Z[action].keys():
                 if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
                     del f[str(action)][self.ens][str(masses)]
-                m_grp = f.create_group(str(action)+'/'+self.ens+'/'+str(masses))
-                mom = m_grp.create_dataset('momenta', data=self.momenta[action][masses])
+                m_grp = f.create_group(
+                    str(action)+'/'+self.ens+'/'+str(masses))
+                mom = m_grp.create_dataset(
+                    'momenta', data=self.momenta[action][masses])
                 Zs = stat(
-                        val=[self.Z[action][masses][mom].val
-                            for mom in range(len(self.Z[action][masses]))],
-                        err=[self.Z[action][masses][mom].err
-                            for mom in range(len(self.Z[action][masses]))],
-                        btsp=np.array([self.Z[action][masses][mom].btsp
-                            for mom in range(len(self.Z[action][masses]))]).swapaxes(0,1))
+                    val=[self.Z[action][masses][mom].val
+                         for mom in range(len(self.Z[action][masses]))],
+                    err=[self.Z[action][masses][mom].err
+                         for mom in range(len(self.Z[action][masses]))],
+                    btsp=np.array([self.Z[action][masses][mom].btsp
+                                   for mom in range(len(self.Z[action][masses]))]).swapaxes(0, 1))
 
                 central = m_grp.create_dataset('central', data=Zs.val)
                 err = m_grp.create_dataset('errors', data=Zs.err)
                 btsp = m_grp.create_dataset('bootstrap', data=Zs.btsp)
-
 
     def NPR_all(self, save=True, **kwargs):
         N_a = len(self.actions)
@@ -231,7 +230,7 @@ class fourquark_analysis:
             res1 = self.Z[(0, 1)][masses]
             res2 = self.Z[(1, 0)][masses]
             self.Z[(0, 1)][masses] = [(res1[m]+res2[m])/2.0
-                for m in range(len(momenta))]
+                                      for m in range(len(momenta))]
 
         self.Z.pop((1, 0))
         self.momenta.pop((1, 0))
