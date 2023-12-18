@@ -1,5 +1,6 @@
 from externalleg import *
 from eta_c import *
+import pandas as pd
 
 # =====bilinear projectors==============================
 bl_gamma_proj = {'S': [Gamma['I']],
@@ -10,8 +11,8 @@ bl_gamma_proj = {'S': [Gamma['I']],
                             for j in range(i+1, 4)]
                            for i in range(0, 4-1)], [])}
 
-bl_gamma_F = {k: np.trace(np.sum([mtx@mtx
-                                  for mtx in bl_gamma_proj[k]], axis=0))
+bl_gamma_F = {k: np.trace(np.sum(
+    [mtx@mtx for mtx in bl_gamma_proj[k]], axis=0))
               for k in currents}
 
 
@@ -25,6 +26,7 @@ class bilinear:
                  mres=True, **kwargs):
 
         data = path+ensemble
+        self.ens = ensemble
         self.L = params[ensemble]['XX']
         cfgs = sorted(os.listdir(data)[1:])
         self.N_cf = len(cfgs)
@@ -67,8 +69,6 @@ class bilinear:
                                        for i in range(self.N_bl)])
 
         self.m_q = float(self.prop_in.info['am'])
-        self.m_pole = self.pole_mass()
-        self.mres = 0
         if ensemble in valence_ens and mres:
             ens = etaCvalence(ensemble)
             try:
@@ -80,25 +80,7 @@ class bilinear:
                 print(f'no mres info for am_q={self.m_q}')
                 self.mres = 0
 
-        self.m_pole += self.mres
 
-    def pole_mass(self):
-        p_hat = 2*np.sin(self.tot_mom/2)
-        p_hat_sq = np.linalg.norm(p_hat)**2
-        p_dash = np.sin(self.tot_mom)
-        p_dash_sq = np.linalg.norm(p_dash)**2
-
-        M5 = float(self.prop_in.info['M5'])
-        Ls = float(self.prop_in.info['Ls'])
-
-        W = 1 - M5 + p_hat_sq/2
-        alpha = np.arccosh((1+W**2+p_dash_sq)/(2*np.abs(W)))
-        Z = np.abs(W)*np.exp(alpha)
-        delta = (W/Z)**Ls
-        R = 1-(W**2)/Z + (delta**2)*(Z-(W**2)/Z)/(1-delta**2)
-
-        E = np.arcsinh(self.m_q*R + delta*(Z-(W**2)/Z)/(1-delta**2))
-        return E
 
     def gamma_Z(self, operators, **kwargs):
         projected = {c: np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]
@@ -139,9 +121,9 @@ class bilinear:
         if renorm == 'SMOM':
             Z_A = 12*q_sq*Z_q/A2
         else:
-            Z_A = (144*q_sq*(Z_q**2)+2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
-        Z_m = (S-(Z_A*A1*1j)/2)/(12*m_q*Z_q) # fixed renorm condition 
-        Z_mm_q = (S-(Z_A*A1*1j)/2)/(12*Z_q)  # fixed renorm condition
+            Z_A = (144*q_sq*(Z_q**2)-2*Z_P*S*P)/(12*Z_q*A2 + 1j*Z_P*A1*P)
+        Z_m = (S+(Z_A*A1*1j)/2)/(12*m_q*Z_q)
+        Z_mm_q = (S-(Z_A*A1*1j)/2)/(12*Z_q)
 
         s_term = np.trace(operators['S'][0])
         mass_term = 4*m_q*Z_m*Z_P*P
@@ -152,6 +134,13 @@ class bilinear:
         qslash_Z = {'S': Z_S.real, 'P': Z_P.real, 'V': Z_V.real,
                     'A': Z_A.real, 'T': Z_T.real, 'm': Z_m.real,
                     'mam_q': Z_mm_q.real, 'q': Z_q, 'm_q': m_q}
+        #ainv = params[self.ens]['ainv']
+        #if np.round(((ainv**2)*p_sq)**0.5,1)==2.1:
+        #    temp_dict = {'Z_A':Z_A, 'Z_q':Z_q,
+        #        'S':S, 'A1':A1, 'm':m_q, 'Z_m':Z_m.real}
+        #    for key in temp_dict:
+        #        print(key, temp_dict[key])
+        #    pdb.set_trace()
         return qslash_Z
 
     def construct_operators(self, S_in, S_out, Gs, **kwargs):
@@ -174,14 +163,13 @@ class bilinear:
         S_out = self.prop_out.inv_outgoing_propagator.val
         operators = self.construct_operators(S_in, S_out, self.avg_bilinear)
         if not massive:
-            self.avg_projected, self.Z = self.gamma_Z(operators)
+            projected, Z = self.gamma_Z(operators)
         else:
-            S_inv = self.prop_in.inv_propagator.val
-            self.Z = self.qslash_Z(operators, S_inv, **kwargs)
+            Z = self.qslash_Z(operators, S_in, **kwargs)
         # ==bootstrap===
-        self.Z_btsp = {c: np.zeros(N_boot) for c in self.Z.keys()}
-        self.btsp_projected = {c: np.zeros(N_boot, dtype=object)
-                               for c in self.Z.keys()}
+        Z_btsp = {c: np.zeros(N_boot) for c in Z.keys()}
+        projected_btsp = {c: np.zeros(N_boot, dtype=object)
+                               for c in Z.keys()}
         for k in range(N_boot):
             S_in = self.prop_in.inv_propagator.btsp[k,]
             S_out = self.prop_out.inv_outgoing_propagator.btsp[k,]
@@ -190,15 +178,21 @@ class bilinear:
             if not massive:
                 proj_k, Z_k = self.gamma_Z(operators)
                 for c in Z_k.keys():
-                    self.btsp_projected[c][k] = proj_k[c]
-                    self.Z_btsp[c][k] = Z_k[c]
+                    projected_btsp[c][k] = proj_k[c]
+                    Z_btsp[c][k] = Z_k[c]
             else:
-                S_inv = self.prop_in.inv_propagator.btsp[k,]
-                Z_k = self.qslash_Z(operators, S_inv, **kwargs)
+                Z_k = self.qslash_Z(operators, S_in, **kwargs)
                 for c in Z_k.keys():
-                    self.Z_btsp[c][k] = Z_k[c].real
+                    Z_btsp[c][k] = Z_k[c].real
 
-        # ==errors===
-        self.Z_err = {}
-        for c in self.Z.keys():
-            self.Z_err[c] = st_dev(self.Z_btsp[c], self.Z[c])
+        self.Z = {key:stat(
+            val=Z[key],
+            err='fill',
+            btsp=Z_btsp[key])
+            for key in Z.keys()}
+        if not massive:
+            self.proj = {key:stat(
+                val=projected[key],
+                err='fill',
+                btsp=projected_btsp[key])
+                for key in Z.keys()}

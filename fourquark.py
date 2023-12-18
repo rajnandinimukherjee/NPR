@@ -28,7 +28,8 @@ fq_gamma_projector = {'VVpAA': fq_proj['VV']+fq_proj['AA'],
 fq_gamma_F = np.array(
     [[np.einsum('abcd,badc',
                 2*(fq_gamma_projector[k1]-fq_gamma_projector[k1].
-                   swapaxes(1, 3)), fq_gamma_projector[k2])
+                   swapaxes(1, 3)), fq_gamma_projector[k2],
+                optimize=True)
       for k2 in operators]
      for k1 in operators])
 
@@ -125,6 +126,7 @@ class fourquark:
             ['info'].attrs['gammaB'][0].decode()]
             for i in range(N_fq)]
 
+    def NPR(self, **kwargs):
         self.gammas = [[[x for x in list(self.org_gammas[i][0])
                          if x in list(gamma.keys())],
                         [y for y in list(self.org_gammas[i][1])
@@ -152,37 +154,34 @@ class fourquark:
                          'SSpPP': self.doublets['SS']+self.doublets['PP'],
                          'TT': self.doublets['TT']}
 
+
         self.amputated = {}
         in_ = self.prop_in.inv_propagator.val
         out_ = self.prop_out.inv_outgoing_propagator.val
         for k in operators:
             op = 2*(self.operator[k]-self.operator[k].swapaxes(2, 4))
             op_avg = np.array(np.mean(op, axis=0), dtype='complex128')
-            self.amputated[k] = np.einsum('ea,bf,gc,dh,abcd->efgh',
-                                          out_, in_, out_, in_, op_avg)
+            self.amputated[k] = self.amputation(out_, in_, op_avg)
 
         if self.scheme == 'gamma':
             self.projector = fq_gamma_projector
             self.F = fq_gamma_F
 
-        self.projected = np.array([[np.einsum('abcd,badc', self.projector[k1],
-                                              self.amputated[k2])
+        projected = np.array([[np.einsum('abcd,badc', self.projector[k1],
+                                    self.amputated[k2], optimize=True)
                                     for k2 in operators]
                                    for k1 in operators])
-        self.bl = bilinear(ensemble, self.prop_in, self.prop_out, cfgs=cfgs)
-        self.bl.NPR(massive=False)
-        bl_A_proj = self.bl.avg_projected['A']
-        self.NPR_RHS = self.F/(bl_gamma_F['A']**2)
-        LHS = self.projected.T/(bl_A_proj**2)
-        self.Z_over_Z_A = (self.NPR_RHS@np.linalg.inv(LHS)).real
+        Z = self.F@np.linalg.inv(projected.T)
 
-    def errs(self):
+        #===bootstrap====
         self.samples = {k: bootstrap(
-            self.operator[k], K=self.N_boot) for k in operators}
+            self.operator[k], K=N_boot) for k in operators}
 
-        self.samples_Z_over_Z_A = np.zeros(
-            shape=(self.N_boot, len(operators), len(operators)))
-        for k in tqdm(range(self.N_boot), leave=False):
+        Z_btsp = np.zeros(
+            shape=(N_boot, len(operators), len(operators)))
+
+        desc = str(np.around(self.q, 3))
+        for k in tqdm(range(N_boot), leave=False, desc=desc):
             in_ = self.prop_in.inv_propagator.btsp[k]
             out_ = self.prop_out.inv_outgoing_propagator.btsp[k]
             samples_amp = {}
@@ -190,16 +189,19 @@ class fourquark:
                 samples_op = 2 * \
                     (self.samples[key][k,] -
                      self.samples[key][k,].swapaxes(1, 3))
-                samples_amp[key] = np.einsum('ea,bf,gc,dh,abcd->efgh',
-                                             out_, in_, out_, in_, samples_op)
-            samples_proj = np.array([[np.einsum('abcd,badc', self.projector[k1],
-                                                samples_amp[k2]) for k2 in operators]
+                samples_amp[key] = self.amputation(out_, in_, samples_op)
+            proj_btsp = np.array([[np.einsum('abcd,badc', self.projector[k1],
+                                                samples_amp[k2], optimize=True)
+                                                for k2 in operators]
                                      for k1 in operators])
-            bl_A_proj_btsp = self.bl.btsp_projected['A'][k]
-            self.samples_Z_over_Z_A[k, :, :] = (self.NPR_RHS@np.linalg.inv(
-                samples_proj.T/(bl_A_proj_btsp**2))).real
-        self.Z_A_errs = np.zeros(shape=(len(operators), len(operators)))
-        for i in range(len(operators)):
-            for j in range(len(operators)):
-                diff = self.samples_Z_over_Z_A[:, i, j]-self.Z_over_Z_A[i, j]
-                self.Z_A_errs[i, j] = (diff.dot(diff)/N_boot)**0.5
+            Z_btsp[k] = self.F@np.linalg.inv(proj_btsp.T)
+
+        self.Z = stat(
+                val=Z,
+                err='fill',
+                btsp=Z_btsp)
+
+    def amputation(self, out_, in_, op_, **kwargs):
+        amputated = np.einsum('ea,bf,gc,dh,abcd->efgh',
+                out_, in_, out_, in_, op_, optimize=True)
+        return amputated

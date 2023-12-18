@@ -19,6 +19,8 @@ from tqdm import tqdm
 
 from ensemble_parameters import *
 from plot_settings import plotparams
+import warnings
+warnings.filterwarnings('ignore')
 
 # ====misc functions ==================================================
 
