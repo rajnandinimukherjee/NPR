@@ -270,6 +270,12 @@ class Z_analysis:
             )
 
 
+M0_ainv = stat(val=params['M0']['ainv'],
+               err=params['M0']['ainv_err'],
+               btsp='fill')
+ms_phys = M0_ainv*params['M0']['ams_sea']
+
+
 class bag_analysis:
 
     def __init__(self, ensemble, obj='bag', action=(0, 0), **kwargs):
@@ -285,6 +291,8 @@ class bag_analysis:
             err='fill',
             btsp=self.ainv.btsp**(-2)
         )
+        self.ms_sea = self.ainv*params[self.ens]['ams_sea']
+        self.ms_diff = (self.ms_sea-ms_phys)/ms_phys
         self.ra = ratio_analysis(self.ens)
         if obj == 'bag':
             self.bag = self.ra.B_N
@@ -317,23 +325,25 @@ class bag_analysis:
         bag_interp = Z_mu@bag
         return bag_interp
 
-    def ansatz(self, params, operator, fit='central', **kwargs):
+    def ansatz(self, param, operator, fit='central', **kwargs):
         op_idx = operators.index(operator)
         if fit == 'central':
-            a_sq = self.ainv.val**(-2)
+            a_sq = self.a_sq.val
             m_f_sq = self.m_f_sq.val
             PDG = m_f_sq_PDG.val
+            ms_diff = self.ms_diff.val
         else:
             k = kwargs['k']
-            a_sq = self.ainv.btsp[k]**(-2)
+            a_sq = self.a_sq.btsp[k]
             m_f_sq = self.m_f_sq.btsp[k]
             PDG = m_f_sq_PDG.btsp[k]
+            ms_diff = self.ms_diff.btsp[k]
 
         def mpi_dep(m_f_sq):
-            f = params[2]*m_f_sq
+            f = param[2]*m_f_sq
             if 'addnl_terms' in kwargs:
                 if kwargs['addnl_terms'] == 'm4':
-                    f += params[3]*(m_f_sq**2)
+                    f += param[3]*(m_f_sq**2)
                 elif kwargs['addnl_terms'] == 'log':
                     chir_log_coeffs = np.array([-0.5, -0.5, -0.5, 0.5, 0.5])
                     if 'rotate' in kwargs:
@@ -345,11 +355,13 @@ class bag_analysis:
                     f += log_term*m_f_sq
             return f
 
-        func = params[0] + params[1]*a_sq +\
+        func = param[0] + param[1]*a_sq +\
             (mpi_dep(m_f_sq)-mpi_dep(PDG))
         if 'addnl_terms' in kwargs:
             if kwargs['addnl_terms'] == 'a4':
-                func += params[3]*(a_sq**2)
+                func += param[3]*(a_sq**2)
+            elif kwargs['addnl_terms'] == 'del_ms':
+                func += param[3]*ms_diff
 
         return func
 

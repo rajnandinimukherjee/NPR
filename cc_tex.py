@@ -12,6 +12,8 @@ ansatz_kwargs = {
                  'ens_list': ['C0', 'C1', 'M0', 'M1', 'M2', 'F1M']},
     'a2m2m4': {'title': r'$a^2$, $m_\pi^2$, $m_\pi^4$',
                'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'm4'},
+    'a2m2delm': {'title': r'$a^2$, $m_\pi^2$, $\delta m_s$',
+                 'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'del_ms'},
     'a2m2logm2': {'title': r'$a^2$, $m_\pi^2$, $\log(m_\pi^2/\Lambda^2)$',
                   'addnl_terms': 'log'}
 }
@@ -67,9 +69,10 @@ def convert_to_MSbar(B_N, mu2, mu1, rot_mtx=np.eye(len(operators)),
 
 def rotate_from_NPR(include_C=False, C_folder='without_C',
                     obj='bag', rot_mtx=np.eye(len(operators)),
-                    **kwargs):
+                    add_str='', **kwargs):
+    NPR_dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{obj}_NPR'+add_str+'.p'
     NPR_fits = pickle.load(
-        open(f'sigmas/{C_folder}/cc_extrap_dict_{obj}_NPR.p', 'rb'))
+        open(NPR_dict_filename, 'rb'))
 
     from_NPR = {op: {fit: {mu: {} for mu in mu_list}
                      for fit in NPR_fits['VVpAA'].keys()}
@@ -200,10 +203,14 @@ def operator_summary(operator, fits, basis='NPR', filename=None,
 
 def full_summary(basis='SUSY', run=False, include_C=False,
                  with_FLAG=False, calc_running=False,
-                 obj='bag', **kwargs):
+                 obj='bag', chiral_extrap=False,
+                 expanded_extrap=False,
+                 add_str='', **kwargs):
     rot_mtx = basis_rotation(basis)
     C_folder = 'with_C' if include_C else 'without_C'
 
+    # sigma_file = f'sigmas/{C_folder}/sigmas_{basis}'+add_str+'.p'
+    sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
     if calc_running:
         Z.store = {}
         mus = np.around(np.arange(16, 31, 1)*0.1, 1)
@@ -218,14 +225,13 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                 mus[i-1], mus[i], rotate=rot_mtx,
                 include_C=include_C)
 
-        pickle.dump(Z.store, open(f'sigmas/{C_folder}/sigmas_{basis}.p', 'wb'))
+        pickle.dump(Z.store, open(sigma_file, 'wb'))
         print(
-            f'Saved npt running matrices to sigmas/{C_folder}/sigmas_{basis}.p')
+            f'Saved npt running matrices to {sigma_file}.')
     else:
-        sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
         Z.store = pickle.load(open(sigma_file, 'rb'))
 
-    dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{obj}_{basis}.p'
+    dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{obj}_{basis}'+add_str+'.p'
     if run:
         fits = {}
         b = bag_fits(bag_ensembles, obj=obj)
@@ -238,12 +244,14 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                                       str(int(mu*10))+'.pdf'} for mu in mu_list}
                 akwargs = ansatz_kwargs[fit]
                 akwargs['rotate'] = rot_mtx
-                if 'chiral_extrap' in kwargs:
-                    akwargs['chiral_extrap'] = kwargs['chiral_extrap']
+
                 for mu in mu_list:
                     filename = fits[op][fit][mu]['filename']
                     phys, coeffs, chi_sq_dof, pvalue = b.plot_fits(
-                        mu, ops=[op], filename=filename, **akwargs)
+                        mu, ops=[op], filename=filename,
+                        chiral_extrap=chiral_extrap,
+                        expanded_extrap=expanded_extrap,
+                        **akwargs)
 
                     fits[op][fit][mu].update(
                         {'phys': phys,
@@ -283,15 +291,18 @@ def full_summary(basis='SUSY', run=False, include_C=False,
 
     for op in operators:
         operator_summary(op, fits, obj=obj, basis=basis, open=False, with_alt=True,
-                         with_FLAG=with_FLAG, rot_mtx=rot_mtx, C_folder=C_folder)
+                         with_FLAG=with_FLAG, rot_mtx=rot_mtx, C_folder=C_folder, add_str=add_str)
 
     if obj == 'bag':
         char = r'\mathcal{B}'
     elif obj == 'fq_op':
         char = r'\langle O \rangle'
 
+    num_ansatz = len(ansatz_kwargs.keys())-1
+    paperwidth = int(3*num_ansatz)
     rv = [r'\documentclass[12pt]{extarticle}']
-    rv += [r'\usepackage[paperwidth=15in,paperheight=7.2in]{geometry}']
+    rv += [r'\usepackage[paperwidth='+str(paperwidth) +
+           r'in,paperheight=7.5in]{geometry}']
     rv += [r'\usepackage{amsmath}']
     rv += [r'\usepackage{hyperref}']
     rv += [r'\usepackage{multirow}']
@@ -373,10 +384,10 @@ def full_summary(basis='SUSY', run=False, include_C=False,
 
     rv += [r'\end{document}']
 
-    filename = f'extrap_{obj}_{basis}'
+    filename = f'extrap_{obj}_{basis}'+add_str
     f = open('tex/'+filename+'.tex', 'w')
     f.write('\n'.join(rv))
     f.close()
 
-    os.system(f"pdflatex tex/{filename}.tex")
-    os.system(f"open {filename}.pdf")
+    os.system(f"pdflatex -output-directory tex tex/{filename}.tex")
+    os.system(f"open tex/{filename}.pdf")

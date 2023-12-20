@@ -151,7 +151,7 @@ class Z_fits:
             phys_sigma.append(sigma_C0)
             cont_ens.append('C0')
 
-        # ==== Step 3: continuum extrapolate F0 and M0=======================
+        # ==== Step 3: continuum extrapolate F0 and M0 (and maybe C0)=======================
         sigma = stat(
             val=[sig.val for sig in phys_sigma],
             err='fill',
@@ -391,12 +391,8 @@ class Z_fits:
 
         return stat(val=extrap, err='fill', btsp=extrap_btsp), mapping, fit_params
 
-    def Z_chiral_extrap_plot(self, mu, normalise=False,
-                             exclude_phys=True,
-                             filename='plots/Z_chiral_extrap.pdf',
-                             show_extra='None',
-                             **kwargs):
-
+    def Z_chiral_extrap_phys_handler(self, mu, exclude_phys=True,
+                                     passonly=False, **kwargs):
         ainv = None
         flag_0 = False
         ens_list = self.ens_list.copy()
@@ -408,7 +404,9 @@ class Z_fits:
                 ens_list.pop(phys_idx)
                 ainv = self.Z_dict[self.ens_list[-1]].ainv
                 flag_0 = True
-                print(f'Excluding {self.ens_list[phys_idx]} from chiral fit.')
+                if not passonly:
+                    print(
+                        f'Excluding {self.ens_list[phys_idx]} from chiral fit.')
         except IndexError:
             print('No physical point ensembles included.')
 
@@ -416,6 +414,34 @@ class Z_fits:
             mu, ens_list, **kwargs)
         chiral_data = [self.Z_dict[ens].interpolate(mu, ainv=ainv, **kwargs)
                        for ens in self.ens_list]
+
+        N_ops = len(operators)
+        expanded_errors = np.zeros(shape=(N_ops, N_ops))
+        for i, j in itertools.product(range(N_ops), range(N_ops)):
+            if mask[i, j]:
+                y_chiral = mapping(i, j, fit_params, 0.0)
+                y = np.array([cd.val[i, j] for cd in chiral_data])
+                yerr = np.array([cd.err[i, j] for cd in chiral_data])
+                y_top = np.max([y_chiral.val+y_chiral.err,
+                                y[phys_idx]+yerr[phys_idx],
+                                phys_Z.val[i, j]+phys_Z.err[i, j]])
+                y_bot = np.min([y_chiral.val-y_chiral.err,
+                                y[phys_idx]-yerr[phys_idx],
+                                phys_Z.val[i, j]-phys_Z.err[i, j]])
+                expanded_errors[i, j] = np.max([np.abs(y_top-y_chiral.val),
+                                               np.abs(y_chiral.val-y_bot)])
+
+        return extrap, mapping, fit_params, chiral_data, phys_Z, phys_idx, flag_0, expanded_errors
+
+    def Z_chiral_extrap_plot(self, mu, normalise=False,
+                             filename='plots/Z_chiral_extrap.pdf',
+                             show_extra='None',
+                             **kwargs):
+
+        quantities = self.Z_chiral_extrap_phys_handler(mu, **kwargs)
+        extrap, mapping, fit_params, chiral_data = quantities[:4]
+        phys_Z, phys_idx, flag_0, expanded_errors = quantities[4:]
+
         m_sq = [self.Z_dict[ens].m_pi**2
                 for ens in self.ens_list]
         m_sq = stat(
@@ -455,7 +481,7 @@ class Z_fits:
                 ax[i, j].axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
                 ax[i, j].errorbar([0.0], y_chiral.val/divider,
                                   yerr=y_chiral.err/divider,
-                                  color='k', fmt='o', capsize=4)
+                                  color='0.1', fmt='o', capsize=4)
                 slope = err_disp(
                     fit_params.val[1, i, j], fit_params.err[1, i, j])
                 ax[i, j].text(0.5, 0.1, r'$m = '+slope+'$',
@@ -468,6 +494,11 @@ class Z_fits:
                                       yerr=phys_Z.err[i, j]/divider,
                                       xerr=[m_sq.err[phys_idx]],
                                       color='r', fmt='o', capsize=4)
+
+                    ax[i, j].errorbar([m_sq.val[phys_idx]/2],
+                                      y_chiral.val/divider,
+                                      yerr=expanded_errors[i, j]/divider,
+                                      color='k', fmt='o', capsize=4)
 
                 if j == 2 or j == 4:
                     ax[i, j].yaxis.tick_right()
@@ -572,10 +603,10 @@ class Z_fits:
         return stat(val=extrap, err='fill', btsp=extrap_btsp), mapping, fit_params
 
 
-M_shamir = ['M1', 'M2', 'M3']
-M = Z_fits(M_shamir, bag=True)
-C_shamir = ['C1', 'C2']
-C = Z_fits(C_shamir, bag=True)
+M_ens = ['M0', 'M1', 'M2', 'M3']
+M = Z_fits(M_ens, bag=True)
+C_ens = ['C0', 'C1', 'C2']
+C = Z_fits(C_ens, bag=True)
 
 
 class bag_fits:
@@ -588,23 +619,41 @@ class bag_fits:
                        mc.TABLEAU_COLORS.keys())[k]
                        for k in range(len(self.ens_list))}
 
-    def load_bag(self, mu, ens_list, chiral_extrap=False, **kwargs):
+    def load_bag(self, mu, ens_list, chiral_extrap=False,
+                 expanded_extrap=False, **kwargs):
         if not chiral_extrap:
             bags = [self.bag_dict[e].interpolate(mu, **kwargs)
                     for e in ens_list]
         else:
-            M_extrap, M_mapping, M_fit_params = M.Z_chiral_extrap(
-                mu, M_shamir, **kwargs)
+            M_quantities = M.Z_chiral_extrap_phys_handler(
+                mu, passonly=True, **kwargs)
+            M_extrap, M_mapping, M_fit_params = M_quantities[:3]
+            M_expanded_errs = M_quantities[-1]
 
-            C_extrap, C_mapping, C_fit_params = C.Z_chiral_extrap(
-                mu, C_shamir, **kwargs)
+            C_quantities = C.Z_chiral_extrap_phys_handler(
+                mu, passonly=True, **kwargs)
+            C_extrap, C_mapping, C_fit_params = C_quantities[:3]
+            C_expanded_errs = C_quantities[-1]
 
+            if expanded_extrap and 'C0' in ens_list and 'M0' in ens_list:
+                M_extrap = stat(
+                    val=M_extrap.val,
+                    err=M_expanded_errs,
+                    btsp='fill'
+                )
+                C_extrap = stat(
+                    val=C_extrap.val,
+                    err=C_expanded_errs,
+                    btsp='fill'
+                )
             Z_dict = {}
             for ens in ens_list:
-                if ens in M_shamir:
+                if ens in M_ens[1:]:
                     Z = M_extrap
-                if ens in C_shamir:
+                elif ens in C_ens[1:]:
                     Z = C_extrap
+                elif ens[1] == '0' and expanded_extrap:
+                    Z = C_extrap if ens == 'C0' else M_extrap
                 else:
                     Z = self.bag_dict[ens].Z_info.interpolate(mu, **kwargs)
                 Z_dict[ens] = Z
