@@ -5,7 +5,9 @@ from coeffs import *
 
 class Z_bl_analysis:
 
-    def __init__(self, ens, action=(0, 0), scheme='qslash', **kwargs):
+    def __init__(self, ens, action=(0, 0), scheme='qslash',
+                 renorm='mSMOM', **kwargs):
+
         self.ens = ens
         self.datafolder = h5py.File(f'bilinear_Z_{scheme}.h5', 'r')[
             str(action)][ens]
@@ -35,24 +37,97 @@ class Z_bl_analysis:
                         btsp=np.array(self.datafolder[m][key]['bootstrap'][:])
                     )
 
-    def interpolate(self, mu, masses, key, plot=False, **kwargs):
+    def interpolate(self, mu, masses, key,
+                    method='fit', plot=False,
+                    pass_plot=False, **kwargs):
         x = self.momenta[masses]*self.ainv
         y = self.Z[masses][key]
 
-        Z_mu = stat(
-            val=interp1d(x.val, y.val, fill_value='extrapolate')(mu),
-            err='fill',
-            btsp=np.array([interp1d(x.btsp[k], y.btsp[k], fill_value='extrapolate')(mu)
-                           for k in range(N_boot)])
-        )
+        if method == 'fit':
+            mapping, plt = self.fit_momentum_dependence(
+                masses, key, pass_plot=True)
+            Z_mu = mapping(mu)
+        else:
+            Z_mu = stat(
+                val=interp1d(x.val, y.val, fill_value='extrapolate')(mu),
+                err='fill',
+                btsp=np.array([interp1d(x.btsp[k], y.btsp[k], fill_value='extrapolate')(mu)
+                               for k in range(N_boot)])
+            )
+            plt = self.plot_momentum_dependence(masses, key, pass_fig=True)
+
+        plt.errorbar([mu], Z_mu.val, yerr=Z_mu.err,
+                     capsize=4, fmt='o', color='k')
 
         if plot:
-            plt = self.plot_momentum_dependence(masses, key, pass_fig=True)
-            plt.errorbar([mu], Z_mu.val, yerr=Z_mu.err,
-                         capsize=4, fmt='o', color='k')
-
             filename = f'plots/Z_{key}_v_ap.pdf'
             call_PDF(filename)
+
+        returns = [Z_mu]
+        if pass_plot:
+            returns.append(plt)
+
+        return returns
+
+    def fit_momentum_dependence(self, masses, key,
+                                plot=False, guess=[1, 1e-1, 1e-2],
+                                pass_plot=False, **kwargs):
+
+        x = self.momenta[masses]*self.ainv
+        y = self.Z[masses][key]
+
+        COV = np.diag(y.err**2)
+        L_inv = np.linalg.cholesky(COV)
+        L = np.linalg.inv(L_inv)
+
+        def ansatz(mus, param, **kwargs):
+            return param[0] + param[1]*mus + param[2]*(mus**2)
+
+        def diff(in_, out_, param, **kwargs):
+            return out_ - ansatz(in_, param, **kwargs)
+
+        def LD(param):
+            return L.dot(diff(x.val, y.val, param, fit='central'))
+
+        res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
+        chi_sq = LD(res.x).dot(LD(res.x))
+        DOF = len(x.val)-len(guess)
+
+        res_btsp = np.zeros(shape=(N_boot, len(res.x)))
+        for k in range(N_boot):
+            def LD_btsp(param):
+                return L.dot(diff(x.btsp[k], y.btsp[k], param))
+            res_k = least_squares(LD_btsp, guess,
+                                  ftol=1e-10, gtol=1e-10)
+            res_btsp[k, :] = res_k.x
+
+        def fit_mapping(m):
+            return stat(val=ansatz(m, res.x),
+                        err='fill',
+                        btsp=np.array([ansatz(m, res_btsp[k])
+                                       for k in range(N_boot)])
+                        )
+
+        returns = [fit_mapping]
+
+        plt = self.plot_momentum_dependence(masses, key, pass_fig=True)
+        xmin, xmax = plt.xlim()
+        mu_grain = np.linspace(xmin, xmax, 100)
+        Z_grain = fit_mapping(mu_grain)
+        plt.fill_between(mu_grain,
+                         Z_grain.val+Z_grain.err,
+                         Z_grain.val-Z_grain.err,
+                         color='0.8')
+        plt.text(0.5, 0.9, r'$\chi^2$/DOF:'+str(np.around(chi_sq/DOF, 3)),
+                 va='center', ha='center', transform=plt.gca().transAxes)
+
+        filename = f'plots/Z_{key}_v_ap.pdf'
+        if plot:
+            call_PDF(filename)
+        if pass_plot:
+            returns.append(plt)
+
+        return returns
 
     def plot_momentum_dependence(self, masses, key,
                                  pass_fig=False, **kwargs):
