@@ -29,8 +29,8 @@ class bilinear_analysis:
         a1, a2 = action
         a1, a2 = self.actions[a1], self.actions[a2]
 
-        self.momenta[action] = {masses: {}}
-        self.Z[action] = {masses: {}}
+        self.momenta[action][masses] = {}
+        self.Z[action][masses] = {}
 
         self.data = path+self.ens
         if not os.path.isdir(self.data):
@@ -99,6 +99,8 @@ class bilinear_analysis:
 
     def NPR_all(self, massive=False, save=True, renorm='mSMOM', **kwargs):
         if massive:
+            self.momenta[(0,0)]={}
+            self.Z[(0,0)]={}
             self.NPR((self.sea_mass, self.sea_mass),
                      massive=massive, renorm=renorm)
             for mass in self.non_sea_masses:
@@ -107,6 +109,8 @@ class bilinear_analysis:
         else:
             N_a = len(self.actions)
             for a1, a2 in itertools.product(range(N_a), range(N_a)):
+                self.momenta[(a1,a2)]={}
+                self.Z[(a1,a2)]={}
                 self.NPR((self.sea_mass, self.sea_mass), action=(a1, a2))
             if N_a == 2:
                 self.merge_mixed()
