@@ -105,7 +105,7 @@ class bilinear_analysis:
                      massive=massive, renorm=renorm)
             for mass in self.non_sea_masses:
                 self.NPR((mass, mass), massive=massive, renorm=renorm)
-            filename = 'bilinear_Z_qslash.h5'
+            filename = f'bilinear_Z_qslash_{renorm}.h5'
         else:
             N_a = len(self.actions)
             for a1, a2 in itertools.product(range(N_a), range(N_a)):
