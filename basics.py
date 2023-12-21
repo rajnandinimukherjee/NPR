@@ -53,6 +53,17 @@ def st_dev(data, mean=None, **kwargs):
         mean = np.mean(data)
     return np.sqrt(((data-mean).dot(data-mean))/n)
 
+
+def call_PDF(filename, **kwargs):
+    pdf = PdfPages(filename)
+    fig_nums = plt.get_fignums()
+    figs = [plt.figure(n) for n in fig_nums]
+    for fig in figs:
+        fig.savefig(pdf, format='pdf')
+    pdf.close()
+    plt.close('all')
+    os.system('open '+filename)
+
 # =====statistical obj class======================================
 
 
@@ -102,7 +113,7 @@ class stat:
         central = func(self.val, **kwargs)
 
         btsp = np.array([func(self.btsp[k,], **kwargs)
-            for k in range(N_boot)])
+                         for k in range(N_boot)])
 
         return stat(val=central, err='fill', btsp=btsp)
 

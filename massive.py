@@ -3,6 +3,77 @@ from eta_c import *
 from coeffs import *
 
 
+class Z_bl_analysis:
+
+    def __init__(self, ens, action=(0, 0), scheme='qslash', **kwargs):
+        self.ens = ens
+        self.datafolder = h5py.File(f'bilinear_Z_{scheme}.h5', 'r')[
+            str(action)][ens]
+
+        info = params[self.ens]
+        self.ainv = stat(val=info['ainv'], err=info['ainv_err'], btsp='fill')
+
+        self.sea_mass = '{:.4f}'.format(info['masses'][0])
+        self.non_sea_masses = ['{:.4f}'.format(info['masses'][k])
+                               for k in range(1, len(info['masses']))]
+        self.all_masses = [self.sea_mass]+self.non_sea_masses
+
+        self.momenta, self.Z = {}, {}
+
+        for m in self.datafolder.keys():
+            masses = (m[2:8], m[12:18])
+            self.momenta[masses] = stat(
+                val=np.array(self.datafolder[m]['momenta'][:]),
+                btsp='fill')
+
+            self.Z[masses] = {}
+            for key in self.datafolder[m].keys():
+                if key != 'momenta':
+                    self.Z[masses][key] = stat(
+                        val=np.array(self.datafolder[m][key]['central'][:]),
+                        err=np.array(self.datafolder[m][key]['errors'][:]),
+                        btsp=np.array(self.datafolder[m][key]['bootstrap'][:])
+                    )
+
+    def interpolate(self, mu, masses, key, plot=False, **kwargs):
+        x = self.momenta[masses]*self.ainv
+        y = self.Z[masses][key]
+
+        Z_mu = stat(
+            val=interp1d(x.val, y.val, fill_value='extrapolate')(mu),
+            err='fill',
+            btsp=np.array([interp1d(x.btsp[k], y.btsp[k], fill_value='extrapolate')(mu)
+                           for k in range(N_boot)])
+        )
+
+        if plot:
+            plt = self.plot_momentum_dependence(masses, key, pass_fig=True)
+            plt.errorbar([mu], Z_mu.val, yerr=Z_mu.err,
+                         capsize=4, fmt='o', color='k')
+
+            filename = f'plots/Z_{key}_v_ap.pdf'
+            call_PDF(filename)
+
+    def plot_momentum_dependence(self, masses, key,
+                                 pass_fig=False, **kwargs):
+        plt.figure()
+
+        x = self.momenta[masses]*self.ainv
+        y = self.Z[masses][key]
+
+        plt.errorbar(x.val, y.val,
+                     xerr=x.err, yerr=y.err,
+                     capsize=4, fmt='o:')
+        plt.xlabel(r'$\mu$ (GeV)')
+        plt.ylabel(r'$Z_'+key+r'$')
+
+        if pass_fig:
+            return plt
+        else:
+            filename = f'plots/Z_{key}_v_ap.pdf'
+            call_PDF(filename)
+
+
 class mNPR:
 
     def __init__(self, ens, mu=2.0, mres=True, **kwargs):
@@ -17,7 +88,6 @@ class mNPR:
         )
         self.load_eta()
 
-        prefix = 'mres' if self.mres else 'no_mres'
         self.SMOM_bl = bilinear_analysis(
             self.ens, mres=self.mres,
             loadpath=f'{prefix}/{self.ens}_bl_massive_SMOM.p')

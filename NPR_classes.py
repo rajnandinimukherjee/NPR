@@ -62,7 +62,7 @@ class bilinear_analysis:
 
                     if (condition3 and condition4):
                         bl = bilinear(self.ens, prop1, prop2, mres=self.mres)
-                        mom = bl.q*self.ainv
+                        mom = bl.q
                         if mom not in results.keys():
                             bl.NPR(massive=massive, **kwargs)
                             results[mom] = bl.Z
@@ -99,8 +99,8 @@ class bilinear_analysis:
 
     def NPR_all(self, massive=False, save=True, renorm='mSMOM', **kwargs):
         if massive:
-            self.momenta[(0,0)]={}
-            self.Z[(0,0)]={}
+            self.momenta[(0, 0)] = {}
+            self.Z[(0, 0)] = {}
             self.NPR((self.sea_mass, self.sea_mass),
                      massive=massive, renorm=renorm)
             for mass in self.non_sea_masses:
@@ -109,8 +109,8 @@ class bilinear_analysis:
         else:
             N_a = len(self.actions)
             for a1, a2 in itertools.product(range(N_a), range(N_a)):
-                self.momenta[(a1,a2)]={}
-                self.Z[(a1,a2)]={}
+                self.momenta[(a1, a2)] = {}
+                self.Z[(a1, a2)] = {}
                 self.NPR((self.sea_mass, self.sea_mass), action=(a1, a2))
             if N_a == 2:
                 self.merge_mixed()
