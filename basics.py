@@ -98,6 +98,14 @@ class stat:
                 central, self.err[idx], self.N_boot)
         self.btsp = np.moveaxis(self.btsp, -1, 0)
 
+    def use_func(self, func, **kwargs):
+        central = func(self.val, **kwargs)
+
+        btsp = np.array([func(self.btsp[k,], **kwargs)
+            for k in range(N_boot)])
+
+        return stat(val=central, err='fill', btsp=btsp)
+
     def __getitem__(self, arg):
         new_stat = stat(
             val=self.val[arg],
