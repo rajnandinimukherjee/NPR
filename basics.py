@@ -64,6 +64,60 @@ def call_PDF(filename, **kwargs):
     plt.close('all')
     os.system('open '+filename)
 
+
+def fit_func(x, y, ansatz, guess,
+             start=0, end=None,
+             verbose=False, **kwargs):
+    if end == None:
+        end = len(x.val)
+
+    COV = np.diag(y.err[start:end]**2)
+    L_inv = np.linalg.cholesky(COV)
+    L = np.linalg.inv(L_inv)
+
+    def diff(inp, out, param):
+        return out - ansatz(inp, param, **kwargs)
+
+    def LD(param):
+        return L.dot(diff(x.val[start:end],
+                          y.val[start:end], param))
+
+    res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
+    if verbose:
+        print(res.message)
+
+    chi_sq = LD(res.x).dot(LD(res.x))
+    DOF = len(x.val[start:end])-np.count_nonzero(guess)
+
+    res_btsp = np.zeros(shape=(N_boot, len(guess)))
+    for k in range(N_boot):
+        def LD_k(param):
+            return L.dot(diff(x.btsp[k, start:end],
+                              y.btsp[k, start:end], param))
+        res = least_squares(LD_k, guess, ftol=1e-10, gtol=1e-10)
+        res_btsp[k,] = res.x
+
+    res = stat(val=res.x, err='fill', btsp=res_btsp)
+
+    def mapping(am):
+        if not isinstance(am, stat):
+            am = stat(
+                val=np.array(am),
+                btsp='fill')
+
+        return stat(
+            val=ansatz(am.val, res.val),
+            err='fill',
+            btsp=np.array([ansatz(am.btsp[k,], res.btsp[k])
+                           for k in range(N_boot)])
+        )
+    res.mapping = mapping
+    res.chi_sq = chi_sq
+    res.DOF = DOF
+    res.pvalue = gammaincc(DOF/2, chi_sq/2)
+    res.range = (start, end)
+
+    return res
 # =====statistical obj class======================================
 
 
@@ -81,13 +135,18 @@ class stat:
         self.err = np.array(err) if type(err) in accept_types else err
         self.btsp = np.array(btsp) if type(btsp) in accept_types else btsp
 
-        if type(btsp) == str:
-            if btsp == 'fill':
-                self.calc_btsp()
-
         if type(err) == str:
             if err == 'fill':
                 self.calc_err()
+            elif err[-1] == '%':
+                percent = float(err[:-1])
+                dist = np.random.normal(percent, percent/4,
+                                        size=self.val.shape)
+                self.err = np.multiply(dist, self.val)/100
+
+        if type(btsp) == str:
+            if btsp == 'fill':
+                self.calc_btsp()
 
     def calc_err(self):
         if type(self.btsp) == np.ndarray:
@@ -218,6 +277,15 @@ class stat:
                            for k in range(self.N_boot)])
         )
         return new_stat
+
+
+def join_stats(stats):
+    N = len(stats)
+    return stat(
+        val=np.array([s.val for s in stats]),
+        err=np.array([s.err for s in stats]),
+        btsp=np.array([s.btsp for s in stats]).swapaxes(0, 1)
+    )
 
 
 plt.rcParams.update(plotparams)
