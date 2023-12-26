@@ -1,6 +1,6 @@
 from externalleg import *
-from eta_c import *
 import pandas as pd
+from valence import *
 
 # =====bilinear projectors==============================
 bl_gamma_proj = {'S': [Gamma['I']],
@@ -70,15 +70,16 @@ class bilinear:
 
         self.m_q = float(self.prop_in.info['am'])
         if ensemble in valence_ens and mres:
-            ens = etaCvalence(ensemble)
+            self.valence = valence(ensemble)
+            self.valence.load_from_H5()
+            info = self.valence.mass_dict
+            m = str(self.m_q)
+            if m == '0.0214':
+                m = '0.02144'
             try:
-                sig_figs = len(str(self.m_q))-2
-                mres_key = next((key for key, val in ens.mass_comb.items()
-                                 if round(val, sig_figs) == self.m_q), None)
-                self.mres = ens.data[mres_key]['mres']
+                self.mres = info[m]['am_res']
             except KeyError:
-                print(f'no mres info for am_q={self.m_q}')
-                self.mres = 0
+                self.mres = stat(val=0, btsp='fill')
 
     def gamma_Z(self, operators, **kwargs):
         projected = {c: np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]
@@ -98,7 +99,7 @@ class bilinear:
         return Z_q
 
 
-    def qslash_Z(self, operators, S, renorm='mSMOM', **kwargs):
+    def qslash_Z(self, operators, S, mres, renorm='mSMOM', **kwargs):
 
         S_inv_in, S_inv_out = S
 
@@ -120,7 +121,7 @@ class bilinear:
         Z_V = Z_q/(np.trace(np.sum([q_vec[i]*operators['V'][i]
                                     for i in range(len(dirs))],
                                    axis=0)@qslash).real/(12*q_sq))
-        m_q = self.m_q+self.mres
+        m_q = self.m_q+mres
         A1 = 1j*np.trace(np.sum([q_vec[i]*operators['A'][i]
                               for i in range(len(dirs))],
                              axis=0)@Gamma['5']).imag
@@ -181,7 +182,8 @@ class bilinear:
         if not massive:
             projected, Z = self.gamma_Z(operators)
         else:
-            Z = self.qslash_Z(operators, [S_in,S_out], **kwargs)
+            mres = self.mres.val
+            Z = self.qslash_Z(operators, [S_in,S_out], mres, **kwargs)
 
         # ==bootstrap===
         Z_btsp = {c: np.zeros(N_boot) for c in Z.keys()}
@@ -198,7 +200,8 @@ class bilinear:
                     projected_btsp[c][k] = proj_k[c]
                     Z_btsp[c][k] = Z_k[c]
             else:
-                Z_k = self.qslash_Z(operators, [S_in, S_out], **kwargs)
+                mres = self.mres.btsp[k]
+                Z_k = self.qslash_Z(operators, [S_in, S_out], mres, **kwargs)
                 for c in Z_k.keys():
                     Z_btsp[c][k] = Z_k[c].real
 
