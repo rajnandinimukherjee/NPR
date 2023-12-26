@@ -170,7 +170,6 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
                           xerr=x.err, yerr=(y/x).err,
                           fmt='o', capsize=4,
                           color=color_list[idx])
-    ymin, ymax = axes[2, idx].get_ylim()
     axes[2, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
 
     guess = [1, 1e-1, 1e-2]
@@ -203,7 +202,7 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
                       transform=axes[2, idx].transAxes)
 
     axes[2, idx].set_xlim(xmin, xmax)
-    axes[2, idx].set_ylim(ymin, ymax)
+    axes[2, idx].set_ylim(axes_info_combined[1, 1, :])
 
 
 for ens_idx, ens in enumerate(ens_list):
@@ -241,6 +240,7 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
     am_star = e.interpolate_eta_c(eta_C_star)
 
     axes[0, idx].errorbar(e.eta_ax.val, e.eta_y.val,
+                          xerr=e.eta_ax.err,
                           yerr=e.eta_y.err,
                           fmt='o', capsize=4,
                           color=color_list[idx])
@@ -280,7 +280,7 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
                               e.am_C.val+e.am_C.err, 10),
                               ymin, eta_PDG.val,
                               color='0.9')
-    axes[0, idx].text(e.am_C.val, 0.3, r'$am_c$',
+    axes[0, idx].text(e.am_C.val, 0.5, r'$am_c$',
                       ha='right', va='center',
                       color='0.5', rotation=270, fontsize=18)
 
@@ -291,7 +291,8 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
 
     x, y = e.load_mSMOM(key='m')
     y = y*e.m_C
-    axes[1, idx].errorbar(x.val, y.val, yerr=y.err,
+    axes[1, idx].errorbar(x.val, y.val,
+                          xerr=x.err, yerr=y.err,
                           fmt='o', capsize=4,
                           color=color_list[idx])
     axes[1, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
@@ -305,7 +306,8 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
     axes[1, idx].fill_between(am_grain.val,
                               m_c_ren_grain.val+m_c_ren_grain.err,
                               m_c_ren_grain.val-m_c_ren_grain.err,
-                              color='k', alpha=0.3, label='fit', zorder=0)
+                              color='k', alpha=0.2, label='fit',
+                              zorder=0)
 
     m_c_ren_star = e.Z_m_mSMOM_fit.mapping(am_star)*e.m_C
     axes[1, idx].errorbar([am_star.val], [m_c_ren_star.val],
@@ -319,7 +321,8 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
 
     x, y = e.load_mSMOM(key='m')
     y = y*x*e.ainv
-    axes[2, idx].errorbar(x.val, y.val, yerr=y.err,
+    axes[2, idx].errorbar(x.val, y.val,
+                          xerr=x.err, yerr=y.err,
                           fmt='o', capsize=4,
                           color=color_list[idx])
     axes[2, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
@@ -333,7 +336,8 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
     axes[2, idx].fill_between(am_grain.val,
                               m_bar_grain.val+m_bar_grain.err,
                               m_bar_grain.val-m_bar_grain.err,
-                              color='k', alpha=0.3, label='fit', zorder=0)
+                              color='k', alpha=0.2, label='fit',
+                              zorder=0)
     m_bar_star = e.Z_m_mSMOM_fit.mapping(am_star)*am_star*e.ainv
     axes[2, idx].errorbar([am_star.val], [m_bar_star.val],
                           xerr=[am_star.err],
@@ -350,7 +354,7 @@ for ens_idx, ens in enumerate(ens_list):
     for ax_idx in [1, 2]:
         ymin, ymax = axes[ax_idx, ens_idx].get_ylim()
         if ax_idx == 2:
-            ymax *= 0.75
+            ymax *= 0.80
         else:
             ymin *= 1.1
         axes[ax_idx, ens_idx].vlines(

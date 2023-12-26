@@ -7,10 +7,7 @@ eta_PDG = stat(
     err=0.5/1000,
     btsp='fill')
 
-eta_stars = [1.8, 2.2, float(eta_PDG.val)]
-
-m_C_PDG = 1.27
-m_C_PDG_err = 0.02
+eta_stars = [1.6, 2.2, float(eta_PDG.val)]
 
 
 class Z_bl_analysis:
