@@ -230,8 +230,9 @@ axes[0, 0].text(axes_info_combined[0, 0, 0]+0.1, eta_C_star *
 # ===plot 3: Zms and Z_mm_q interpolate for some choice M_eta_C_star===
 fig, axes = plt.subplots(nrows=3, ncols=num_ens,
                          sharex='col', sharey='row',
-                         figsize=(w*num_ens, h*3),
-                         gridspec_kw={'width_ratios': [1, 1, 1]})
+                         figsize=(w*num_ens, h*2),
+                         gridspec_kw={'width_ratios': [1, 1, 1],
+                                      'height_ratios': [1, 0.8, 0.8]})
 
 plt.subplots_adjust(hspace=0, wspace=0)
 
@@ -325,7 +326,7 @@ for idx, ens in enumerate(['C1', 'M1', 'F1S']):
                           xerr=x.err, yerr=y.err,
                           fmt='o', capsize=4,
                           color=color_list[idx])
-    axes[2, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=18)
+    axes[2, idx].set_xlabel('$a_{'+ens+'}m$', fontsize=14)
     xmin, xmax = axes[2, idx].get_xlim()
 
     am_grain = stat(
@@ -356,7 +357,7 @@ for ens_idx, ens in enumerate(ens_list):
         if ax_idx == 2:
             ymax *= 0.80
         else:
-            ymin *= 1.1
+            ymin *= 1.05
         axes[ax_idx, ens_idx].vlines(
             am_star.val, ymin, ymax,
             linestyle='dashed',
@@ -367,15 +368,19 @@ for ens_idx, ens in enumerate(ens_list):
         axes[ax_idx, ens_idx].set_ylim(ymin, ymax)
 
 
-axes[0, 0].set_ylabel(r'$M_{\eta_h}$ (GeV)', fontsize=16)
+axes[0, 0].text(0.0, 1.0, r'(GeV)',
+                ha='right', va='bottom',
+                fontsize=14,
+                transform=axes[0, 0].transAxes)
+axes[0, 0].set_ylabel(r'$M_{\eta_h}$', fontsize=14)
 axes[0, 0].text(axes_info_combined[0, 0, 0]+0.02, eta_C_star *
-                1.03, r'$M^\star$', fontsize=16)
+                1.03, r'$M^\star$', fontsize=14)
 axes[0, 0].text(axes_info_combined[0, 0, 0]+0.02, eta_PDG.val *
-                1.04, r'$M_{\eta_c}^{PDG}$', fontsize=16)
+                1.04, r'$M_{\eta_c}$', fontsize=14)
 axes[2, 0].set_ylabel(
-    r'$Z_m(am,a\mu)\cdot a^{-1}\cdot (am)$ (GeV)', fontsize=16)
+    r'$Z_m(am,a\mu)\cdot a^{-1}\cdot (am)$', fontsize=14)
 axes[1, 0].set_ylabel(
-    r'$Z_m(am,a\mu)\cdot a^{-1}\cdot (am_c)$ (GeV)', fontsize=16)
+    r'$Z_m(am,a\mu)\cdot a^{-1}\cdot (am_c)$', fontsize=14)
 plt.savefig(
     '/Users/rajnandinimukherjee/Desktop/Proceedings_Plots/interpolation.pdf')
 
@@ -392,25 +397,31 @@ m_C_SMOM_grain = m_C_SMOM_mapping(asq_grain)
 phys_SMOM = (m_C_SMOM_mapping(0.0), 0.0)
 ax.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
 
-ax.plot(asq_grain, m_C_SMOM_grain.val,
-        linestyle='dashed',
-        color='0.5', label='SMOM')
 ax.fill_between(asq_grain,
                 m_C_SMOM_grain.val - m_C_SMOM_grain.err,
                 m_C_SMOM_grain.val + m_C_SMOM_grain.err,
                 color='0.8')
 for ens_idx, ens in enumerate(ens_list):
-    ax.errorbar(extrap.a_sq.val[ens_idx],
-                extrap.m_C_SMOM.val[ens_idx],
-                xerr=extrap.a_sq.err[ens_idx],
-                yerr=extrap.m_C_SMOM.err[ens_idx],
-                fmt='o', capsize=4, color='0.5')
+    if ens_idx == 0:
+        ax.errorbar(extrap.a_sq.val[ens_idx],
+                    extrap.m_C_SMOM.val[ens_idx],
+                    xerr=extrap.a_sq.err[ens_idx],
+                    yerr=extrap.m_C_SMOM.err[ens_idx],
+                    fmt='o', capsize=4, color='0.5',
+                    ms=5, label='SMOM')
+    else:
+        ax.errorbar(extrap.a_sq.val[ens_idx],
+                    extrap.m_C_SMOM.val[ens_idx],
+                    xerr=extrap.a_sq.err[ens_idx],
+                    yerr=extrap.m_C_SMOM.err[ens_idx],
+                    fmt='o', capsize=4, color='0.5', ms=5)
 ax.errorbar([0], phys_SMOM[0].val,
             yerr=phys_SMOM[0].err,
             fmt='o', capsize=4,
             color='0.5')
 
 phys_mSMOM = []
+marker_list = ['s', 'v', '^']
 for eta_idx, eta_star in enumerate(eta_stars):
     m_C_mSMOM = []
     for ens in ens_list:
@@ -428,23 +439,28 @@ for eta_idx, eta_star in enumerate(eta_stars):
 
     # label = r'$\overline{m}\approx'+str(np.around(phys_mbar.val, 2))+r'$ GeV'
     label = r'$M^\star='+str(eta_star)+'$ GeV'\
-        if eta_star != eta_PDG.val else r'$M^\star=M_{\eta_C}^{PDG}$'
+        if eta_star != eta_PDG.val else r'$M^\star=M_{\eta_c}$'
 
-    ax.plot(asq_grain, m_C_mSMOM_grain.val,
-            linestyle='dashed',
-            color=color_list[3+eta_idx], label=label)
     ax.fill_between(asq_grain,
                     m_C_mSMOM_grain.val - m_C_mSMOM_grain.err,
                     m_C_mSMOM_grain.val + m_C_mSMOM_grain.err,
                     color=color_list[3+eta_idx], alpha=0.5)
 
     for ens_idx, ens in enumerate(ens_list):
-        ax.errorbar(extrap.a_sq.val[ens_idx],
-                    m_C_mSMOM.val[ens_idx],
-                    xerr=extrap.a_sq.err[ens_idx],
-                    yerr=m_C_mSMOM.err[ens_idx],
-                    fmt='o', capsize=4,
-                    color=color_list[3+eta_idx])
+        if ens_idx == 0:
+            ax.errorbar(extrap.a_sq.val[ens_idx],
+                        m_C_mSMOM.val[ens_idx],
+                        xerr=extrap.a_sq.err[ens_idx],
+                        yerr=m_C_mSMOM.err[ens_idx],
+                        fmt='o', capsize=4, ms=5,
+                        color=color_list[3+eta_idx], label=label)
+        else:
+            ax.errorbar(extrap.a_sq.val[ens_idx],
+                        m_C_mSMOM.val[ens_idx],
+                        xerr=extrap.a_sq.err[ens_idx],
+                        yerr=m_C_mSMOM.err[ens_idx],
+                        fmt='o', capsize=4, ms=5,
+                        color=color_list[3+eta_idx])
 
     m_C_mSMOM_phys = m_C_mSMOM_mapping(0.0)
     ax.errorbar([0], m_C_mSMOM_phys.val,
@@ -456,7 +472,7 @@ for eta_idx, eta_star in enumerate(eta_stars):
 ax.legend(loc='lower right')
 ax.set_xlabel(r'$a^2$ (GeV${}^{-2}$)', fontsize=18)
 # plt.ylabel(r'$m_{C}(am^\star,a\mu)$', fontsize=18)
-ax.set_ylabel(r'$m_{c}^{ren}$ (GeV)', fontsize=18)
+ax.set_ylabel(r'$m_{c, R}$ (GeV)', fontsize=18)
 ax.set_xlim(ren_xaxes)
 ax_twin = ax.twiny()
 ax_twin.set_xlim(ax.get_xlim())
@@ -480,7 +496,7 @@ for eta_idx, eta_star in enumerate(eta_stars):
     m_C_mSMOM_grain = m_C_mSMOM_mapping(asq_grain)
 
     label = r'$M_{\eta_C}^\star='+str(eta_star)+'$ GeV'\
-            if eta_star != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
+            if eta_star != eta_PDG.val else r'$M_{\eta_c}$'
 
     plt.plot(asq_grain, m_C_mSMOM_grain.val,
              linestyle='dashed',
@@ -527,8 +543,12 @@ plt.xlim(ren_xaxes)
 
 
 # ===STEP4 plot 4: mbar continuum extrap for eta_stars=============
-plt.figure(figsize=(h, w))
-plt.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
+fig = plt.figure(figsize=(h, w))
+ax = fig.add_subplot(111)
+
+asq_grain = np.linspace(0, 0.45, 50)
+ren_xaxes = [-0.01, 0.35]
+ax.axvline(x=0, linestyle='dashed', color='k', alpha=0.4)
 
 for eta_idx, eta_star in enumerate(eta_stars):
     mbar = []
@@ -543,34 +563,44 @@ for eta_idx, eta_star in enumerate(eta_stars):
     mbar_mSMOM_grain = mbar_mSMOM_mapping(asq_grain)
 
     label = r'$M_{\eta_C}^\star='+str(eta_star)+'$ GeV'\
-            if eta_star != eta_PDG.val else r'$M_{\eta_C}^{\star,PDG}$'
+            if eta_star != eta_PDG.val else r'$M_{\eta_c}$'
 
-    plt.plot(asq_grain, mbar_mSMOM_grain.val,
-             linestyle='dashed',
-             color=color_list[3+eta_idx], label=label)
-    plt.fill_between(asq_grain,
-                     mbar_mSMOM_grain.val - mbar_mSMOM_grain.err,
-                     mbar_mSMOM_grain.val + mbar_mSMOM_grain.err,
-                     color=color_list[3+eta_idx], alpha=0.5)
+    ax.fill_between(asq_grain,
+                    mbar_mSMOM_grain.val - mbar_mSMOM_grain.err,
+                    mbar_mSMOM_grain.val + mbar_mSMOM_grain.err,
+                    color=color_list[3+eta_idx], alpha=0.5)
 
     for ens_idx, ens in enumerate(ens_list):
-        plt.errorbar(extrap.a_sq.val[ens_idx],
-                     mbar.val[ens_idx],
-                     mbar.err[ens_idx],
-                     fmt='o', capsize=4,
-                     color=color_list[3+eta_idx])
+        if ens_idx == 0:
+            ax.errorbar(extrap.a_sq.val[ens_idx],
+                        mbar.val[ens_idx],
+                        xerr=extrap.a_sq.err[ens_idx],
+                        yerr=mbar.err[ens_idx],
+                        fmt='o', capsize=4, ms=5,
+                        color=color_list[3+eta_idx], label=label)
+        else:
+            ax.errorbar(extrap.a_sq.val[ens_idx],
+                        mbar.val[ens_idx],
+                        xerr=extrap.a_sq.err[ens_idx],
+                        yerr=mbar.err[ens_idx],
+                        fmt='o', capsize=4, ms=5,
+                        color=color_list[3+eta_idx])
 
     mbar_mSMOM_phys = mbar_mSMOM_mapping(0.0)
     phys_mSMOM[eta_idx].append(mbar_mSMOM_mapping(0.0))
-    plt.errorbar([0], mbar_mSMOM_phys.val,
-                 yerr=mbar_mSMOM_phys.err,
-                 fmt='o', capsize=4,
-                 color=color_list[3+eta_idx])
+    ax.errorbar([0], mbar_mSMOM_phys.val,
+                yerr=mbar_mSMOM_phys.err,
+                fmt='o', capsize=4,
+                color=color_list[3+eta_idx])
 
-plt.xlabel(r'$a^2$ (GeV${}^{-2}$)', fontsize=18)
-plt.ylabel(r'$\overline{m}(am^\star,a\mu)$', fontsize=18)
-plt.xlim(ren_xaxes)
-plt.savefig(
+ax.set_xlabel(r'$a^2$ (GeV${}^{-2}$)', fontsize=18)
+ax.set_ylabel(r'$\overline{m}$ (GeV)', fontsize=18)
+ax.set_xlim(ren_xaxes)
+ax_twin = ax.twiny()
+ax_twin.set_xlim(ax.get_xlim())
+ax_twin.set_xticks([0]+list(extrap.a_sq.val))
+ax_twin.set_xticklabels([r'cont', 'C', 'M', 'F'])
+fig.savefig(
     '/Users/rajnandinimukherjee/Desktop/Proceedings_Plots/mbar.pdf')
 
 

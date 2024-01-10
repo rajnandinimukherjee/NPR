@@ -72,13 +72,14 @@ class Z_analysis:
         norm = 'bag' if self.bag else 'V'
         self.load_fq_Z(norm=norm)
 
-    def interpolate(self, m, type='mu', ainv=None, **kwargs):
-        if type == 'mu':
+    def interpolate(self, m, xaxis='mu', ainv=None,
+                    plot=False, **kwargs):
+        if xaxis == 'mu':
             if ainv is None:
                 x = self.am*self.ainv
             else:
                 x = self.am*ainv
-        elif type == 'amu':
+        elif xaxis == 'amu':
             x = self.am
 
         matrix = np.zeros(shape=(5, 5))
@@ -106,6 +107,17 @@ class Z_analysis:
                 btsp=np.array([rot_mtx@Z.btsp[k,]@np.linalg.inv(rot_mtx)
                                for k in range(N_boot)])
             )
+
+        if plot:
+            fig, ax, filename = self.plot_Z(xaxis=xaxis, pass_plot=True)
+            N_ops = len(operators)
+            for i, j in itertools.product(range(N_ops), range(N_ops)):
+                if mask[i, j]:
+                    ax[i, j].errorbar(m, Z.val[i, j],
+                                      yerr=Z.err[i, j],
+                                      c='k', fmt='o', capsize=4)
+            call_PDF(filename)
+
         return Z
 
     def scale_evolve(self, mu2, mu1, **kwargs):
@@ -118,7 +130,8 @@ class Z_analysis:
                            for k in range(N_boot)]))
         return sigma
 
-    def plot_Z(self, xaxis='mu', filename='plots/Z_scaling.pdf', **kwargs):
+    def plot_Z(self, xaxis='mu', filename='plots/Z_scaling.pdf',
+               pass_plot=False, **kwargs):
         x = self.am.val if xaxis == 'am' else (self.am*self.ainv).val
         xerr = self.am.err if xaxis == 'am' else (self.am*self.ainv).err
 
@@ -145,16 +158,11 @@ class Z_analysis:
             plt.suptitle(
                 r'$Z_{ij}^{'+self.ens+r'}/Z_V^2$ vs renormalisation scale $\mu$', y=0.9)
 
-        pp = PdfPages(filename)
-        fig_nums = plt.get_fignums()
-        figs = [plt.figure(n) for n in fig_nums]
-        for fig in figs:
-            fig.savefig(pp, format='pdf')
-        pp.close()
-        plt.close('all')
-
-        print(f'Saved plot to {filename}.')
-        os.system("open "+filename)
+        if pass_plot:
+            return fig, ax, filename
+        else:
+            call_PDF(filename)
+            print(f'Saved plot to {filename}.')
 
     def plot_sigma(self, xaxis='mu', mu1=None, mu2=3.0,
                    filename='plots/Z_running.pdf', **kwargs):
