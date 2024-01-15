@@ -2,10 +2,6 @@ import pdb
 from coeffs import *
 from bag_param_renorm import *
 
-Z_dict = {ens: Z_analysis(ens) for ens in bag_ensembles}
-bag_dict = {ens: bag_analysis(ens) for ens in bag_ensembles}
-
-
 cmap = plt.cm.tab20b
 norm = mc.BoundaryNorm(np.linspace(0, 1, len(bag_ensembles)), cmap.N)
 
@@ -43,11 +39,14 @@ class Z_fits:
 
     chiral_ens = [ens for ens in bag_ensembles if ens[0] == 'M']
     cont_ens = ['F1M', 'M0']
+    mask = mask
 
-    def __init__(self, ens_list, bag=True, **kwargs):
+    def __init__(self, ens_list, norm='V', **kwargs):
         self.ens_list = ens_list
-        self.bag = bag
-        self.Z_dict = {e: Z_analysis(e, bag=self.bag)
+        self.norm = norm
+        if norm == '11':
+            self.mask[0, 0] = False
+        self.Z_dict = {e: Z_analysis(e, norm=self.norm)
                        for e in self.ens_list}
         self.colors = {list(self.Z_dict.keys())[k]: list(
             mc.TABLEAU_COLORS.keys())[k]
@@ -198,7 +197,7 @@ class Z_fits:
         sigma_err = np.zeros(shape=(N_ops, N_ops))
         sigma_btsp = np.zeros(shape=(N_boot, N_ops, N_ops))
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 chiral_params, cont_params = self.extrap_ij(
                     mu2, mu1, i, j, **kwargs)
                 sigma[i, j] = cont_params.val[0]
@@ -219,7 +218,7 @@ class Z_fits:
         plt.subplots_adjust(hspace=0)
 
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 chiral_params, cont_params = self.extrap_ij(
                     mu2, mu1, i, j, **kwargs)
                 for e in self.ens_list:
@@ -281,7 +280,7 @@ class Z_fits:
         plt.subplots_adjust(hspace=0, wspace=0)
 
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 y = [sig.val[i, j] for sig in sigmas]
                 yerr = [sig.err[i, j] for sig in sigmas]
 
@@ -291,12 +290,15 @@ class Z_fits:
                     ax[i, j].yaxis.tick_right()
             else:
                 ax[i, j].axis('off')
-        if self.bag:
+        if self.norm == 'bag':
             plt.suptitle(
                 sig_str+r'for $Z_{ij}/Z_{A/P}^2$', y=0.9)
+        elif self.norm in bilinear.currents:
+            plt.suptitle(
+                sig_str+r'for $Z_{ij}/Z_'+self.norm+r'^2$', y=0.9)
         else:
             plt.suptitle(
-                sig_str+r'for $Z_{ij}/Z_A^2$', y=0.9)
+                sig_str+r'for $Z_{ij}/'+self.norm+r'$', y=0.9)
 
         pp = PdfPages(filename)
         fig_nums = plt.get_fignums()
@@ -312,18 +314,15 @@ class Z_fits:
     def Z_chiral_extrap(self, mu, ens_list, **kwargs):
         chiral_data = [self.Z_dict[ens].interpolate(mu, **kwargs)
                        for ens in ens_list]
-        m_sq = [self.Z_dict[ens].m_pi**2
-                for ens in ens_list]
-        m_sq = stat(
-            val=[msq.val for msq in m_sq],
-            err=[msq.err for msq in m_sq],
-            btsp=np.array([msq.btsp for msq in m_sq]).T
-        )
-
+        m_sq = join_stats([self.Z_dict[ens].m_pi**2
+                           for ens in ens_list])
         x = m_sq.val
 
         def ansatz(params, msq):
             return params[0] + params[1]*msq
+
+        def diff(x, y, params):
+            return y - ansatz(params, x)
 
         N_ops = len(operators)
         extrap = np.zeros(shape=(N_ops, N_ops))
@@ -333,16 +332,13 @@ class Z_fits:
         param_save = np.zeros(shape=(2, N_ops, N_ops))
         param_save_btsp = np.zeros(shape=(N_boot, 2, N_ops, N_ops))
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 y = np.array([cd.val[i, j] for cd in chiral_data])
                 y_err = np.array([cd.err[i, j]
-                                 for cd in chiral_data])
+                                  for cd in chiral_data])
                 COV = np.diag(y_err**2)
                 L_inv = np.linalg.cholesky(COV)
                 L = np.linalg.inv(L_inv)
-
-                def diff(x, y, params):
-                    return y - ansatz(params, x)
 
                 # ==central fit====
                 def LD(params):
@@ -394,7 +390,6 @@ class Z_fits:
     def Z_chiral_extrap_phys_handler(self, mu, exclude_phys=True,
                                      passonly=False, **kwargs):
         ainv = None
-        flag_0 = False
         ens_list = self.ens_list.copy()
         try:
             phys_idx = [index for index, ens in enumerate(
@@ -403,57 +398,53 @@ class Z_fits:
             if exclude_phys:
                 ens_list.pop(phys_idx)
                 ainv = self.Z_dict[self.ens_list[-1]].ainv
-                flag_0 = True
                 if not passonly:
                     print(
                         f'Excluding {self.ens_list[phys_idx]} from chiral fit.')
+            extrap, mapping, fit_params = self.Z_chiral_extrap(
+                mu, ens_list, **kwargs)
+            chiral_data = [self.Z_dict[ens].interpolate(
+                mu, ainv=ainv, **kwargs) for ens in self.ens_list]
+
+            N_ops = len(operators)
+            expanded_errors = np.zeros(shape=(N_ops, N_ops))
+            for i, j in itertools.product(range(N_ops), range(N_ops)):
+                if self.mask[i, j]:
+                    y_chiral = mapping(i, j, fit_params, 0.0)
+                    y = np.array([cd.val[i, j] for cd in chiral_data])
+                    yerr = np.array([cd.err[i, j] for cd in chiral_data])
+                    y_top = np.max([y_chiral.val+y_chiral.err,
+                                    y[phys_idx]+yerr[phys_idx],
+                                    phys_Z.val[i, j]+phys_Z.err[i, j]])
+                    y_bot = np.min([y_chiral.val-y_chiral.err,
+                                    y[phys_idx]-yerr[phys_idx],
+                                    phys_Z.val[i, j]-phys_Z.err[i, j]])
+                    expanded_errors[i, j] = np.max([np.abs(
+                        y_top-y_chiral.val), np.abs(
+                            y_chiral.val-y_bot)])
+            return extrap, mapping, fit_params, chiral_data, phys_idx, phys_Z, expanded_errors
+
         except IndexError:
             print('No physical point ensembles included.')
-
-        extrap, mapping, fit_params = self.Z_chiral_extrap(
-            mu, ens_list, **kwargs)
-        chiral_data = [self.Z_dict[ens].interpolate(mu, ainv=ainv, **kwargs)
-                       for ens in self.ens_list]
-
-        N_ops = len(operators)
-        expanded_errors = np.zeros(shape=(N_ops, N_ops))
-        for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
-                y_chiral = mapping(i, j, fit_params, 0.0)
-                y = np.array([cd.val[i, j] for cd in chiral_data])
-                yerr = np.array([cd.err[i, j] for cd in chiral_data])
-                y_top = np.max([y_chiral.val+y_chiral.err,
-                                y[phys_idx]+yerr[phys_idx],
-                                phys_Z.val[i, j]+phys_Z.err[i, j]])
-                y_bot = np.min([y_chiral.val-y_chiral.err,
-                                y[phys_idx]-yerr[phys_idx],
-                                phys_Z.val[i, j]-phys_Z.err[i, j]])
-                expanded_errors[i, j] = np.max([np.abs(y_top-y_chiral.val),
-                                               np.abs(y_chiral.val-y_bot)])
-
-        return extrap, mapping, fit_params, chiral_data, phys_Z, phys_idx, flag_0, expanded_errors
+            extrap, mapping, fit_params = self.Z_chiral_extrap(
+                mu, ens_list, **kwargs)
+            chiral_data = [self.Z_dict[ens].interpolate(
+                mu, ainv=ainv, **kwargs) for ens in self.ens_list]
+            return extrap, mapping, fit_params, chiral_data, None
 
     def Z_chiral_extrap_plot(self, mu, normalise=False,
                              filename='plots/Z_chiral_extrap.pdf',
-                             show_extra='None',
                              **kwargs):
 
         quantities = self.Z_chiral_extrap_phys_handler(mu, **kwargs)
-        extrap, mapping, fit_params, chiral_data = quantities[:4]
-        phys_Z, phys_idx, flag_0, expanded_errors = quantities[4:]
+        extrap, mapping, fit_params, chiral_data, phys_idx = quantities[:5]
+        if phys_idx != None:
+            phys_Z, expanded_errors = quantities[5:]
 
-        m_sq = [self.Z_dict[ens].m_pi**2
-                for ens in self.ens_list]
-        m_sq = stat(
-            val=[msq.val for msq in m_sq],
-            err=[msq.err for msq in m_sq],
-            btsp=np.array([msq.btsp for msq in m_sq]).T
-        )
-
+        m_sq = join_stats([self.Z_dict[ens].m_pi**2
+                           for ens in self.ens_list])
         x = m_sq.val
         xerr = m_sq.err
-        msq_grain = np.linspace(
-            0.0, (0.45/self.Z_dict[self.ens_list[-1]].ainv.val)**2, 50)
 
         N_ops = len(operators)
         fig, ax = plt.subplots(nrows=N_ops, ncols=N_ops,
@@ -461,7 +452,7 @@ class Z_fits:
         plt.subplots_adjust(hspace=0, wspace=0)
 
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 y_chiral = mapping(i, j, fit_params, 0.0)
                 divider = y_chiral.val if normalise else 1
                 y = np.array([cd.val[i, j] for cd in chiral_data])
@@ -473,6 +464,8 @@ class Z_fits:
                                   xerr=xerr, fmt='o',
                                   capsize=4, label=label)
 
+                xmin, xmax = ax[i, j].get_xlim()
+                msq_grain = np.linspace(0.0, xmax, 50)
                 y_grain = mapping(i, j, fit_params, msq_grain)
                 ax[i, j].fill_between(msq_grain,
                                       (y_grain.val-y_grain.err)/divider,
@@ -482,13 +475,7 @@ class Z_fits:
                 ax[i, j].errorbar([0.0], y_chiral.val/divider,
                                   yerr=y_chiral.err/divider,
                                   color='0.1', fmt='o', capsize=4)
-                slope = err_disp(
-                    fit_params.val[1, i, j], fit_params.err[1, i, j])
-                ax[i, j].text(0.5, 0.1, r'$m = '+slope+'$',
-                              ha='center', va='bottom',
-                              transform=ax[i, j].transAxes)
-
-                if flag_0:
+                if phys_idx != None:
                     ax[i, j].errorbar([m_sq.val[phys_idx]],
                                       phys_Z.val[i, j]/divider,
                                       yerr=phys_Z.err[i, j]/divider,
@@ -507,7 +494,7 @@ class Z_fits:
             else:
                 ax[i, j].axis('off')
         plt.suptitle(r'$Z_{ij}^{'+','.join(self.ens_list) +
-                     '}(\mu='+str(mu)+'$ GeV$)/Z_A^2$ vs $a^2m_\pi^2$', y=0.9)
+                     '}(\mu='+str(mu)+'$ GeV$)/Z_{'+self.norm+r'}$ vs $m_\pi^2$', y=0.9)
 
         pp = PdfPages(filename)
         fig_nums = plt.get_fignums()
@@ -544,10 +531,10 @@ class Z_fits:
         param_save = np.zeros(shape=(2, N_ops, N_ops))
         param_save_btsp = np.zeros(shape=(N_boot, 2, N_ops, N_ops))
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 y = np.array([cd.val[i, j] for cd in chiral_data])
                 y_err = np.array([cd.err[i, j]
-                                 for cd in chiral_data])
+                                  for cd in chiral_data])
                 COV = np.diag(y_err**2)
                 L_inv = np.linalg.cholesky(COV)
                 L = np.linalg.inv(L_inv)
@@ -604,20 +591,25 @@ class Z_fits:
 
 
 M_ens = ['M0', 'M1', 'M2', 'M3']
-M = Z_fits(M_ens, bag=True)
+M = Z_fits(M_ens, norm='bag')
 C_ens = ['C0', 'C1', 'C2']
-C = Z_fits(C_ens, bag=True)
+C = Z_fits(C_ens, norm='bag')
 
 
 class bag_fits:
+    mask = mask
+    operators = operators
 
     def __init__(self, ens_list, obj='bag', **kwargs):
         self.ens_list = ens_list
+        self.obj = obj
+        if self.obj == 'ratio':
+            self.operators = self.operators[1:]
         self.bag_dict = {e: bag_analysis(e, obj=obj)
                          for e in self.ens_list}
         self.colors = {list(self.bag_dict.keys())[k]: list(
-                       mc.TABLEAU_COLORS.keys())[k]
-                       for k in range(len(self.ens_list))}
+            mc.TABLEAU_COLORS.keys())[k]
+            for k in range(len(self.ens_list))}
 
     def load_bag(self, mu, ens_list, chiral_extrap=False,
                  expanded_extrap=False, **kwargs):
@@ -678,121 +670,71 @@ class bag_fits:
         )
         self.bag.btsp = self.bag.btsp.swapaxes(0, 1)
 
-    def fit_operator(self, operator, ens_list,
-                     guess=[1e-1, 1e-2, 1e-3],
-                     Z=None, **kwargs):
-
-        op_idx = operators.index(operator)
-        dof = len(ens_list)-len(guess)
-
-        def pred(params, operator, **kwargs):
-            p = [self.bag_dict[e].ansatz(params, operator, **kwargs)
-                 for e in ens_list]
-            return p
-
-        def diff(bag, params, operator, **kwargs):
-            return np.array(bag) - np.array(pred(params, operator, **kwargs))
-
-        bags_op = stat(
-            val=self.bag.val[:, op_idx],
-            err=self.bag.err[:, op_idx],
-            btsp=self.bag.btsp[:, :, op_idx]
-        )
-
-        COV = np.diag(bags_op.err**2)
-        L_inv = np.linalg.cholesky(COV)
-        L = np.linalg.inv(L_inv)
-
-        def LD(params):
-            return L.dot(diff(bags_op.val, params, operator,
-                              fit='central', **kwargs))
-
-        guess = np.array(guess)
-        res = least_squares(LD, guess, ftol=1e-15, gtol=1e-15,
-                            max_nfev=1e+5, xtol=1e-15)
-        chi_sq = LD(res.x).dot(LD(res.x))
-        pvalue = gammaincc(dof/2, chi_sq/2)
-
-        res_btsp = np.zeros(shape=(N_boot, len(res.x)))
-        for k in range(N_boot):
-            def LD_btsp(params):
-                return L.dot(diff(bags_op.btsp[k, :], params, operator,
-                                  fit='btsp', k=k, **kwargs))
-            res_k = least_squares(LD_btsp, guess,
-                                  ftol=1e-10, gtol=1e-10)
-            res_btsp[k, :] = res_k.x
-
-        params = stat(
-            val=res.x,
-            err='fill',
-            btsp=res_btsp
-        )
-        params.res = res
-
-        return params, chi_sq/dof, pvalue
-
-    def plot_fits(self, mu, ops=operators, ens_list=None,
-                  title='', filename='plots/bag_fits.pdf', open=False,
-                  passvals=True, save=True, **kwargs):
+    def fit_operator(self, mu, operator, ens_list=None,
+                     guess=[1e-1, 1e-2, 1e-3], title='',
+                     Z=None, plot=False, open=False,
+                     **kwargs):
 
         if ens_list == None:
             ens_list = self.ens_list
 
         self.load_bag(mu, ens_list, **kwargs)
 
-        num_ops = len(ops)
+        op_idx = operators.index(operator)
+        dof = len(ens_list)-len(guess)
 
-        fig, ax = plt.subplots(num_ops, 2, figsize=(15, 6*num_ops))
-        for i in range(num_ops):
-            if num_ops == 1:
-                ax0, ax1 = ax[0], ax[1]
-            else:
-                ax0, ax1 = ax[i, 0], ax[i, 1]
+        def ansatz(x, param, **kwargs):
+            p = [self.bag_dict[e].ansatz(param, operator, **kwargs)
+                 for e in ens_list]
+            return np.array(p)
 
-            operator = ops[i]
-            op_idx = operators.index(operator)
+        y = stat(
+            val=self.bag.val[:, op_idx],
+            err=self.bag.err[:, op_idx],
+            btsp=self.bag.btsp[:, :, op_idx]
+        )
+        x = y
+        guess = np.array(guess)
+
+        res = fit_func(x, y, ansatz, guess, **kwargs)
+        cc_coeffs = stat(
+            val=res.val[1:]/res.val[0],
+            err='fill',
+            btsp=np.array([res.btsp[k, 1:]/res.btsp[k, 0]
+                           for k in range(N_boot)])
+        )
+
+        y_phys = stat(
+            val=res.val[0],
+            err=res.err[0],
+            btsp=res.btsp[:, 0]
+        )
+
+        if plot:
+            fig, ax = plt.subplots(1, 2, figsize=(15, 6))
+            label = operator
             if 'rotate' in kwargs:
                 N = len(operators)
-                rot_str = np.empty(N, dtype=object)
-                for r in range(N):
-                    rot_str[r] = []
-                    for c in range(N):
-                        val = np.around(kwargs['rotate'][r, c], 2)
-                        if val != 0.0 and val != 1.0:
-                            rot_str[r].append('('+str(val)+')*'+operators[c])
-                        elif val == 1.0:
-                            rot_str[r].append(operators[c])
-                    rot_str[r] = ' + '.join(rot_str[r])
-                ax0.title.set_text(rot_str[op_idx])
-                ax1.title.set_text(rot_str[op_idx])
-            else:
-                ax0.title.set_text(operator)
-                ax1.title.set_text(operator)
-            if 'names' in kwargs:
-                ax0.title.set_text(kwargs['names'][i])
-                ax1.title.set_text(kwargs['names'][i])
+                rot_str = []
+                for c in range(N):
+                    val = np.around(kwargs['rotate'][op_idx, c], 2)
+                    if val != 0.0 and val != 1.0:
+                        rot_str.append('('+str(val)+')*'+operators[c])
+                    elif val == 1.0:
+                        rot_str.append(operators[c])
+                label = ' + '.join(rot_str)
 
-            params, chi_sq_dof, pvalue = self.fit_operator(
-                operator, ens_list, **kwargs)
+            ax[0].set_title(label)
+            ax[1].set_title(label)
 
-            cc_coeffs = stat(
-                val=params.val[1:3]/params.val[0],
-                err='fill',
-                btsp=np.array([params.btsp[k, 1:3]/params.btsp[k, 0]
-                               for k in range(N_boot)])
-            )
-
-            y_phys = stat(
-                val=params.val[0],
-                err=params.err[0],
-                btsp=params.btsp[:, 0]
-            )
-
-            ax0.errorbar([0], [y_phys.val], yerr=[y_phys.err],
-                         color='k', fmt='o', capsize=4, label='phys')
-            ax1.errorbar([m_pi_PDG.val**2], [y_phys.val], yerr=[y_phys.err],
-                         color='k', fmt='o', capsize=4, label='phys')
-            ax1.axvline(m_pi_PDG.val**2, color='k', linestyle='dashed')
+            ax[0].errorbar([0], [y_phys.val], yerr=[y_phys.err],
+                           color='k', fmt='o', capsize=4, label='phys')
+            ax[1].errorbar([(m_pi_PDG**2).val], [y_phys.val],
+                           xerr=[(m_pi_PDG**2).err],
+                           yerr=[y_phys.err], color='k',
+                           fmt='o', capsize=4, label='phys')
+            ax[1].axvline(m_pi_PDG.val**2, color='k',
+                          linestyle='dashed')
 
             x_asq = np.linspace(0, (1/1.7)**2, 50)
             x_msq = np.linspace(0.01, 0.2, 50)
@@ -804,47 +746,51 @@ class bag_fits:
                 y_asq = stat(
                     val=np.array(
                         [chiral_continuum_ansatz(
-                            params.val, x, m_f_sq.val,
+                            res.val, x, m_f_sq.val,
                             m_f_sq_PDG.val,
                             operator, **kwargs)
                          for x in x_asq]),
                     err='fill',
                     btsp=np.array([[chiral_continuum_ansatz(
-                        params.btsp[k, :], x, m_f_sq.btsp[k],
+                        res.btsp[k, :], x, m_f_sq.btsp[k],
                         m_f_sq_PDG.btsp[k],
                         operator, **kwargs) for x in x_asq]
                         for k in range(N_boot)])
                 )
 
-                ax0.plot(x_asq, y_asq.val, color=self.colors[e])
-                ax0.fill_between(x_asq, y_asq.val+y_asq.err, y_asq.val-y_asq.err,
-                                 color=self.colors[e], alpha=0.2)
+                ax[0].plot(x_asq, y_asq.val, color=self.colors[e])
+                ax[0].fill_between(x_asq, y_asq.val+y_asq.err,
+                                   y_asq.val-y_asq.err,
+                                   color=self.colors[e], alpha=0.2)
 
                 y_mpi = stat(
                     val=np.array(
                         [chiral_continuum_ansatz(
-                            params.val, a_sq.val,
+                            res.val, a_sq.val,
                             x/(f_pi_PDG.val**2),
                             m_f_sq_PDG.val,
                             operator, **kwargs) for x in x_msq]),
                     err='fill',
                     btsp=np.array([[chiral_continuum_ansatz(
-                        params.btsp[k, :], a_sq.btsp[k],
+                        res.btsp[k, :], a_sq.btsp[k],
                         x/(f_pi_PDG.btsp[k]**2),
                         m_f_sq_PDG.btsp[k],
                         operator, **kwargs) for x in x_msq]
                         for k in range(N_boot)])
                 )
 
-                ax1.plot(x_msq, y_mpi.val, color=self.colors[e])
-                ax1.fill_between(x_msq, y_mpi.val+y_mpi.err, y_mpi.val-y_mpi.err,
-                                 color=self.colors[e], alpha=0.2)
+                ax[1].plot(x_msq, y_mpi.val, color=self.colors[e])
+                ax[1].fill_between(x_msq, y_mpi.val+y_mpi.err,
+                                   y_mpi.val-y_mpi.err,
+                                   color=self.colors[e], alpha=0.2)
 
-                ax0.errorbar([a_sq.val], [self.bag.val[ens_idx, op_idx]],
-                             yerr=[self.bag.err[ens_idx, op_idx]],
-                             xerr=[a_sq.err],
-                             fmt='o', label=e,
-                             capsize=4, color=self.colors[e], mfc='None')
+                ax[0].errorbar([a_sq.val],
+                               [self.bag.val[ens_idx, op_idx]],
+                               yerr=[self.bag.err[ens_idx, op_idx]],
+                               xerr=[a_sq.err],
+                               fmt='o', label=e,
+                               capsize=4, color=self.colors[e],
+                               mfc='None')
 
                 mpi_phys = stat(
                     val=m_pi.val**2/a_sq.val,
@@ -852,39 +798,31 @@ class bag_fits:
                     btsp=[(m_pi.btsp[k]**2)/a_sq.btsp[k]
                           for k in range(N_boot)]
                 )
-                ax1.errorbar([mpi_phys.val], [self.bag.val[ens_idx, op_idx]],
-                             yerr=[self.bag.err[ens_idx, op_idx]],
-                             xerr=[mpi_phys.err],
-                             fmt='o', label=e, capsize=4,
-                             color=self.colors[e],
-                             mfc='None')
+                ax[1].errorbar([mpi_phys.val],
+                               [self.bag.val[ens_idx, op_idx]],
+                               yerr=[self.bag.err[ens_idx, op_idx]],
+                               xerr=[mpi_phys.err],
+                               fmt='o', label=e, capsize=4,
+                               color=self.colors[e],
+                               mfc='None')
 
-            ax0.legend()
-            ax0.set_xlabel(r'$a^2$ (GeV${}^{-2}$)')
-            ax1.legend()
-            ax1.set_xlabel(r'$m_{\pi}^2$ (GeV${}^2$)')
+            ax[0].legend()
+            ax[0].set_xlabel(r'$a^2$ (GeV${}^{-2}$)')
+            ax[1].legend()
+            ax[1].set_xlabel(r'$m_{\pi}^2$ (GeV${}^2$)')
 
-            ax0.text(0.4, 0.05, r'$\chi^2$/DOF:'+'{:.3f}'.format(chi_sq_dof),
-                     transform=ax0.transAxes)
-            ax1.text(0.4, 0.05, r'$p$-value:'+'{:.3f}'.format(pvalue),
-                     transform=ax1.transAxes)
+            ax[0].text(0.4, 0.05, r'$\chi^2$/DOF:'+'{:.3f}'.format(
+                res.chi_sq/res.DOF), transform=ax[0].transAxes)
+            ax[1].text(0.4, 0.05, r'$p$-value:'+'{:.3f}'.format(
+                res.pvalue), transform=ax[1].transAxes)
 
-        if title != '':
-            title += r', '
-        title += r'$\mu='+str(np.around(mu, 2))+'$ GeV'
-        plt.suptitle(title, y=0.95)
+            title += r', $\mu='+str(np.around(mu, 2))+'$ GeV'
+            plt.suptitle(title, y=0.95)
 
-        if save:
-            pp = PdfPages(filename)
-            fig_nums = plt.get_fignums()
-            figs = [plt.figure(n) for n in fig_nums]
-            for fig in figs:
-                fig.savefig(pp, format='pdf')
-            pp.close()
-            plt.close('all')
+            if 'filename' in kwargs:
+                filename = kwargs['filename']
+            else:
+                filename = f'plots/bag_fits_{operator}.pdf'
+            call_PDF(filename, open=open)
 
-            if open:
-                print(f'Saved plot to {filename}.')
-                os.system("open "+filename)
-        if passvals and num_ops == 1:
-            return y_phys, cc_coeffs, chi_sq_dof, pvalue
+        return y_phys, cc_coeffs, res.chi_sq/res.DOF, res.pvalue

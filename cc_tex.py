@@ -1,12 +1,12 @@
 from cont_chir_extrap import *
 
-Z = Z_fits(bag_ensembles, bag=True)
+Z = Z_fits(bag_ensembles, norm='bag')
 mu_list = [2.0, 2.2, 2.3, 2.4]
 ansatz_kwargs = {
     'a2m2': {'title': r'$a^2$, $m_\pi^2$'},
     'a2m2noC': {'title': r'$a^2$, $m_\pi^2$ (no C)',
                 'ens_list': ['M0', 'M1', 'M2', 'M3', 'F1M']},
-    'a2a4m2': {'title': r'$a^2$, $a^4$, $m_\pi^2$',
+    'a2a4m2': {'title': r'$a^2$, $m_\pi^2$, $a^4$',
                'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'a4'},
     'a2m2mcut': {'title': r'$a^2$, $m_\pi^2$ (no M3, C2)',
                  'ens_list': ['C0', 'C1', 'M0', 'M1', 'M2', 'F1M']},
@@ -242,27 +242,26 @@ def full_summary(basis='SUSY', run=False, include_C=False,
             for fit in list(ansatz_kwargs.keys())[:-1]:
                 fits[op][fit] = {mu: {'filename': op+'/'+basis+'/'+fit+'_' +
                                       str(int(mu*10))+'.pdf'} for mu in mu_list}
-                akwargs = ansatz_kwargs[fit]
-                akwargs['rotate'] = rot_mtx
-
                 for mu in mu_list:
                     filename = fits[op][fit][mu]['filename']
-                    phys, coeffs, chi_sq_dof, pvalue = b.plot_fits(
-                        mu, ops=[op], filename=filename,
+                    phys, coeffs, chi_sq_dof, pvalue = b.fit_operator(
+                        mu, op, filename=filename, rotate=rot_mtx,
                         chiral_extrap=chiral_extrap,
                         expanded_extrap=expanded_extrap,
-                        **akwargs)
+                        **ansatz_kwargs[fit], plot=True, open=False)
 
                     fits[op][fit][mu].update(
                         {'phys': phys,
                          'coeffs': coeffs,
                          'disp': err_disp(phys.val, phys.err),
-                         'coeff_disp': [err_disp(coeffs.val[0],
-                                                 coeffs.err[0]),
-                                        err_disp(coeffs.val[1],
-                                                 coeffs.err[1])],
+                         'coeff_disp': [err_disp(
+                             coeffs.val[i], coeffs.err[i])
+                             for i in range(len(coeffs.val))],
                          'chi_sq_dof': chi_sq_dof,
                          'pvalue': pvalue})
+                    if len(coeffs.val) == 2:
+                        fits[op][fit][mu]['coeff_disp'].append(' ')
+                        # pdb.set_trace()
 
         for fit in fits['VVpAA'].keys():
             for mu in mu_list:
@@ -302,7 +301,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
     paperwidth = int(3*num_ansatz)
     rv = [r'\documentclass[12pt]{extarticle}']
     rv += [r'\usepackage[paperwidth='+str(paperwidth) +
-           r'in,paperheight=7.5in]{geometry}']
+           r'in,paperheight=8.5in]{geometry}']
     rv += [r'\usepackage{amsmath}']
     rv += [r'\usepackage{hyperref}']
     rv += [r'\usepackage{multirow}']
@@ -364,15 +363,17 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         rv += [r'$\mu$ (GeV) &  & '+'& '.join(ansatze)+r'\\']
         rv += [r'\hline']
         for mu in mu_list:
-            rv += [r'\multirow{2}{0.5in}{'+str(mu)+r'} & $\alpha$ & ' + '& '.join(
+            rv += [r'\multirow{3}{0.5in}{'+str(mu)+r'} & $\alpha$ & ' + '& '.join(
                 [fits[op][fit][mu]['coeff_disp'][0] for fit in fits[op].keys()])+r'\\']
             rv += [r' & $\beta$ & ' + '& '.join([fits[op][fit][mu][
                 'coeff_disp'][1] for fit in fits[op].keys()])+r'\\']
+            rv += [r' & $\gamma$ & ' + '& '.join([fits[op][fit][mu][
+                'coeff_disp'][2] for fit in fits[op].keys()])+r'\\']
             rv += [r'\hline']
         rv += [r'\end{tabular}']
         rv += [r'\caption{Fit values of coefficients in $Q = Q_{phys} + \mathbf{\alpha}'
                + r' a^2 + \mathbf{\beta}\left(\frac{m_\pi^2}{f_\pi^2}-'
-               + r'\frac{m_{\pi,PDG}^2}{f_\pi^2}\right) + \ldots$.}']
+               + r'\frac{m_{\pi,PDG}^2}{f_\pi^2}\right) + \gamma(\ldots)$}']
         rv += [r'\end{center}']
         rv += [r'\end{table}']
 

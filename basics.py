@@ -54,7 +54,7 @@ def st_dev(data, mean=None, **kwargs):
     return np.sqrt(((data-mean).dot(data-mean))/n)
 
 
-def call_PDF(filename, **kwargs):
+def call_PDF(filename, open=True, **kwargs):
     pdf = PdfPages(filename)
     fig_nums = plt.get_fignums()
     figs = [plt.figure(n) for n in fig_nums]
@@ -62,7 +62,8 @@ def call_PDF(filename, **kwargs):
         fig.savefig(pdf, format='pdf')
     pdf.close()
     plt.close('all')
-    os.system('open '+filename)
+    if open:
+        os.system('open '+filename)
 
 
 def fit_func(x, y, ansatz, guess,
@@ -75,12 +76,13 @@ def fit_func(x, y, ansatz, guess,
     L_inv = np.linalg.cholesky(COV)
     L = np.linalg.inv(L_inv)
 
-    def diff(inp, out, param):
-        return out - ansatz(inp, param, **kwargs)
+    def diff(inp, out, param, fit='central', k=0):
+        return out - ansatz(inp, param, fit=fit, k=0, **kwargs)
 
     def LD(param):
         return L.dot(diff(x.val[start:end],
-                          y.val[start:end], param))
+                          y.val[start:end],
+                          param, fit='central'))
 
     res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
     if verbose:
@@ -93,7 +95,8 @@ def fit_func(x, y, ansatz, guess,
     for k in range(N_boot):
         def LD_k(param):
             return L.dot(diff(x.btsp[k, start:end],
-                              y.btsp[k, start:end], param))
+                              y.btsp[k, start:end],
+                              param, fit='btsp', k=k))
         res = least_squares(LD_k, guess, ftol=1e-10, gtol=1e-10)
         res_btsp[k,] = res.x
 

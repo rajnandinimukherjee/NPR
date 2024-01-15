@@ -240,7 +240,7 @@ class bag_analysis:
             btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
         )
 
-        self.Z_info = Z_analysis(self.ens, bag=True)
+        self.Z_info = Z_analysis(self.ens, norm='bag')
 
     def rotate_bag(self, rot_mtx, bag, **kwargs):
         bag_rot = stat(

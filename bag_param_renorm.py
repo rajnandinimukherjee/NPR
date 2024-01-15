@@ -41,12 +41,12 @@ class Z_analysis:
     operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
     N_boot = N_boot
     filename = 'fourquarks_Z.h5'
+    mask = mask
 
-    def __init__(self, ensemble, action=(0, 0), bag=False, **kwargs):
+    def __init__(self, ensemble, action=(0, 0), norm='V', **kwargs):
 
         self.ens = ensemble
         self.action = action
-        self.bag = bag
         self.ainv = stat(
             val=params[self.ens]['ainv'],
             err=params[self.ens]['ainv_err'],
@@ -69,8 +69,10 @@ class Z_analysis:
             btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
         )
 
-        norm = 'bag' if self.bag else 'V'
-        self.load_fq_Z(norm=norm)
+        self.norm = norm
+        if norm == '11':
+            self.mask[0, 0] = False
+        self.load_fq_Z(norm=self.norm)
 
     def interpolate(self, m, xaxis='mu', ainv=None,
                     plot=False, **kwargs):
@@ -85,7 +87,7 @@ class Z_analysis:
         matrix = np.zeros(shape=(5, 5))
         btsp = np.zeros(shape=(N_boot, 5, 5))
         for i, j in itertools.product(range(5), range(5)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 f = interp1d(x.val, self.Z.val[:, i, j],
                              fill_value='extrapolate')
                 matrix[i, j] = f(m)
@@ -112,7 +114,7 @@ class Z_analysis:
             fig, ax, filename = self.plot_Z(xaxis=xaxis, pass_plot=True)
             N_ops = len(operators)
             for i, j in itertools.product(range(N_ops), range(N_ops)):
-                if mask[i, j]:
+                if self.mask[i, j]:
                     ax[i, j].errorbar(m, Z.val[i, j],
                                       yerr=Z.err[i, j],
                                       c='k', fmt='o', capsize=4)
@@ -124,9 +126,9 @@ class Z_analysis:
         Z1 = self.interpolate(mu1, type='mu', **kwargs)
         Z2 = self.interpolate(mu2, **kwargs)
         sigma = stat(
-            val=mask*Z2.val@np.linalg.inv(Z1.val),
+            val=self.mask*Z2.val@np.linalg.inv(Z1.val),
             err='fill',
-            btsp=np.array([mask*Z2.btsp[k,]@np.linalg.inv(Z1.btsp[k,])
+            btsp=np.array([self.mask*Z2.btsp[k,]@np.linalg.inv(Z1.btsp[k,])
                            for k in range(N_boot)]))
         return sigma
 
@@ -142,7 +144,7 @@ class Z_analysis:
         plt.subplots_adjust(hspace=0, wspace=0)
 
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 y = self.Z.val[:, i, j]
                 yerr = self.Z.err[:, i, j]
                 ax[i, j].errorbar(x, y, yerr=yerr, xerr=xerr,
@@ -151,12 +153,8 @@ class Z_analysis:
                     ax[i, j].yaxis.tick_right()
             else:
                 ax[i, j].axis('off')
-        if self.bag:
-            plt.suptitle(
-                r'$Z_{ij}^{'+self.ens+r'}/Z_{A/S}^2$ vs renormalisation scale $\mu$', y=0.9)
-        else:
-            plt.suptitle(
-                r'$Z_{ij}^{'+self.ens+r'}/Z_V^2$ vs renormalisation scale $\mu$', y=0.9)
+        plt.suptitle(
+            r'$Z_{ij}^{'+self.ens+r'}/Z_{'+self.norm+r'}^2$ vs renormalisation scale $\mu$', y=0.9)
 
         if pass_plot:
             return fig, ax, filename
@@ -187,7 +185,7 @@ class Z_analysis:
         plt.subplots_adjust(hspace=0, wspace=0)
 
         for i, j in itertools.product(range(N_ops), range(N_ops)):
-            if mask[i, j]:
+            if self.mask[i, j]:
                 y = [sig.val[i, j] for sig in sigmas]
                 yerr = [sig.err[i, j] for sig in sigmas]
 
@@ -261,7 +259,16 @@ class Z_analysis:
                 btsp=Z_ij_bag_btsp
             )
 
-        else:
+        elif norm == '11':
+            self.Z = stat(
+                val=[Z_ij_Z_q_2.val[m, :, :]/Z_ij_Z_q_2.val[m, 0, 0]
+                     for m in range(self.N_mom)],
+                err='fill',
+                    btsp=[[Z_ij_Z_q_2.btsp[k, m, :, :]/Z_ij_Z_q_2.btsp[k, m, 0, 0]
+                           for m in range(self.N_mom)]
+                          for k in range(N_boot)]
+            )
+        elif norm in bilinear.currents:
             Z_bl_Z_q = stat(
                 val=bl_data[norm]['central'][:],
                 err=bl_data[norm]['errors'][:],
@@ -278,13 +285,8 @@ class Z_analysis:
             )
 
 
-M0_ainv = stat(val=params['M0']['ainv'],
-               err=params['M0']['ainv_err'],
-               btsp='fill')
-ms_phys = M0_ainv*params['M0']['ams_sea']
-
-
 class bag_analysis:
+    mask = mask
 
     def __init__(self, ensemble, obj='bag', action=(0, 0), **kwargs):
 
@@ -299,13 +301,18 @@ class bag_analysis:
             err='fill',
             btsp=self.ainv.btsp**(-2)
         )
+        self.ms_phys = stat(
+            val=params[self.ens]['ams_phys'],
+            err=params[self.ens]['ams_phys_err'],
+            btsp='fill'
+        )*self.ainv
         self.ms_sea = self.ainv*params[self.ens]['ams_sea']
-        self.ms_diff = (self.ms_sea-ms_phys)/ms_phys
+        self.ms_diff = (self.ms_sea-self.ms_phys)/self.ms_phys
         self.ra = ratio_analysis(self.ens)
         if obj == 'bag':
             self.bag = self.ra.B_N
-        elif obj == 'fq_op':
-            self.bag = self.ra.gr_O_gr
+        elif obj == 'ratio':
+            self.bag = self.ra.ratio
 
         self.f_pi = stat(
             val=f_pi_PDG.val/self.ainv.val,
@@ -320,7 +327,12 @@ class bag_analysis:
         )
 
         ens = self.ens
-        self.Z_info = Z_analysis(ens, bag=True)
+        if obj == 'bag':
+            norm = 'bag'
+        elif obj == 'ratio':
+            norm = '11'
+            self.mask[0, 0] = False
+        self.Z_info = Z_analysis(ens, norm=norm)
 
     def interpolate(self, mu, rotate=np.eye(len(operators)), **kwargs):
         Z_mu = self.Z_info.interpolate(mu, rotate=rotate, **kwargs)
