@@ -62,12 +62,15 @@ class Z_analysis:
             val=f_pi_PDG.val/self.ainv.val,
             btsp=f_pi_PDG.btsp/self.ainv.btsp)
 
-        self.m_pi = load_info('m_0', self.ens, operators, meson='ll')
-        self.m_f_sq = stat(
-            val=(self.m_pi.val/self.f_pi.val)**2,
-            err='fill',
-            btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
-        )
+        try:
+            self.m_pi = load_info('m_0', self.ens, operators, meson='ll')
+            self.m_f_sq = stat(
+                val=(self.m_pi.val/self.f_pi.val)**2,
+                err='fill',
+                btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
+            )
+        except KeyError:
+            print('m_pi data not identified, check for consistent ensemble naming')
 
         self.norm = norm
         if norm == '11':
@@ -217,8 +220,8 @@ class Z_analysis:
         fq_data = h5py.File(self.filename, 'r')[
             str(self.action)][self.ens][str(self.masses)]
         self.am = stat(
-            val=fq_data['momenta'][:],
-            err=np.zeros(len(fq_data['momenta'][:])),
+            val=fq_data['ap'][:],
+            err=np.zeros(len(fq_data['ap'][:])),
             btsp='fill'
         )
         self.N_mom = len(self.am.val)
