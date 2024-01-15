@@ -80,7 +80,7 @@ class bilinear_analysis:
                 m_grp = f.create_group(
                     str(action)+'/'+self.ens+'/'+str(masses))
                 mom = m_grp.create_dataset(
-                    'momenta', data=self.momenta[action][masses])
+                    'ap', data=self.momenta[action][masses])
                 for current in self.Z[action][masses][0].keys():
                     c_grp = m_grp.create_group(current)
                     Zs = stat(
@@ -144,8 +144,11 @@ class fourquark_analysis:
         info = params[self.ens]
         self.sea_mass = '{:.4f}'.format(info['masses'][0])
 
-        self.actions = [info['gauges'][0]+'_'+info['baseactions'][0],
-                        info['gauges'][-1]+'_'+info['baseactions'][-1]]
+        gauge_count = len(info['baseactions'])
+        self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
+                        i in range(gauge_count)]
+        #self.actions = [info['gauges'][0]+'_'+info['baseactions'][0],
+        #                info['gauges'][-1]+'_'+info['baseactions'][-1]]
 
         self.momenta, self.Z = {}, {}
 
@@ -205,7 +208,7 @@ class fourquark_analysis:
                 m_grp = f.create_group(
                     str(action)+'/'+self.ens+'/'+str(masses))
                 mom = m_grp.create_dataset(
-                    'momenta', data=self.momenta[action][masses])
+                    'ap', data=self.momenta[action][masses])
                 Zs = stat(
                     val=[self.Z[action][masses][mom].val
                          for mom in range(len(self.Z[action][masses]))],
@@ -222,7 +225,8 @@ class fourquark_analysis:
         N_a = len(self.actions)
         for a1, a2 in itertools.product(range(N_a), range(N_a)):
             self.NPR((self.sea_mass, self.sea_mass), action=(a1, a2))
-        self.merge_mixed()
+        if N_a == 2:
+            self.merge_mixed()
         if save:
             self.save_NPR()
 
