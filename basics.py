@@ -25,12 +25,18 @@ warnings.filterwarnings('ignore')
 # ====misc functions ==================================================
 
 
-def err_disp(num, err, n=2, **kwargs):
+def err_disp(num, err, n=2, sys_err=None, **kwargs):
     ''' converts num and err into num(err) in scientific notation upto n digits
     in error, can be extended for accepting arrays of nums and errs as well, for
     now only one at a time'''
 
-    err_dec_place = int(np.floor(np.log10(np.abs(err))))
+    if sys_err != None:
+        err_dec_place = max(int(np.floor(np.log10(np.abs(err)))),
+                            int(np.floor(np.log10(np.abs(sys_err)))))
+        sys_err_n_digits = int(sys_err*10**(-(err_dec_place+1-n)))
+    else:
+        err_dec_place = int(np.floor(np.log10(np.abs(err))))
+
     err_n_digits = int(err*10**(-(err_dec_place+1-n)))
     num_dec_place = int(np.floor(np.log10(np.abs(num))))
     if num_dec_place < err_dec_place:
@@ -41,7 +47,10 @@ def err_disp(num, err, n=2, **kwargs):
         num_trunc = round(num_sf, num_dec_place-(err_dec_place+1-n))
         digs = -err_dec_place+n-1
         str_num_trunc = str(num)[:digs+2]
-        return str_num_trunc+'('+str(err_n_digits)+')'
+        if sys_err == None:
+            return str_num_trunc+'('+str(err_n_digits)+')'
+        else:
+            return str_num_trunc+'('+str(err_n_digits)+')('+str(sys_err_n_digits)+')'
 
 
 def st_dev(data, mean=None, **kwargs):

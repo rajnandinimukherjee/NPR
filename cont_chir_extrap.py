@@ -494,7 +494,7 @@ class Z_fits:
             else:
                 ax[i, j].axis('off')
         plt.suptitle(r'$Z_{ij}^{'+','.join(self.ens_list) +
-                     '}(\mu='+str(mu)+'$ GeV$)/Z_{'+self.norm+r'}$ vs $m_\pi^2$', y=0.9)
+                     '}(\mu='+str(mu)+'$ GeV$)/Z_{'+self.norm+r'}$ vs $(am_\pi)^2$', y=0.9)
 
         pp = PdfPages(filename)
         fig_nums = plt.get_fignums()
@@ -591,9 +591,9 @@ class Z_fits:
 
 
 M_ens = ['M0', 'M1', 'M2', 'M3']
-M = Z_fits(M_ens, norm='bag')
+M = Z_fits(M_ens[1:], norm='bag')
 C_ens = ['C0', 'C1', 'C2']
-C = Z_fits(C_ens, norm='bag')
+C = Z_fits(C_ens[1:], norm='bag')
 
 
 class bag_fits:
@@ -618,21 +618,24 @@ class bag_fits:
                     for e in ens_list]
         else:
             M_quantities = M.Z_chiral_extrap_phys_handler(
-                mu, passonly=True, **kwargs)
+                mu, passonly=True, chiral_extrap=chiral_extrap,
+                expanded_extrap=expanded_extrap, **kwargs)
             M_extrap, M_mapping, M_fit_params = M_quantities[:3]
-            M_expanded_errs = M_quantities[-1]
 
             C_quantities = C.Z_chiral_extrap_phys_handler(
-                mu, passonly=True, **kwargs)
+                mu, passonly=True, chiral_extrap=chiral_extrap,
+                expanded_extrap=expanded_extrap, **kwargs)
             C_extrap, C_mapping, C_fit_params = C_quantities[:3]
-            C_expanded_errs = C_quantities[-1]
 
             if expanded_extrap and 'C0' in ens_list and 'M0' in ens_list:
+                print('Using expanded extrap')
+                M_expanded_errs = M_quantities[-1]
                 M_extrap = stat(
                     val=M_extrap.val,
                     err=M_expanded_errs,
                     btsp='fill'
                 )
+                C_expanded_errs = C_quantities[-1]
                 C_extrap = stat(
                     val=C_extrap.val,
                     err=C_expanded_errs,
@@ -644,8 +647,33 @@ class bag_fits:
                     Z = M_extrap
                 elif ens in C_ens[1:]:
                     Z = C_extrap
-                elif ens[1] == '0' and expanded_extrap:
-                    Z = C_extrap if ens == 'C0' else M_extrap
+                elif ens[1] == '0':
+                    if expanded_extrap:
+                        Z = C_extrap if ens == 'C0' else M_extrap
+                    else:
+                        print(
+                            f'using slope from {ens[0]} ensembles to chirally extrapolate {ens}')
+                        params = C_fit_params if ens == 'C0' else M_fit_params
+                        slope = stat(
+                            val=params.val[1],
+                            err=params.err[1],
+                            btsp=params.btsp[:, 1]
+                        )
+                        Z0 = self.bag_dict[ens].Z_info.interpolate(
+                            mu, **kwargs)
+                        Z = Z0 - slope*(self.bag_dict[ens].m_pi**2)
+                elif ens == 'F1M':
+                    # chose slope from M ensembles for F1M
+                    params = M_fit_params
+                    slope = stat(
+                        val=params.val[1],
+                        err=params.err[1],
+                        btsp=params.btsp[:, 1]
+                    )
+                    Z0 = self.bag_dict[ens].Z_info.interpolate(
+                        mu, **kwargs)
+                    Z = Z0 - slope*(self.bag_dict[ens].m_pi**2)
+
                 else:
                     Z = self.bag_dict[ens].Z_info.interpolate(mu, **kwargs)
                 Z_dict[ens] = Z

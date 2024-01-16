@@ -42,6 +42,7 @@ class Z_analysis:
     N_boot = N_boot
     filename = 'fourquarks_Z.h5'
     mask = mask
+    N_ops = 5
 
     def __init__(self, ensemble, action=(0, 0), norm='V', **kwargs):
 
@@ -87,23 +88,126 @@ class Z_analysis:
         elif xaxis == 'amu':
             x = self.am
 
-        matrix = np.zeros(shape=(5, 5))
-        btsp = np.zeros(shape=(N_boot, 5, 5))
-        for i, j in itertools.product(range(5), range(5)):
-            if self.mask[i, j]:
-                f = interp1d(x.val, self.Z.val[:, i, j],
-                             fill_value='extrapolate')
-                matrix[i, j] = f(m)
+        # for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
+        #    if self.mask[i, j]:
+        #        y = stat(
+        #            val=self.Z.val[:, i, j],
+        #            err=self.Z.err[:, i, j],
+        #            btsp=self.Z.btsp[:, :, i, j]
+        #        )
+        #        f = interp1d(x.val, y.val,
+        #                     fill_value='extrapolate')
+        #        matrix[i, j] = f(m)
 
-                for k in range(self.N_boot):
-                    f = interp1d(x.btsp[k,], self.Z.btsp[k, :, i, j],
-                                 fill_value='extrapolate')
-                    btsp[k, i, j] = f(m)
+        #        for k in range(self.N_boot):
+        #            f = interp1d(x.btsp[k,], y.btsp[k,],
+        #                         fill_value='extrapolate')
+        #            btsp[k, i, j] = f(m)
+
+        fig, ax, filename = self.plot_Z(xaxis=xaxis, pass_plot=True)
+        if filename in kwargs:
+            filename = kwargs['filename']
+
+        matrix = np.zeros(shape=(self.N_ops, self.N_ops))
+        errors = np.zeros(shape=(self.N_ops, self.N_ops))
+        stat_errors = np.zeros(shape=(self.N_ops, self.N_ops))
+        sys_errors = np.zeros(shape=(self.N_ops, self.N_ops))
+        btsp = np.zeros(shape=(N_boot, self.N_ops, self.N_ops))
+        for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
+            if self.mask[i, j]:
+                y = stat(
+                    val=self.Z.val[:, i, j],
+                    err=self.Z.err[:, i, j],
+                    btsp=self.Z.btsp[:, :, i, j]
+                )
+
+                def linear_ansatz(x, param, **kwargs):
+                    return param[0] + param[1]*x
+                lin_indices = np.sort(
+                    self.closest_n_points(m, x.val, n=2))
+                linear_res = fit_func(x, y, linear_ansatz, [1, 0.1],
+                                      start=lin_indices[0],
+                                      end=lin_indices[1]+1)
+                lin_pred = linear_res.mapping(m)
+
+                def quadratic_ansatz(x, param, **kwargs):
+                    return param[0] + param[1]*x + param[2]*(x**2)
+                quad_indices = np.sort(
+                    self.closest_n_points(m, x.val, n=3))
+                quadratic_res = fit_func(x, y, quadratic_ansatz, [1, 0.1, 0.01],
+                                         start=quad_indices[0],
+                                         end=quad_indices[2]+1)
+                quad_pred = quadratic_res.mapping(m)
+
+                average = (lin_pred + quad_pred)/2
+                matrix[i, j] = average.val
+                btsp[:, i, j] = average.btsp
+                stat_errors[i, j] = max(abs(lin_pred.err), abs(quad_pred.err))
+                sys_errors[i, j] = np.abs(lin_pred.val - quad_pred.val)/2
+                errors[i, j] = stat_errors[i, j] + sys_errors[i, j]
+
+                if plot:
+                    x_grain = np.linspace(
+                        x.val[lin_indices[0]], x.val[lin_indices[1]], 20)
+                    lin_grain = linear_res.mapping(x_grain)
+                    lin_plot_idx = lin_indices[1]
+                    ax[i, j].errorbar(x.val[lin_plot_idx],
+                                      lin_pred.val,
+                                      yerr=lin_pred.err,
+                                      c='r', fmt='o',
+                                      label=err_disp(
+                                          lin_pred.val,
+                                          lin_pred.err),
+                                      capsize=4)
+                    ax[i, j].fill_between(x_grain,
+                                          lin_grain.val+lin_grain.err,
+                                          lin_grain.val-lin_grain.err,
+                                          color='r', alpha=0.1,
+                                          )
+                    ax[i, j].text(x.val[lin_plot_idx], lin_pred.val,
+                                  '2', color='w', va='center', ha='center',
+                                  fontsize=6)
+
+                    x_grain = np.linspace(
+                        x.val[quad_indices[0]], x.val[quad_indices[2]], 20)
+                    quad_grain = quadratic_res.mapping(x_grain)
+                    quad_plot_idx = lin_plot_idx+1
+                    ax[i, j].errorbar(x.val[quad_plot_idx],
+                                      quad_pred.val,
+                                      yerr=quad_pred.err,
+                                      c='g', fmt='o',
+                                      label=err_disp(
+                                          quad_pred.val,
+                                          quad_pred.err),
+                                      capsize=4)
+                    ax[i, j].fill_between(x_grain,
+                                          quad_grain.val+quad_grain.err,
+                                          quad_grain.val-quad_grain.err,
+                                          color='g', alpha=0.1,
+                                          )
+                    ax[i, j].text(x.val[quad_plot_idx], quad_pred.val,
+                                  '3', color='w', va='center', ha='center',
+                                  fontsize=6)
+                    ax[i, j].errorbar(m, matrix[i, j], yerr=errors[i, j],
+                                      c='k', fmt='o', capsize=4,
+                                      label=err_disp(
+                                          matrix[i, j], stat_errors[i, j],
+                                          sys_err=sys_errors[i, j]))
+                    ax[i, j].legend()
+
+        if plot:
+            call_PDF(filename)
+        else:
+            plt.close(fig)
+
         Z = stat(
             val=matrix,
-            err='fill',
+            err=errors,
             btsp=btsp
         )
+        Z.stat_err = stat_errors
+        Z.sys_err = sys_errors
+
         if 'rotate' in kwargs:
             rot_mtx = kwargs['rotate']
             Z = stat(
@@ -112,16 +216,6 @@ class Z_analysis:
                 btsp=np.array([rot_mtx@Z.btsp[k,]@np.linalg.inv(rot_mtx)
                                for k in range(N_boot)])
             )
-
-        if plot:
-            fig, ax, filename = self.plot_Z(xaxis=xaxis, pass_plot=True)
-            N_ops = len(operators)
-            for i, j in itertools.product(range(N_ops), range(N_ops)):
-                if self.mask[i, j]:
-                    ax[i, j].errorbar(m, Z.val[i, j],
-                                      yerr=Z.err[i, j],
-                                      c='k', fmt='o', capsize=4)
-            call_PDF(filename)
 
         return Z
 
@@ -137,8 +231,7 @@ class Z_analysis:
 
     def plot_Z(self, xaxis='mu', filename='plots/Z_scaling.pdf',
                pass_plot=False, **kwargs):
-        x = self.am.val if xaxis == 'am' else (self.am*self.ainv).val
-        xerr = self.am.err if xaxis == 'am' else (self.am*self.ainv).err
+        x = self.am if xaxis == 'am' else (self.am*self.ainv)
 
         N_ops = len(operators)
         fig, ax = plt.subplots(nrows=N_ops, ncols=N_ops,
@@ -148,10 +241,15 @@ class Z_analysis:
 
         for i, j in itertools.product(range(N_ops), range(N_ops)):
             if self.mask[i, j]:
-                y = self.Z.val[:, i, j]
-                yerr = self.Z.err[:, i, j]
-                ax[i, j].errorbar(x, y, yerr=yerr, xerr=xerr,
+                y = stat(
+                    val=self.Z.val[:, i, j],
+                    err=self.Z.err[:, i, j],
+                    btsp=self.Z.btsp[:, :, i, j]
+                )
+                ax[i, j].errorbar(x.val, y.val,
+                                  yerr=y.err, xerr=x.err,
                                   fmt='o', capsize=4)
+
                 if j == 2 or j == 4:
                     ax[i, j].yaxis.tick_right()
             else:
@@ -287,6 +385,15 @@ class Z_analysis:
                                for k in range(N_boot)])
             )
 
+    def closest_n_points(self, target, values, n, **kwargs):
+        diff = np.abs(np.array(values)-np.array(target))
+        sort = np.sort(diff)
+        closest_idx = []
+        for n_idx in range(n):
+            nth_closest_point = list(diff).index(sort[n_idx])
+            closest_idx.append(nth_closest_point)
+        return closest_idx
+
 
 class bag_analysis:
     mask = mask
@@ -378,7 +485,7 @@ class bag_analysis:
                     f += log_term*m_f_sq
             return f
 
-        func = param[0] + param[1]*a_sq +\
+        func = param[0] + param[1]*a_sq + \
             (mpi_dep(m_f_sq)-mpi_dep(PDG))
         if 'addnl_terms' in kwargs:
             if kwargs['addnl_terms'] == 'a4':
