@@ -31,26 +31,26 @@ def err_disp(num, err, n=2, sys_err=None, **kwargs):
     now only one at a time'''
 
     if sys_err != None:
-        err_dec_place = max(int(np.floor(np.log10(np.abs(err)))),
-                            int(np.floor(np.log10(np.abs(sys_err)))))
-        sys_err_n_digits = int(sys_err*10**(-(err_dec_place+1-n)))
+        err_size = max(int(np.floor(np.log10(np.abs(err)))),
+                       int(np.floor(np.log10(np.abs(sys_err)))))
     else:
-        err_dec_place = int(np.floor(np.log10(np.abs(err))))
+        err_size = int(np.floor(np.log10(np.abs(err))))
 
-    err_n_digits = int(err*10**(-(err_dec_place+1-n)))
-    num_dec_place = int(np.floor(np.log10(np.abs(num))))
-    if num_dec_place < err_dec_place:
-        # print('Error is larger than measurement')
-        return str(np.around(num, 3))
+    num_size = int(np.floor(np.log10(np.abs(num))))
+    min_size = min(err_size, num_size+(n-1))
+    err_n_digits = int(err*10**(-(min_size-(n-1))))
+
+    if min_size > (n-1):
+        disp_str = f'{num}({err})'
     else:
-        num_sf = num*10**(-(num_dec_place))
-        num_trunc = round(num_sf, num_dec_place-(err_dec_place+1-n))
-        digs = -err_dec_place+n-1
-        str_num_trunc = str(num)[:digs+2]
-        if sys_err == None:
-            return str_num_trunc+'('+str(err_n_digits)+')'
-        else:
-            return str_num_trunc+'('+str(err_n_digits)+')('+str(sys_err_n_digits)+')'
+        disp_str = "{:.{m}f}".format(num, m=-(min_size-(n-1)))
+        disp_str += f'({err_n_digits})'
+
+    if sys_err != None:
+        sys_err_n_digits = int(sys_err*10**(-(min_size-(n-1))))
+        disp_str += f'({sys_err_n_digits})'
+
+    return disp_str
 
 
 def st_dev(data, mean=None, **kwargs):

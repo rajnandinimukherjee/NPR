@@ -45,7 +45,6 @@ class Z_analysis:
     N_ops = 5
 
     def __init__(self, ensemble, action=(0, 0), norm='V', **kwargs):
-
         self.ens = ensemble
         self.action = action
         self.ainv = stat(
@@ -402,15 +401,17 @@ class bag_analysis:
 
         self.ens = ensemble
         self.action = action
-        self.ainv = stat(
-            val=params[self.ens]['ainv'],
-            err=params[self.ens]['ainv_err'],
-            btsp='fill')
-        self.a_sq = stat(
-            val=self.ainv.val**(-2),
-            err='fill',
-            btsp=self.ainv.btsp**(-2)
-        )
+        self.ra = ratio_analysis(self.ens)
+        if obj == 'bag':
+            norm = 'bag'
+            self.bag = self.ra.B_N
+        elif obj == 'ratio':
+            norm = '11'
+            self.mask[0, 0] = False
+            self.bag = self.ra.ratio
+        self.Z_info = Z_analysis(self.ens, norm=norm)
+        self.ainv = self.Z_info.ainv
+        self.a_sq = self.ainv**(-2)
         self.ms_phys = stat(
             val=params[self.ens]['ams_phys'],
             err=params[self.ens]['ams_phys_err'],
@@ -418,11 +419,6 @@ class bag_analysis:
         )*self.ainv
         self.ms_sea = self.ainv*params[self.ens]['ams_sea']
         self.ms_diff = (self.ms_sea-self.ms_phys)/self.ms_phys
-        self.ra = ratio_analysis(self.ens)
-        if obj == 'bag':
-            self.bag = self.ra.B_N
-        elif obj == 'ratio':
-            self.bag = self.ra.ratio
 
         self.f_pi = stat(
             val=f_pi_PDG.val/self.ainv.val,
@@ -435,14 +431,6 @@ class bag_analysis:
             err='fill',
             btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
         )
-
-        ens = self.ens
-        if obj == 'bag':
-            norm = 'bag'
-        elif obj == 'ratio':
-            norm = '11'
-            self.mask[0, 0] = False
-        self.Z_info = Z_analysis(ens, norm=norm)
 
     def interpolate(self, mu, rotate=np.eye(len(operators)), **kwargs):
         Z_mu = self.Z_info.interpolate(mu, rotate=rotate, **kwargs)
