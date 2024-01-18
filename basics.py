@@ -474,6 +474,8 @@ def encode_prop(prop_info):
 
 m_pi_PDG = stat(val=139.5709/1000, err=0.00018/1000, btsp='fill')
 f_pi_PDG = stat(val=130.41/1000, err=0.23/1000, btsp='fill')
+m_K_PDG = stat(val=497.614/1000, err=0.024/1000, btsp='fill')
+f_K_PDG = stat(val=158.1/1000, err=3.9/1000, btsp='fill')
 
 m_f_sq_PDG = (m_pi_PDG/f_pi_PDG)**2
 

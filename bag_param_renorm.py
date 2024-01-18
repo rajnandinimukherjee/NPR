@@ -481,13 +481,6 @@ class ratio_analysis:
         self.ZA_L_0 = load_info('aLL_0', self.ens)
 
         self.gr_O_gr = load_info('gr-O-gr', self.ens)
-        gr1 = stat(
-            val=self.gr_O_gr.val[0],
-            err=self.gr_O_gr.err[0],
-            btsp=self.gr_O_gr.btsp[:, 0]
-        )
-        self.ratio = self.gr_O_gr/gr1
-
         self.Ni = norm_factors()
         B1 = stat(
             val=self.gr_O_gr.val[0]/(
@@ -520,3 +513,10 @@ class ratio_analysis:
             btsp='fill'
         )
         self.B_N = Ni_diag@self.bag
+
+        self.ratio = self.gr_O_gr/self.gr_O_gr[0]
+        self.m_P = load_info('m_0', self.ens)
+        self.f_P = load_info('f_M', self.ens)
+        K_exp_ratio = (m_K_PDG/f_K_PDG)**2
+        P_lat_ratio = (self.m_P/self.f_P)**2
+        # self.ratio = P_lat_ratio*self.ratio/K_exp_ratio
