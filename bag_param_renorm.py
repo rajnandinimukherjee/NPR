@@ -1,9 +1,12 @@
 import itertools
 from scipy.interpolate import interp1d
 from NPR_classes import *
+import hashlib
 
 all_bag_data = h5py.File('kaon_bag_fits.h5', 'r')
 bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
+ensemble_seeds = {ens: int(hashlib.sha256(str.encode(ens)).hexdigest(), base=16)
+                  for ens in bag_ensembles}
 
 
 def load_info(key, ens, ops=operators, meson='ls', **kwargs):
@@ -38,11 +41,10 @@ def load_info(key, ens, ops=operators, meson='ls', **kwargs):
 
 
 class Z_analysis:
-    operators = ['VVpAA', 'VVmAA', 'SSmPP', 'SSpPP', 'TT']
     N_boot = N_boot
     filename = 'fourquarks_Z.h5'
     mask = mask
-    N_ops = 5
+    N_ops = len(operators)
 
     def __init__(self, ensemble, action=(0, 0), norm='V', **kwargs):
         self.ens = ensemble
@@ -50,7 +52,7 @@ class Z_analysis:
         self.ainv = stat(
             val=params[self.ens]['ainv'],
             err=params[self.ens]['ainv_err'],
-            btsp='fill')
+            btsp='seed', seed=ensemble_seeds[self.ens])
         self.a_sq = stat(
             val=self.ainv.val**(-2),
             err='fill',
@@ -87,25 +89,10 @@ class Z_analysis:
         elif xaxis == 'amu':
             x = self.am
 
-        # for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
-        #    if self.mask[i, j]:
-        #        y = stat(
-        #            val=self.Z.val[:, i, j],
-        #            err=self.Z.err[:, i, j],
-        #            btsp=self.Z.btsp[:, :, i, j]
-        #        )
-        #        f = interp1d(x.val, y.val,
-        #                     fill_value='extrapolate')
-        #        matrix[i, j] = f(m)
-
-        #        for k in range(self.N_boot):
-        #            f = interp1d(x.btsp[k,], y.btsp[k,],
-        #                         fill_value='extrapolate')
-        #            btsp[k, i, j] = f(m)
-
-        fig, ax, filename = self.plot_Z(xaxis=xaxis, pass_plot=True)
-        if filename in kwargs:
-            filename = kwargs['filename']
+        if plot:
+            fig, ax, filename = self.plot_Z(xaxis=xaxis, pass_plot=plot)
+            if filename in kwargs:
+                filename = kwargs['filename']
 
         matrix = np.zeros(shape=(self.N_ops, self.N_ops))
         errors = np.zeros(shape=(self.N_ops, self.N_ops))
@@ -120,23 +107,33 @@ class Z_analysis:
                     btsp=self.Z.btsp[:, :, i, j]
                 )
 
-                def linear_ansatz(x, param, **kwargs):
-                    return param[0] + param[1]*x
                 lin_indices = np.sort(
                     self.closest_n_points(m, x.val, n=2))
-                linear_res = fit_func(x, y, linear_ansatz, [1, 0.1],
-                                      start=lin_indices[0],
-                                      end=lin_indices[1]+1)
-                lin_pred = linear_res.mapping(m)
+                x_1, y_1 = x[lin_indices[0]], y[lin_indices[0]]
+                x_2, y_2 = x[lin_indices[1]], y[lin_indices[1]]
+                slope = (y_2-y_1)/(x_2-x_1)
+                intercept = y_1 - slope*x_1
 
-                def quadratic_ansatz(x, param, **kwargs):
-                    return param[0] + param[1]*x + param[2]*(x**2)
+                lin_pred = intercept + slope*m
+
                 quad_indices = np.sort(
                     self.closest_n_points(m, x.val, n=3))
-                quadratic_res = fit_func(x, y, quadratic_ansatz, [1, 0.1, 0.01],
-                                         start=quad_indices[0],
-                                         end=quad_indices[2]+1)
-                quad_pred = quadratic_res.mapping(m)
+                x_1, y_1 = x[quad_indices[0]], y[quad_indices[0]]
+                x_2, y_2 = x[quad_indices[1]], y[quad_indices[1]]
+                x_3, y_3 = x[quad_indices[2]], y[quad_indices[2]]
+
+                a = y_1/((x_1-x_2)*(x_1-x_3)) + y_2 / \
+                    ((x_2-x_1)*(x_2-x_3)) + y_3/((x_3-x_1)*(x_3-x_2))
+
+                b = (-y_1*(x_2+x_3)/((x_1-x_2)*(x_1-x_3))
+                     - y_2*(x_1+x_3)/((x_2-x_1)*(x_2-x_3))
+                     - y_3*(x_1+x_2)/((x_3-x_1)*(x_3-x_2)))
+
+                c = (y_1*x_2*x_3/((x_1-x_2)*(x_1-x_3))
+                     + y_2*x_1*x_3/((x_2-x_1)*(x_2-x_3))
+                     + y_3*x_1*x_2/((x_3-x_1)*(x_3-x_2)))
+
+                quad_pred = a*(m**2) + b*m + c
 
                 average = (lin_pred + quad_pred)/2
                 matrix[i, j] = average.val
@@ -148,7 +145,8 @@ class Z_analysis:
                 if plot:
                     x_grain = np.linspace(
                         x.val[lin_indices[0]], x.val[lin_indices[1]], 20)
-                    lin_grain = linear_res.mapping(x_grain)
+                    lin_grain = join_stats(
+                        [intercept+slope*g for g in x_grain])
                     lin_plot_idx = lin_indices[1]
                     ax[i, j].errorbar(x.val[lin_plot_idx],
                                       lin_pred.val,
@@ -169,7 +167,8 @@ class Z_analysis:
 
                     x_grain = np.linspace(
                         x.val[quad_indices[0]], x.val[quad_indices[2]], 20)
-                    quad_grain = quadratic_res.mapping(x_grain)
+                    quad_grain = join_stats(
+                        [a*(g**2) + b*g + c for g in x_grain])
                     quad_plot_idx = lin_plot_idx+1
                     ax[i, j].errorbar(x.val[quad_plot_idx],
                                       quad_pred.val,
@@ -196,8 +195,6 @@ class Z_analysis:
 
         if plot:
             call_PDF(filename)
-        else:
-            plt.close(fig)
 
         Z = stat(
             val=matrix,
@@ -232,13 +229,12 @@ class Z_analysis:
                pass_plot=False, **kwargs):
         x = self.am if xaxis == 'am' else (self.am*self.ainv)
 
-        N_ops = len(operators)
-        fig, ax = plt.subplots(nrows=N_ops, ncols=N_ops,
+        fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
                                sharex='col',
                                figsize=(16, 16))
         plt.subplots_adjust(hspace=0, wspace=0)
 
-        for i, j in itertools.product(range(N_ops), range(N_ops)):
+        for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
             if self.mask[i, j]:
                 y = stat(
                     val=self.Z.val[:, i, j],
@@ -278,8 +274,7 @@ class Z_analysis:
             sig_str = r'$\sigma_{ij}^{'+self.ens + \
                 r'}(\mu\leftarrow '+str(mu1)+r')$'
 
-        N_ops = len(operators)
-        fig, ax = plt.subplots(nrows=N_ops, ncols=N_ops,
+        fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
                                sharex='col',
                                figsize=(16, 16))
         plt.subplots_adjust(hspace=0, wspace=0)
@@ -395,7 +390,6 @@ class Z_analysis:
 
 
 class bag_analysis:
-    mask = mask
 
     def __init__(self, ensemble, obj='bag', action=(0, 0), **kwargs):
 
@@ -407,30 +401,23 @@ class bag_analysis:
             self.bag = self.ra.B_N
         elif obj == 'ratio':
             norm = '11'
-            self.mask[0, 0] = False
             self.bag = self.ra.ratio
+
         self.Z_info = Z_analysis(self.ens, norm=norm)
+
         self.ainv = self.Z_info.ainv
         self.a_sq = self.ainv**(-2)
         self.ms_phys = stat(
             val=params[self.ens]['ams_phys'],
             err=params[self.ens]['ams_phys_err'],
-            btsp='fill'
-        )*self.ainv
+            btsp='fill')*self.ainv
         self.ms_sea = self.ainv*params[self.ens]['ams_sea']
         self.ms_diff = (self.ms_sea-self.ms_phys)/self.ms_phys
 
-        self.f_pi = stat(
-            val=f_pi_PDG.val/self.ainv.val,
-            err='fill',
-            btsp=f_pi_PDG.btsp/self.ainv.btsp)
+        self.f_pi = f_pi_PDG/self.ainv
 
         self.m_pi = load_info('m_0', self.ens, meson='ll')
-        self.m_f_sq = stat(
-            val=(self.m_pi.val/self.f_pi.val)**2,
-            err='fill',
-            btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
-        )
+        self.m_f_sq = (self.m_pi**2)/(self.f_pi**2)
 
     def interpolate(self, mu, rotate=np.eye(len(operators)), **kwargs):
         Z_mu = self.Z_info.interpolate(mu, rotate=rotate, **kwargs)
@@ -485,7 +472,6 @@ class bag_analysis:
 
 
 class ratio_analysis:
-
     def __init__(self, ens, action=(0, 0), **kwargs):
         self.ens = ens
         self.op_recon()

@@ -509,20 +509,17 @@ class Z_fits:
 
 
 M_ens = ['M0', 'M1', 'M2', 'M3']
-M = Z_fits(M_ens[1:], norm='bag')
 C_ens = ['C0', 'C1', 'C2']
-C = Z_fits(C_ens[1:], norm='bag')
 
 
 class bag_fits:
-    mask = mask
     operators = operators
 
     def __init__(self, ens_list, obj='bag', **kwargs):
         self.ens_list = ens_list
         self.obj = obj
-        if self.obj == 'ratio':
-            self.operators = self.operators[1:]
+        if obj == 'ratio':
+            self.operators = operators[1:]
         self.bag_dict = {e: bag_analysis(e, obj=obj)
                          for e in self.ens_list}
         self.colors = {list(self.bag_dict.keys())[k]: list(
@@ -532,17 +529,18 @@ class bag_fits:
     def load_bag(self, mu, ens_list, chiral_extrap=False,
                  expanded_extrap=False, **kwargs):
         if not chiral_extrap:
-            bags = [self.bag_dict[e].interpolate(mu, **kwargs)
-                    for e in ens_list]
+            self.bag = join_stats([self.bag_dict[e].interpolate(mu, **kwargs)
+                                  for e in ens_list])
         else:
+            M, C = kwargs['M'], kwargs['C']
             M_quantities = M.Z_chiral_extrap_phys_handler(
                 mu, passonly=True, chiral_extrap=chiral_extrap,
                 expanded_extrap=expanded_extrap, **kwargs)
-            M_extrap, M_mapping, M_fit_params = M_quantities[:3]
-
             C_quantities = C.Z_chiral_extrap_phys_handler(
                 mu, passonly=True, chiral_extrap=chiral_extrap,
                 expanded_extrap=expanded_extrap, **kwargs)
+
+            M_extrap, M_mapping, M_fit_params = M_quantities[:3]
             C_extrap, C_mapping, C_fit_params = C_quantities[:3]
 
             if expanded_extrap and 'C0' in ens_list and 'M0' in ens_list:
@@ -572,25 +570,29 @@ class bag_fits:
                         print(
                             f'using slope from {ens[0]} ensembles to chirally extrapolate {ens}')
                         params = C_fit_params if ens == 'C0' else M_fit_params
-                        slope = stat(
-                            val=params.val[1],
-                            err=params.err[1],
-                            btsp=params.btsp[:, 1]
-                        )
+                        slope = params[1]
                         Z0 = self.bag_dict[ens].Z_info.interpolate(
                             mu, **kwargs)
                         Z = Z0 - slope*(self.bag_dict[ens].m_pi**2)
                 elif ens == 'F1M':
-                    # chose slope from M ensembles for F1M
-                    params = M_fit_params
-                    slope = stat(
-                        val=params.val[1],
-                        err=params.err[1],
-                        btsp=params.btsp[:, 1]
-                    )
+                    print(
+                        f'using chiral slopes from both C and M shamir ensembles to extrapolate {ens}')
+                    C_slope = C_fit_params[1]
+                    M_slope = M_fit_params[1]
                     Z0 = self.bag_dict[ens].Z_info.interpolate(
                         mu, **kwargs)
-                    Z = Z0 - slope*(self.bag_dict[ens].m_pi**2)
+
+                    Z_C = Z0 - C_slope*(self.bag_dict[ens].m_pi**2)
+                    Z_M = Z0 - M_slope*(self.bag_dict[ens].m_pi**2)
+                    Z = stat(
+                        val=(Z_C.val+Z_M.val)/2,
+                        err=[[max(Z_C.err[i, j], Z_M.err[i, j])
+                              for j in range(5)]
+                             for i in range(5)],
+                        btsp=(Z_C.btsp+Z_M.btsp)/2
+                    )
+                    Z.sys_err = np.abs(Z_C.val-Z_M.val)/2
+                    Z.err += Z.sys_err
 
                 else:
                     Z = self.bag_dict[ens].Z_info.interpolate(mu, **kwargs)
@@ -606,15 +608,8 @@ class bag_fits:
                 btsp='fill'
             )
 
-            bags = [Z_dict[e]@(rot_mtx@self.bag_dict[e].bag)
-                    for e in ens_list]
-
-        self.bag = stat(
-            val=[b.val for b in bags],
-            err=[b.err for b in bags],
-            btsp=np.array([b.btsp for b in bags])
-        )
-        self.bag.btsp = self.bag.btsp.swapaxes(0, 1)
+            self.bag = join_stats([Z_dict[e]@(rot_mtx@self.bag_dict[e].bag)
+                                   for e in ens_list])
 
     def fit_operator(self, mu, operator, ens_list=None,
                      guess=[1e-1, 1e-2, 1e-3], title='',
@@ -643,18 +638,8 @@ class bag_fits:
         guess = np.array(guess)
 
         res = fit_func(x, y, ansatz, guess, **kwargs)
-        cc_coeffs = stat(
-            val=res.val[1:]/res.val[0],
-            err='fill',
-            btsp=np.array([res.btsp[k, 1:]/res.btsp[k, 0]
-                           for k in range(N_boot)])
-        )
-
-        y_phys = stat(
-            val=res.val[0],
-            err=res.err[0],
-            btsp=res.btsp[:, 0]
-        )
+        cc_coeffs = res[1:]/res[0]
+        y_phys = res[0]
 
         if plot:
             fig, ax = plt.subplots(1, 2, figsize=(15, 6))
@@ -768,7 +753,7 @@ class bag_fits:
             if 'filename' in kwargs:
                 filename = kwargs['filename']
             else:
-                filename = f'plots/bag_fits_{operator}.pdf'
+                filename = f'plots/{self.obj}_fits_{operator}.pdf'
             call_PDF(filename, open=open)
 
-        return y_phys, cc_coeffs, res.chi_sq/res.DOF, res.pvalue
+        return res

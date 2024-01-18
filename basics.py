@@ -77,13 +77,19 @@ def call_PDF(filename, open=True, **kwargs):
 
 def fit_func(x, y, ansatz, guess,
              start=0, end=None,
-             verbose=False, **kwargs):
+             verbose=False,
+             correlated=False,
+             pause=False, **kwargs):
+
     if end == None:
         end = len(x.val)
 
-    COV = np.diag(y.err[start:end]**2)
-    L_inv = np.linalg.cholesky(COV)
-    L = np.linalg.inv(L_inv)
+    if correlated:
+        cov = COV(y.btsp[:, start:end], center=y.val[start:end])
+        L_inv = np.linalg.cholesky(cov)
+        L = np.linalg.inv(L_inv)
+    else:
+        L = np.diag(1/y.err[start:end])
 
     def diff(inp, out, param, fit='central', k=0):
         return out - ansatz(inp, param, fit=fit, k=0, **kwargs)
@@ -95,7 +101,7 @@ def fit_func(x, y, ansatz, guess,
 
     res = least_squares(LD, guess, ftol=1e-10, gtol=1e-10)
     if verbose:
-        print(res.message)
+        print(res)
 
     chi_sq = LD(res.x).dot(LD(res.x))
     DOF = len(x.val[start:end])-np.count_nonzero(guess)
@@ -106,8 +112,8 @@ def fit_func(x, y, ansatz, guess,
             return L.dot(diff(x.btsp[k, start:end],
                               y.btsp[k, start:end],
                               param, fit='btsp', k=k))
-        res = least_squares(LD_k, guess, ftol=1e-10, gtol=1e-10)
-        res_btsp[k,] = res.x
+        res_k = least_squares(LD_k, guess, ftol=1e-10, gtol=1e-10)
+        res_btsp[k,] = res_k.x
 
     res = stat(val=res.x, err='fill', btsp=res_btsp)
 
@@ -128,6 +134,8 @@ def fit_func(x, y, ansatz, guess,
     res.DOF = DOF
     res.pvalue = gammaincc(DOF/2, chi_sq/2)
     res.range = (start, end)
+    if pause:
+        pdb.set_trace()
 
     return res
 # =====statistical obj class======================================
@@ -159,6 +167,9 @@ class stat:
         if type(btsp) == str:
             if btsp == 'fill':
                 self.calc_btsp()
+            if btsp == 'seed':
+                seed = kwargs['seed']
+                self.calc_btsp(seed=seed)
 
     def calc_err(self):
         if type(self.btsp) == np.ndarray:
@@ -169,13 +180,14 @@ class stat:
         else:
             self.err = np.zeros(shape=self.shape)
 
-    def calc_btsp(self):
+    def calc_btsp(self, seed=None):
         if type(self.err) != np.ndarray:
             self.err = np.zeros(shape=self.shape)
 
         self.btsp = np.zeros(shape=self.shape+(self.N_boot,))
         for idx, central in np.ndenumerate(self.val):
-            # np.random.seed(self.seed)
+            if seed != None:
+                np.random.seed(self.seed)
             self.btsp[idx] = np.random.normal(
                 central, self.err[idx], self.N_boot)
         self.btsp = np.moveaxis(self.btsp, -1, 0)
@@ -187,15 +199,6 @@ class stat:
                          for k in range(N_boot)])
 
         return stat(val=central, err='fill', btsp=btsp)
-
-    def __getitem__(self, arg):
-        new_stat = stat(
-            val=self.val[arg],
-            err=self.err[arg],
-            btsp=np.array([self.btsp[k, arg]
-                           for k in range(self.N_boot)])
-        )
-        return new_stat
 
     def __add__(self, other):
         if not isinstance(other, stat):
@@ -281,12 +284,20 @@ class stat:
         )
         return new_stat
 
-    def __neg__(self, num):
+    def __neg__(self):
         new_stat = stat(
             val=-self.val,
-            err='fill',
-            btsp=np.array([-self.btsp[k,]
-                           for k in range(self.N_boot)])
+            err=self.err,
+            btsp=-self.btsp
+        )
+        return new_stat
+
+    def __getitem__(self, indices):
+        key = indices
+        new_stat = stat(
+            val=self.val[key],
+            err=self.err[key],
+            btsp=self.btsp[:, key]
         )
         return new_stat
 

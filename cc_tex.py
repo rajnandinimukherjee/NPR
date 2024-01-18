@@ -204,13 +204,12 @@ def operator_summary(operator, fits, basis='NPR', filename=None,
 def full_summary(basis='SUSY', run=False, include_C=False,
                  with_FLAG=False, calc_running=False,
                  obj='bag', chiral_extrap=False,
-                 expanded_extrap=False,
                  add_str='', **kwargs):
     rot_mtx = basis_rotation(basis)
     C_folder = 'with_C' if include_C else 'without_C'
 
-    # sigma_file = f'sigmas/{C_folder}/sigmas_{basis}'+add_str+'.p'
-    sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
+    sigma_file = f'sigmas/{C_folder}/sigmas_{basis}'+add_str+'.p'
+    # sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
     if calc_running:
         Z.store = {}
         mus = np.around(np.arange(16, 31, 1)*0.1, 1)
@@ -234,36 +233,40 @@ def full_summary(basis='SUSY', run=False, include_C=False,
     dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{obj}_{basis}'+add_str+'.p'
     if run:
         fits = {}
+        if obj == 'bag':
+            norm = 'bag'
+        elif obj == 'ratio':
+            norm = '11'
+        C = Z_fits(C_ens[1:], norm=norm)
+        M = Z_fits(M_ens[1:], norm=norm)
         b = bag_fits(bag_ensembles, obj=obj)
 
-        for op in tqdm(operators, desc=f'{obj} fits'):
+        for op in tqdm(b.operators, desc=f'{obj} fits'):
             op_idx = operators.index(op)
             fits[op] = {}
             for fit in list(ansatz_kwargs.keys())[:-1]:
-                fits[op][fit] = {mu: {'filename': op+'/'+basis+'/'+fit+'_' +
+                fits[op][fit] = {mu: {'filename': op+'/'+basis+f'/{obj}_'+fit+'_' +
                                       str(int(mu*10))+'.pdf'} for mu in mu_list}
                 for mu in mu_list:
                     filename = fits[op][fit][mu]['filename']
-                    phys, coeffs, chi_sq_dof, pvalue = b.fit_operator(
+                    res = b.fit_operator(
                         mu, op, filename=filename, rotate=rot_mtx,
-                        chiral_extrap=chiral_extrap,
-                        expanded_extrap=expanded_extrap,
+                        chiral_extrap=chiral_extrap, C=C, M=M,
                         **ansatz_kwargs[fit], plot=True, open=False)
 
                     fits[op][fit][mu].update(
-                        {'phys': phys,
-                         'coeffs': coeffs,
-                         'disp': err_disp(phys.val, phys.err),
+                        {'phys': res[0],
+                         'coeffs': res[1:],
+                         'disp': err_disp(res[0].val, res[0].err),
                          'coeff_disp': [err_disp(
-                             coeffs.val[i], coeffs.err[i])
-                             for i in range(len(coeffs.val))],
-                         'chi_sq_dof': chi_sq_dof,
-                         'pvalue': pvalue})
-                    if len(coeffs.val) == 2:
+                             res.val[i], res.err[i])
+                             for i in range(1, len(res.val))],
+                         'chi_sq_dof': res.chi_sq/res.DOF,
+                         'pvalue': res.pvalue})
+                    if len(res.val) == 3:
                         fits[op][fit][mu]['coeff_disp'].append(' ')
-                        # pdb.set_trace()
 
-        for fit in fits['VVpAA'].keys():
+        for fit in fits['VVmAA'].keys():
             for mu in mu_list:
                 obj_ = stat(
                     val=[fits[op][fit][mu]['phys'].val
