@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.16)  18 JAN 2024 00:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.16)  23 JAN 2024 16:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -486,7 +486,7 @@ Overfull \hbox (91.06535pt too wide) in paragraph at lines 17--18
 LaTeX Warning: Float too large for page by 14.37129pt on input line 19.
 
 [2 <./VVpAA/SUSY/fit_summary_bag.pdf>]
-<VVmAA/SUSY/fit_summary_bag.pdf, id=116, page=1, 861.50606pt x 326.72737pt>
+<VVmAA/SUSY/fit_summary_bag.pdf, id=115, page=1, 861.50606pt x 326.72737pt>
 File: VVmAA/SUSY/fit_summary_bag.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/fit_summary_bag.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/fit_summary_bag.pdf , page1 used on input l
@@ -501,19 +501,19 @@ Overfull \hbox (91.06535pt too wide) in paragraph at lines 23--24
 LaTeX Warning: Float too large for page by 8.20927pt on input line 25.
 
 [3 <./VVmAA/SUSY/fit_summary_bag.pdf>]
-<SSmPP/SUSY/fit_summary_bag.pdf, id=191, page=1, 857.80472pt x 326.72737pt>
+<SSmPP/SUSY/fit_summary_bag.pdf, id=190, page=1, 847.76723pt x 326.72737pt>
 File: SSmPP/SUSY/fit_summary_bag.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/fit_summary_bag.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/fit_summary_bag.pdf , page1 used on input l
 ine 29.
-(pdftex.def)             Requested size: 1001.66336pt x 381.5416pt.
+(pdftex.def)             Requested size: 1001.66336pt x 386.04346pt.
 
 Overfull \hbox (91.06535pt too wide) in paragraph at lines 29--30
  [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 9.86943pt on input line 31.
+LaTeX Warning: Float too large for page by 14.37129pt on input line 31.
 
 [4 <./SSmPP/SUSY/fit_summary_bag.pdf>]
 <SSpPP/SUSY/fit_summary_bag.pdf, id=264, page=1, 847.76723pt x 326.72737pt>
@@ -563,7 +563,7 @@ Overfull \hbox (22.68866pt too wide) in paragraph at lines 48--58
  [] 
  []
 
-<VVpAA/SUSY/bag_a2m2_20.pdf, id=437, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_20.pdf, id=434, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_20.pdf  used on input line 87.
@@ -572,7 +572,7 @@ File: VVpAA/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_20.pdf  used on input line 87.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2_20.pdf, id=440, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_20.pdf, id=437, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_20.pdf , page1 used on input line 
@@ -607,7 +607,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_20.pdf , page1 used on input line
 87.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [8 <./VVpAA/SUSY/bag_a2m2_20.pdf>]
-<VVpAA/SUSY/bag_a2m2_22.pdf, id=531, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_22.pdf, id=527, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_22.pdf  used on input line 88.
@@ -616,7 +616,7 @@ File: VVpAA/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_22.pdf  used on input line 88.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2_22.pdf, id=534, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_22.pdf, id=530, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_22.pdf , page1 used on input line 
@@ -643,7 +643,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_22.pdf , page1 used on input line
 88.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [9 <./VVpAA/SUSY/bag_a2m2_22.pdf>]
-<VVpAA/SUSY/bag_a2m2_23.pdf, id=590, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_23.pdf, id=587, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_23.pdf  used on input line 89.
@@ -652,7 +652,7 @@ File: VVpAA/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_23.pdf  used on input line 89.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2_23.pdf, id=593, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_23.pdf, id=590, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_23.pdf , page1 used on input line 
@@ -680,7 +680,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_23.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [10 <./VVpAA/SUSY/bag_a2m2_23.pdf>]
-<VVpAA/SUSY/bag_a2m2_24.pdf, id=650, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_24.pdf, id=646, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_24.pdf  used on input line 90.
@@ -689,7 +689,7 @@ File: VVpAA/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_24.pdf  used on input line 90.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2_24.pdf, id=653, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2_24.pdf, id=649, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_24.pdf , page1 used on input line 
@@ -716,7 +716,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2_24.pdf , page1 used on input line
 90.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [11 <./VVpAA/SUSY/bag_a2m2_24.pdf>]
-<VVpAA/SUSY/bag_a2m2noC_20.pdf, id=709, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_20.pdf, id=705, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_20.pdf  used on input line 91.
@@ -725,7 +725,7 @@ File: VVpAA/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_20.pdf  used on input line 91.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2noC_20.pdf, id=712, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_20.pdf, id=708, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_20.pdf , page1 used on input li
@@ -753,7 +753,7 @@ ne 91.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [12 <./VVpAA/SUSY/bag_a2m2noC_20.pdf>]
-<VVpAA/SUSY/bag_a2m2noC_22.pdf, id=772, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_22.pdf, id=767, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_22.pdf  used on input line 92.
@@ -762,7 +762,7 @@ File: VVpAA/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_22.pdf  used on input line 92.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2noC_22.pdf, id=775, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_22.pdf, id=770, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
@@ -789,7 +789,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
 ne 92.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [13 <./VVpAA/SUSY/bag_a2m2noC_22.pdf>]
-<VVpAA/SUSY/bag_a2m2noC_23.pdf, id=834, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_23.pdf, id=829, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_23.pdf  used on input line 93.
@@ -798,7 +798,7 @@ File: VVpAA/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_23.pdf  used on input line 93.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2noC_23.pdf, id=837, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_23.pdf, id=832, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_23.pdf , page1 used on input li
@@ -826,7 +826,7 @@ ne 93.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [14 <./VVpAA/SUSY/bag_a2m2noC_23.pdf>]
-<VVpAA/SUSY/bag_a2m2noC_24.pdf, id=894, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_24.pdf, id=891, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_24.pdf  used on input line 94.
@@ -835,7 +835,7 @@ File: VVpAA/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_24.pdf  used on input line 94.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2noC_24.pdf, id=897, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2noC_24.pdf, id=894, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
@@ -862,7 +862,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
 ne 94.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [15 <./VVpAA/SUSY/bag_a2m2noC_24.pdf>]
-<VVpAA/SUSY/bag_a2a4m2_20.pdf, id=954, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_20.pdf, id=952, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_20.pdf  used on input line 95.
@@ -871,7 +871,7 @@ File: VVpAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_20.pdf  used on input line 95.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2a4m2_20.pdf, id=957, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_20.pdf, id=955, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
@@ -899,7 +899,7 @@ e 95.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [16 <./VVpAA/SUSY/bag_a2a4m2_20.pdf>]
-<VVpAA/SUSY/bag_a2a4m2_22.pdf, id=1013, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_22.pdf, id=1012, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_22.pdf  used on input line 96.
@@ -908,7 +908,7 @@ File: VVpAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_22.pdf  used on input line 96.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2a4m2_22.pdf, id=1016, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_22.pdf, id=1015, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
@@ -935,7 +935,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 96.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [17 <./VVpAA/SUSY/bag_a2a4m2_22.pdf>]
-<VVpAA/SUSY/bag_a2a4m2_23.pdf, id=1072, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_23.pdf, id=1071, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_23.pdf  used on input line 97.
@@ -944,7 +944,7 @@ File: VVpAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_23.pdf  used on input line 97.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2a4m2_23.pdf, id=1075, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_23.pdf, id=1074, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
@@ -972,7 +972,7 @@ e 97.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [18 <./VVpAA/SUSY/bag_a2a4m2_23.pdf>]
-<VVpAA/SUSY/bag_a2a4m2_24.pdf, id=1132, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_24.pdf, id=1130, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_24.pdf  used on input line 98.
@@ -981,7 +981,7 @@ File: VVpAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_24.pdf  used on input line 98.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2a4m2_24.pdf, id=1135, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2a4m2_24.pdf, id=1133, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
@@ -1008,7 +1008,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 98.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [19 <./VVpAA/SUSY/bag_a2a4m2_24.pdf>]
-<VVpAA/SUSY/bag_a2m2mcut_20.pdf, id=1192, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_20.pdf, id=1190, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_20.pdf  used on input line 99.
@@ -1019,7 +1019,7 @@ File: VVpAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_20.pdf  used on input line 99.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2mcut_20.pdf, id=1195, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_20.pdf, id=1193, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
@@ -1047,7 +1047,7 @@ ine 99.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [20 <./VVpAA/SUSY/bag_a2m2mcut_20.pdf>]
-<VVpAA/SUSY/bag_a2m2mcut_22.pdf, id=1254, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_22.pdf, id=1252, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_22.pdf  used on input line 100
@@ -1058,7 +1058,7 @@ File: VVpAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_22.pdf  used on input line 100
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2mcut_22.pdf, id=1257, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_22.pdf, id=1255, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
@@ -1085,7 +1085,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 100.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [21 <./VVpAA/SUSY/bag_a2m2mcut_22.pdf>]
-<VVpAA/SUSY/bag_a2m2mcut_23.pdf, id=1314, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_23.pdf, id=1313, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_23.pdf  used on input line 101
@@ -1096,7 +1096,7 @@ File: VVpAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_23.pdf  used on input line 101
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2mcut_23.pdf, id=1317, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_23.pdf, id=1316, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
@@ -1123,7 +1123,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 101.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [22 <./VVpAA/SUSY/bag_a2m2mcut_23.pdf>]
-<VVpAA/SUSY/bag_a2m2mcut_24.pdf, id=1376, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_24.pdf, id=1374, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_24.pdf  used on input line 102
@@ -1134,7 +1134,7 @@ File: VVpAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_24.pdf  used on input line 102
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2mcut_24.pdf, id=1379, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2mcut_24.pdf, id=1377, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
@@ -1161,7 +1161,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 102.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [23 <./VVpAA/SUSY/bag_a2m2mcut_24.pdf>]
-<VVpAA/SUSY/bag_a2m2m4_20.pdf, id=1438, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_20.pdf, id=1435, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_20.pdf  used on input line 103.
@@ -1170,7 +1170,7 @@ File: VVpAA/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_20.pdf  used on input line 103.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2m4_20.pdf, id=1441, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_20.pdf, id=1438, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
@@ -1197,7 +1197,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
 e 103.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [24 <./VVpAA/SUSY/bag_a2m2m4_20.pdf>]
-<VVpAA/SUSY/bag_a2m2m4_22.pdf, id=1498, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_22.pdf, id=1494, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_22.pdf  used on input line 104.
@@ -1206,7 +1206,7 @@ File: VVpAA/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_22.pdf  used on input line 104.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2m4_22.pdf, id=1501, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_22.pdf, id=1497, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
@@ -1233,7 +1233,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
 e 104.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [25 <./VVpAA/SUSY/bag_a2m2m4_22.pdf>]
-<VVpAA/SUSY/bag_a2m2m4_23.pdf, id=1558, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_23.pdf, id=1554, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_23.pdf  used on input line 105.
@@ -1242,7 +1242,7 @@ File: VVpAA/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_23.pdf  used on input line 105.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2m4_23.pdf, id=1561, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_23.pdf, id=1557, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_23.pdf , page1 used on input lin
@@ -1270,7 +1270,7 @@ e 105.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [26 <./VVpAA/SUSY/bag_a2m2m4_23.pdf>]
-<VVpAA/SUSY/bag_a2m2m4_24.pdf, id=1617, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_24.pdf, id=1613, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_24.pdf  used on input line 106.
@@ -1279,7 +1279,7 @@ File: VVpAA/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_24.pdf  used on input line 106.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2m4_24.pdf, id=1620, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2m4_24.pdf, id=1616, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
@@ -1306,7 +1306,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
 e 106.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [27 <./VVpAA/SUSY/bag_a2m2m4_24.pdf>]
-<VVpAA/SUSY/bag_a2m2delm_20.pdf, id=1677, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_20.pdf, id=1673, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_20.pdf  used on input line 107
@@ -1317,7 +1317,7 @@ File: VVpAA/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_20.pdf  used on input line 107
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2delm_20.pdf, id=1680, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_20.pdf, id=1676, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_20.pdf , page1 used on input l
@@ -1345,7 +1345,7 @@ ine 107.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [28 <./VVpAA/SUSY/bag_a2m2delm_20.pdf>]
-<VVpAA/SUSY/bag_a2m2delm_22.pdf, id=1739, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_22.pdf, id=1735, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_22.pdf  used on input line 108
@@ -1356,7 +1356,7 @@ File: VVpAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_22.pdf  used on input line 108
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2delm_22.pdf, id=1742, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_22.pdf, id=1738, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
@@ -1383,7 +1383,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 108.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [29 <./VVpAA/SUSY/bag_a2m2delm_22.pdf>]
-<VVpAA/SUSY/bag_a2m2delm_23.pdf, id=1800, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_23.pdf, id=1796, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_23.pdf  used on input line 109
@@ -1394,7 +1394,7 @@ File: VVpAA/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_23.pdf  used on input line 109
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2delm_23.pdf, id=1803, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_23.pdf, id=1799, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
@@ -1421,7 +1421,7 @@ Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
 ine 109.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [30 <./VVpAA/SUSY/bag_a2m2delm_23.pdf>]
-<VVpAA/SUSY/bag_a2m2delm_24.pdf, id=1862, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_24.pdf, id=1857, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_24.pdf  used on input line 110
@@ -1432,7 +1432,7 @@ File: VVpAA/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_24.pdf  used on input line 110
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/SUSY/bag_a2m2delm_24.pdf, id=1865, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/SUSY/bag_a2m2delm_24.pdf, id=1860, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVpAA/SUSY/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/SUSY/bag_a2m2delm_24.pdf , page1 used on input l
@@ -1476,7 +1476,7 @@ Overfull \hbox (56.43866pt too wide) in paragraph at lines 115--125
  [] 
  []
 
-<VVmAA/SUSY/bag_a2m2_20.pdf, id=1949, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_20.pdf, id=1943, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_20.pdf  used on input line 154.
@@ -1485,7 +1485,7 @@ File: VVmAA/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_20.pdf  used on input line 154.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2_20.pdf, id=1952, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_20.pdf, id=1946, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_20.pdf , page1 used on input line 
@@ -1515,7 +1515,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_20.pdf , page1 used on input line
 154.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [33 <./VVmAA/SUSY/bag_a2m2_20.pdf>]
-<VVmAA/SUSY/bag_a2m2_22.pdf, id=2038, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_22.pdf, id=2033, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_22.pdf  used on input line 155.
@@ -1524,7 +1524,7 @@ File: VVmAA/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_22.pdf  used on input line 155.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2_22.pdf, id=2041, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_22.pdf, id=2036, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_22.pdf , page1 used on input line 
@@ -1551,7 +1551,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_22.pdf , page1 used on input line
 155.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [34 <./VVmAA/SUSY/bag_a2m2_22.pdf>]
-<VVmAA/SUSY/bag_a2m2_23.pdf, id=2099, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_23.pdf, id=2093, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_23.pdf  used on input line 156.
@@ -1560,7 +1560,7 @@ File: VVmAA/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_23.pdf  used on input line 156.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2_23.pdf, id=2102, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_23.pdf, id=2096, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_23.pdf , page1 used on input line 
@@ -1588,7 +1588,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_23.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 
 [35 <./VVmAA/SUSY/bag_a2m2_23.pdf>]
-<VVmAA/SUSY/bag_a2m2_24.pdf, id=2158, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_24.pdf, id=2151, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_24.pdf  used on input line 157.
@@ -1597,7 +1597,7 @@ File: VVmAA/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_24.pdf  used on input line 157.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2_24.pdf, id=2161, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2_24.pdf, id=2154, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_24.pdf , page1 used on input line 
@@ -1624,7 +1624,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2_24.pdf , page1 used on input line
 157.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [36 <./VVmAA/SUSY/bag_a2m2_24.pdf>]
-<VVmAA/SUSY/bag_a2m2noC_20.pdf, id=2218, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_20.pdf, id=2211, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_20.pdf  used on input line 158.
@@ -1635,7 +1635,7 @@ File: VVmAA/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_20.pdf  used on input line 158.
 
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2noC_20.pdf, id=2221, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_20.pdf, id=2214, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_20.pdf , page1 used on input li
@@ -1663,7 +1663,7 @@ ne 158.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [37 <./VVmAA/SUSY/bag_a2m2noC_20.pdf>]
-<VVmAA/SUSY/bag_a2m2noC_22.pdf, id=2282, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_22.pdf, id=2273, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_22.pdf  used on input line 159.
@@ -1674,7 +1674,7 @@ File: VVmAA/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_22.pdf  used on input line 159.
 
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2noC_22.pdf, id=2285, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_22.pdf, id=2276, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
@@ -1701,7 +1701,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
 ne 159.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [38 <./VVmAA/SUSY/bag_a2m2noC_22.pdf>]
-<VVmAA/SUSY/bag_a2m2noC_23.pdf, id=2345, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_23.pdf, id=2335, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_23.pdf  used on input line 160.
@@ -1712,7 +1712,7 @@ File: VVmAA/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_23.pdf  used on input line 160.
 
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2noC_23.pdf, id=2348, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_23.pdf, id=2338, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_23.pdf , page1 used on input li
@@ -1740,7 +1740,7 @@ ne 160.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [39 <./VVmAA/SUSY/bag_a2m2noC_23.pdf>]
-<VVmAA/SUSY/bag_a2m2noC_24.pdf, id=2408, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_24.pdf, id=2396, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_24.pdf  used on input line 161.
@@ -1751,7 +1751,7 @@ File: VVmAA/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_24.pdf  used on input line 161.
 
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2noC_24.pdf, id=2411, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2noC_24.pdf, id=2399, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
@@ -1778,306 +1778,306 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
 ne 161.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [40 <./VVmAA/SUSY/bag_a2m2noC_24.pdf>]
-<VVmAA/SUSY/bag_a2a4m2_20.pdf, id=2471, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2a4m2_20.pdf, id=2458, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_20.pdf  used on input line 162.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_20.pdf  used on input line 162.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2a4m2_20.pdf, id=2474, page=1, 886.05406pt x 410.8148pt>
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2a4m2_20.pdf, id=2461, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
 e 162.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
 e 162.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
 e 162.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
 e 162.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
 e 162.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [41 <./VVmAA/SUSY/bag_a2a4m2_20.pdf>]
-<VVmAA/SUSY/bag_a2a4m2_22.pdf, id=2530, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2a4m2_22.pdf, id=2517, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_22.pdf  used on input line 163.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_22.pdf  used on input line 163.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2a4m2_22.pdf, id=2533, page=1, 886.05406pt x 410.8148pt>
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2a4m2_22.pdf, id=2520, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 163.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 163.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 163.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 163.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 163.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [42 <./VVmAA/SUSY/bag_a2a4m2_22.pdf>]
-<VVmAA/SUSY/bag_a2a4m2_23.pdf, id=2591, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2a4m2_23.pdf, id=2577, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_23.pdf  used on input line 164.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_23.pdf  used on input line 164.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2a4m2_23.pdf, id=2594, page=1, 886.05406pt x 410.8148pt>
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2a4m2_23.pdf, id=2580, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
 e 164.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
 e 164.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
 e 164.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
 e 164.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
 e 164.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [43 <./VVmAA/SUSY/bag_a2a4m2_23.pdf>]
-<VVmAA/SUSY/bag_a2a4m2_24.pdf, id=2651, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2a4m2_24.pdf, id=2637, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_24.pdf  used on input line 165.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_24.pdf  used on input line 165.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2a4m2_24.pdf, id=2654, page=1, 886.05406pt x 410.8148pt>
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2a4m2_24.pdf, id=2640, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 165.
-(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 165.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 165.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 165.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 File: VVmAA/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 165.
-(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
+(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [44 <./VVmAA/SUSY/bag_a2a4m2_24.pdf>]
-<VVmAA/SUSY/bag_a2m2mcut_20.pdf, id=2710, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2mcut_20.pdf, id=2697, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_20.pdf  used on input line 166
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_20.pdf  used on input line 166
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2mcut_20.pdf, id=2713, page=1, 891.07281pt x 410.8148pt>
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2m2mcut_20.pdf, id=2700, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
 ine 166.
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
 ine 166.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
 ine 166.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
 ine 166.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
 ine 166.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 
 [45 <./VVmAA/SUSY/bag_a2m2mcut_20.pdf>]
-<VVmAA/SUSY/bag_a2m2mcut_22.pdf, id=2771, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2mcut_22.pdf, id=2759, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_22.pdf  used on input line 167
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_22.pdf  used on input line 167
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2mcut_22.pdf, id=2774, page=1, 891.07281pt x 410.8148pt>
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2m2mcut_22.pdf, id=2762, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 167.
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 167.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 167.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 167.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 167.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [46 <./VVmAA/SUSY/bag_a2m2mcut_22.pdf>]
-<VVmAA/SUSY/bag_a2m2mcut_23.pdf, id=2832, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2mcut_23.pdf, id=2820, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_23.pdf  used on input line 168
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_23.pdf  used on input line 168
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2mcut_23.pdf, id=2835, page=1, 891.07281pt x 410.8148pt>
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2m2mcut_23.pdf, id=2823, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 168.
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 168.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 168.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 168.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 168.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 [47 <./VVmAA/SUSY/bag_a2m2mcut_23.pdf>]
-<VVmAA/SUSY/bag_a2m2mcut_24.pdf, id=2893, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2mcut_24.pdf, id=2882, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_24.pdf  used on input line 169
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_24.pdf  used on input line 169
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2mcut_24.pdf, id=2896, page=1, 891.07281pt x 410.8148pt>
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2m2mcut_24.pdf, id=2885, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 169.
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 169.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 169.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 169.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 169.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [48 <./VVmAA/SUSY/bag_a2m2mcut_24.pdf>]
-<VVmAA/SUSY/bag_a2m2m4_20.pdf, id=2954, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_20.pdf, id=2943, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_20.pdf  used on input line 170.
@@ -2086,7 +2086,7 @@ File: VVmAA/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_20.pdf  used on input line 170.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2m4_20.pdf, id=2957, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_20.pdf, id=2946, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
@@ -2113,7 +2113,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
 e 170.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 [49 <./VVmAA/SUSY/bag_a2m2m4_20.pdf>]
-<VVmAA/SUSY/bag_a2m2m4_22.pdf, id=3015, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_22.pdf, id=3004, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_22.pdf  used on input line 171.
@@ -2122,7 +2122,7 @@ File: VVmAA/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_22.pdf  used on input line 171.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2m4_22.pdf, id=3018, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_22.pdf, id=3007, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
@@ -2149,7 +2149,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
 e 171.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [50 <./VVmAA/SUSY/bag_a2m2m4_22.pdf>]
-<VVmAA/SUSY/bag_a2m2m4_23.pdf, id=3076, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_23.pdf, id=3065, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_23.pdf  used on input line 172.
@@ -2158,7 +2158,7 @@ File: VVmAA/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_23.pdf  used on input line 172.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2m4_23.pdf, id=3079, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_23.pdf, id=3068, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_23.pdf , page1 used on input lin
@@ -2186,7 +2186,7 @@ e 172.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 
 [51 <./VVmAA/SUSY/bag_a2m2m4_23.pdf>]
-<VVmAA/SUSY/bag_a2m2m4_24.pdf, id=3135, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_24.pdf, id=3124, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_24.pdf  used on input line 173.
@@ -2195,7 +2195,7 @@ File: VVmAA/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_24.pdf  used on input line 173.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2m4_24.pdf, id=3138, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2m4_24.pdf, id=3127, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
@@ -2222,7 +2222,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
 e 173.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [52 <./VVmAA/SUSY/bag_a2m2m4_24.pdf>]
-<VVmAA/SUSY/bag_a2m2delm_20.pdf, id=3195, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2delm_20.pdf, id=3184, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_20.pdf  used on input line 174
@@ -2233,7 +2233,7 @@ File: VVmAA/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_20.pdf  used on input line 174
 .
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2delm_20.pdf, id=3198, page=1, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2delm_20.pdf, id=3187, page=1, 891.07281pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_20.pdf , page1 used on input l
@@ -2261,45 +2261,45 @@ ine 174.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [53 <./VVmAA/SUSY/bag_a2m2delm_20.pdf>]
-<VVmAA/SUSY/bag_a2m2delm_22.pdf, id=3255, 891.07281pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2delm_22.pdf, id=3245, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_22.pdf  used on input line 175
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_22.pdf  used on input line 175
 .
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2delm_22.pdf, id=3258, page=1, 891.07281pt x 410.8148pt>
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+<VVmAA/SUSY/bag_a2m2delm_22.pdf, id=3248, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 175.
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: VVmAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 175.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 175.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 175.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: VVmAA/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 175.
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [54 <./VVmAA/SUSY/bag_a2m2delm_22.pdf>]
-<VVmAA/SUSY/bag_a2m2delm_23.pdf, id=3316, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2delm_23.pdf, id=3307, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_23.pdf  used on input line 176
@@ -2310,7 +2310,7 @@ File: VVmAA/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_23.pdf  used on input line 176
 .
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2delm_23.pdf, id=3319, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2delm_23.pdf, id=3310, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
@@ -2337,7 +2337,7 @@ Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
 ine 176.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 [55 <./VVmAA/SUSY/bag_a2m2delm_23.pdf>]
-<VVmAA/SUSY/bag_a2m2delm_24.pdf, id=3377, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2delm_24.pdf, id=3369, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_24.pdf  used on input line 177
@@ -2348,7 +2348,7 @@ File: VVmAA/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_24.pdf  used on input line 177
 .
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/SUSY/bag_a2m2delm_24.pdf, id=3380, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/SUSY/bag_a2m2delm_24.pdf, id=3372, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVmAA/SUSY/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/SUSY/bag_a2m2delm_24.pdf , page1 used on input l
@@ -2388,11 +2388,11 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 179.
 
 
-Overfull \hbox (63.18866pt too wide) in paragraph at lines 182--192
+Overfull \hbox (22.68866pt too wide) in paragraph at lines 182--192
  [] 
  []
 
-<SSmPP/SUSY/bag_a2m2_20.pdf, id=3462, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_20.pdf, id=3455, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_20.pdf  used on input line 221.
@@ -2401,7 +2401,7 @@ File: SSmPP/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_20.pdf  used on input line 221.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2_20.pdf, id=3465, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_20.pdf, id=3458, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_20.pdf , page1 used on input line 
@@ -2431,7 +2431,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_20.pdf , page1 used on input line
 221.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [58 <./SSmPP/SUSY/bag_a2m2_20.pdf>]
-<SSmPP/SUSY/bag_a2m2_22.pdf, id=3557, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_22.pdf, id=3550, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_22.pdf  used on input line 222.
@@ -2440,7 +2440,7 @@ File: SSmPP/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_22.pdf  used on input line 222.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2_22.pdf, id=3560, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_22.pdf, id=3553, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_22.pdf , page1 used on input line 
@@ -2467,7 +2467,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_22.pdf , page1 used on input line
 222.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [59 <./SSmPP/SUSY/bag_a2m2_22.pdf>]
-<SSmPP/SUSY/bag_a2m2_23.pdf, id=3621, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_23.pdf, id=3614, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_23.pdf  used on input line 223.
@@ -2476,7 +2476,7 @@ File: SSmPP/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_23.pdf  used on input line 223.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2_23.pdf, id=3624, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_23.pdf, id=3617, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_23.pdf , page1 used on input line 
@@ -2504,7 +2504,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_23.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [60 <./SSmPP/SUSY/bag_a2m2_23.pdf>]
-<SSmPP/SUSY/bag_a2m2_24.pdf, id=3685, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_24.pdf, id=3678, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_24.pdf  used on input line 224.
@@ -2513,7 +2513,7 @@ File: SSmPP/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_24.pdf  used on input line 224.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2_24.pdf, id=3688, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2_24.pdf, id=3681, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_24.pdf , page1 used on input line 
@@ -2540,7 +2540,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2_24.pdf , page1 used on input line
 224.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [61 <./SSmPP/SUSY/bag_a2m2_24.pdf>]
-<SSmPP/SUSY/bag_a2m2noC_20.pdf, id=3750, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_20.pdf, id=3743, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_20.pdf  used on input line 225.
@@ -2551,7 +2551,7 @@ File: SSmPP/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_20.pdf  used on input line 225.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2noC_20.pdf, id=3753, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_20.pdf, id=3746, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_20.pdf , page1 used on input li
@@ -2579,7 +2579,7 @@ ne 225.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [62 <./SSmPP/SUSY/bag_a2m2noC_20.pdf>]
-<SSmPP/SUSY/bag_a2m2noC_22.pdf, id=3816, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_22.pdf, id=3809, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_22.pdf  used on input line 226.
@@ -2590,7 +2590,7 @@ File: SSmPP/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_22.pdf  used on input line 226.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2noC_22.pdf, id=3819, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_22.pdf, id=3812, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
@@ -2617,7 +2617,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
 ne 226.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [63 <./SSmPP/SUSY/bag_a2m2noC_22.pdf>]
-<SSmPP/SUSY/bag_a2m2noC_23.pdf, id=3882, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_23.pdf, id=3875, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_23.pdf  used on input line 227.
@@ -2628,7 +2628,7 @@ File: SSmPP/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_23.pdf  used on input line 227.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2noC_23.pdf, id=3885, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_23.pdf, id=3878, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_23.pdf , page1 used on input li
@@ -2656,7 +2656,7 @@ ne 227.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [64 <./SSmPP/SUSY/bag_a2m2noC_23.pdf>]
-<SSmPP/SUSY/bag_a2m2noC_24.pdf, id=3949, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_24.pdf, id=3942, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_24.pdf  used on input line 228.
@@ -2667,7 +2667,7 @@ File: SSmPP/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_24.pdf  used on input line 228.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2noC_24.pdf, id=3952, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2noC_24.pdf, id=3945, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
@@ -2694,7 +2694,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
 ne 228.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [65 <./SSmPP/SUSY/bag_a2m2noC_24.pdf>]
-<SSmPP/SUSY/bag_a2a4m2_20.pdf, id=4015, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_20.pdf, id=4007, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_20.pdf  used on input line 229.
@@ -2703,7 +2703,7 @@ File: SSmPP/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_20.pdf  used on input line 229.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2a4m2_20.pdf, id=4018, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_20.pdf, id=4010, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
@@ -2731,7 +2731,7 @@ e 229.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [66 <./SSmPP/SUSY/bag_a2a4m2_20.pdf>]
-<SSmPP/SUSY/bag_a2a4m2_22.pdf, id=4078, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_22.pdf, id=4071, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_22.pdf  used on input line 230.
@@ -2740,7 +2740,7 @@ File: SSmPP/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_22.pdf  used on input line 230.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2a4m2_22.pdf, id=4081, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_22.pdf, id=4074, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
@@ -2767,7 +2767,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 230.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [67 <./SSmPP/SUSY/bag_a2a4m2_22.pdf>]
-<SSmPP/SUSY/bag_a2a4m2_23.pdf, id=4143, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_23.pdf, id=4136, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_23.pdf  used on input line 231.
@@ -2776,7 +2776,7 @@ File: SSmPP/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_23.pdf  used on input line 231.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2a4m2_23.pdf, id=4146, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_23.pdf, id=4139, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
@@ -2804,7 +2804,7 @@ e 231.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [68 <./SSmPP/SUSY/bag_a2a4m2_23.pdf>]
-<SSmPP/SUSY/bag_a2a4m2_24.pdf, id=4207, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_24.pdf, id=4200, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_24.pdf  used on input line 232.
@@ -2813,7 +2813,7 @@ File: SSmPP/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_24.pdf  used on input line 232.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2a4m2_24.pdf, id=4210, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2a4m2_24.pdf, id=4203, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
@@ -2840,7 +2840,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 232.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [69 <./SSmPP/SUSY/bag_a2a4m2_24.pdf>]
-<SSmPP/SUSY/bag_a2m2mcut_20.pdf, id=4270, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_20.pdf, id=4264, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_20.pdf  used on input line 233
@@ -2851,7 +2851,7 @@ File: SSmPP/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_20.pdf  used on input line 233
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2mcut_20.pdf, id=4273, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_20.pdf, id=4267, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
@@ -2879,7 +2879,7 @@ ine 233.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [70 <./SSmPP/SUSY/bag_a2m2mcut_20.pdf>]
-<SSmPP/SUSY/bag_a2m2mcut_22.pdf, id=4336, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_22.pdf, id=4330, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_22.pdf  used on input line 234
@@ -2890,7 +2890,7 @@ File: SSmPP/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_22.pdf  used on input line 234
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2mcut_22.pdf, id=4339, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_22.pdf, id=4333, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
@@ -2917,7 +2917,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 234.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [71 <./SSmPP/SUSY/bag_a2m2mcut_22.pdf>]
-<SSmPP/SUSY/bag_a2m2mcut_23.pdf, id=4403, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_23.pdf, id=4397, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_23.pdf  used on input line 235
@@ -2928,7 +2928,7 @@ File: SSmPP/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_23.pdf  used on input line 235
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2mcut_23.pdf, id=4406, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_23.pdf, id=4400, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
@@ -2955,7 +2955,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 235.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [72 <./SSmPP/SUSY/bag_a2m2mcut_23.pdf>]
-<SSmPP/SUSY/bag_a2m2mcut_24.pdf, id=4468, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_24.pdf, id=4463, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_24.pdf  used on input line 236
@@ -2966,7 +2966,7 @@ File: SSmPP/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_24.pdf  used on input line 236
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2mcut_24.pdf, id=4471, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2mcut_24.pdf, id=4466, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
@@ -2993,7 +2993,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 236.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [73 <./SSmPP/SUSY/bag_a2m2mcut_24.pdf>]
-<SSmPP/SUSY/bag_a2m2m4_20.pdf, id=4534, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_20.pdf, id=4530, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_20.pdf  used on input line 237.
@@ -3002,7 +3002,7 @@ File: SSmPP/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_20.pdf  used on input line 237.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2m4_20.pdf, id=4537, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_20.pdf, id=4533, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
@@ -3029,7 +3029,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
 e 237.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [74 <./SSmPP/SUSY/bag_a2m2m4_20.pdf>]
-<SSmPP/SUSY/bag_a2m2m4_22.pdf, id=4597, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_22.pdf, id=4594, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_22.pdf  used on input line 238.
@@ -3038,7 +3038,7 @@ File: SSmPP/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_22.pdf  used on input line 238.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2m4_22.pdf, id=4600, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_22.pdf, id=4597, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
@@ -3065,7 +3065,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
 e 238.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [75 <./SSmPP/SUSY/bag_a2m2m4_22.pdf>]
-<SSmPP/SUSY/bag_a2m2m4_23.pdf, id=4660, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_23.pdf, id=4658, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_23.pdf  used on input line 239.
@@ -3074,7 +3074,7 @@ File: SSmPP/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_23.pdf  used on input line 239.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2m4_23.pdf, id=4663, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_23.pdf, id=4661, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_23.pdf , page1 used on input lin
@@ -3102,7 +3102,7 @@ e 239.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [76 <./SSmPP/SUSY/bag_a2m2m4_23.pdf>]
-<SSmPP/SUSY/bag_a2m2m4_24.pdf, id=4724, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_24.pdf, id=4722, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_24.pdf  used on input line 240.
@@ -3111,7 +3111,7 @@ File: SSmPP/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_24.pdf  used on input line 240.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2m4_24.pdf, id=4727, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2m4_24.pdf, id=4725, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
@@ -3138,7 +3138,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
 e 240.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [77 <./SSmPP/SUSY/bag_a2m2m4_24.pdf>]
-<SSmPP/SUSY/bag_a2m2delm_20.pdf, id=4787, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2delm_20.pdf, id=4786, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_20.pdf  used on input line 241
@@ -3149,7 +3149,7 @@ File: SSmPP/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_20.pdf  used on input line 241
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2delm_20.pdf, id=4790, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2delm_20.pdf, id=4789, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_20.pdf , page1 used on input l
@@ -3215,7 +3215,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 242.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [79 <./SSmPP/SUSY/bag_a2m2delm_22.pdf>]
-<SSmPP/SUSY/bag_a2m2delm_23.pdf, id=4919, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2delm_23.pdf, id=4920, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_23.pdf  used on input line 243
@@ -3226,7 +3226,7 @@ File: SSmPP/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_23.pdf  used on input line 243
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2delm_23.pdf, id=4922, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2delm_23.pdf, id=4923, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
@@ -3253,7 +3253,7 @@ Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
 ine 243.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [80 <./SSmPP/SUSY/bag_a2m2delm_23.pdf>]
-<SSmPP/SUSY/bag_a2m2delm_24.pdf, id=4984, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2delm_24.pdf, id=4986, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_24.pdf  used on input line 244
@@ -3264,7 +3264,7 @@ File: SSmPP/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_24.pdf  used on input line 244
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/SUSY/bag_a2m2delm_24.pdf, id=4987, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/SUSY/bag_a2m2delm_24.pdf, id=4989, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSmPP/SUSY/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/SUSY/bag_a2m2delm_24.pdf , page1 used on input l
@@ -3303,12 +3303,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 246.
 
-
-Overfull \hbox (5.06384pt too wide) in paragraph at lines 249--259
- [] 
- []
-
-<SSpPP/SUSY/bag_a2m2_20.pdf, id=5074, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_20.pdf, id=5076, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_20.pdf  used on input line 288.
@@ -3317,7 +3312,7 @@ File: SSpPP/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_20.pdf  used on input line 288.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2_20.pdf, id=5077, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_20.pdf, id=5079, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_20.pdf , page1 used on input line 
@@ -3347,7 +3342,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_20.pdf , page1 used on input line
 288.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [83 <./SSpPP/SUSY/bag_a2m2_20.pdf>]
-<SSpPP/SUSY/bag_a2m2_22.pdf, id=5165, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_22.pdf, id=5167, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_22.pdf  used on input line 289.
@@ -3356,7 +3351,7 @@ File: SSpPP/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_22.pdf  used on input line 289.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2_22.pdf, id=5168, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_22.pdf, id=5170, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_22.pdf , page1 used on input line 
@@ -3383,7 +3378,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_22.pdf , page1 used on input line
 289.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [84 <./SSpPP/SUSY/bag_a2m2_22.pdf>]
-<SSpPP/SUSY/bag_a2m2_23.pdf, id=5226, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_23.pdf, id=5228, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_23.pdf  used on input line 290.
@@ -3392,7 +3387,7 @@ File: SSpPP/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_23.pdf  used on input line 290.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2_23.pdf, id=5229, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_23.pdf, id=5231, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_23.pdf , page1 used on input line 
@@ -3420,7 +3415,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_23.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [85 <./SSpPP/SUSY/bag_a2m2_23.pdf>]
-<SSpPP/SUSY/bag_a2m2_24.pdf, id=5290, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_24.pdf, id=5291, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_24.pdf  used on input line 291.
@@ -3429,7 +3424,7 @@ File: SSpPP/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_24.pdf  used on input line 291.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2_24.pdf, id=5293, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2_24.pdf, id=5294, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2_24.pdf , page1 used on input line 
@@ -3495,7 +3490,7 @@ ne 292.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [87 <./SSpPP/SUSY/bag_a2m2noC_20.pdf>]
-<SSpPP/SUSY/bag_a2m2noC_22.pdf, id=5416, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2noC_22.pdf, id=5415, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_22.pdf  used on input line 293.
@@ -3506,7 +3501,7 @@ File: SSpPP/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_22.pdf  used on input line 293.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2noC_22.pdf, id=5419, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2noC_22.pdf, id=5418, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
@@ -3533,7 +3528,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_22.pdf , page1 used on input li
 ne 293.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [88 <./SSpPP/SUSY/bag_a2m2noC_22.pdf>]
-<SSpPP/SUSY/bag_a2m2noC_23.pdf, id=5480, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2noC_23.pdf, id=5478, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_23.pdf  used on input line 294.
@@ -3544,7 +3539,7 @@ File: SSpPP/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_23.pdf  used on input line 294.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2noC_23.pdf, id=5483, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2noC_23.pdf, id=5481, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_23.pdf , page1 used on input li
@@ -3572,7 +3567,7 @@ ne 294.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [89 <./SSpPP/SUSY/bag_a2m2noC_23.pdf>]
-<SSpPP/SUSY/bag_a2m2noC_24.pdf, id=5544, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2noC_24.pdf, id=5540, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_24.pdf  used on input line 295.
@@ -3583,7 +3578,7 @@ File: SSpPP/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_24.pdf  used on input line 295.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2noC_24.pdf, id=5547, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2noC_24.pdf, id=5543, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
@@ -3610,7 +3605,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2noC_24.pdf , page1 used on input li
 ne 295.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [90 <./SSpPP/SUSY/bag_a2m2noC_24.pdf>]
-<SSpPP/SUSY/bag_a2a4m2_20.pdf, id=5608, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_20.pdf, id=5603, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_20.pdf  used on input line 296.
@@ -3619,7 +3614,7 @@ File: SSpPP/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_20.pdf  used on input line 296.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2a4m2_20.pdf, id=5611, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_20.pdf, id=5606, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_20.pdf , page1 used on input lin
@@ -3647,7 +3642,7 @@ e 296.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [91 <./SSpPP/SUSY/bag_a2a4m2_20.pdf>]
-<SSpPP/SUSY/bag_a2a4m2_22.pdf, id=5671, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_22.pdf, id=5665, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_22.pdf  used on input line 297.
@@ -3656,7 +3651,7 @@ File: SSpPP/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_22.pdf  used on input line 297.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2a4m2_22.pdf, id=5674, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_22.pdf, id=5668, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
@@ -3683,7 +3678,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_22.pdf , page1 used on input lin
 e 297.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [92 <./SSpPP/SUSY/bag_a2a4m2_22.pdf>]
-<SSpPP/SUSY/bag_a2a4m2_23.pdf, id=5732, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_23.pdf, id=5727, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_23.pdf  used on input line 298.
@@ -3692,7 +3687,7 @@ File: SSpPP/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_23.pdf  used on input line 298.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2a4m2_23.pdf, id=5735, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_23.pdf, id=5730, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_23.pdf , page1 used on input lin
@@ -3720,7 +3715,7 @@ e 298.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [93 <./SSpPP/SUSY/bag_a2a4m2_23.pdf>]
-<SSpPP/SUSY/bag_a2a4m2_24.pdf, id=5795, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_24.pdf, id=5789, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_24.pdf  used on input line 299.
@@ -3729,7 +3724,7 @@ File: SSpPP/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_24.pdf  used on input line 299.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2a4m2_24.pdf, id=5798, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2a4m2_24.pdf, id=5792, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
@@ -3756,7 +3751,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2a4m2_24.pdf , page1 used on input lin
 e 299.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [94 <./SSpPP/SUSY/bag_a2a4m2_24.pdf>]
-<SSpPP/SUSY/bag_a2m2mcut_20.pdf, id=5856, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_20.pdf, id=5850, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_20.pdf  used on input line 300
@@ -3767,7 +3762,7 @@ File: SSpPP/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_20.pdf  used on input line 300
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2mcut_20.pdf, id=5859, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_20.pdf, id=5853, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_20.pdf , page1 used on input l
@@ -3795,7 +3790,7 @@ ine 300.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [95 <./SSpPP/SUSY/bag_a2m2mcut_20.pdf>]
-<SSpPP/SUSY/bag_a2m2mcut_22.pdf, id=5919, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_22.pdf, id=5913, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_22.pdf  used on input line 301
@@ -3806,7 +3801,7 @@ File: SSpPP/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_22.pdf  used on input line 301
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2mcut_22.pdf, id=5922, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_22.pdf, id=5916, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
@@ -3833,7 +3828,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_22.pdf , page1 used on input l
 ine 301.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [96 <./SSpPP/SUSY/bag_a2m2mcut_22.pdf>]
-<SSpPP/SUSY/bag_a2m2mcut_23.pdf, id=5983, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_23.pdf, id=5976, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_23.pdf  used on input line 302
@@ -3844,7 +3839,7 @@ File: SSpPP/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_23.pdf  used on input line 302
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2mcut_23.pdf, id=5986, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_23.pdf, id=5979, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
@@ -3871,7 +3866,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_23.pdf , page1 used on input l
 ine 302.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [97 <./SSpPP/SUSY/bag_a2m2mcut_23.pdf>]
-<SSpPP/SUSY/bag_a2m2mcut_24.pdf, id=6047, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_24.pdf, id=6040, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_24.pdf  used on input line 303
@@ -3882,7 +3877,7 @@ File: SSpPP/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_24.pdf  used on input line 303
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2mcut_24.pdf, id=6050, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2mcut_24.pdf, id=6043, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
@@ -3909,7 +3904,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2mcut_24.pdf , page1 used on input l
 ine 303.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [98 <./SSpPP/SUSY/bag_a2m2mcut_24.pdf>]
-<SSpPP/SUSY/bag_a2m2m4_20.pdf, id=6110, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_20.pdf, id=6103, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_20.pdf  used on input line 304.
@@ -3918,7 +3913,7 @@ File: SSpPP/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_20.pdf  used on input line 304.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2m4_20.pdf, id=6113, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_20.pdf, id=6106, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
@@ -3945,7 +3940,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_20.pdf , page1 used on input lin
 e 304.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 [99 <./SSpPP/SUSY/bag_a2m2m4_20.pdf>]
-<SSpPP/SUSY/bag_a2m2m4_22.pdf, id=6172, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_22.pdf, id=6165, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_22.pdf  used on input line 305.
@@ -3954,7 +3949,7 @@ File: SSpPP/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_22.pdf  used on input line 305.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2m4_22.pdf, id=6175, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_22.pdf, id=6168, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
@@ -3981,7 +3976,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_22.pdf , page1 used on input lin
 e 305.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [100 <./SSpPP/SUSY/bag_a2m2m4_22.pdf>]
-<SSpPP/SUSY/bag_a2m2m4_23.pdf, id=6233, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_23.pdf, id=6227, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_23.pdf  used on input line 306.
@@ -3990,7 +3985,7 @@ File: SSpPP/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_23.pdf  used on input line 306.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2m4_23.pdf, id=6236, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_23.pdf, id=6230, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_23.pdf , page1 used on input lin
@@ -4018,7 +4013,7 @@ e 306.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [101 <./SSpPP/SUSY/bag_a2m2m4_23.pdf>]
-<SSpPP/SUSY/bag_a2m2m4_24.pdf, id=6295, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_24.pdf, id=6290, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_24.pdf  used on input line 307.
@@ -4027,7 +4022,7 @@ File: SSpPP/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_24.pdf  used on input line 307.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2m4_24.pdf, id=6298, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2m4_24.pdf, id=6293, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
@@ -4054,7 +4049,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2m4_24.pdf , page1 used on input lin
 e 307.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [102 <./SSpPP/SUSY/bag_a2m2m4_24.pdf>]
-<SSpPP/SUSY/bag_a2m2delm_20.pdf, id=6357, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_20.pdf, id=6352, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_20.pdf  used on input line 308
@@ -4065,7 +4060,7 @@ File: SSpPP/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_20.pdf  used on input line 308
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2delm_20.pdf, id=6360, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_20.pdf, id=6355, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_20.pdf , page1 used on input l
@@ -4093,7 +4088,7 @@ ine 308.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [103 <./SSpPP/SUSY/bag_a2m2delm_20.pdf>]
-<SSpPP/SUSY/bag_a2m2delm_22.pdf, id=6421, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_22.pdf, id=6416, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_22.pdf  used on input line 309
@@ -4104,7 +4099,7 @@ File: SSpPP/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_22.pdf  used on input line 309
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2delm_22.pdf, id=6424, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_22.pdf, id=6419, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
@@ -4131,7 +4126,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_22.pdf , page1 used on input l
 ine 309.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [104 <./SSpPP/SUSY/bag_a2m2delm_22.pdf>]
-<SSpPP/SUSY/bag_a2m2delm_23.pdf, id=6484, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_23.pdf, id=6479, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_23.pdf  used on input line 310
@@ -4142,7 +4137,7 @@ File: SSpPP/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_23.pdf  used on input line 310
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2delm_23.pdf, id=6487, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_23.pdf, id=6482, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
@@ -4169,7 +4164,7 @@ Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_23.pdf , page1 used on input l
 ine 310.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [105 <./SSpPP/SUSY/bag_a2m2delm_23.pdf>]
-<SSpPP/SUSY/bag_a2m2delm_24.pdf, id=6547, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_24.pdf, id=6542, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_24.pdf  used on input line 311
@@ -4180,7 +4175,7 @@ File: SSpPP/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_24.pdf  used on input line 311
 .
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSpPP/SUSY/bag_a2m2delm_24.pdf, id=6550, page=1, 879.18465pt x 410.8148pt>
+<SSpPP/SUSY/bag_a2m2delm_24.pdf, id=6545, page=1, 879.18465pt x 410.8148pt>
 File: SSpPP/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSpPP/SUSY/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/SUSY/bag_a2m2delm_24.pdf , page1 used on input l
@@ -4220,11 +4215,11 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 313.
 
 
-Overfull \hbox (33.81396pt too wide) in paragraph at lines 316--326
+Overfull \hbox (22.68866pt too wide) in paragraph at lines 316--326
  [] 
  []
 
-<TT/SUSY/bag_a2m2_20.pdf, id=6634, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_20.pdf, id=6629, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_20.pdf  used on input line 355.
@@ -4233,7 +4228,7 @@ File: TT/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_20.pdf  used on input line 355.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2_20.pdf, id=6637, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_20.pdf, id=6632, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_20.pdf , page1 used on input line 355
@@ -4263,7 +4258,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2_20.pdf , page1 used on input line 355
 .
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [108 <./TT/SUSY/bag_a2m2_20.pdf>]
-<TT/SUSY/bag_a2m2_22.pdf, id=6727, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_22.pdf, id=6722, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_22.pdf  used on input line 356.
@@ -4272,7 +4267,7 @@ File: TT/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_22.pdf  used on input line 356.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2_22.pdf, id=6730, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_22.pdf, id=6725, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_22.pdf , page1 used on input line 356
@@ -4299,7 +4294,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2_22.pdf , page1 used on input line 356
 .
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [109 <./TT/SUSY/bag_a2m2_22.pdf>]
-<TT/SUSY/bag_a2m2_23.pdf, id=6790, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_23.pdf, id=6785, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_23.pdf  used on input line 357.
@@ -4308,7 +4303,7 @@ File: TT/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_23.pdf  used on input line 357.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2_23.pdf, id=6793, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_23.pdf, id=6788, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_23.pdf , page1 used on input line 357
@@ -4336,7 +4331,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2_23.pdf , page1 used on input line 357
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [110 <./TT/SUSY/bag_a2m2_23.pdf>]
-<TT/SUSY/bag_a2m2_24.pdf, id=6851, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_24.pdf, id=6847, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_24.pdf  used on input line 358.
@@ -4345,7 +4340,7 @@ File: TT/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_24.pdf  used on input line 358.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2_24.pdf, id=6854, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2_24.pdf, id=6850, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2_24.pdf , page1 used on input line 358
@@ -4372,7 +4367,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2_24.pdf , page1 used on input line 358
 .
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [111 <./TT/SUSY/bag_a2m2_24.pdf>]
-<TT/SUSY/bag_a2m2noC_20.pdf, id=6913, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2noC_20.pdf, id=6909, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_20.pdf  used on input line 359.
@@ -4381,7 +4376,7 @@ File: TT/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_20.pdf  used on input line 359.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2noC_20.pdf, id=6916, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2noC_20.pdf, id=6912, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_20.pdf , page1 used on input line 
@@ -4408,115 +4403,115 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2noC_20.pdf , page1 used on input line
 359.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [112 <./TT/SUSY/bag_a2m2noC_20.pdf>]
-<TT/SUSY/bag_a2m2noC_22.pdf, id=6977, 884.2034pt x 410.8148pt>
+<TT/SUSY/bag_a2m2noC_22.pdf, id=6973, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_22.pdf  used on input line 360.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_22.pdf  used on input line 360.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
-<TT/SUSY/bag_a2m2noC_22.pdf, id=6980, page=1, 884.2034pt x 410.8148pt>
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
+<TT/SUSY/bag_a2m2noC_22.pdf, id=6976, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_22.pdf , page1 used on input line 
 360.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_22.pdf , page1 used on input line 
 360.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_22.pdf , page1 used on input line 
 360.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_22.pdf , page1 used on input line 
 360.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_22.pdf , page1 used on input line 
 360.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [113 <./TT/SUSY/bag_a2m2noC_22.pdf>]
-<TT/SUSY/bag_a2m2noC_23.pdf, id=7041, 884.2034pt x 410.8148pt>
+<TT/SUSY/bag_a2m2noC_23.pdf, id=7037, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_23.pdf  used on input line 361.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_23.pdf  used on input line 361.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
-<TT/SUSY/bag_a2m2noC_23.pdf, id=7044, page=1, 884.2034pt x 410.8148pt>
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
+<TT/SUSY/bag_a2m2noC_23.pdf, id=7040, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_23.pdf , page1 used on input line 
 361.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_23.pdf , page1 used on input line 
 361.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_23.pdf , page1 used on input line 
 361.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_23.pdf , page1 used on input line 
 361.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_23.pdf , page1 used on input line 
 361.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [114 <./TT/SUSY/bag_a2m2noC_23.pdf>]
-<TT/SUSY/bag_a2m2noC_24.pdf, id=7105, 884.2034pt x 410.8148pt>
+<TT/SUSY/bag_a2m2noC_24.pdf, id=7101, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_24.pdf  used on input line 362.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_24.pdf  used on input line 362.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
-<TT/SUSY/bag_a2m2noC_24.pdf, id=7108, page=1, 884.2034pt x 410.8148pt>
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
+<TT/SUSY/bag_a2m2noC_24.pdf, id=7104, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_24.pdf , page1 used on input line 
 362.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_24.pdf , page1 used on input line 
 362.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_24.pdf , page1 used on input line 
 362.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_24.pdf , page1 used on input line 
 362.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2noC_24.pdf , page1 used on input line 
 362.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [115 <./TT/SUSY/bag_a2m2noC_24.pdf>]
-<TT/SUSY/bag_a2a4m2_20.pdf, id=7170, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2a4m2_20.pdf, id=7167, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_20.pdf  used on input line 363.
@@ -4525,7 +4520,7 @@ File: TT/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_20.pdf  used on input line 363.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2a4m2_20.pdf, id=7173, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2a4m2_20.pdf, id=7170, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_20.pdf , page1 used on input line 3
@@ -4552,7 +4547,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2a4m2_20.pdf , page1 used on input line 3
 63.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [116 <./TT/SUSY/bag_a2a4m2_20.pdf>]
-<TT/SUSY/bag_a2a4m2_22.pdf, id=7232, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2a4m2_22.pdf, id=7229, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_22.pdf  used on input line 364.
@@ -4561,7 +4556,7 @@ File: TT/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_22.pdf  used on input line 364.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2a4m2_22.pdf, id=7235, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2a4m2_22.pdf, id=7232, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_22.pdf , page1 used on input line 3
@@ -4588,115 +4583,115 @@ Package pdftex.def Info: TT/SUSY/bag_a2a4m2_22.pdf , page1 used on input line 3
 64.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [117 <./TT/SUSY/bag_a2a4m2_22.pdf>]
-<TT/SUSY/bag_a2a4m2_23.pdf, id=7294, 884.2034pt x 410.8148pt>
+<TT/SUSY/bag_a2a4m2_23.pdf, id=7291, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_23.pdf  used on input line 365.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_23.pdf  used on input line 365.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
-<TT/SUSY/bag_a2a4m2_23.pdf, id=7297, page=1, 884.2034pt x 410.8148pt>
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
+<TT/SUSY/bag_a2a4m2_23.pdf, id=7294, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_23.pdf , page1 used on input line 3
 65.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_23.pdf , page1 used on input line 3
 65.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_23.pdf , page1 used on input line 3
 65.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_23.pdf , page1 used on input line 3
 65.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_23.pdf , page1 used on input line 3
 65.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [118 <./TT/SUSY/bag_a2a4m2_23.pdf>]
-<TT/SUSY/bag_a2a4m2_24.pdf, id=7356, 884.2034pt x 410.8148pt>
+<TT/SUSY/bag_a2a4m2_24.pdf, id=7353, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_24.pdf  used on input line 366.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_24.pdf  used on input line 366.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
-<TT/SUSY/bag_a2a4m2_24.pdf, id=7359, page=1, 884.2034pt x 410.8148pt>
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
+<TT/SUSY/bag_a2a4m2_24.pdf, id=7356, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_24.pdf , page1 used on input line 3
 66.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_24.pdf , page1 used on input line 3
 66.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_24.pdf , page1 used on input line 3
 66.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_24.pdf , page1 used on input line 3
 66.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2a4m2_24.pdf , page1 used on input line 3
 66.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [119 <./TT/SUSY/bag_a2a4m2_24.pdf>]
-<TT/SUSY/bag_a2m2mcut_20.pdf, id=7418, 884.2034pt x 410.8148pt>
+<TT/SUSY/bag_a2m2mcut_20.pdf, id=7415, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_20.pdf  used on input line 367.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_20.pdf  used on input line 367.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
-<TT/SUSY/bag_a2m2mcut_20.pdf, id=7421, page=1, 884.2034pt x 410.8148pt>
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
+<TT/SUSY/bag_a2m2mcut_20.pdf, id=7418, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_20.pdf , page1 used on input line
  367.
-(pdftex.def)             Requested size: 884.20125pt x 410.8138pt.
+(pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
 File: TT/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_20.pdf , page1 used on input line
  367.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_20.pdf , page1 used on input line
  367.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_20.pdf , page1 used on input line
  367.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 File: TT/SUSY/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_20.pdf , page1 used on input line
  367.
-(pdftex.def)             Requested size: 1301.15308pt x 604.53616pt.
+(pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [120 <./TT/SUSY/bag_a2m2mcut_20.pdf>]
-<TT/SUSY/bag_a2m2mcut_22.pdf, id=7482, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2mcut_22.pdf, id=7479, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_22.pdf  used on input line 368.
@@ -4705,7 +4700,7 @@ File: TT/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_22.pdf  used on input line 368.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2mcut_22.pdf, id=7485, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2mcut_22.pdf, id=7482, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_22.pdf , page1 used on input line
@@ -4732,7 +4727,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_22.pdf , page1 used on input line
  368.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [121 <./TT/SUSY/bag_a2m2mcut_22.pdf>]
-<TT/SUSY/bag_a2m2mcut_23.pdf, id=7547, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2mcut_23.pdf, id=7544, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_23.pdf  used on input line 369.
@@ -4741,7 +4736,7 @@ File: TT/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_23.pdf  used on input line 369.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2mcut_23.pdf, id=7550, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2mcut_23.pdf, id=7547, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_23.pdf , page1 used on input line
@@ -4768,7 +4763,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_23.pdf , page1 used on input line
  369.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [122 <./TT/SUSY/bag_a2m2mcut_23.pdf>]
-<TT/SUSY/bag_a2m2mcut_24.pdf, id=7611, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2mcut_24.pdf, id=7608, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_24.pdf  used on input line 370.
@@ -4777,7 +4772,7 @@ File: TT/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_24.pdf  used on input line 370.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2mcut_24.pdf, id=7614, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2mcut_24.pdf, id=7611, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_24.pdf , page1 used on input line
@@ -4805,7 +4800,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2mcut_24.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [123 <./TT/SUSY/bag_a2m2mcut_24.pdf>]
-<TT/SUSY/bag_a2m2m4_20.pdf, id=7676, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_20.pdf, id=7673, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_20.pdf  used on input line 371.
@@ -4814,7 +4809,7 @@ File: TT/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_20.pdf  used on input line 371.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2m4_20.pdf, id=7679, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_20.pdf, id=7676, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_20.pdf , page1 used on input line 3
@@ -4841,7 +4836,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2m4_20.pdf , page1 used on input line 3
 71.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [124 <./TT/SUSY/bag_a2m2m4_20.pdf>]
-<TT/SUSY/bag_a2m2m4_22.pdf, id=7738, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_22.pdf, id=7735, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_22.pdf  used on input line 372.
@@ -4850,7 +4845,7 @@ File: TT/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_22.pdf  used on input line 372.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2m4_22.pdf, id=7741, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_22.pdf, id=7738, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_22.pdf , page1 used on input line 3
@@ -4878,7 +4873,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2m4_22.pdf , page1 used on input line 3
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [125 <./TT/SUSY/bag_a2m2m4_22.pdf>]
-<TT/SUSY/bag_a2m2m4_23.pdf, id=7799, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_23.pdf, id=7797, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_23.pdf  used on input line 373.
@@ -4887,7 +4882,7 @@ File: TT/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_23.pdf  used on input line 373.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2m4_23.pdf, id=7802, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_23.pdf, id=7800, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_23.pdf , page1 used on input line 3
@@ -4914,7 +4909,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2m4_23.pdf , page1 used on input line 3
 73.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [126 <./TT/SUSY/bag_a2m2m4_23.pdf>]
-<TT/SUSY/bag_a2m2m4_24.pdf, id=7861, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_24.pdf, id=7859, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_24.pdf  used on input line 374.
@@ -4923,7 +4918,7 @@ File: TT/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_24.pdf  used on input line 374.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2m4_24.pdf, id=7864, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2m4_24.pdf, id=7862, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2m4_24.pdf , page1 used on input line 3
@@ -4951,7 +4946,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2m4_24.pdf , page1 used on input line 3
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [127 <./TT/SUSY/bag_a2m2m4_24.pdf>]
-<TT/SUSY/bag_a2m2delm_20.pdf, id=7924, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_20.pdf, id=7922, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_20.pdf  used on input line 375.
@@ -4960,7 +4955,7 @@ File: TT/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_20.pdf  used on input line 375.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2delm_20.pdf, id=7927, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_20.pdf, id=7925, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_20.pdf , page1 used on input line
@@ -4987,7 +4982,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2delm_20.pdf , page1 used on input line
  375.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [128 <./TT/SUSY/bag_a2m2delm_20.pdf>]
-<TT/SUSY/bag_a2m2delm_22.pdf, id=7988, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_22.pdf, id=7986, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_22.pdf  used on input line 376.
@@ -4996,7 +4991,7 @@ File: TT/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_22.pdf  used on input line 376.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2delm_22.pdf, id=7991, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_22.pdf, id=7989, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_22.pdf , page1 used on input line
@@ -5024,7 +5019,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2delm_22.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [129 <./TT/SUSY/bag_a2m2delm_22.pdf>]
-<TT/SUSY/bag_a2m2delm_23.pdf, id=8051, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_23.pdf, id=8050, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_23.pdf  used on input line 377.
@@ -5033,7 +5028,7 @@ File: TT/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_23.pdf  used on input line 377.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2delm_23.pdf, id=8054, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_23.pdf, id=8053, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_23.pdf , page1 used on input line
@@ -5060,7 +5055,7 @@ Package pdftex.def Info: TT/SUSY/bag_a2m2delm_23.pdf , page1 used on input line
  377.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [130 <./TT/SUSY/bag_a2m2delm_23.pdf>]
-<TT/SUSY/bag_a2m2delm_24.pdf, id=8116, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_24.pdf, id=8115, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_24.pdf  used on input line 378.
@@ -5069,7 +5064,7 @@ File: TT/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_24.pdf  used on input line 378.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<TT/SUSY/bag_a2m2delm_24.pdf, id=8119, page=1, 879.18465pt x 410.8148pt>
+<TT/SUSY/bag_a2m2delm_24.pdf, id=8118, page=1, 879.18465pt x 410.8148pt>
 File: TT/SUSY/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use TT/SUSY/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: TT/SUSY/bag_a2m2delm_24.pdf , page1 used on input line
@@ -5108,11 +5103,11 @@ d.
 Here is how much of TeX's memory you used:
  12791 strings out of 475189
  237445 string characters out of 5761337
- 1944254 words of memory out of 5000000
+ 1943254 words of memory out of 5000000
  33657 multiletter control sequences out of 15000+600000
  565823 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,79p,561b,572s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,79p,560b,572s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx1
 2.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mex10.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/amsfonts/
@@ -5125,9 +5120,9 @@ public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type
 1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2023basic/texmf-dist/font
 s/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on tex/extrap_bag_SUSY_Z_extrap.pdf (131 pages, 5211460 bytes).
+Output written on tex/extrap_bag_SUSY_Z_extrap.pdf (131 pages, 5373605 bytes).
 PDF statistics:
- 8291 PDF objects out of 8907 (max. 8388607)
+ 8290 PDF objects out of 8907 (max. 8388607)
  1941 compressed objects within 20 object streams
  273 named destinations out of 1000 (max. 500000)
  2466 words of extra memory for PDF output out of 10000 (max. 10000000)

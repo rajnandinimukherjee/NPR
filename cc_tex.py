@@ -208,20 +208,27 @@ def full_summary(basis='SUSY', run=False, include_C=False,
     rot_mtx = basis_rotation(basis)
     C_folder = 'with_C' if include_C else 'without_C'
 
+    if obj == 'bag':
+        norm = 'bag'
+    elif obj == 'ratio':
+        norm = '11'
+
     sigma_file = f'sigmas/{C_folder}/sigmas_{basis}'+add_str+'.p'
-    # sigma_file = f'sigmas/{C_folder}/sigmas_{basis}.p'
     if calc_running:
         Z.store = {}
+        S = sigma(norm=norm)
         mus = np.around(np.arange(16, 31, 1)*0.1, 1)
         N_mus = len(mus)
 
         for i in tqdm(range(1, N_mus)):
-            Z.store[(mus[i], mus[i-1])] = Z.extrap_sigma(
+            Z.store[(mus[i], mus[i-1])] = S.calc_running(
                 mus[i], mus[i-1], rotate=rot_mtx,
+                correlated=True,
                 include_C=include_C)
 
-            Z.store[(mus[i-1], mus[i])] = Z.extrap_sigma(
+            Z.store[(mus[i-1], mus[i])] = S.calc_running(
                 mus[i-1], mus[i], rotate=rot_mtx,
+                correlated=True,
                 include_C=include_C)
 
         pickle.dump(Z.store, open(sigma_file, 'wb'))
@@ -233,12 +240,6 @@ def full_summary(basis='SUSY', run=False, include_C=False,
     dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{obj}_{basis}'+add_str+'.p'
     if run:
         fits = {}
-        if obj == 'bag':
-            norm = 'bag'
-        elif obj == 'ratio':
-            norm = '11'
-        C = Z_fits(C_ens[1:], norm=norm)
-        M = Z_fits(M_ens[1:], norm=norm)
         b = bag_fits(bag_ensembles, obj=obj)
 
         for op in tqdm(b.operators, desc=f'{obj} fits'):
@@ -251,7 +252,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
                     filename = fits[op][fit][mu]['filename']
                     res = b.fit_operator(
                         mu, op, filename=filename, rotate=rot_mtx,
-                        chiral_extrap=chiral_extrap, C=C, M=M,
+                        chiral_extrap=chiral_extrap,
                         **ansatz_kwargs[fit], plot=True, open=False)
 
                     fits[op][fit][mu].update(

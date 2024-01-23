@@ -142,8 +142,7 @@ def fit_func(x, y, ansatz, guess,
 
 
 class stat:
-    N_boot = 200
-    seed = 1
+    N_boot = 1000
 
     def __init__(self, val, err=None, btsp=None,
                  dtype=None, **kwargs):
@@ -187,7 +186,7 @@ class stat:
         self.btsp = np.zeros(shape=self.shape+(self.N_boot,))
         for idx, central in np.ndenumerate(self.val):
             if seed != None:
-                np.random.seed(self.seed)
+                np.random.seed(seed)
             self.btsp[idx] = np.random.normal(
                 central, self.err[idx], self.N_boot)
         self.btsp = np.moveaxis(self.btsp, -1, 0)
@@ -318,7 +317,6 @@ N_c = 3  # Color indices
 # N_bl = 16 # number of bilinears
 N_fq = 16  # number of fourquarks
 N_boot = stat.N_boot  # number of bootstrap samples
-seed = stat.seed  # random seed
 
 
 dirs = ['X', 'Y', 'Z', 'T']

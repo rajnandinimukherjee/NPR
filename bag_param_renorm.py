@@ -1,12 +1,12 @@
 import itertools
 from scipy.interpolate import interp1d
 from NPR_classes import *
-import hashlib
 
-all_bag_data = h5py.File('kaon_bag_fits.h5', 'r')
+# fit_file = 'Felix'
+fit_file = 'Tobi'
+all_bag_data = h5py.File(f'kaon_bag_fits_{fit_file}.h5', 'r')
 bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
-ensemble_seeds = {ens: int(hashlib.sha256(str.encode(ens)).hexdigest(), base=16)
-                  for ens in bag_ensembles}
+ensemble_seeds = {ens: int(hash(ens)) % (2**32) for ens in bag_ensembles}
 
 
 def load_info(key, ens, ops=operators, meson='ls', **kwargs):
@@ -22,12 +22,12 @@ def load_info(key, ens, ops=operators, meson='ls', **kwargs):
         for i in range(len(operators)):
             op = ops[i]
             bootstraps[:, i] = np.array(h5_data[op][key][
-                'Bootstraps'])[:, 0]
+                'Bootstraps'])[:N_boot, 0]
 
     elif meson == 'll':
         central = np.array(h5_data[key]['central']).item()
         error = np.array(h5_data[key]['error']).item()
-        bootstraps = np.array(h5_data[key]['Bootstraps'])[:, 0]
+        bootstraps = np.array(h5_data[key]['Bootstraps'])[:N_boot, 0]
 
     if key == 'gr-O-gr':
         central[1] *= -1
@@ -37,7 +37,7 @@ def load_info(key, ens, ops=operators, meson='ls', **kwargs):
         central[4] *= -1
         bootstraps[:, 4] = -bootstraps[:, 4]
 
-    return stat(val=central, err='fill', btsp=bootstraps)
+    return stat(val=central, err=error, btsp=bootstraps)
 
 
 class Z_analysis:
@@ -53,16 +53,11 @@ class Z_analysis:
             val=params[self.ens]['ainv'],
             err=params[self.ens]['ainv_err'],
             btsp='seed', seed=ensemble_seeds[self.ens])
-        self.a_sq = stat(
-            val=self.ainv.val**(-2),
-            err='fill',
-            btsp=self.ainv.btsp**(-2)
-        )
+        self.a_sq = self.ainv**(-2)
+
         self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
         self.masses = (self.sea_m, self.sea_m)
-        self.f_pi = stat(
-            val=f_pi_PDG.val/self.ainv.val,
-            btsp=f_pi_PDG.btsp/self.ainv.btsp)
+        self.f_pi = f_pi_PDG/self.ainv
 
         try:
             self.m_pi = load_info('m_0', self.ens, operators, meson='ll')
@@ -98,7 +93,6 @@ class Z_analysis:
         errors = np.zeros(shape=(self.N_ops, self.N_ops))
         stat_errors = np.zeros(shape=(self.N_ops, self.N_ops))
         sys_errors = np.zeros(shape=(self.N_ops, self.N_ops))
-        btsp = np.zeros(shape=(N_boot, self.N_ops, self.N_ops))
         for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
             if self.mask[i, j]:
                 y = stat(
@@ -137,10 +131,10 @@ class Z_analysis:
 
                 average = (lin_pred + quad_pred)/2
                 matrix[i, j] = average.val
-                btsp[:, i, j] = average.btsp
                 stat_errors[i, j] = max(abs(lin_pred.err), abs(quad_pred.err))
                 sys_errors[i, j] = np.abs(lin_pred.val - quad_pred.val)/2
-                errors[i, j] = stat_errors[i, j] + sys_errors[i, j]
+                errors[i, j] = (stat_errors[i, j]**2 +
+                                sys_errors[i, j]**2)**0.5
 
                 if plot:
                     x_grain = np.linspace(
@@ -199,7 +193,7 @@ class Z_analysis:
         Z = stat(
             val=matrix,
             err=errors,
-            btsp=btsp
+            btsp='fill'
         )
         Z.stat_err = stat_errors
         Z.sys_err = sys_errors
@@ -250,7 +244,7 @@ class Z_analysis:
             else:
                 ax[i, j].axis('off')
         plt.suptitle(
-            r'$Z_{ij}^{'+self.ens+r'}/Z_{'+self.norm+r'}^2$ vs renormalisation scale $\mu$', y=0.9)
+            r'$Z_{ij}^{'+self.ens+r'}/Z_{'+self.norm+r'}$ vs renormalisation scale $\mu$', y=0.9)
 
         if pass_plot:
             return fig, ax, filename
@@ -297,16 +291,7 @@ class Z_analysis:
             plt.suptitle(
                 sig_str+r'for $Z_{ij}/Z_A^2$', y=0.9)
 
-        pp = PdfPages(filename)
-        fig_nums = plt.get_fignums()
-        figs = [plt.figure(n) for n in fig_nums]
-        for fig in figs:
-            fig.savefig(pp, format='pdf')
-        pp.close()
-        plt.close('all')
-
-        print(f'Saved plot to {filename}.')
-        os.system("open "+filename)
+        call_PDF(filename)
 
     def load_fq_Z(self, norm='A', **kwargs):
         fq_data = h5py.File(self.filename, 'r')[
@@ -359,10 +344,23 @@ class Z_analysis:
                 val=[Z_ij_Z_q_2.val[m, :, :]/Z_ij_Z_q_2.val[m, 0, 0]
                      for m in range(self.N_mom)],
                 err='fill',
-                    btsp=[[Z_ij_Z_q_2.btsp[k, m, :, :]/Z_ij_Z_q_2.btsp[k, m, 0, 0]
-                           for m in range(self.N_mom)]
-                          for k in range(N_boot)]
+                btsp=[[Z_ij_Z_q_2.btsp[k, m, :, :]/Z_ij_Z_q_2.btsp[k, m, 0, 0]
+                       for m in range(self.N_mom)]
+                      for k in range(N_boot)]
             )
+        elif norm == '11/A':
+            self.Z = stat(
+                val=[Z_ij_Z_q_2.val[m, :, :]/(Z_ij_Z_q_2.val[m, 0, 0] *
+                                              (bl_data['A']['central'][m]**2))
+                     for m in range(self.N_mom)],
+                err='fill',
+                btsp=[[Z_ij_Z_q_2.btsp[k, m, :, :] /
+                       (Z_ij_Z_q_2.btsp[k, m, 0, 0] *
+                        (bl_data['A']['bootstrap'][k, m]**2))
+                       for m in range(self.N_mom)]
+                      for k in range(N_boot)]
+            )
+
         elif norm in bilinear.currents:
             Z_bl_Z_q = stat(
                 val=bl_data[norm]['central'][:],
@@ -390,9 +388,7 @@ class Z_analysis:
 
 
 class bag_analysis:
-
     def __init__(self, ensemble, obj='bag', action=(0, 0), **kwargs):
-
         self.ens = ensemble
         self.action = action
         self.ra = ratio_analysis(self.ens)
@@ -402,6 +398,9 @@ class bag_analysis:
         elif obj == 'ratio':
             norm = '11'
             self.bag = self.ra.ratio
+        elif obj == 'ratio2':
+            norm = '11/A'
+            self.bag = self.ra.ratio2
 
         self.Z_info = Z_analysis(self.ens, norm=norm)
 
@@ -410,9 +409,12 @@ class bag_analysis:
         self.ms_phys = stat(
             val=params[self.ens]['ams_phys'],
             err=params[self.ens]['ams_phys_err'],
-            btsp='fill')*self.ainv
+            btsp='seed', seed=ensemble_seeds[self.ens])*self.ainv
+
         self.ms_sea = self.ainv*params[self.ens]['ams_sea']
         self.ms_diff = (self.ms_sea-self.ms_phys)/self.ms_phys
+        # if self.ens == 'F1M':
+        #    self.ms_diff = self.ms_diff*6
 
         self.f_pi = f_pi_PDG/self.ainv
 
@@ -477,8 +479,12 @@ class ratio_analysis:
         self.op_recon()
 
     def op_recon(self, **kwargs):
+        self.m_P = load_info('m_0', self.ens)
         self.ZP_L_0 = load_info('pLL_0', self.ens)
         self.ZA_L_0 = load_info('aLL_0', self.ens)
+        if fit_file == 'Tobi':
+            self.ZP_L_0 = self.ZP_L_0*(self.m_P)**0.5
+            self.ZA_L_0 = self.ZA_L_0*(self.m_P)**0.5
 
         self.gr_O_gr = load_info('gr-O-gr', self.ens)
         self.Ni = norm_factors()
@@ -515,8 +521,7 @@ class ratio_analysis:
         self.B_N = Ni_diag@self.bag
 
         self.ratio = self.gr_O_gr/self.gr_O_gr[0]
-        self.m_P = load_info('m_0', self.ens)
-        self.f_P = load_info('f_M', self.ens)
-        K_exp_ratio = (m_K_PDG/f_K_PDG)**2
-        P_lat_ratio = (self.m_P/self.f_P)**2
-        # self.ratio = P_lat_ratio*self.ratio/K_exp_ratio
+        # self.f_P = load_info('f_M', self.ens)
+        # K_exp_ratio = (m_K_PDG/f_K_PDG)**2
+        # P_lat_ratio = (self.m_P/self.f_P)**2
+        # self.ratio2 = P_lat_ratio*self.ratio/K_exp_ratio
