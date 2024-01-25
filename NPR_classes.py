@@ -136,7 +136,7 @@ class bilinear_analysis:
 
 
 class fourquark_analysis:
-    N_boot = 200
+    N_boot = N_boot
 
     def __init__(self, ensemble, **kwargs):
 
