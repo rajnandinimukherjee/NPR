@@ -10,12 +10,12 @@ ansatz_kwargs = {
                'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'a4'},
     'a2m2mcut': {'title': r'$a^2$, $m_\pi^2$ (no M3, C2)',
                  'ens_list': ['C0', 'C1', 'M0', 'M1', 'M2', 'F1M']},
-    'a2m2m4': {'title': r'$a^2$, $m_\pi^2$, $m_\pi^4$',
-               'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'm4'},
+    #'a2m2m4': {'title': r'$a^2$, $m_\pi^2$, $m_\pi^4$',
+    #           'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'm4'},
+    #'a2m2logm2': {'title': r'$a^2$, $m_\pi^2$, $\log(m_\pi^2/\Lambda^2)$',
+    #              'addnl_terms': 'log'},
     'a2m2delm': {'title': r'$a^2$, $m_\pi^2$, $\delta m_s$',
-                 'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'del_ms'},
-    'a2m2logm2': {'title': r'$a^2$, $m_\pi^2$, $\log(m_\pi^2/\Lambda^2)$',
-                  'addnl_terms': 'log'}
+                 'guess': [1, 1e-1, 1e-2, 1e-3], 'addnl_terms': 'del_ms'}
 }
 
 
@@ -75,9 +75,9 @@ def rotate_from_NPR(include_C=False, C_folder='without_C',
         open(NPR_dict_filename, 'rb'))
 
     from_NPR = {op: {fit: {mu: {} for mu in mu_list}
-                     for fit in NPR_fits['VVpAA'].keys()}
+                     for fit in NPR_fits['VVmAA'].keys()}
                 for op in operators}
-    for fit in NPR_fits['VVpAA'].keys():
+    for fit in NPR_fits['VVmAA'].keys():
         for mu in mu_list:
             NPR_MS_Bs = stat(
                 val=[NPR_fits[op][fit][mu]['MS'].val
@@ -165,7 +165,7 @@ def operator_summary(operator, fits, basis='NPR', filename=None,
     ax[0].set_xticks(np.arange(len(ansatze)), ansatz_desc, rotation=45,
                      ha='right')
 
-    if basis != 'NPR' and with_FLAG:
+    if basis != 'NPR' and with_FLAG and obj=='bag':
         ansatze.append('FLAG')
         ansatz_desc.append(r'FLAG $N_f=2+1$')
         op_idx = operators.index(operator)
@@ -213,7 +213,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
     elif obj == 'ratio':
         norm = '11'
 
-    sigma_file = f'sigmas/{C_folder}/sigmas_{basis}'+add_str+'.p'
+    sigma_file = f'sigmas/{C_folder}/sigmas_{basis}'+add_str+'_{obj}.p'
     if calc_running:
         Z.store = {}
         S = sigma(norm=norm)
@@ -238,22 +238,25 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         Z.store = pickle.load(open(sigma_file, 'rb'))
 
     dict_filename = f'sigmas/{C_folder}/cc_extrap_dict_{obj}_{basis}'+add_str+'.p'
+    b = bag_fits(bag_ensembles, obj=obj)
     if run:
         fits = {}
-        b = bag_fits(bag_ensembles, obj=obj)
 
         for op in tqdm(b.operators, desc=f'{obj} fits'):
             op_idx = operators.index(op)
-            fits[op] = {}
-            for fit in list(ansatz_kwargs.keys())[:-1]:
-                fits[op][fit] = {mu: {'filename': op+'/'+basis+f'/{obj}_'+fit+'_' +
+            fits.update({op:{fit:{mu:{'filename':op+'/'+basis+f'/{obj}_'+fit+'_' +
                                       str(int(mu*10))+'.pdf'} for mu in mu_list}
-                for mu in mu_list:
+                             for fit in ansatz_kwargs.keys()}})
+            for mu in mu_list:
+                b.load_bag(mu, chiral_extrap=chiral_extrap, rotate=rot_mtx)
+                for fit in list(ansatz_kwargs.keys()):
                     filename = fits[op][fit][mu]['filename']
                     res = b.fit_operator(
-                        mu, op, filename=filename, rotate=rot_mtx,
-                        chiral_extrap=chiral_extrap,
-                        **ansatz_kwargs[fit], plot=True, open=False)
+                        mu, op,
+                        filename=filename,
+                        rotate=rot_mtx,
+                        **ansatz_kwargs[fit],
+                        plot=True, open=False)
 
                     fits[op][fit][mu].update(
                         {'phys': res[0],
@@ -271,13 +274,20 @@ def full_summary(basis='SUSY', run=False, include_C=False,
             for mu in mu_list:
                 obj_ = stat(
                     val=[fits[op][fit][mu]['phys'].val
-                         for op in operators],
+                         for op in b.operators],
                     err=[fits[op][fit][mu]['phys'].err
-                         for op in operators],
+                         for op in b.operators],
                     btsp=np.array([fits[op][fit][mu]['phys'].btsp
-                                   for op in operators]).T,
+                                   for op in b.operators]).T,
                 )
-                for op_idx, op in enumerate(operators):
+                if obj=='ratio':
+                    obj_ = stat(
+                            val=[1]+list(obj_.val),
+                            err=[1]+list(obj_.err),
+                            btsp=np.array([[1]+list(obj_.btsp[k,:])
+                                            for k in range(N_boot)])
+                            )
+                for op_idx, op in enumerate(b.operators):
                     MS = convert_to_MSbar(
                         obj_, flag_mus[op_idx], mu, obj=obj, rot_mtx=rot_mtx)
                     fits[op][fit][mu].update({'MS': stat(
@@ -292,16 +302,16 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         print(f'Loaded fit dict from {dict_filename}.')
         fits = pickle.load(open(dict_filename, 'rb'))
 
-    for op in operators:
+    for op in b.operators:
         operator_summary(op, fits, obj=obj, basis=basis, open=False, with_alt=True,
                          with_FLAG=with_FLAG, rot_mtx=rot_mtx, C_folder=C_folder, add_str=add_str)
 
     if obj == 'bag':
         char = r'\mathcal{B}'
-    elif obj == 'fq_op':
+    elif obj == 'ratio':
         char = r'\langle O \rangle'
 
-    num_ansatz = len(ansatz_kwargs.keys())-1
+    num_ansatz = len(ansatz_kwargs.keys())
     paperwidth = int(3*num_ansatz)
     rv = [r'\documentclass[12pt]{extarticle}']
     rv += [r'\usepackage[paperwidth='+str(paperwidth) +
@@ -318,7 +328,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
     rv += [r'\tableofcontents']
     rv += [r'\clearpage']
 
-    for i, op in enumerate(operators):
+    for i, op in enumerate(b.operators):
         mu_str = str(np.around(flag_mus[i]))
         rv += [r'\begin{figure}']
         rv += [r'\centering']
@@ -333,7 +343,7 @@ def full_summary(basis='SUSY', run=False, include_C=False,
         rv += [r'\end{figure}']
         rv += [r'\clearpage']
 
-    for i, op in enumerate(operators):
+    for i, op in enumerate(b.operators):
         ansatze = [ansatz_kwargs[fit]['title'] for fit in fits[op].keys()]
         rv += [r'\section{$\mathcal{B}_'+str(i+1)+r'$}']
         rv += [r'\begin{table}[h!]']

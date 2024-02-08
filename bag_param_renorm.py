@@ -6,7 +6,8 @@ from NPR_classes import *
 fit_file = 'Tobi'
 all_bag_data = h5py.File(f'kaon_bag_fits_{fit_file}.h5', 'r')
 bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
-ensemble_seeds = {ens: int(hash(ens)) % (2**32) for ens in bag_ensembles}
+ensemble_seeds = {ens: int(hash(ens)) % (2**32)
+                  for ens in bag_ensembles+['C1M']}
 
 
 def load_info(key, ens, ops=operators, meson='ls', **kwargs):
@@ -67,7 +68,14 @@ class Z_analysis:
                 btsp=(self.m_pi.btsp**2)/(self.f_pi.btsp**2)
             )
         except KeyError:
-            print('m_pi data not identified, check for consistent ensemble naming')
+            if self.ens == 'C1M':
+                self.m_pi = stat(
+                    val=0.16079,
+                    err=0.00054,
+                    btsp='fill')
+            else:
+                print(f'{self.ens} m_pi data not identified,' +
+                      ' check for consistent ensemble naming')
 
         self.norm = norm
         if norm == '11':
@@ -75,7 +83,9 @@ class Z_analysis:
         self.load_fq_Z(norm=self.norm)
 
     def interpolate(self, m, xaxis='mu', ainv=None,
-                    plot=False, **kwargs):
+                    plot=False, fittype='linear',
+                    filename='plots/Z_scaling.pdf',
+                    **kwargs):
         if xaxis == 'mu':
             if ainv is None:
                 x = self.am*self.ainv
@@ -85,14 +95,11 @@ class Z_analysis:
             x = self.am
 
         if plot:
-            fig, ax, filename = self.plot_Z(xaxis=xaxis, pass_plot=plot)
-            if filename in kwargs:
-                filename = kwargs['filename']
+            fig, ax = self.plot_Z(xaxis=xaxis, pass_plot=plot,
+                                  filename=filename)
 
         matrix = np.zeros(shape=(self.N_ops, self.N_ops))
         errors = np.zeros(shape=(self.N_ops, self.N_ops))
-        stat_errors = np.zeros(shape=(self.N_ops, self.N_ops))
-        sys_errors = np.zeros(shape=(self.N_ops, self.N_ops))
         for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
             if self.mask[i, j]:
                 y = stat(
@@ -101,102 +108,79 @@ class Z_analysis:
                     btsp=self.Z.btsp[:, :, i, j]
                 )
 
-                lin_indices = np.sort(
-                    self.closest_n_points(m, x.val, n=2))
-                x_1, y_1 = x[lin_indices[0]], y[lin_indices[0]]
-                x_2, y_2 = x[lin_indices[1]], y[lin_indices[1]]
-                slope = (y_2-y_1)/(x_2-x_1)
-                intercept = y_1 - slope*x_1
+                if fittype == 'linear':
+                    indices = np.sort(
+                        self.closest_n_points(m, x.val, n=2))
+                    x_1, y_1 = x[indices[0]], y[indices[0]]
+                    x_2, y_2 = x[indices[1]], y[indices[1]]
+                    slope = (y_2-y_1)/(x_2-x_1)
+                    intercept = y_1 - slope*x_1
 
-                lin_pred = intercept + slope*m
+                    pred = intercept + slope*m
+                    x_grain = np.linspace(
+                        x.val[indices[0]], x.val[indices[-1]], 20)
+                    pred_grain = join_stats(
+                        [intercept+slope*g for g in x_grain])
 
-                quad_indices = np.sort(
-                    self.closest_n_points(m, x.val, n=3))
-                x_1, y_1 = x[quad_indices[0]], y[quad_indices[0]]
-                x_2, y_2 = x[quad_indices[1]], y[quad_indices[1]]
-                x_3, y_3 = x[quad_indices[2]], y[quad_indices[2]]
+                elif fittype == 'quadratic':
+                    indices = np.sort(
+                        self.closest_n_points(m, x.val, n=3))
+                    x_1, y_1 = x[indices[0]], y[indices[0]]
+                    x_2, y_2 = x[indices[1]], y[indices[1]]
+                    x_3, y_3 = x[indices[2]], y[indices[2]]
 
-                a = y_1/((x_1-x_2)*(x_1-x_3)) + y_2 / \
-                    ((x_2-x_1)*(x_2-x_3)) + y_3/((x_3-x_1)*(x_3-x_2))
+                    a = y_1/((x_1-x_2)*(x_1-x_3)) + y_2 / \
+                        ((x_2-x_1)*(x_2-x_3)) + y_3/((x_3-x_1)*(x_3-x_2))
 
-                b = (-y_1*(x_2+x_3)/((x_1-x_2)*(x_1-x_3))
-                     - y_2*(x_1+x_3)/((x_2-x_1)*(x_2-x_3))
-                     - y_3*(x_1+x_2)/((x_3-x_1)*(x_3-x_2)))
+                    b = (-y_1*(x_2+x_3)/((x_1-x_2)*(x_1-x_3))
+                         - y_2*(x_1+x_3)/((x_2-x_1)*(x_2-x_3))
+                         - y_3*(x_1+x_2)/((x_3-x_1)*(x_3-x_2)))
 
-                c = (y_1*x_2*x_3/((x_1-x_2)*(x_1-x_3))
-                     + y_2*x_1*x_3/((x_2-x_1)*(x_2-x_3))
-                     + y_3*x_1*x_2/((x_3-x_1)*(x_3-x_2)))
+                    c = (y_1*x_2*x_3/((x_1-x_2)*(x_1-x_3))
+                         + y_2*x_1*x_3/((x_2-x_1)*(x_2-x_3))
+                         + y_3*x_1*x_2/((x_3-x_1)*(x_3-x_2)))
 
-                quad_pred = a*(m**2) + b*m + c
+                    pred = a*(m**2) + b*m + c
+                    x_grain = np.linspace(
+                        x.val[indices[0]], x.val[indices[-1]], 20)
+                    pred_grain = join_stats(
+                        [a*(g**2)+b*g + c for g in x_grain]
+                    )
 
-                average = (lin_pred + quad_pred)/2
-                matrix[i, j] = average.val
-                stat_errors[i, j] = max(abs(lin_pred.err), abs(quad_pred.err))
-                sys_errors[i, j] = np.abs(lin_pred.val - quad_pred.val)/2
-                errors[i, j] = (stat_errors[i, j]**2 +
-                                sys_errors[i, j]**2)**0.5
+                else:
+                    print("Choose fittype linear or quadratic.")
+                    break
+
+                matrix[i, j] = pred.val
+                errors[i, j] = pred.err
 
                 if plot:
-                    x_grain = np.linspace(
-                        x.val[lin_indices[0]], x.val[lin_indices[1]], 20)
-                    lin_grain = join_stats(
-                        [intercept+slope*g for g in x_grain])
-                    lin_plot_idx = lin_indices[1]
-                    ax[i, j].errorbar(x.val[lin_plot_idx],
-                                      lin_pred.val,
-                                      yerr=lin_pred.err,
+                    ax[i, j].errorbar(m,
+                                      matrix[i, j],
+                                      yerr=errors[i, j],
                                       c='r', fmt='o',
                                       label=err_disp(
-                                          lin_pred.val,
-                                          lin_pred.err),
+                                          pred.val,
+                                          pred.err),
                                       capsize=4)
                     ax[i, j].fill_between(x_grain,
-                                          lin_grain.val+lin_grain.err,
-                                          lin_grain.val-lin_grain.err,
+                                          pred_grain.val+pred_grain.err,
+                                          pred_grain.val-pred_grain.err,
                                           color='r', alpha=0.1,
-                                          )
-                    ax[i, j].text(x.val[lin_plot_idx], lin_pred.val,
-                                  '2', color='w', va='center', ha='center',
-                                  fontsize=6)
-
-                    x_grain = np.linspace(
-                        x.val[quad_indices[0]], x.val[quad_indices[2]], 20)
-                    quad_grain = join_stats(
-                        [a*(g**2) + b*g + c for g in x_grain])
-                    quad_plot_idx = lin_plot_idx+1
-                    ax[i, j].errorbar(x.val[quad_plot_idx],
-                                      quad_pred.val,
-                                      yerr=quad_pred.err,
-                                      c='g', fmt='o',
-                                      label=err_disp(
-                                          quad_pred.val,
-                                          quad_pred.err),
-                                      capsize=4)
-                    ax[i, j].fill_between(x_grain,
-                                          quad_grain.val+quad_grain.err,
-                                          quad_grain.val-quad_grain.err,
-                                          color='g', alpha=0.1,
-                                          )
-                    ax[i, j].text(x.val[quad_plot_idx], quad_pred.val,
-                                  '3', color='w', va='center', ha='center',
-                                  fontsize=6)
-                    ax[i, j].errorbar(m, matrix[i, j], yerr=errors[i, j],
-                                      c='k', fmt='o', capsize=4,
-                                      label=err_disp(
-                                          matrix[i, j], stat_errors[i, j],
-                                          sys_err=sys_errors[i, j]))
+                                          label=fittype)
                     ax[i, j].legend()
 
         if plot:
             call_PDF(filename)
+
+        if self.mask[0, 0] == False:
+            matrix[0, 0] = 1
 
         Z = stat(
             val=matrix,
             err=errors,
             btsp='fill'
         )
-        Z.stat_err = stat_errors
-        Z.sys_err = sys_errors
 
         if 'rotate' in kwargs:
             rot_mtx = kwargs['rotate']
@@ -224,7 +208,6 @@ class Z_analysis:
         x = self.am if xaxis == 'am' else (self.am*self.ainv)
 
         fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
-                               sharex='col',
                                figsize=(16, 16))
         plt.subplots_adjust(hspace=0, wspace=0)
 
@@ -241,13 +224,15 @@ class Z_analysis:
 
                 if j == 2 or j == 4:
                     ax[i, j].yaxis.tick_right()
+                if i == 1 or i == 3:
+                    ax[i, j].set_xticks([])
             else:
                 ax[i, j].axis('off')
         plt.suptitle(
             r'$Z_{ij}^{'+self.ens+r'}/Z_{'+self.norm+r'}$ vs renormalisation scale $\mu$', y=0.9)
 
         if pass_plot:
-            return fig, ax, filename
+            return fig, ax
         else:
             call_PDF(filename)
             print(f'Saved plot to {filename}.')
@@ -322,17 +307,19 @@ class Z_analysis:
                      for m in range(self.N_mom)])
 
             Z_ij_bag_btsp = Z_ij_Z_q_2.btsp
-            for k in range(N_boot):
-                Z_ij_bag_btsp[k, :, 0, 0] = np.array(
-                    [Z_ij_bag_btsp[k, m, 0, 0] *
-                     (bl_data['A']['bootstrap']
-                      [k, m]**(-2))
-                     for m in range(self.N_mom)])
-                Z_ij_bag_btsp[k, :, 1:, 1:] = np.array(
-                    [Z_ij_bag_btsp[k, m, 1:, 1:] *
-                     (bl_data['S']['bootstrap']
-                      [k, m]**(-2))
-                     for m in range(self.N_mom)])
+            Z_ij_bag_btsp[:, :, 0, 0] = np.array([
+                [Z_ij_bag_btsp[k, m, 0, 0] *
+                 (bl_data['A']['bootstrap']
+                  [k, m]**(-2))
+                 for m in range(self.N_mom)]
+                for k in range(N_boot)])
+            Z_ij_bag_btsp[:, :, 1:, 1:] = np.array([
+                [Z_ij_bag_btsp[k, m, 1:, 1:] *
+                 (bl_data['S']['bootstrap']
+                  [k, m]**(-2))
+                 for m in range(self.N_mom)]
+                for k in range(N_boot)])
+
             self.Z = stat(
                 val=Z_ij_bag,
                 err='fill',
@@ -348,15 +335,16 @@ class Z_analysis:
                        for m in range(self.N_mom)]
                       for k in range(N_boot)]
             )
-        elif norm == '11/A':
+        elif norm == '11/AS':
             self.Z = stat(
-                val=[Z_ij_Z_q_2.val[m, :, :]/(Z_ij_Z_q_2.val[m, 0, 0] *
-                                              (bl_data['A']['central'][m]**2))
+                val=[(Z_ij_Z_q_2.val[m, :, :]/Z_ij_Z_q_2.val[m, 0, 0]) *
+                     (bl_data['A']['central'][m]/bl_data['S']['central'][m])**2
                      for m in range(self.N_mom)],
                 err='fill',
-                btsp=[[Z_ij_Z_q_2.btsp[k, m, :, :] /
-                       (Z_ij_Z_q_2.btsp[k, m, 0, 0] *
-                        (bl_data['A']['bootstrap'][k, m]**2))
+                btsp=[[(Z_ij_Z_q_2.btsp[k, m, :, :] /
+                       Z_ij_Z_q_2.btsp[k, m, 0, 0]) *
+                       (bl_data['A']['bootstrap'][k, m] /
+                        bl_data['S']['bootstrap'][k, m])**2
                        for m in range(self.N_mom)]
                       for k in range(N_boot)]
             )
@@ -376,6 +364,8 @@ class Z_analysis:
                                for m in range(self.N_mom)]
                                for k in range(N_boot)])
             )
+        else:
+            print('Normalisation not recognised!')
 
     def closest_n_points(self, target, values, n, **kwargs):
         diff = np.abs(np.array(values)-np.array(target))
@@ -399,12 +389,13 @@ class bag_analysis:
             norm = '11'
             self.bag = self.ra.ratio
         elif obj == 'ratio2':
-            norm = '11/A'
+            norm = '11/AS'
             self.bag = self.ra.ratio2
 
-        self.Z_info = Z_analysis(self.ens, norm=norm)
-
-        self.ainv = self.Z_info.ainv
+        self.ainv = stat(
+            val=params[self.ens]['ainv'],
+            err=params[self.ens]['ainv_err'],
+            btsp='seed', seed=ensemble_seeds[self.ens])
         self.a_sq = self.ainv**(-2)
         self.ms_phys = stat(
             val=params[self.ens]['ams_phys'],
@@ -413,24 +404,11 @@ class bag_analysis:
 
         self.ms_sea = self.ainv*params[self.ens]['ams_sea']
         self.ms_diff = (self.ms_sea-self.ms_phys)/self.ms_phys
-        # if self.ens == 'F1M':
-        #    self.ms_diff = self.ms_diff*6
 
         self.f_pi = f_pi_PDG/self.ainv
 
         self.m_pi = load_info('m_0', self.ens, meson='ll')
         self.m_f_sq = (self.m_pi**2)/(self.f_pi**2)
-
-    def interpolate(self, mu, rotate=np.eye(len(operators)), **kwargs):
-        Z_mu = self.Z_info.interpolate(mu, rotate=rotate, **kwargs)
-        rot_mtx = stat(
-            val=rotate,
-            btsp='fill'
-        )
-
-        bag = rot_mtx@self.bag
-        bag_interp = Z_mu@bag
-        return bag_interp
 
     def ansatz(self, param, operator, fit='central', **kwargs):
         op_idx = operators.index(operator)
@@ -462,7 +440,7 @@ class bag_analysis:
                     f += log_term*m_f_sq
             return f
 
-        func = param[0] + param[1]*a_sq + \
+        func = param[0] + param[1]*a_sq +\
             (mpi_dep(m_f_sq)-mpi_dep(PDG))
         if 'addnl_terms' in kwargs:
             if kwargs['addnl_terms'] == 'a4':
@@ -521,7 +499,10 @@ class ratio_analysis:
         self.B_N = Ni_diag@self.bag
 
         self.ratio = self.gr_O_gr/self.gr_O_gr[0]
-        # self.f_P = load_info('f_M', self.ens)
-        # K_exp_ratio = (m_K_PDG/f_K_PDG)**2
-        # P_lat_ratio = (self.m_P/self.f_P)**2
-        # self.ratio2 = P_lat_ratio*self.ratio/K_exp_ratio
+        try:
+            self.f_P = load_info('f_M', self.ens)
+            K_exp_ratio = (m_K_PDG/f_K_PDG)**2
+            P_lat_ratio = (self.m_P/self.f_P)**2
+            self.ratio2 = P_lat_ratio*self.ratio/K_exp_ratio
+        except KeyError:
+            pass

@@ -87,6 +87,7 @@ for i in range(len(operators)):
     mask[i, i] = True
 mask[1, 2], mask[2, 1] = True, True
 mask[3, 4], mask[4, 3] = True, True
+# mask = np.full((len(operators), len(operators)), True)
 
 
 class fourquark:

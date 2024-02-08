@@ -68,4 +68,3 @@ class external:
             val=np.linalg.inv(self.outgoing_propagator.val),
             btsp=np.array([np.linalg.inv(self.outgoing_propagator.btsp[k,])
                            for k in range(N_boot)]))
-

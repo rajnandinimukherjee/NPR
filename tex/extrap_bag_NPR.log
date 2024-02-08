@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.16)  23 JAN 2024 15:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.8.16)  25 JAN 2024 01:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -486,22 +486,22 @@ Overfull \hbox (91.06535pt too wide) in paragraph at lines 17--18
 LaTeX Warning: Float too large for page by 14.37129pt on input line 19.
 
 [2 <./VVpAA/NPR/fit_summary_bag.pdf>]
-<VVmAA/NPR/fit_summary_bag.pdf, id=104, page=1, 866.52481pt x 326.72737pt>
+<VVmAA/NPR/fit_summary_bag.pdf, id=104, page=1, 861.50606pt x 326.72737pt>
 File: VVmAA/NPR/fit_summary_bag.pdf Graphic file (type pdf)
 <use VVmAA/NPR/fit_summary_bag.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/fit_summary_bag.pdf , page1 used on input li
 ne 23.
-(pdftex.def)             Requested size: 1001.66336pt x 377.68784pt.
+(pdftex.def)             Requested size: 1001.66336pt x 379.88144pt.
 
 Overfull \hbox (91.06535pt too wide) in paragraph at lines 23--24
  [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 6.01567pt on input line 25.
+LaTeX Warning: Float too large for page by 8.20927pt on input line 25.
 
 [3 <./VVmAA/NPR/fit_summary_bag.pdf>]
-<SSmPP/NPR/fit_summary_bag.pdf, id=168, page=1, 857.80472pt x 326.72737pt>
+<SSmPP/NPR/fit_summary_bag.pdf, id=166, page=1, 857.80472pt x 326.72737pt>
 File: SSmPP/NPR/fit_summary_bag.pdf Graphic file (type pdf)
 <use SSmPP/NPR/fit_summary_bag.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/fit_summary_bag.pdf , page1 used on input li
@@ -516,7 +516,7 @@ Overfull \hbox (91.06535pt too wide) in paragraph at lines 29--30
 LaTeX Warning: Float too large for page by 9.86943pt on input line 31.
 
 [4 <./SSmPP/NPR/fit_summary_bag.pdf>]
-<SSpPP/NPR/fit_summary_bag.pdf, id=232, page=1, 861.50606pt x 326.72737pt>
+<SSpPP/NPR/fit_summary_bag.pdf, id=230, page=1, 861.50606pt x 326.72737pt>
 File: SSpPP/NPR/fit_summary_bag.pdf Graphic file (type pdf)
 <use SSpPP/NPR/fit_summary_bag.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/fit_summary_bag.pdf , page1 used on input li
@@ -531,7 +531,7 @@ Overfull \hbox (91.06535pt too wide) in paragraph at lines 35--36
 LaTeX Warning: Float too large for page by 8.20927pt on input line 37.
 
 [5 <./SSpPP/NPR/fit_summary_bag.pdf>]
-<TT/NPR/fit_summary_bag.pdf, id=297, page=1, 861.50606pt x 326.72737pt>
+<TT/NPR/fit_summary_bag.pdf, id=295, page=1, 861.50606pt x 326.72737pt>
 File: TT/NPR/fit_summary_bag.pdf Graphic file (type pdf)
 <use TT/NPR/fit_summary_bag.pdf, page 1>
 Package pdftex.def Info: TT/NPR/fit_summary_bag.pdf , page1 used on input line 
@@ -563,7 +563,7 @@ Overfull \hbox (22.68866pt too wide) in paragraph at lines 48--58
  [] 
  []
 
-<VVpAA/NPR/bag_a2m2_20.pdf, id=385, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2_20.pdf, id=384, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_20.pdf  used on input line 87.
@@ -572,7 +572,7 @@ File: VVpAA/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_20.pdf  used on input line 87.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2_20.pdf, id=388, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2_20.pdf, id=387, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_20.pdf , page1 used on input line 8
@@ -643,7 +643,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2_22.pdf , page1 used on input line 8
 8.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [9 <./VVpAA/NPR/bag_a2m2_22.pdf>]
-<VVpAA/NPR/bag_a2m2_23.pdf, id=537, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2_23.pdf, id=538, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_23.pdf  used on input line 89.
@@ -652,7 +652,7 @@ File: VVpAA/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_23.pdf  used on input line 89.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2_23.pdf, id=540, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2_23.pdf, id=541, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_23.pdf , page1 used on input line 8
@@ -680,7 +680,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2_23.pdf , page1 used on input line 8
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [10 <./VVpAA/NPR/bag_a2m2_23.pdf>]
-<VVpAA/NPR/bag_a2m2_24.pdf, id=596, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2_24.pdf, id=598, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_24.pdf  used on input line 90.
@@ -689,7 +689,7 @@ File: VVpAA/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_24.pdf  used on input line 90.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2_24.pdf, id=599, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2_24.pdf, id=601, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2_24.pdf , page1 used on input line 9
@@ -716,7 +716,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2_24.pdf , page1 used on input line 9
 0.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [11 <./VVpAA/NPR/bag_a2m2_24.pdf>]
-<VVpAA/NPR/bag_a2m2noC_20.pdf, id=656, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_20.pdf, id=658, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_20.pdf  used on input line 91.
@@ -725,7 +725,7 @@ File: VVpAA/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_20.pdf  used on input line 91.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2noC_20.pdf, id=659, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_20.pdf, id=661, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
@@ -752,7 +752,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
 e 91.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [12 <./VVpAA/NPR/bag_a2m2noC_20.pdf>]
-<VVpAA/NPR/bag_a2m2noC_22.pdf, id=719, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_22.pdf, id=720, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_22.pdf  used on input line 92.
@@ -761,7 +761,7 @@ File: VVpAA/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_22.pdf  used on input line 92.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2noC_22.pdf, id=722, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_22.pdf, id=723, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
@@ -788,7 +788,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
 e 92.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [13 <./VVpAA/NPR/bag_a2m2noC_22.pdf>]
-<VVpAA/NPR/bag_a2m2noC_23.pdf, id=780, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_23.pdf, id=781, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_23.pdf  used on input line 93.
@@ -797,7 +797,7 @@ File: VVpAA/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_23.pdf  used on input line 93.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2noC_23.pdf, id=783, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_23.pdf, id=784, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
@@ -824,7 +824,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
 e 93.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [14 <./VVpAA/NPR/bag_a2m2noC_23.pdf>]
-<VVpAA/NPR/bag_a2m2noC_24.pdf, id=841, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_24.pdf, id=842, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_24.pdf  used on input line 94.
@@ -833,7 +833,7 @@ File: VVpAA/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_24.pdf  used on input line 94.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2noC_24.pdf, id=844, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2noC_24.pdf, id=845, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2noC_24.pdf , page1 used on input lin
@@ -896,7 +896,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2a4m2_20.pdf , page1 used on input line
  95.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [16 <./VVpAA/NPR/bag_a2a4m2_20.pdf>]
-<VVpAA/NPR/bag_a2a4m2_22.pdf, id=962, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2a4m2_22.pdf, id=963, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2a4m2_22.pdf  used on input line 96.
@@ -905,7 +905,7 @@ File: VVpAA/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2a4m2_22.pdf  used on input line 96.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2a4m2_22.pdf, id=965, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2a4m2_22.pdf, id=966, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2a4m2_22.pdf , page1 used on input line
@@ -1004,7 +1004,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2a4m2_24.pdf , page1 used on input line
  98.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [19 <./VVpAA/NPR/bag_a2a4m2_24.pdf>]
-<VVpAA/NPR/bag_a2m2mcut_20.pdf, id=1142, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_20.pdf, id=1141, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_20.pdf  used on input line 99.
@@ -1013,7 +1013,7 @@ File: VVpAA/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_20.pdf  used on input line 99.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2mcut_20.pdf, id=1145, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_20.pdf, id=1144, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
@@ -1040,7 +1040,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
 ne 99.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [20 <./VVpAA/NPR/bag_a2m2mcut_20.pdf>]
-<VVpAA/NPR/bag_a2m2mcut_22.pdf, id=1205, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_22.pdf, id=1203, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_22.pdf  used on input line 100.
@@ -1051,7 +1051,7 @@ File: VVpAA/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_22.pdf  used on input line 100.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2mcut_22.pdf, id=1208, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_22.pdf, id=1206, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
@@ -1078,7 +1078,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
 ne 100.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [21 <./VVpAA/NPR/bag_a2m2mcut_22.pdf>]
-<VVpAA/NPR/bag_a2m2mcut_23.pdf, id=1267, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_23.pdf, id=1265, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_23.pdf  used on input line 101.
@@ -1089,7 +1089,7 @@ File: VVpAA/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_23.pdf  used on input line 101.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2mcut_23.pdf, id=1270, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_23.pdf, id=1268, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
@@ -1116,7 +1116,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
 ne 101.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [22 <./VVpAA/NPR/bag_a2m2mcut_23.pdf>]
-<VVpAA/NPR/bag_a2m2mcut_24.pdf, id=1328, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_24.pdf, id=1327, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_24.pdf  used on input line 102.
@@ -1127,7 +1127,7 @@ File: VVpAA/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_24.pdf  used on input line 102.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2mcut_24.pdf, id=1331, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2mcut_24.pdf, id=1330, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
@@ -1154,7 +1154,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
 ne 102.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [23 <./VVpAA/NPR/bag_a2m2mcut_24.pdf>]
-<VVpAA/NPR/bag_a2m2m4_20.pdf, id=1389, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_20.pdf, id=1387, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_20.pdf  used on input line 103.
@@ -1163,7 +1163,7 @@ File: VVpAA/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_20.pdf  used on input line 103.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2m4_20.pdf, id=1392, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_20.pdf, id=1390, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_20.pdf , page1 used on input line
@@ -1190,7 +1190,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_20.pdf , page1 used on input line
  103.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [24 <./VVpAA/NPR/bag_a2m2m4_20.pdf>]
-<VVpAA/NPR/bag_a2m2m4_22.pdf, id=1449, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_22.pdf, id=1446, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_22.pdf  used on input line 104.
@@ -1199,7 +1199,7 @@ File: VVpAA/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_22.pdf  used on input line 104.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2m4_22.pdf, id=1452, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_22.pdf, id=1449, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_22.pdf , page1 used on input line
@@ -1226,7 +1226,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_22.pdf , page1 used on input line
  104.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [25 <./VVpAA/NPR/bag_a2m2m4_22.pdf>]
-<VVpAA/NPR/bag_a2m2m4_23.pdf, id=1509, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_23.pdf, id=1506, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_23.pdf  used on input line 105.
@@ -1235,7 +1235,7 @@ File: VVpAA/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_23.pdf  used on input line 105.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2m4_23.pdf, id=1512, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_23.pdf, id=1509, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_23.pdf , page1 used on input line
@@ -1262,7 +1262,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_23.pdf , page1 used on input line
  105.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [26 <./VVpAA/NPR/bag_a2m2m4_23.pdf>]
-<VVpAA/NPR/bag_a2m2m4_24.pdf, id=1568, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_24.pdf, id=1565, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_24.pdf  used on input line 106.
@@ -1271,7 +1271,7 @@ File: VVpAA/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_24.pdf  used on input line 106.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2m4_24.pdf, id=1571, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2m4_24.pdf, id=1568, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_24.pdf , page1 used on input line
@@ -1298,7 +1298,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2m4_24.pdf , page1 used on input line
  106.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [27 <./VVpAA/NPR/bag_a2m2m4_24.pdf>]
-<VVpAA/NPR/bag_a2m2delm_20.pdf, id=1627, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_20.pdf, id=1625, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_20.pdf  used on input line 107.
@@ -1309,7 +1309,7 @@ File: VVpAA/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_20.pdf  used on input line 107.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2delm_20.pdf, id=1630, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_20.pdf, id=1628, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_20.pdf , page1 used on input li
@@ -1336,7 +1336,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_20.pdf , page1 used on input li
 ne 107.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [28 <./VVpAA/NPR/bag_a2m2delm_20.pdf>]
-<VVpAA/NPR/bag_a2m2delm_22.pdf, id=1689, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_22.pdf, id=1687, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_22.pdf  used on input line 108.
@@ -1347,7 +1347,7 @@ File: VVpAA/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_22.pdf  used on input line 108.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2delm_22.pdf, id=1692, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_22.pdf, id=1690, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_22.pdf , page1 used on input li
@@ -1374,7 +1374,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_22.pdf , page1 used on input li
 ne 108.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [29 <./VVpAA/NPR/bag_a2m2delm_22.pdf>]
-<VVpAA/NPR/bag_a2m2delm_23.pdf, id=1751, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_23.pdf, id=1749, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_23.pdf  used on input line 109.
@@ -1385,7 +1385,7 @@ File: VVpAA/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_23.pdf  used on input line 109.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2delm_23.pdf, id=1754, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_23.pdf, id=1752, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_23.pdf , page1 used on input li
@@ -1412,7 +1412,7 @@ Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_23.pdf , page1 used on input li
 ne 109.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [30 <./VVpAA/NPR/bag_a2m2delm_23.pdf>]
-<VVpAA/NPR/bag_a2m2delm_24.pdf, id=1813, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_24.pdf, id=1811, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_24.pdf  used on input line 110.
@@ -1423,7 +1423,7 @@ File: VVpAA/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_24.pdf  used on input line 110.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<VVpAA/NPR/bag_a2m2delm_24.pdf, id=1816, page=1, 879.18465pt x 410.8148pt>
+<VVpAA/NPR/bag_a2m2delm_24.pdf, id=1814, page=1, 879.18465pt x 410.8148pt>
 File: VVpAA/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVpAA/NPR/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: VVpAA/NPR/bag_a2m2delm_24.pdf , page1 used on input li
@@ -1467,7 +1467,7 @@ Overfull \hbox (49.68866pt too wide) in paragraph at lines 115--125
  [] 
  []
 
-<VVmAA/NPR/bag_a2m2_20.pdf, id=1900, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_20.pdf, id=1898, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_20.pdf  used on input line 154.
@@ -1476,7 +1476,7 @@ File: VVmAA/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_20.pdf  used on input line 154.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2_20.pdf, id=1903, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_20.pdf, id=1901, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_20.pdf , page1 used on input line 1
@@ -1506,7 +1506,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2_20.pdf , page1 used on input line 1
 54.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [33 <./VVmAA/NPR/bag_a2m2_20.pdf>]
-<VVmAA/NPR/bag_a2m2_22.pdf, id=1991, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_22.pdf, id=1989, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_22.pdf  used on input line 155.
@@ -1515,7 +1515,7 @@ File: VVmAA/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_22.pdf  used on input line 155.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2_22.pdf, id=1994, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_22.pdf, id=1992, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_22.pdf , page1 used on input line 1
@@ -1542,7 +1542,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2_22.pdf , page1 used on input line 1
 55.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [34 <./VVmAA/NPR/bag_a2m2_22.pdf>]
-<VVmAA/NPR/bag_a2m2_23.pdf, id=2053, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_23.pdf, id=2051, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_23.pdf  used on input line 156.
@@ -1551,7 +1551,7 @@ File: VVmAA/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_23.pdf  used on input line 156.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2_23.pdf, id=2056, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_23.pdf, id=2054, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_23.pdf , page1 used on input line 1
@@ -1579,7 +1579,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2_23.pdf , page1 used on input line 1
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 
 [35 <./VVmAA/NPR/bag_a2m2_23.pdf>]
-<VVmAA/NPR/bag_a2m2_24.pdf, id=2114, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_24.pdf, id=2112, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_24.pdf  used on input line 157.
@@ -1588,7 +1588,7 @@ File: VVmAA/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_24.pdf  used on input line 157.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2_24.pdf, id=2117, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2_24.pdf, id=2115, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2_24.pdf , page1 used on input line 1
@@ -1615,7 +1615,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2_24.pdf , page1 used on input line 1
 57.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [36 <./VVmAA/NPR/bag_a2m2_24.pdf>]
-<VVmAA/NPR/bag_a2m2noC_20.pdf, id=2175, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_20.pdf, id=2173, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_20.pdf  used on input line 158.
@@ -1624,7 +1624,7 @@ File: VVmAA/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_20.pdf  used on input line 158.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2noC_20.pdf, id=2178, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_20.pdf, id=2176, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
@@ -1651,7 +1651,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
 e 158.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [37 <./VVmAA/NPR/bag_a2m2noC_20.pdf>]
-<VVmAA/NPR/bag_a2m2noC_22.pdf, id=2239, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_22.pdf, id=2237, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_22.pdf  used on input line 159.
@@ -1660,7 +1660,7 @@ File: VVmAA/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_22.pdf  used on input line 159.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2noC_22.pdf, id=2242, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_22.pdf, id=2240, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
@@ -1687,7 +1687,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
 e 159.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [38 <./VVmAA/NPR/bag_a2m2noC_22.pdf>]
-<VVmAA/NPR/bag_a2m2noC_23.pdf, id=2302, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_23.pdf, id=2300, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_23.pdf  used on input line 160.
@@ -1696,7 +1696,7 @@ File: VVmAA/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_23.pdf  used on input line 160.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2noC_23.pdf, id=2305, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_23.pdf, id=2303, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
@@ -1723,7 +1723,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
 e 160.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [39 <./VVmAA/NPR/bag_a2m2noC_23.pdf>]
-<VVmAA/NPR/bag_a2m2noC_24.pdf, id=2365, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_24.pdf, id=2363, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_24.pdf  used on input line 161.
@@ -1732,7 +1732,7 @@ File: VVmAA/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_24.pdf  used on input line 161.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2noC_24.pdf, id=2368, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2noC_24.pdf, id=2366, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_24.pdf , page1 used on input lin
@@ -1759,7 +1759,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2noC_24.pdf , page1 used on input lin
 e 161.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [40 <./VVmAA/NPR/bag_a2m2noC_24.pdf>]
-<VVmAA/NPR/bag_a2a4m2_20.pdf, id=2428, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_20.pdf, id=2426, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_20.pdf  used on input line 162.
@@ -1768,7 +1768,7 @@ File: VVmAA/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_20.pdf  used on input line 162.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2a4m2_20.pdf, id=2431, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_20.pdf, id=2429, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_20.pdf , page1 used on input line
@@ -1795,7 +1795,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_20.pdf , page1 used on input line
  162.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [41 <./VVmAA/NPR/bag_a2a4m2_20.pdf>]
-<VVmAA/NPR/bag_a2a4m2_22.pdf, id=2489, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_22.pdf, id=2487, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_22.pdf  used on input line 163.
@@ -1804,7 +1804,7 @@ File: VVmAA/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_22.pdf  used on input line 163.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2a4m2_22.pdf, id=2492, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_22.pdf, id=2490, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_22.pdf , page1 used on input line
@@ -1831,7 +1831,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_22.pdf , page1 used on input line
  163.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [42 <./VVmAA/NPR/bag_a2a4m2_22.pdf>]
-<VVmAA/NPR/bag_a2a4m2_23.pdf, id=2551, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_23.pdf, id=2549, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_23.pdf  used on input line 164.
@@ -1840,7 +1840,7 @@ File: VVmAA/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_23.pdf  used on input line 164.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2a4m2_23.pdf, id=2554, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_23.pdf, id=2552, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_23.pdf , page1 used on input line
@@ -1867,7 +1867,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_23.pdf , page1 used on input line
  164.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [43 <./VVmAA/NPR/bag_a2a4m2_23.pdf>]
-<VVmAA/NPR/bag_a2a4m2_24.pdf, id=2613, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_24.pdf, id=2611, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_24.pdf  used on input line 165.
@@ -1876,7 +1876,7 @@ File: VVmAA/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_24.pdf  used on input line 165.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2a4m2_24.pdf, id=2616, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2a4m2_24.pdf, id=2614, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_24.pdf , page1 used on input line
@@ -1903,7 +1903,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2a4m2_24.pdf , page1 used on input line
  165.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [44 <./VVmAA/NPR/bag_a2a4m2_24.pdf>]
-<VVmAA/NPR/bag_a2m2mcut_20.pdf, id=2674, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_20.pdf, id=2672, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_20.pdf  used on input line 166.
@@ -1914,7 +1914,7 @@ File: VVmAA/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_20.pdf  used on input line 166.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2mcut_20.pdf, id=2677, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_20.pdf, id=2675, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
@@ -1941,7 +1941,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
 ne 166.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [45 <./VVmAA/NPR/bag_a2m2mcut_20.pdf>]
-<VVmAA/NPR/bag_a2m2mcut_22.pdf, id=2737, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_22.pdf, id=2735, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_22.pdf  used on input line 167.
@@ -1952,7 +1952,7 @@ File: VVmAA/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_22.pdf  used on input line 167.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2mcut_22.pdf, id=2740, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_22.pdf, id=2738, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
@@ -1979,7 +1979,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
 ne 167.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [46 <./VVmAA/NPR/bag_a2m2mcut_22.pdf>]
-<VVmAA/NPR/bag_a2m2mcut_23.pdf, id=2800, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_23.pdf, id=2798, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_23.pdf  used on input line 168.
@@ -1990,7 +1990,7 @@ File: VVmAA/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_23.pdf  used on input line 168.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2mcut_23.pdf, id=2803, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_23.pdf, id=2801, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
@@ -2017,7 +2017,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
 ne 168.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [47 <./VVmAA/NPR/bag_a2m2mcut_23.pdf>]
-<VVmAA/NPR/bag_a2m2mcut_24.pdf, id=2863, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_24.pdf, id=2861, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_24.pdf  used on input line 169.
@@ -2028,7 +2028,7 @@ File: VVmAA/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_24.pdf  used on input line 169.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2mcut_24.pdf, id=2866, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2mcut_24.pdf, id=2864, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
@@ -2055,7 +2055,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
 ne 169.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [48 <./VVmAA/NPR/bag_a2m2mcut_24.pdf>]
-<VVmAA/NPR/bag_a2m2m4_20.pdf, id=2926, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_20.pdf, id=2924, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_20.pdf  used on input line 170.
@@ -2064,7 +2064,7 @@ File: VVmAA/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_20.pdf  used on input line 170.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2m4_20.pdf, id=2929, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_20.pdf, id=2927, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_20.pdf , page1 used on input line
@@ -2091,7 +2091,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_20.pdf , page1 used on input line
  170.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [49 <./VVmAA/NPR/bag_a2m2m4_20.pdf>]
-<VVmAA/NPR/bag_a2m2m4_22.pdf, id=2988, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_22.pdf, id=2986, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_22.pdf  used on input line 171.
@@ -2100,7 +2100,7 @@ File: VVmAA/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_22.pdf  used on input line 171.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2m4_22.pdf, id=2991, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_22.pdf, id=2989, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_22.pdf , page1 used on input line
@@ -2127,7 +2127,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_22.pdf , page1 used on input line
  171.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [50 <./VVmAA/NPR/bag_a2m2m4_22.pdf>]
-<VVmAA/NPR/bag_a2m2m4_23.pdf, id=3050, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_23.pdf, id=3048, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_23.pdf  used on input line 172.
@@ -2136,7 +2136,7 @@ File: VVmAA/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_23.pdf  used on input line 172.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2m4_23.pdf, id=3053, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_23.pdf, id=3051, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_23.pdf , page1 used on input line
@@ -2163,7 +2163,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_23.pdf , page1 used on input line
  172.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [51 <./VVmAA/NPR/bag_a2m2m4_23.pdf>]
-<VVmAA/NPR/bag_a2m2m4_24.pdf, id=3111, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_24.pdf, id=3109, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_24.pdf  used on input line 173.
@@ -2172,7 +2172,7 @@ File: VVmAA/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_24.pdf  used on input line 173.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2m4_24.pdf, id=3114, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2m4_24.pdf, id=3112, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_24.pdf , page1 used on input line
@@ -2199,7 +2199,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2m4_24.pdf , page1 used on input line
  173.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [52 <./VVmAA/NPR/bag_a2m2m4_24.pdf>]
-<VVmAA/NPR/bag_a2m2delm_20.pdf, id=3172, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_20.pdf, id=3170, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_20.pdf  used on input line 174.
@@ -2210,7 +2210,7 @@ File: VVmAA/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_20.pdf  used on input line 174.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2delm_20.pdf, id=3175, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_20.pdf, id=3173, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_20.pdf , page1 used on input li
@@ -2237,7 +2237,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_20.pdf , page1 used on input li
 ne 174.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [53 <./VVmAA/NPR/bag_a2m2delm_20.pdf>]
-<VVmAA/NPR/bag_a2m2delm_22.pdf, id=3235, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_22.pdf, id=3233, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_22.pdf  used on input line 175.
@@ -2248,7 +2248,7 @@ File: VVmAA/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_22.pdf  used on input line 175.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2delm_22.pdf, id=3238, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_22.pdf, id=3236, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_22.pdf , page1 used on input li
@@ -2275,7 +2275,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_22.pdf , page1 used on input li
 ne 175.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [54 <./VVmAA/NPR/bag_a2m2delm_22.pdf>]
-<VVmAA/NPR/bag_a2m2delm_23.pdf, id=3298, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_23.pdf, id=3296, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_23.pdf  used on input line 176.
@@ -2286,7 +2286,7 @@ File: VVmAA/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_23.pdf  used on input line 176.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2delm_23.pdf, id=3301, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_23.pdf, id=3299, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_23.pdf , page1 used on input li
@@ -2313,7 +2313,7 @@ Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_23.pdf , page1 used on input li
 ne 176.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [55 <./VVmAA/NPR/bag_a2m2delm_23.pdf>]
-<VVmAA/NPR/bag_a2m2delm_24.pdf, id=3362, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_24.pdf, id=3360, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_24.pdf  used on input line 177.
@@ -2324,7 +2324,7 @@ File: VVmAA/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_24.pdf  used on input line 177.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<VVmAA/NPR/bag_a2m2delm_24.pdf, id=3365, page=1, 886.05406pt x 410.8148pt>
+<VVmAA/NPR/bag_a2m2delm_24.pdf, id=3363, page=1, 886.05406pt x 410.8148pt>
 File: VVmAA/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use VVmAA/NPR/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: VVmAA/NPR/bag_a2m2delm_24.pdf , page1 used on input li
@@ -2363,7 +2363,7 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 179.
 
-<SSmPP/NPR/bag_a2m2_20.pdf, id=3449, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_20.pdf, id=3447, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_20.pdf  used on input line 221.
@@ -2372,7 +2372,7 @@ File: SSmPP/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_20.pdf  used on input line 221.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2_20.pdf, id=3452, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_20.pdf, id=3450, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_20.pdf , page1 used on input line 2
@@ -2402,7 +2402,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2_20.pdf , page1 used on input line 2
 21.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [58 <./SSmPP/NPR/bag_a2m2_20.pdf>]
-<SSmPP/NPR/bag_a2m2_22.pdf, id=3541, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_22.pdf, id=3539, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_22.pdf  used on input line 222.
@@ -2411,7 +2411,7 @@ File: SSmPP/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_22.pdf  used on input line 222.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2_22.pdf, id=3544, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_22.pdf, id=3542, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_22.pdf , page1 used on input line 2
@@ -2438,7 +2438,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2_22.pdf , page1 used on input line 2
 22.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [59 <./SSmPP/NPR/bag_a2m2_22.pdf>]
-<SSmPP/NPR/bag_a2m2_23.pdf, id=3603, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_23.pdf, id=3600, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_23.pdf  used on input line 223.
@@ -2447,7 +2447,7 @@ File: SSmPP/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_23.pdf  used on input line 223.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2_23.pdf, id=3606, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_23.pdf, id=3603, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_23.pdf , page1 used on input line 2
@@ -2475,7 +2475,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2_23.pdf , page1 used on input line 2
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
 
 [60 <./SSmPP/NPR/bag_a2m2_23.pdf>]
-<SSmPP/NPR/bag_a2m2_24.pdf, id=3665, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_24.pdf, id=3662, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_24.pdf  used on input line 224.
@@ -2484,7 +2484,7 @@ File: SSmPP/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_24.pdf  used on input line 224.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2_24.pdf, id=3668, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2_24.pdf, id=3665, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2_24.pdf , page1 used on input line 2
@@ -2511,7 +2511,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2_24.pdf , page1 used on input line 2
 24.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [61 <./SSmPP/NPR/bag_a2m2_24.pdf>]
-<SSmPP/NPR/bag_a2m2noC_20.pdf, id=3728, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_20.pdf, id=3725, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_20.pdf  used on input line 225.
@@ -2520,7 +2520,7 @@ File: SSmPP/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_20.pdf  used on input line 225.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2noC_20.pdf, id=3731, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_20.pdf, id=3728, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
@@ -2547,7 +2547,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
 e 225.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [62 <./SSmPP/NPR/bag_a2m2noC_20.pdf>]
-<SSmPP/NPR/bag_a2m2noC_22.pdf, id=3791, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_22.pdf, id=3787, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_22.pdf  used on input line 226.
@@ -2556,7 +2556,7 @@ File: SSmPP/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_22.pdf  used on input line 226.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2noC_22.pdf, id=3794, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_22.pdf, id=3790, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
@@ -2583,7 +2583,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
 e 226.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [63 <./SSmPP/NPR/bag_a2m2noC_22.pdf>]
-<SSmPP/NPR/bag_a2m2noC_23.pdf, id=3855, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_23.pdf, id=3850, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_23.pdf  used on input line 227.
@@ -2592,7 +2592,7 @@ File: SSmPP/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_23.pdf  used on input line 227.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2noC_23.pdf, id=3858, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_23.pdf, id=3853, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
@@ -2619,7 +2619,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
 e 227.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [64 <./SSmPP/NPR/bag_a2m2noC_23.pdf>]
-<SSmPP/NPR/bag_a2m2noC_24.pdf, id=3918, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_24.pdf, id=3913, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_24.pdf  used on input line 228.
@@ -2628,7 +2628,7 @@ File: SSmPP/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_24.pdf  used on input line 228.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2noC_24.pdf, id=3921, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2noC_24.pdf, id=3916, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_24.pdf , page1 used on input lin
@@ -2655,7 +2655,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2noC_24.pdf , page1 used on input lin
 e 228.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [65 <./SSmPP/NPR/bag_a2m2noC_24.pdf>]
-<SSmPP/NPR/bag_a2a4m2_20.pdf, id=3981, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_20.pdf, id=3976, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_20.pdf  used on input line 229.
@@ -2664,7 +2664,7 @@ File: SSmPP/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_20.pdf  used on input line 229.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2a4m2_20.pdf, id=3984, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_20.pdf, id=3979, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_20.pdf , page1 used on input line
@@ -2691,7 +2691,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_20.pdf , page1 used on input line
  229.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [66 <./SSmPP/NPR/bag_a2a4m2_20.pdf>]
-<SSmPP/NPR/bag_a2a4m2_22.pdf, id=4042, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_22.pdf, id=4037, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_22.pdf  used on input line 230.
@@ -2700,7 +2700,7 @@ File: SSmPP/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_22.pdf  used on input line 230.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2a4m2_22.pdf, id=4045, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_22.pdf, id=4040, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_22.pdf , page1 used on input line
@@ -2727,7 +2727,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_22.pdf , page1 used on input line
  230.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [67 <./SSmPP/NPR/bag_a2a4m2_22.pdf>]
-<SSmPP/NPR/bag_a2a4m2_23.pdf, id=4105, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_23.pdf, id=4099, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_23.pdf  used on input line 231.
@@ -2736,7 +2736,7 @@ File: SSmPP/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_23.pdf  used on input line 231.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2a4m2_23.pdf, id=4108, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_23.pdf, id=4102, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_23.pdf , page1 used on input line
@@ -2763,7 +2763,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_23.pdf , page1 used on input line
  231.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [68 <./SSmPP/NPR/bag_a2a4m2_23.pdf>]
-<SSmPP/NPR/bag_a2a4m2_24.pdf, id=4166, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_24.pdf, id=4160, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_24.pdf  used on input line 232.
@@ -2772,7 +2772,7 @@ File: SSmPP/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_24.pdf  used on input line 232.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2a4m2_24.pdf, id=4169, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2a4m2_24.pdf, id=4163, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_24.pdf , page1 used on input line
@@ -2799,7 +2799,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2a4m2_24.pdf , page1 used on input line
  232.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [69 <./SSmPP/NPR/bag_a2a4m2_24.pdf>]
-<SSmPP/NPR/bag_a2m2mcut_20.pdf, id=4227, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_20.pdf, id=4221, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_20.pdf  used on input line 233.
@@ -2810,7 +2810,7 @@ File: SSmPP/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_20.pdf  used on input line 233.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2mcut_20.pdf, id=4230, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_20.pdf, id=4224, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
@@ -2837,7 +2837,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
 ne 233.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [70 <./SSmPP/NPR/bag_a2m2mcut_20.pdf>]
-<SSmPP/NPR/bag_a2m2mcut_22.pdf, id=4290, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_22.pdf, id=4284, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_22.pdf  used on input line 234.
@@ -2848,7 +2848,7 @@ File: SSmPP/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_22.pdf  used on input line 234.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2mcut_22.pdf, id=4293, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_22.pdf, id=4287, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
@@ -2875,7 +2875,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
 ne 234.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [71 <./SSmPP/NPR/bag_a2m2mcut_22.pdf>]
-<SSmPP/NPR/bag_a2m2mcut_23.pdf, id=4354, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_23.pdf, id=4348, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_23.pdf  used on input line 235.
@@ -2886,7 +2886,7 @@ File: SSmPP/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_23.pdf  used on input line 235.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2mcut_23.pdf, id=4357, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_23.pdf, id=4351, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
@@ -2913,7 +2913,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
 ne 235.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [72 <./SSmPP/NPR/bag_a2m2mcut_23.pdf>]
-<SSmPP/NPR/bag_a2m2mcut_24.pdf, id=4418, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_24.pdf, id=4412, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_24.pdf  used on input line 236.
@@ -2924,7 +2924,7 @@ File: SSmPP/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_24.pdf  used on input line 236.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2mcut_24.pdf, id=4421, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2mcut_24.pdf, id=4415, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
@@ -2951,7 +2951,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
 ne 236.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [73 <./SSmPP/NPR/bag_a2m2mcut_24.pdf>]
-<SSmPP/NPR/bag_a2m2m4_20.pdf, id=4482, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_20.pdf, id=4477, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_20.pdf  used on input line 237.
@@ -2960,7 +2960,7 @@ File: SSmPP/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_20.pdf  used on input line 237.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2m4_20.pdf, id=4485, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_20.pdf, id=4480, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_20.pdf , page1 used on input line
@@ -2987,7 +2987,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_20.pdf , page1 used on input line
  237.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [74 <./SSmPP/NPR/bag_a2m2m4_20.pdf>]
-<SSmPP/NPR/bag_a2m2m4_22.pdf, id=4543, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_22.pdf, id=4538, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_22.pdf  used on input line 238.
@@ -2996,7 +2996,7 @@ File: SSmPP/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_22.pdf  used on input line 238.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2m4_22.pdf, id=4546, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_22.pdf, id=4541, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_22.pdf , page1 used on input line
@@ -3023,7 +3023,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_22.pdf , page1 used on input line
  238.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [75 <./SSmPP/NPR/bag_a2m2m4_22.pdf>]
-<SSmPP/NPR/bag_a2m2m4_23.pdf, id=4604, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_23.pdf, id=4599, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_23.pdf  used on input line 239.
@@ -3032,7 +3032,7 @@ File: SSmPP/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_23.pdf  used on input line 239.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2m4_23.pdf, id=4607, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_23.pdf, id=4602, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_23.pdf , page1 used on input line
@@ -3059,7 +3059,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_23.pdf , page1 used on input line
  239.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [76 <./SSmPP/NPR/bag_a2m2m4_23.pdf>]
-<SSmPP/NPR/bag_a2m2m4_24.pdf, id=4666, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_24.pdf, id=4661, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_24.pdf  used on input line 240.
@@ -3068,7 +3068,7 @@ File: SSmPP/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_24.pdf  used on input line 240.
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2m4_24.pdf, id=4669, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2m4_24.pdf, id=4664, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_24.pdf , page1 used on input line
@@ -3095,7 +3095,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2m4_24.pdf , page1 used on input line
  240.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [77 <./SSmPP/NPR/bag_a2m2m4_24.pdf>]
-<SSmPP/NPR/bag_a2m2delm_20.pdf, id=4727, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_20.pdf, id=4722, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_20.pdf  used on input line 241.
@@ -3106,7 +3106,7 @@ File: SSmPP/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_20.pdf  used on input line 241.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2delm_20.pdf, id=4730, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_20.pdf, id=4725, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_20.pdf , page1 used on input li
@@ -3133,7 +3133,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_20.pdf , page1 used on input li
 ne 241.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [78 <./SSmPP/NPR/bag_a2m2delm_20.pdf>]
-<SSmPP/NPR/bag_a2m2delm_22.pdf, id=4790, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_22.pdf, id=4785, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_22.pdf  used on input line 242.
@@ -3144,7 +3144,7 @@ File: SSmPP/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_22.pdf  used on input line 242.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2delm_22.pdf, id=4793, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_22.pdf, id=4788, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_22.pdf , page1 used on input li
@@ -3171,7 +3171,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_22.pdf , page1 used on input li
 ne 242.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [79 <./SSmPP/NPR/bag_a2m2delm_22.pdf>]
-<SSmPP/NPR/bag_a2m2delm_23.pdf, id=4855, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_23.pdf, id=4851, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_23.pdf  used on input line 243.
@@ -3182,7 +3182,7 @@ File: SSmPP/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_23.pdf  used on input line 243.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2delm_23.pdf, id=4858, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_23.pdf, id=4854, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_23.pdf , page1 used on input li
@@ -3209,7 +3209,7 @@ Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_23.pdf , page1 used on input li
 ne 243.
 (pdftex.def)             Requested size: 1301.11925pt x 607.97131pt.
  [80 <./SSmPP/NPR/bag_a2m2delm_23.pdf>]
-<SSmPP/NPR/bag_a2m2delm_24.pdf, id=4918, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_24.pdf, id=4914, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_24.pdf  used on input line 244.
@@ -3220,7 +3220,7 @@ File: SSmPP/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_24.pdf  used on input line 244.
 
 (pdftex.def)             Requested size: 879.1825pt x 410.8138pt.
-<SSmPP/NPR/bag_a2m2delm_24.pdf, id=4921, page=1, 879.18465pt x 410.8148pt>
+<SSmPP/NPR/bag_a2m2delm_24.pdf, id=4917, page=1, 879.18465pt x 410.8148pt>
 File: SSmPP/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSmPP/NPR/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: SSmPP/NPR/bag_a2m2delm_24.pdf , page1 used on input li
@@ -3260,11 +3260,11 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 246.
 
 
-Overfull \hbox (56.43866pt too wide) in paragraph at lines 249--259
+Overfull \hbox (50.56372pt too wide) in paragraph at lines 249--259
  [] 
  []
 
-<SSpPP/NPR/bag_a2m2_20.pdf, id=5005, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_20.pdf, id=5001, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_20.pdf  used on input line 288.
@@ -3273,7 +3273,7 @@ File: SSpPP/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_20.pdf  used on input line 288.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2_20.pdf, id=5008, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_20.pdf, id=5004, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_20.pdf , page1 used on input line 2
@@ -3303,7 +3303,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2_20.pdf , page1 used on input line 2
 88.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [83 <./SSpPP/NPR/bag_a2m2_20.pdf>]
-<SSpPP/NPR/bag_a2m2_22.pdf, id=5094, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_22.pdf, id=5090, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_22.pdf  used on input line 289.
@@ -3312,7 +3312,7 @@ File: SSpPP/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_22.pdf  used on input line 289.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2_22.pdf, id=5097, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_22.pdf, id=5093, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_22.pdf , page1 used on input line 2
@@ -3339,7 +3339,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2_22.pdf , page1 used on input line 2
 89.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [84 <./SSpPP/NPR/bag_a2m2_22.pdf>]
-<SSpPP/NPR/bag_a2m2_23.pdf, id=5153, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_23.pdf, id=5150, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_23.pdf  used on input line 290.
@@ -3348,7 +3348,7 @@ File: SSpPP/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_23.pdf  used on input line 290.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2_23.pdf, id=5156, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_23.pdf, id=5153, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_23.pdf , page1 used on input line 2
@@ -3376,7 +3376,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2_23.pdf , page1 used on input line 2
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 
 [85 <./SSpPP/NPR/bag_a2m2_23.pdf>]
-<SSpPP/NPR/bag_a2m2_24.pdf, id=5214, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_24.pdf, id=5210, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_24.pdf  used on input line 291.
@@ -3385,7 +3385,7 @@ File: SSpPP/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_24.pdf  used on input line 291.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2_24.pdf, id=5217, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2_24.pdf, id=5213, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2_24.pdf , page1 used on input line 2
@@ -3412,7 +3412,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2_24.pdf , page1 used on input line 2
 91.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [86 <./SSpPP/NPR/bag_a2m2_24.pdf>]
-<SSpPP/NPR/bag_a2m2noC_20.pdf, id=5273, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_20.pdf, id=5269, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_20.pdf  used on input line 292.
@@ -3421,7 +3421,7 @@ File: SSpPP/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_20.pdf  used on input line 292.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2noC_20.pdf, id=5276, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_20.pdf, id=5272, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
@@ -3448,7 +3448,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_20.pdf , page1 used on input lin
 e 292.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [87 <./SSpPP/NPR/bag_a2m2noC_20.pdf>]
-<SSpPP/NPR/bag_a2m2noC_22.pdf, id=5336, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_22.pdf, id=5332, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_22.pdf  used on input line 293.
@@ -3457,7 +3457,7 @@ File: SSpPP/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_22.pdf  used on input line 293.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2noC_22.pdf, id=5339, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_22.pdf, id=5335, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
@@ -3484,7 +3484,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_22.pdf , page1 used on input lin
 e 293.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [88 <./SSpPP/NPR/bag_a2m2noC_22.pdf>]
-<SSpPP/NPR/bag_a2m2noC_23.pdf, id=5399, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_23.pdf, id=5395, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_23.pdf  used on input line 294.
@@ -3493,7 +3493,7 @@ File: SSpPP/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_23.pdf  used on input line 294.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2noC_23.pdf, id=5402, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_23.pdf, id=5398, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
@@ -3520,7 +3520,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_23.pdf , page1 used on input lin
 e 294.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [89 <./SSpPP/NPR/bag_a2m2noC_23.pdf>]
-<SSpPP/NPR/bag_a2m2noC_24.pdf, id=5462, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_24.pdf, id=5458, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_24.pdf  used on input line 295.
@@ -3529,7 +3529,7 @@ File: SSpPP/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_24.pdf  used on input line 295.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2noC_24.pdf, id=5465, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2noC_24.pdf, id=5461, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_24.pdf , page1 used on input lin
@@ -3556,7 +3556,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2noC_24.pdf , page1 used on input lin
 e 295.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [90 <./SSpPP/NPR/bag_a2m2noC_24.pdf>]
-<SSpPP/NPR/bag_a2a4m2_20.pdf, id=5525, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_20.pdf, id=5521, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_20.pdf  used on input line 296.
@@ -3565,7 +3565,7 @@ File: SSpPP/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_20.pdf  used on input line 296.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2a4m2_20.pdf, id=5528, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_20.pdf, id=5524, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_20.pdf , page1 used on input line
@@ -3592,7 +3592,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_20.pdf , page1 used on input line
  296.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [91 <./SSpPP/NPR/bag_a2a4m2_20.pdf>]
-<SSpPP/NPR/bag_a2a4m2_22.pdf, id=5587, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_22.pdf, id=5582, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_22.pdf  used on input line 297.
@@ -3601,7 +3601,7 @@ File: SSpPP/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_22.pdf  used on input line 297.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2a4m2_22.pdf, id=5590, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_22.pdf, id=5585, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_22.pdf , page1 used on input line
@@ -3628,7 +3628,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_22.pdf , page1 used on input line
  297.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [92 <./SSpPP/NPR/bag_a2a4m2_22.pdf>]
-<SSpPP/NPR/bag_a2a4m2_23.pdf, id=5646, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_23.pdf, id=5642, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_23.pdf  used on input line 298.
@@ -3637,7 +3637,7 @@ File: SSpPP/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_23.pdf  used on input line 298.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2a4m2_23.pdf, id=5649, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_23.pdf, id=5645, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_23.pdf , page1 used on input line
@@ -3664,7 +3664,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_23.pdf , page1 used on input line
  298.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [93 <./SSpPP/NPR/bag_a2a4m2_23.pdf>]
-<SSpPP/NPR/bag_a2a4m2_24.pdf, id=5707, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_24.pdf, id=5702, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_24.pdf  used on input line 299.
@@ -3673,7 +3673,7 @@ File: SSpPP/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_24.pdf  used on input line 299.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2a4m2_24.pdf, id=5710, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2a4m2_24.pdf, id=5705, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_24.pdf , page1 used on input line
@@ -3700,7 +3700,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2a4m2_24.pdf , page1 used on input line
  299.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [94 <./SSpPP/NPR/bag_a2a4m2_24.pdf>]
-<SSpPP/NPR/bag_a2m2mcut_20.pdf, id=5767, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_20.pdf, id=5762, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_20.pdf  used on input line 300.
@@ -3711,7 +3711,7 @@ File: SSpPP/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_20.pdf  used on input line 300.
 
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2mcut_20.pdf, id=5770, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_20.pdf, id=5765, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
@@ -3738,7 +3738,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_20.pdf , page1 used on input li
 ne 300.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [95 <./SSpPP/NPR/bag_a2m2mcut_20.pdf>]
-<SSpPP/NPR/bag_a2m2mcut_22.pdf, id=5828, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_22.pdf, id=5824, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_22.pdf  used on input line 301.
@@ -3749,7 +3749,7 @@ File: SSpPP/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_22.pdf  used on input line 301.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2mcut_22.pdf, id=5831, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_22.pdf, id=5827, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
@@ -3776,7 +3776,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_22.pdf , page1 used on input li
 ne 301.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [96 <./SSpPP/NPR/bag_a2m2mcut_22.pdf>]
-<SSpPP/NPR/bag_a2m2mcut_23.pdf, id=5890, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_23.pdf, id=5884, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_23.pdf  used on input line 302.
@@ -3787,7 +3787,7 @@ File: SSpPP/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_23.pdf  used on input line 302.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2mcut_23.pdf, id=5893, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_23.pdf, id=5887, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
@@ -3814,7 +3814,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_23.pdf , page1 used on input li
 ne 302.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [97 <./SSpPP/NPR/bag_a2m2mcut_23.pdf>]
-<SSpPP/NPR/bag_a2m2mcut_24.pdf, id=5952, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_24.pdf, id=5946, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_24.pdf  used on input line 303.
@@ -3825,7 +3825,7 @@ File: SSpPP/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_24.pdf  used on input line 303.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2mcut_24.pdf, id=5955, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2mcut_24.pdf, id=5949, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
@@ -3852,7 +3852,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2mcut_24.pdf , page1 used on input li
 ne 303.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [98 <./SSpPP/NPR/bag_a2m2mcut_24.pdf>]
-<SSpPP/NPR/bag_a2m2m4_20.pdf, id=6013, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_20.pdf, id=6007, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_20.pdf  used on input line 304.
@@ -3861,7 +3861,7 @@ File: SSpPP/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_20.pdf  used on input line 304.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2m4_20.pdf, id=6016, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_20.pdf, id=6010, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_20.pdf , page1 used on input line
@@ -3888,7 +3888,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_20.pdf , page1 used on input line
  304.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [99 <./SSpPP/NPR/bag_a2m2m4_20.pdf>]
-<SSpPP/NPR/bag_a2m2m4_22.pdf, id=6072, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_22.pdf, id=6066, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_22.pdf  used on input line 305.
@@ -3897,7 +3897,7 @@ File: SSpPP/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_22.pdf  used on input line 305.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2m4_22.pdf, id=6075, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_22.pdf, id=6069, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_22.pdf , page1 used on input line
@@ -3924,7 +3924,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_22.pdf , page1 used on input line
  305.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [100 <./SSpPP/NPR/bag_a2m2m4_22.pdf>]
-<SSpPP/NPR/bag_a2m2m4_23.pdf, id=6131, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_23.pdf, id=6125, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_23.pdf  used on input line 306.
@@ -3933,7 +3933,7 @@ File: SSpPP/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_23.pdf  used on input line 306.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2m4_23.pdf, id=6134, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_23.pdf, id=6128, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_23.pdf , page1 used on input line
@@ -3960,7 +3960,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_23.pdf , page1 used on input line
  306.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [101 <./SSpPP/NPR/bag_a2m2m4_23.pdf>]
-<SSpPP/NPR/bag_a2m2m4_24.pdf, id=6191, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_24.pdf, id=6185, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_24.pdf  used on input line 307.
@@ -3969,7 +3969,7 @@ File: SSpPP/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_24.pdf  used on input line 307.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2m4_24.pdf, id=6194, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2m4_24.pdf, id=6188, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_24.pdf , page1 used on input line
@@ -3996,7 +3996,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2m4_24.pdf , page1 used on input line
  307.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [102 <./SSpPP/NPR/bag_a2m2m4_24.pdf>]
-<SSpPP/NPR/bag_a2m2delm_20.pdf, id=6251, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_20.pdf, id=6245, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_20.pdf  used on input line 308.
@@ -4007,7 +4007,7 @@ File: SSpPP/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_20.pdf  used on input line 308.
 
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2delm_20.pdf, id=6254, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_20.pdf, id=6248, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_20.pdf , page1 used on input li
@@ -4034,7 +4034,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_20.pdf , page1 used on input li
 ne 308.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [103 <./SSpPP/NPR/bag_a2m2delm_20.pdf>]
-<SSpPP/NPR/bag_a2m2delm_22.pdf, id=6313, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_22.pdf, id=6308, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_22.pdf  used on input line 309.
@@ -4045,7 +4045,7 @@ File: SSpPP/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_22.pdf  used on input line 309.
 
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2delm_22.pdf, id=6316, page=1, 891.07281pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_22.pdf, id=6311, page=1, 891.07281pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_22.pdf , page1 used on input li
@@ -4072,7 +4072,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_22.pdf , page1 used on input li
 ne 309.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [104 <./SSpPP/NPR/bag_a2m2delm_22.pdf>]
-<SSpPP/NPR/bag_a2m2delm_23.pdf, id=6374, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_23.pdf, id=6368, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_23.pdf  used on input line 310.
@@ -4083,7 +4083,7 @@ File: SSpPP/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_23.pdf  used on input line 310.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2delm_23.pdf, id=6377, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_23.pdf, id=6371, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_23.pdf , page1 used on input li
@@ -4110,7 +4110,7 @@ Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_23.pdf , page1 used on input li
 ne 310.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [105 <./SSpPP/NPR/bag_a2m2delm_23.pdf>]
-<SSpPP/NPR/bag_a2m2delm_24.pdf, id=6436, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_24.pdf, id=6429, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_24.pdf  used on input line 311.
@@ -4121,7 +4121,7 @@ File: SSpPP/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_24.pdf  used on input line 311.
 
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<SSpPP/NPR/bag_a2m2delm_24.pdf, id=6439, page=1, 886.05406pt x 410.8148pt>
+<SSpPP/NPR/bag_a2m2delm_24.pdf, id=6432, page=1, 886.05406pt x 410.8148pt>
 File: SSpPP/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use SSpPP/NPR/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: SSpPP/NPR/bag_a2m2delm_24.pdf , page1 used on input li
@@ -4165,7 +4165,7 @@ Overfull \hbox (49.68866pt too wide) in paragraph at lines 316--326
  [] 
  []
 
-<TT/NPR/bag_a2m2_20.pdf, id=6521, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2_20.pdf, id=6515, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_20.pdf  used on input line 355.
@@ -4174,7 +4174,7 @@ File: TT/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_20.pdf  used on input line 355.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2_20.pdf, id=6524, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2_20.pdf, id=6518, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_20.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_20.pdf , page1 used on input line 355.
@@ -4204,7 +4204,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2_20.pdf , page1 used on input line 355.
 
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [108 <./TT/NPR/bag_a2m2_20.pdf>]
-<TT/NPR/bag_a2m2_22.pdf, id=6611, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2_22.pdf, id=6605, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_22.pdf  used on input line 356.
@@ -4213,7 +4213,7 @@ File: TT/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_22.pdf  used on input line 356.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2_22.pdf, id=6614, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2_22.pdf, id=6608, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_22.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_22.pdf , page1 used on input line 356.
@@ -4240,44 +4240,44 @@ Package pdftex.def Info: TT/NPR/bag_a2m2_22.pdf , page1 used on input line 356.
 
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [109 <./TT/NPR/bag_a2m2_22.pdf>]
-<TT/NPR/bag_a2m2_23.pdf, id=6671, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2_23.pdf, id=6665, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_23.pdf  used on input line 357.
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: TT/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_23.pdf  used on input line 357.
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2_23.pdf, id=6674, page=1, 891.07281pt x 410.8148pt>
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
+<TT/NPR/bag_a2m2_23.pdf, id=6668, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_23.pdf , page1 used on input line 357.
 
-(pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
+(pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
 File: TT/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_23.pdf , page1 used on input line 357.
 
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: TT/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_23.pdf , page1 used on input line 357.
 
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: TT/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_23.pdf , page1 used on input line 357.
 
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 File: TT/NPR/bag_a2m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_23.pdf , page1 used on input line 357.
 
-(pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
+(pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 
 [110 <./TT/NPR/bag_a2m2_23.pdf>]
-<TT/NPR/bag_a2m2_24.pdf, id=6731, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2_24.pdf, id=6724, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_24.pdf  used on input line 358.
@@ -4286,7 +4286,7 @@ File: TT/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2_24.pdf  used on input line 358.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2_24.pdf, id=6734, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2_24.pdf, id=6727, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2_24.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2_24.pdf , page1 used on input line 358.
@@ -4313,7 +4313,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2_24.pdf , page1 used on input line 358.
 
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [111 <./TT/NPR/bag_a2m2_24.pdf>]
-<TT/NPR/bag_a2m2noC_20.pdf, id=6791, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_20.pdf, id=6784, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_20.pdf  used on input line 359.
@@ -4322,7 +4322,7 @@ File: TT/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_20.pdf  used on input line 359.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2noC_20.pdf, id=6794, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_20.pdf, id=6787, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_20.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_20.pdf , page1 used on input line 3
@@ -4349,7 +4349,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2noC_20.pdf , page1 used on input line 3
 59.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [112 <./TT/NPR/bag_a2m2noC_20.pdf>]
-<TT/NPR/bag_a2m2noC_22.pdf, id=6853, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_22.pdf, id=6846, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_22.pdf  used on input line 360.
@@ -4358,7 +4358,7 @@ File: TT/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_22.pdf  used on input line 360.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2noC_22.pdf, id=6856, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_22.pdf, id=6849, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_22.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_22.pdf , page1 used on input line 3
@@ -4385,7 +4385,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2noC_22.pdf , page1 used on input line 3
 60.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [113 <./TT/NPR/bag_a2m2noC_22.pdf>]
-<TT/NPR/bag_a2m2noC_23.pdf, id=6915, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_23.pdf, id=6908, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_23.pdf  used on input line 361.
@@ -4394,7 +4394,7 @@ File: TT/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_23.pdf  used on input line 361.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2noC_23.pdf, id=6918, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_23.pdf, id=6911, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_23.pdf , page1 used on input line 3
@@ -4421,7 +4421,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2noC_23.pdf , page1 used on input line 3
 61.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [114 <./TT/NPR/bag_a2m2noC_23.pdf>]
-<TT/NPR/bag_a2m2noC_24.pdf, id=6977, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_24.pdf, id=6970, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_24.pdf  used on input line 362.
@@ -4430,7 +4430,7 @@ File: TT/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_24.pdf  used on input line 362.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2noC_24.pdf, id=6980, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2noC_24.pdf, id=6973, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2noC_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2noC_24.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2noC_24.pdf , page1 used on input line 3
@@ -4457,7 +4457,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2noC_24.pdf , page1 used on input line 3
 62.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [115 <./TT/NPR/bag_a2m2noC_24.pdf>]
-<TT/NPR/bag_a2a4m2_20.pdf, id=7041, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_20.pdf, id=7034, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_20.pdf  used on input line 363.
@@ -4466,7 +4466,7 @@ File: TT/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_20.pdf  used on input line 363.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2a4m2_20.pdf, id=7044, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_20.pdf, id=7037, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_20.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_20.pdf , page1 used on input line 36
@@ -4493,7 +4493,7 @@ Package pdftex.def Info: TT/NPR/bag_a2a4m2_20.pdf , page1 used on input line 36
 3.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [116 <./TT/NPR/bag_a2a4m2_20.pdf>]
-<TT/NPR/bag_a2a4m2_22.pdf, id=7101, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_22.pdf, id=7094, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_22.pdf  used on input line 364.
@@ -4502,7 +4502,7 @@ File: TT/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_22.pdf  used on input line 364.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2a4m2_22.pdf, id=7104, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_22.pdf, id=7097, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_22.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_22.pdf , page1 used on input line 36
@@ -4529,7 +4529,7 @@ Package pdftex.def Info: TT/NPR/bag_a2a4m2_22.pdf , page1 used on input line 36
 4.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [117 <./TT/NPR/bag_a2a4m2_22.pdf>]
-<TT/NPR/bag_a2a4m2_23.pdf, id=7161, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_23.pdf, id=7154, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_23.pdf  used on input line 365.
@@ -4538,7 +4538,7 @@ File: TT/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_23.pdf  used on input line 365.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2a4m2_23.pdf, id=7164, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_23.pdf, id=7157, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_23.pdf , page1 used on input line 36
@@ -4565,7 +4565,7 @@ Package pdftex.def Info: TT/NPR/bag_a2a4m2_23.pdf , page1 used on input line 36
 5.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [118 <./TT/NPR/bag_a2a4m2_23.pdf>]
-<TT/NPR/bag_a2a4m2_24.pdf, id=7221, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_24.pdf, id=7214, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_24.pdf  used on input line 366.
@@ -4574,7 +4574,7 @@ File: TT/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_24.pdf  used on input line 366.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2a4m2_24.pdf, id=7224, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2a4m2_24.pdf, id=7217, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2a4m2_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2a4m2_24.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2a4m2_24.pdf , page1 used on input line 36
@@ -4602,7 +4602,7 @@ Package pdftex.def Info: TT/NPR/bag_a2a4m2_24.pdf , page1 used on input line 36
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
 
 [119 <./TT/NPR/bag_a2a4m2_24.pdf>]
-<TT/NPR/bag_a2m2mcut_20.pdf, id=7281, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_20.pdf, id=7274, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_20.pdf  used on input line 367.
@@ -4611,7 +4611,7 @@ File: TT/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_20.pdf  used on input line 367.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2mcut_20.pdf, id=7284, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_20.pdf, id=7277, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_20.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_20.pdf , page1 used on input line 
@@ -4638,7 +4638,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2mcut_20.pdf , page1 used on input line
 367.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [120 <./TT/NPR/bag_a2m2mcut_20.pdf>]
-<TT/NPR/bag_a2m2mcut_22.pdf, id=7343, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_22.pdf, id=7336, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_22.pdf  used on input line 368.
@@ -4647,7 +4647,7 @@ File: TT/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_22.pdf  used on input line 368.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2mcut_22.pdf, id=7346, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_22.pdf, id=7339, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_22.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_22.pdf , page1 used on input line 
@@ -4675,7 +4675,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2mcut_22.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [121 <./TT/NPR/bag_a2m2mcut_22.pdf>]
-<TT/NPR/bag_a2m2mcut_23.pdf, id=7405, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_23.pdf, id=7398, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_23.pdf  used on input line 369.
@@ -4684,7 +4684,7 @@ File: TT/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_23.pdf  used on input line 369.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2mcut_23.pdf, id=7408, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_23.pdf, id=7401, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_23.pdf , page1 used on input line 
@@ -4711,7 +4711,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2mcut_23.pdf , page1 used on input line
 369.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [122 <./TT/NPR/bag_a2m2mcut_23.pdf>]
-<TT/NPR/bag_a2m2mcut_24.pdf, id=7467, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_24.pdf, id=7460, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_24.pdf  used on input line 370.
@@ -4720,7 +4720,7 @@ File: TT/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_24.pdf  used on input line 370.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2mcut_24.pdf, id=7470, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2mcut_24.pdf, id=7463, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2mcut_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2mcut_24.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2mcut_24.pdf , page1 used on input line 
@@ -4748,7 +4748,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2mcut_24.pdf , page1 used on input line
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [123 <./TT/NPR/bag_a2m2mcut_24.pdf>]
-<TT/NPR/bag_a2m2m4_20.pdf, id=7530, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_20.pdf, id=7523, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_20.pdf  used on input line 371.
@@ -4757,7 +4757,7 @@ File: TT/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_20.pdf  used on input line 371.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2m4_20.pdf, id=7533, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_20.pdf, id=7526, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_20.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_20.pdf , page1 used on input line 37
@@ -4784,7 +4784,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2m4_20.pdf , page1 used on input line 37
 1.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [124 <./TT/NPR/bag_a2m2m4_20.pdf>]
-<TT/NPR/bag_a2m2m4_22.pdf, id=7590, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_22.pdf, id=7583, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_22.pdf  used on input line 372.
@@ -4793,7 +4793,7 @@ File: TT/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_22.pdf  used on input line 372.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2m4_22.pdf, id=7593, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_22.pdf, id=7586, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_22.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_22.pdf , page1 used on input line 37
@@ -4821,7 +4821,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2m4_22.pdf , page1 used on input line 37
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
 
 [125 <./TT/NPR/bag_a2m2m4_22.pdf>]
-<TT/NPR/bag_a2m2m4_23.pdf, id=7650, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_23.pdf, id=7643, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_23.pdf  used on input line 373.
@@ -4830,7 +4830,7 @@ File: TT/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_23.pdf  used on input line 373.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2m4_23.pdf, id=7653, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_23.pdf, id=7646, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_23.pdf , page1 used on input line 37
@@ -4857,7 +4857,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2m4_23.pdf , page1 used on input line 37
 3.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [126 <./TT/NPR/bag_a2m2m4_23.pdf>]
-<TT/NPR/bag_a2m2m4_24.pdf, id=7710, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_24.pdf, id=7703, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_24.pdf  used on input line 374.
@@ -4866,7 +4866,7 @@ File: TT/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_24.pdf  used on input line 374.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2m4_24.pdf, id=7713, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2m4_24.pdf, id=7706, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2m4_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2m4_24.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2m4_24.pdf , page1 used on input line 37
@@ -4893,7 +4893,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2m4_24.pdf , page1 used on input line 37
 4.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [127 <./TT/NPR/bag_a2m2m4_24.pdf>]
-<TT/NPR/bag_a2m2delm_20.pdf, id=7771, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_20.pdf, id=7764, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_20.pdf  used on input line 375.
@@ -4902,7 +4902,7 @@ File: TT/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_20.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_20.pdf  used on input line 375.
 (pdftex.def)             Requested size: 891.07065pt x 410.8138pt.
-<TT/NPR/bag_a2m2delm_20.pdf, id=7774, page=1, 891.07281pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_20.pdf, id=7767, page=1, 891.07281pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_20.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_20.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_20.pdf , page1 used on input line 
@@ -4929,7 +4929,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2delm_20.pdf , page1 used on input line
 375.
 (pdftex.def)             Requested size: 1300.95552pt x 599.78462pt.
  [128 <./TT/NPR/bag_a2m2delm_20.pdf>]
-<TT/NPR/bag_a2m2delm_22.pdf, id=7832, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_22.pdf, id=7825, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_22.pdf  used on input line 376.
@@ -4938,7 +4938,7 @@ File: TT/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_22.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_22.pdf  used on input line 376.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2delm_22.pdf, id=7835, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_22.pdf, id=7828, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_22.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_22.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_22.pdf , page1 used on input line 
@@ -4965,7 +4965,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2delm_22.pdf , page1 used on input line
 376.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [129 <./TT/NPR/bag_a2m2delm_22.pdf>]
-<TT/NPR/bag_a2m2delm_23.pdf, id=7894, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_23.pdf, id=7887, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_23.pdf  used on input line 377.
@@ -4974,7 +4974,7 @@ File: TT/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_23.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_23.pdf  used on input line 377.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2delm_23.pdf, id=7897, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_23.pdf, id=7890, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_23.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_23.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_23.pdf , page1 used on input line 
@@ -5001,7 +5001,7 @@ Package pdftex.def Info: TT/NPR/bag_a2m2delm_23.pdf , page1 used on input line
 377.
 (pdftex.def)             Requested size: 1300.92903pt x 603.16963pt.
  [130 <./TT/NPR/bag_a2m2delm_23.pdf>]
-<TT/NPR/bag_a2m2delm_24.pdf, id=7957, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_24.pdf, id=7949, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_24.pdf  used on input line 378.
@@ -5010,7 +5010,7 @@ File: TT/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_24.pdf>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_24.pdf  used on input line 378.
 (pdftex.def)             Requested size: 886.0519pt x 410.8138pt.
-<TT/NPR/bag_a2m2delm_24.pdf, id=7960, page=1, 886.05406pt x 410.8148pt>
+<TT/NPR/bag_a2m2delm_24.pdf, id=7952, page=1, 886.05406pt x 410.8148pt>
 File: TT/NPR/bag_a2m2delm_24.pdf Graphic file (type pdf)
 <use TT/NPR/bag_a2m2delm_24.pdf, page 1>
 Package pdftex.def Info: TT/NPR/bag_a2m2delm_24.pdf , page1 used on input line 
@@ -5051,7 +5051,7 @@ Here is how much of TeX's memory you used:
  33657 multiletter control sequences out of 15000+600000
  565823 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,79p,544b,572s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,79p,543b,572s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx1
 2.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mex10.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type1/public/amsfonts/
@@ -5064,9 +5064,9 @@ public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/type
 1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2023basic/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2023basic/texmf-dist/font
 s/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on tex/extrap_bag_NPR.pdf (131 pages, 5298894 bytes).
+Output written on tex/extrap_bag_NPR.pdf (131 pages, 5289244 bytes).
 PDF statistics:
- 8130 PDF objects out of 8907 (max. 8388607)
+ 8122 PDF objects out of 8907 (max. 8388607)
  1941 compressed objects within 20 object streams
  273 named destinations out of 1000 (max. 500000)
  2466 words of extra memory for PDF output out of 10000 (max. 10000000)

@@ -1,8 +1,8 @@
 from bag_param_renorm import *
 
 
-ens_list = ['M0', 'M1', 'M2', 'M3']
-# ens_list = ['C0', 'C1', 'C2']
+# ens_list = ['M0', 'M1', 'M2', 'M3']
+ens_list = ['C0', 'C1M', 'C1', 'C2']
 Z_dict = {ens: Z_analysis(ens, norm='bag') for ens in ens_list}
 start, end = 3, -1
 

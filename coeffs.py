@@ -1,5 +1,4 @@
 from scipy.integrate import quad
-from scipy import real, imag
 from scipy.special import spence
 from scipy.integrate import odeint
 from scipy.special import polygamma
@@ -89,7 +88,7 @@ def C0(u):
     term4 = term4/(1j*np.sqrt(4*u+1)+np.sqrt(3))
 
     li = spence(term1)-spence(term2)+spence(term3)-spence(term4)
-    return -real(li*2*1j/np.sqrt(3))
+    return -(li*2*1j/np.sqrt(3)).real
 
 
 def mylog(x):
@@ -118,10 +117,10 @@ def C0_int(u):
             return num/den
 
         def real_func(y):
-            return real(func(y))
+            return func(y).real
 
         def imag_func(y):
-            return imag(func(y))
+            return func(y).imag
 
         return -quad(real_func, 0, 1)[0]
 
