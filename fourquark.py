@@ -82,12 +82,12 @@ def fq_qslash_projector(q, p1, p2, **kwargs):
     return {k: np.q_proj[k].reshape((12, 12, 12, 12)) for k in operators}
 
 
-mask = np.full((len(operators), len(operators)), False)
+fq_mask = np.full((len(operators), len(operators)), False)
 for i in range(len(operators)):
-    mask[i, i] = True
-mask[1, 2], mask[2, 1] = True, True
-mask[3, 4], mask[4, 3] = True, True
-# mask = np.full((len(operators), len(operators)), True)
+    fq_mask[i, i] = True
+fq_mask[1, 2], fq_mask[2, 1] = True, True
+fq_mask[3, 4], fq_mask[4, 3] = True, True
+# fq_mask = np.full((len(operators), len(operators)), True)
 
 
 class fourquark:

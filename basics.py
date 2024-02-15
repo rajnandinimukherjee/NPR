@@ -344,6 +344,19 @@ def norm_factors(rotate=np.eye(len(operators)), **kwargs):
     N_NPR = np.array([8/3, -4/3, 2, -5/3, -1])
     return rotate@N_NPR
 
+def chiral_logs(rotate=np.eye(len(operators)), obj='bag', **kwargs):
+    bag_logs_SUSY = np.array([-0.5, -0.5, -0.5, 0.5, 0.5])
+    ratio_logs_SUSY = np.array([1, 1.5, 1.5, 2.5, 2.5])
+    if (rotate==NPR_to_SUSY).all():
+        if obj=='bag':
+            return bag_logs_SUSY
+        elif obj=='ratio':
+            return ratio_logs_SUSY
+    elif (rotate==np.eye(len(operators))).all():
+        if obj=='bag':
+            return np.linalg.inv(NPR_to_SUSY)@bag_logs_SUSY
+        elif obj=='ratio':
+            return np.linalg.inv(NPR_to_SUSY)@ratio_logs_SUSY
 
 flag_mus = [2.0, 3.0, 3.0, 3.0, 3.0]
 flag = stat(
@@ -470,12 +483,17 @@ def encode_prop(prop_info):
     return prop_name[:-1]
 
 
-m_pi_PDG = stat(val=139.5709/1000, err=0.00018/1000, btsp='fill')
+m_pi_plus_minus = stat(val=139.5709/1000, err=0.00018/1000, btsp='fill')
+m_pi_0 = stat(val=134.9700/1000, err=0.0005/1000, btsp='fill')
+
+
+m_pi_PDG = (m_pi_plus_minus*2 + m_pi_0)/3
 f_pi_PDG = stat(val=130.41/1000, err=0.23/1000, btsp='fill')
 m_K_PDG = stat(val=497.614/1000, err=0.024/1000, btsp='fill')
 f_K_PDG = stat(val=158.1/1000, err=3.9/1000, btsp='fill')
 
 m_f_sq_PDG = (m_pi_PDG/f_pi_PDG)**2
+Lambda_QCD = 1.0
 
 # ====coloring and markers=================================================
 color_list = list(mc.TABLEAU_COLORS.keys())

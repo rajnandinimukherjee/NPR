@@ -16,19 +16,11 @@ def mpi_dep(params, m_f_sq, op_idx, **kwargs):
     if 'addnl_terms' in kwargs:
         if kwargs['addnl_terms'] == 'm4':
             f += params[3]*(m_f_sq**2)
-        elif kwargs['addnl_terms'] == 'log':
-            chir_log_coeffs = np.array([-0.5, -0.5, -0.5, 0.5, 0.5])
-            if 'rotate' in kwargs:
-                chir_log_coeffs = kwargs['rotate']@chir_log_coeffs
-            chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
-            Lambda_QCD = 1.0
-            log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
-            log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
-            f += log_term*m_f_sq
     return f
 
 
-def chiral_continuum_ansatz(params, a_sq, m_f_sq, PDG, operator, **kwargs):
+def chiral_continuum_ansatz(params, a_sq, m_f_sq, PDG, operator,
+                            obj='bag', **kwargs):
     op_idx = operators.index(operator)
     func = params[0] + params[1]*a_sq + \
         mpi_dep(params, m_f_sq, op_idx, **kwargs) - \
@@ -38,21 +30,28 @@ def chiral_continuum_ansatz(params, a_sq, m_f_sq, PDG, operator, **kwargs):
             func += params[3]*(a_sq**2)
         elif kwargs['addnl_terms'] == 'del_ms':
             func += params[3]*kwargs['ms_diff']
+        elif kwargs['addnl_terms'] == 'log':
+            chir_log_coeffs = chiral_logs(obj=obj, **kwargs)
+            chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
+            log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
+            log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
+            func += params[0]*log_term*m_f_sq
 
     return func
 
 
 class Z_fits:
-    mask = mask
     N_ops = len(operators)
 
-    def __init__(self, ens_list, norm='V', **kwargs):
+    def __init__(self, ens_list, norm='V', mask=fq_mask.copy(), **kwargs):
         self.ens_list = ens_list
         self.norm = norm
+        self.mask = mask
+
         if norm == '11':
             self.mask[0, 0] = False
-        self.Z_dict = {e: Z_analysis(e, norm=self.norm)
-                       for e in bag_ensembles+['C1M']}
+        self.Z_dict = {e: Z_analysis(e, norm=self.norm, mask=self.mask, **kwargs)
+                       for e in bag_ensembles+['C1M', 'M1M']}
 
     def Z_assignment(self, mu, chiral_extrap=False, **kwargs):
         if not chiral_extrap:
@@ -87,6 +86,8 @@ class Z_fits:
                     ['C0', 'C1M'], mu, fittype=fittype, **kwargs)
                 MS_extrap, MS_fit_params = self.Z_chiral_extrap(
                     ['M1', 'M2', 'M3'], mu, fittype=fittype, **kwargs)
+                MM_extrap, MM_fit_params = self.Z_chiral_extrap(
+                    ['M0', 'M1M'], mu, fittype=fittype, **kwargs)
 
                 for ens in self.ens_list:
                     m_pi = self.Z_dict[ens].m_pi
@@ -97,23 +98,30 @@ class Z_fits:
                     elif ens == 'C0':
                         Z = CM_extrap
                     elif ens == 'M0':
-                        slope = MS_fit_params[1]
-                        Z0 = self.Z_dict[ens].interpolate(mu, **kwargs)
-                        Z = Z0 - slope*(m_pi**2)
+                        Z = MM_extrap
                     elif ens == 'F1M':
-                        C_slope = CM_fit_params[1]
-                        M_slope = MS_fit_params[1]
                         Z0 = self.Z_dict[ens].interpolate(mu, **kwargs)
 
-                        Z_C = Z0 - C_slope*(m_pi**2)
-                        Z_M = Z0 - M_slope*(m_pi**2)
-                        stat_err = np.array([[max(Z_C.err[i, j], Z_M.err[i, j])
-                                            for j in range(5)] for i in range(5)])
-                        sys_err = np.abs(Z_C.val-Z_M.val)/2
+                        Z_CM = Z0 - CM_fit_params[1]*(m_pi**2)
+                        Z_MM = Z0 - MM_fit_params[1]*(m_pi**2)
+                        Z_CS = Z0 - CS_fit_params[1]*(m_pi**2)
+                        Z_MS = Z0 - MS_fit_params[1]*(m_pi**2)
+
+                        all_4 = [Z_CM, Z_MM, Z_CS, Z_MS]
+
+                        stat_err = np.array([[max(z.err[i,j] for z in all_4)
+                                            for j in range(self.N_ops)]
+                                             for i in range(self.N_ops)])
+                        sys_err = np.array([[np.abs(
+                            max(z.val[i,j] for z in all_4)-min(z.val[i,j] for z in all_4))/2
+                                             for j in range(self.N_ops)]
+                                            for i in range(self.N_ops)])
+                        all_sum = (Z_CM+Z_MM+Z_CS+Z_MS)/4
                         Z = stat(
-                            val=(Z_C.val+Z_M.val)/2,
-                            err=(stat_err**2 + sys_err**2)**0.5,
-                            btsp='fill'
+                            val=all_sum.val,
+                            err=stat_err,
+                            btsp='seed',
+                            seed = 1
                         )
                         Z.sys_err = sys_err
                     extrap_assign[fittype][ens] = Z
@@ -128,10 +136,18 @@ class Z_fits:
                 sys_err = np.array([[np.abs(Z_linear.val[i, j]-Z_quadratic.val[i, j])/2
                                      for j in range(self.N_ops)]
                                     for i in range(self.N_ops)])
+                if ens=='F1M':
+                    other_sys_error = np.array([[max(
+                        Z_linear.sys_err[i,j], Z_quadratic.sys_err[i,j])
+                                                 for j in range(self.N_ops)]
+                                                for i in range(self.N_ops)])
+                    sys_err = (sys_err**2 + other_sys_error**2)**0.5
+
                 Z = stat(
                     val=(Z_linear.val+Z_quadratic.val)/2,
                     err=(stat_err**2+sys_err**2)**0.5,
-                    btsp='fill'
+                    btsp='seed',
+                    seed=ensemble_seeds[ens]
                 )
                 Z.stat_err = stat_err
                 Z.sys_err = sys_err
@@ -154,6 +170,7 @@ class Z_fits:
             return param[0] + param[1]*msq
 
         extrap = np.zeros(shape=(self.N_ops, self.N_ops), dtype=object)
+
         param_save = np.zeros(shape=(2, self.N_ops, self.N_ops))
         param_save_btsp = np.zeros(shape=(N_boot, 2, self.N_ops, self.N_ops))
 
@@ -169,7 +186,10 @@ class Z_fits:
                 param_save_btsp[:, :, i, j] = res.btsp
                 extrap[i, j] = res.mapping(0.0)
             else:
-                extrap[i, j] = stat(val=0, btsp='fill')
+                if i==0 and j==0:
+                    extrap[i,j] = stat(val=1, err=0, btsp='fill')
+                else:
+                    extrap[i, j] = stat(val=0, btsp='fill')
 
         fit_params = stat(
             val=param_save,
@@ -247,18 +267,18 @@ class Z_fits:
 class sigma:
     relevant_ensembles = ['C1', 'C0', 'M1', 'M0', 'F1M']
     N_ops = len(operators)
-    mask = mask
 
-    def __init__(self, norm='V', **kwargs):
+    def __init__(self, norm='V', mask=fq_mask.copy(), **kwargs):
         self.norm = norm
+        self.mask=mask
         if self.norm == '11':
             self.mask[0, 0] = False
 
-        self.Z_fits = Z_fits(bag_ensembles, norm=self.norm)
-        self.Z_dict = {e: Z_analysis(e, norm=self.norm)
+        self.Z_fits = Z_fits(bag_ensembles, norm=self.norm, mask=mask, **kwargs)
+        self.Z_dict = {e: Z_analysis(e, norm=self.norm, mask=mask, **kwargs)
                        for e in self.relevant_ensembles}
 
-    def calc_running(self, mu2, mu1, plot=False, include_C=True,
+    def calc_running(self, mu1, mu2, plot=False, include_C=True,
                      filename='plots/Z_running.pdf', **kwargs):
         if not include_C:
             ens_list = self.relevant_ensembles[2:]
@@ -373,7 +393,7 @@ class sigma:
 
 
 class bag_fits:
-    operators = operators
+    operators = operators.copy()
 
     def __init__(self, ens_list, obj='bag', **kwargs):
         self.ens_list = ens_list
@@ -390,17 +410,17 @@ class bag_fits:
 
         self.bag_dict = {e: bag_analysis(e, obj=obj)
                          for e in self.ens_list}
-        self.Z_fits = Z_fits(self.ens_list, norm=self.norm)
+        self.Z_fits = Z_fits(self.ens_list, norm=self.norm, **kwargs)
 
     def load_bag(self, mu, chiral_extrap=False,
                  **kwargs):
 
-        Z_dict = self.Z_fits.Z_assignment(mu, chiral_extrap=chiral_extrap,
+        self.Z_dict = self.Z_fits.Z_assignment(mu, chiral_extrap=chiral_extrap,
                                           **kwargs)
         if 'rotate' in kwargs:
             rot_mtx = kwargs['rotate']
         else:
-            rot_mtx = np.eye(len(operators))
+            rot_mtx = np.eye(len(self.operators))
 
         rot_mtx = stat(
             val=rot_mtx,
@@ -408,7 +428,7 @@ class bag_fits:
         )
 
         self.mu = mu
-        self.bag = join_stats([Z_dict[e]@(rot_mtx@self.bag_dict[e].bag)
+        self.bag = join_stats([self.Z_dict[e]@(rot_mtx@self.bag_dict[e].bag)
                                for e in self.ens_list])
 
     def fit_operator(self, mu, operator,
@@ -419,6 +439,7 @@ class bag_fits:
                      title='',
                      figsize=(15, 6),
                      legend_axis=1,
+                     fs=10,
                      **kwargs):
 
         if self.mu != mu:
@@ -453,12 +474,20 @@ class bag_fits:
             norm = norm_factors(**kwargs)[op_idx]
             y = y/norm
 
+        # in this case ansatz loads correct x dependence
+        # so just passing dummy x
         x = y
         guess = np.array(guess)
 
         res = fit_func(x, y, ansatz, guess, **kwargs)
         cc_coeffs = res[1:]/res[0]
         y_phys = res[0]
+
+        if 'addnl_terms' in kwargs:
+            if kwargs['addnl_terms']=='log':
+                log_term = chiral_logs(obj=self.obj, **kwargs)[op_idx]/((4*np.pi)**2)
+                log_term = m_f_sq_PDG*((m_pi_PDG**2)/(Lambda_QCD**2)).use_func(np.log)*log_term
+                y_phys = y_phys + y_phys*log_term
 
         if plot:
             fig, ax = plt.subplots(1, 2, figsize=figsize,
@@ -499,6 +528,7 @@ class bag_fits:
                             res.val, x, m_f_sq.val,
                             m_f_sq_PDG.val,
                             operator, ms_diff=0,  # ms_diff.val,
+                            obj=self.obj,
                             **kwargs)
                          for x in x_asq]),
                     err='fill',
@@ -506,6 +536,7 @@ class bag_fits:
                         res.btsp[k, :], x, m_f_sq.btsp[k],
                         m_f_sq_PDG.btsp[k], operator,
                         ms_diff=0,  # ms_diff.btsp[k],
+                        obj=self.obj,
                         **kwargs) for x in x_asq]
                         for k in range(N_boot)])
                 )
@@ -522,6 +553,7 @@ class bag_fits:
                             x/(f_pi_PDG.val**2),
                             m_f_sq_PDG.val,
                             operator, ms_diff=0,  # ms_diff.val,
+                            obj=self.obj,
                             **kwargs) for x in x_msq]),
                     err='fill',
                     btsp=np.array([[chiral_continuum_ansatz(
@@ -529,6 +561,7 @@ class bag_fits:
                         x/(f_pi_PDG.btsp[k]**2),
                         m_f_sq_PDG.btsp[k], operator,
                         ms_diff=0,  # ms_diff.btsp[k],
+                        obj=self.obj,
                         **kwargs) for x in x_msq]
                         for k in range(N_boot)])
                 )
@@ -544,10 +577,16 @@ class bag_fits:
                     if kwargs['addnl_terms'] == 'del_ms':
                         y_ens = y_ens - res[-1]*ms_diff
 
+                e_label = e
+                if e=='C0' or e=='M0':
+                    e_label += 'M'
+                elif e in C_ens[1:] or e in M_ens[1:]:
+                    e_label += 'S'
+
                 ax[0].errorbar([a_sq.val], [y_ens.val],
                                yerr=[y_ens.err],
                                xerr=[a_sq.err],
-                               fmt='o', label=e,
+                               fmt='o', label=e_label,
                                capsize=4, color=ens_colors[e],
                                mfc='None', zorder=10, clip_on=False)
 
@@ -560,7 +599,7 @@ class bag_fits:
                 ax[1].errorbar([mpi_phys.val], [y_ens.val],
                                yerr=[y_ens.err],
                                xerr=[mpi_phys.err],
-                               fmt='o', label=e, capsize=4,
+                               fmt='o', label=e_label, capsize=4,
                                color=ens_colors[e],
                                mfc='None')
 
@@ -577,9 +616,19 @@ class bag_fits:
 
             ax[0].set_xlim(x_asq[0]-0.01, x_asq[-1])
             ax[1].set_xlim(x_msq[0], x_msq[-1])
+            ax[0].yaxis.set_ticks_position('both')
+            ax[1].yaxis.set_ticks_position('both')
 
-            ax[0].set_xlabel(r'$a^2$ (GeV${}^{-2}$)')
-            ax[1].set_xlabel(r'$m_{\pi}^2$ (GeV${}^2$)')
+            ax[0].set_xlabel(r'$a^2\,[\mathrm{GeV}^{-2}]$', fontsize=fs)
+            ax[1].set_xlabel(r'$m_{\pi}^2\,[\mathrm{GeV}^{2}]$', fontsize=fs)
+            
+
+            if self.obj=='bag':
+                ylabel = r'$B' if not rescale else r'$\mathcal{B}'
+            else:
+                ylabel = r'$R' 
+            ylabel += f'_{op_idx+1}'+r'(\mu= '+str(mu)+r'\,\mathrm{GeV})$'
+            ax[0].set_ylabel(ylabel, fontsize=fs)
             ax[legend_axis].legend(ncol=2, columnspacing=0.6)
 
             ax[0].text(0.4, 0.05, r'$\chi^2$/DOF:'+'{:.3f}'.format(
@@ -593,12 +642,16 @@ class bag_fits:
                 if 'custom_title' in kwargs:
                     title = kwargs['custom_title']
 
-            plt.suptitle(title, y=0.95 if figsize == (15, 6) else 1)
+            plt.suptitle(title, y=0.95 if figsize == (15, 6) else 1, fontsize=fs)
 
             if 'filename' in kwargs:
                 filename = kwargs['filename']
             else:
                 filename = f'plots/{self.obj}_fits_{operator}.pdf'
             call_PDF(filename, open=open)
+
+        if 'addnl_terms' in kwargs:
+            if kwargs['addnl_terms'] == 'log':
+                res.val[0], res.err[0], res.btsp[:,0] = y_phys.val, y_phys.err, y_phys.btsp
 
         return res

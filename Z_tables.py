@@ -84,7 +84,7 @@ class ens_table:
         rv += [r'\end{center}']
         rv += [r'\end{'+table_type+'}']
 
-        filename = f'tex/{self.ens}_Z_table.tex'
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/{self.ens}_Z_table.tex'
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()
@@ -104,9 +104,14 @@ class extrap_table:
         Z_assign = self.Z_fit.Z_assignment(mu, chiral_extrap=True)
 
         rv = [r'\begin{table}']
-        rv += [r'\caption{Elements of $Z_{ij}^{RI}(\mu={' +
-               str(mu)+r'}\,\mathrm{GeV})/Z_{A/S}^2$' +
-               r' extrapolated to the massless limit. \label{tab:ch-extrap-'+str(mu)+'}}']
+        rv += [r'\caption{Elements of $Z_{ij}^{RI}(\mu={' +\
+               str(mu)+r'}\,\mathrm{GeV})/Z_{A/S}^2$' +\
+               r' extrapolated to the massless limit. The first parenthesis '+\
+               r'is the statistical error and the second is the systematic error. '+\
+               r'The systematic error on the finest ensemble also includes the '+\
+               r'spread in chiral extrapolations using the chiral slopes from '+\
+               r'the four other extrapolations.'+\
+               r'\label{tab:ch-extrap-'+str(mu)+'}}']
         rv += [r'\begin{tabular}{c|ccccc}']
         rv += [r'\hline']
         rv += [r'\hline']
@@ -144,10 +149,10 @@ class extrap_table:
         rv += [r'\end{tabular}']
         rv += [r'\end{table}']
 
-        filename = f'tex/extrap_Z_table_{str(int(10*mu))}.tex'
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/extrap_Z_table_{str(int(10*mu))}.tex'
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()
         print(f'Z table output written to {filename}.')
 
-    def create_sig_table(self, mu1, mu2, **kwargs):
+    #def create_sig_table(self, mu1, mu2, **kwargs):

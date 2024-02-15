@@ -7,7 +7,7 @@ fit_file = 'Tobi'
 all_bag_data = h5py.File(f'kaon_bag_fits_{fit_file}.h5', 'r')
 bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
 ensemble_seeds = {ens: int(hash(ens)) % (2**32)
-                  for ens in bag_ensembles+['C1M']}
+                  for ens in bag_ensembles+['C1M', 'M1M']}
 
 
 def load_info(key, ens, ops=operators, meson='ls', **kwargs):
@@ -44,10 +44,10 @@ def load_info(key, ens, ops=operators, meson='ls', **kwargs):
 class Z_analysis:
     N_boot = N_boot
     filename = 'fourquarks_Z.h5'
-    mask = mask
     N_ops = len(operators)
 
-    def __init__(self, ensemble, action=(0, 0), norm='V', **kwargs):
+    def __init__(self, ensemble, action=(0, 0),
+                 norm='V', mask=fq_mask.copy(), **kwargs):
         self.ens = ensemble
         self.action = action
         self.ainv = stat(
@@ -55,6 +55,7 @@ class Z_analysis:
             err=params[self.ens]['ainv_err'],
             btsp='seed', seed=ensemble_seeds[self.ens])
         self.a_sq = self.ainv**(-2)
+        self.mask = mask
 
         self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
         self.masses = (self.sea_m, self.sea_m)
@@ -73,6 +74,12 @@ class Z_analysis:
                     val=0.16079,
                     err=0.00054,
                     btsp='fill')
+            elif self.ens == 'M1M':
+                self.m_pi = stat(
+                    val=0.12005,
+                    err=0.00065,
+                    btsp='fill',
+                )
             else:
                 print(f'{self.ens} m_pi data not identified,' +
                       ' check for consistent ensemble naming')
@@ -80,7 +87,7 @@ class Z_analysis:
         self.norm = norm
         if norm == '11':
             self.mask[0, 0] = False
-        self.load_fq_Z(norm=self.norm)
+        self.load_fq_Z(norm=self.norm, **kwargs)
 
     def interpolate(self, m, xaxis='mu', ainv=None,
                     plot=False, fittype='linear',
@@ -197,9 +204,9 @@ class Z_analysis:
         Z1 = self.interpolate(mu1, type='mu', **kwargs)
         Z2 = self.interpolate(mu2, **kwargs)
         sigma = stat(
-            val=self.mask*Z2.val@np.linalg.inv(Z1.val),
+            val=Z2.val@np.linalg.inv(Z1.val),
             err='fill',
-            btsp=np.array([self.mask*Z2.btsp[k,]@np.linalg.inv(Z1.btsp[k,])
+            btsp=np.array([Z2.btsp[k,]@np.linalg.inv(Z1.btsp[k,])
                            for k in range(N_boot)]))
         return sigma
 
@@ -278,7 +285,7 @@ class Z_analysis:
 
         call_PDF(filename)
 
-    def load_fq_Z(self, norm='A', **kwargs):
+    def load_fq_Z(self, norm='A', resid_mask=True, **kwargs):
         fq_data = h5py.File(self.filename, 'r')[
             str(self.action)][self.ens][str(self.masses)]
         self.am = stat(
@@ -292,6 +299,29 @@ class Z_analysis:
             err=fq_data['errors'][:],
             btsp=(fq_data['bootstrap'][:]).real
         )
+
+        if resid_mask:
+            Z_mask = np.zeros(shape=Z_ij_Z_q_2.val.shape)
+            Z_mask_boot = np.zeros(shape=Z_ij_Z_q_2.btsp.shape)
+            try:
+                for m in range(self.N_mom):
+                    Lambda = (np.linalg.inv(Z_ij_Z_q_2.val[m])@fq_gamma_F).T
+                    Lambda = fq_mask*Lambda
+                    Z_mask[m,] = fq_gamma_F@np.linalg.inv(Lambda.T)
+                    for k in range(N_boot):
+                        Lambda_k = (np.linalg.inv(Z_ij_Z_q_2.btsp[k,m])@fq_gamma_F).T
+                        Lambda_k = fq_mask*Lambda_k
+                        Z_mask_boot[k,m,] = fq_gamma_F@np.linalg.inv(Lambda_k.T)
+                Z_ij_Z_q_2 = stat(
+                        val=Z_mask,
+                        err='fill',
+                        btsp=Z_mask_boot
+                        )
+            except np.linalg.LinAlgError:
+                print(self.mask)
+                raise
+
+
         bl_data = h5py.File('bilinear_Z_gamma.h5', 'r')[
             str(self.action)][self.ens][str(self.masses)]
 
@@ -377,11 +407,13 @@ class Z_analysis:
         return closest_idx
 
 
+
 class bag_analysis:
     def __init__(self, ensemble, obj='bag', action=(0, 0), **kwargs):
         self.ens = ensemble
         self.action = action
         self.ra = ratio_analysis(self.ens)
+        self.obj = obj
         if obj == 'bag':
             norm = 'bag'
             self.bag = self.ra.B_N
@@ -429,15 +461,6 @@ class bag_analysis:
             if 'addnl_terms' in kwargs:
                 if kwargs['addnl_terms'] == 'm4':
                     f += param[3]*(m_f_sq**2)
-                elif kwargs['addnl_terms'] == 'log':
-                    chir_log_coeffs = np.array([-0.5, -0.5, -0.5, 0.5, 0.5])
-                    if 'rotate' in kwargs:
-                        chir_log_coeffs = kwargs['rotate']@chir_log_coeffs
-                    chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
-                    Lambda_QCD = 1.0
-                    log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
-                    log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
-                    f += log_term*m_f_sq
             return f
 
         func = param[0] + param[1]*a_sq +\
@@ -447,6 +470,12 @@ class bag_analysis:
                 func += param[3]*(a_sq**2)
             elif kwargs['addnl_terms'] == 'del_ms':
                 func += param[3]*ms_diff
+            elif kwargs['addnl_terms'] == 'log':
+                chir_log_coeffs = chiral_logs(obj=self.obj, **kwargs)
+                chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
+                log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
+                log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
+                func += param[0]*log_term*m_f_sq
 
         return func
 
