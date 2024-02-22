@@ -318,7 +318,10 @@ class sigma:
                 extrap[i, j] = res.mapping(0.0)
                 GOF[i, j] = str(np.around(res.pvalue, 3))
             else:
-                extrap[i, j] = stat(val=0, btsp='fill')
+                if i==0 and j==0:
+                    extrap[i, j] = stat(val=1, btsp='fill')
+                else:
+                    extrap[i, j] = stat(val=0, btsp='fill')
 
         fit_params = stat(
             val=param_save,
@@ -390,6 +393,49 @@ class sigma:
             call_PDF(filename)
 
         return extrap
+
+    def compare_scaling(self, mu1, mu2, npoints=11, save=True,
+                        filename='running_pt_v_npt.pdf',
+                        open_file=False, figsize=(5,2.5), fs=10,
+                        separate=False, **kwargs):
+
+        mu_grain = np.linspace(mu1, mu2, npoints)
+
+        npt_filename = f'npt_scaling_{int(mu1*10)}_{int(mu2*10)}_{npoints}.p'
+        if os.path.isfile(npt_filename):
+            npt_scaling = pickle.load(open(npt_filename, 'rb'))
+        else:
+            npt_scaling = join_stats([self.calc_running(mu_grain[m_idx], mu2, **kwargs)
+                                     for m_idx in tqdm(range(len(mu_grain)))])
+            pickle.dump(npt_scaling, open(npt_filename, 'wb'))
+
+        LO_scaling = np.array([expm(gamma_0*np.log(g(mu2)/g(m))/Bcoeffs(3)[0])
+                      for m in mu_grain]) 
+        NLO_scaling = np.array([K(mu2)@LO_scaling[m_idx]@np.linalg.inv(K(mu_grain[m_idx]))
+                       for m_idx in range(len(mu_grain))])
+
+        for i,j in itertools.product(range(self.N_ops), range(self.N_ops)):
+            if self.mask[i,j]:
+                fig, ax = plt.subplots(figsize=figsize)
+
+                ax.errorbar(mu_grain, npt_scaling.val[:,i,j],
+                             yerr=npt_scaling.err[:,i,j],
+                             fmt='o', capsize=4, label='npt')
+                ax.plot(mu_grain, LO_scaling[:,i,j],
+                         '--', label='LO')
+                ax.plot(mu_grain, NLO_scaling[:,i,j],
+                            '-', label='NLO')
+                ax.set_xlabel(r'$\mu_1\,\mathrm{[GeV]}$', fontsize=fs)
+                ax.set_ylabel(r'$\sigma_{'+str(i+1)+str(j+1)+r'}('+\
+                        str(mu2)+r'\,\mathrm{GeV}, \mu_1)$', fontsize=fs)
+                ax.yaxis.set_ticks_position('both')
+                ax.legend()
+                if separate:
+                    call_PDF(filename[:-4]+f'_{i+1}{j+1}'+filename[-4:], open=open_file)
+
+        if not separate:
+            call_PDF(filename, open=open_file)
+
 
 
 class bag_fits:

@@ -30,27 +30,30 @@ def err_disp(num, err, n=2, sys_err=None, **kwargs):
     in error, can be extended for accepting arrays of nums and errs as well, for
     now only one at a time'''
 
-    if sys_err != None:
-        err_size = max(int(np.floor(np.log10(np.abs(err)))),
-                       int(np.floor(np.log10(np.abs(sys_err)))))
+    if err==0.0:
+        return str(np.around(num,2))
     else:
-        err_size = int(np.floor(np.log10(np.abs(err))))
+        if sys_err != None:
+            err_size = max(int(np.floor(np.log10(np.abs(err)))),
+                           int(np.floor(np.log10(np.abs(sys_err)))))
+        else:
+            err_size = int(np.floor(np.log10(np.abs(err))))
 
-    num_size = int(np.floor(np.log10(np.abs(num))))
-    min_size = min(err_size, num_size+(n-1))
-    err_n_digits = int(err*10**(-(min_size-(n-1))))
+        num_size = int(np.floor(np.log10(np.abs(num))))
+        min_size = min(err_size, num_size+(n-1))
+        err_n_digits = int(err*10**(-(min_size-(n-1))))
 
-    if min_size > (n-1):
-        disp_str = f'{num}({err})'
-    else:
-        disp_str = "{:.{m}f}".format(num, m=-(min_size-(n-1)))
-        disp_str += f'({err_n_digits})'
+        if min_size > (n-1):
+            disp_str = f'{num}({err})'
+        else:
+            disp_str = "{:.{m}f}".format(num, m=-(min_size-(n-1)))
+            disp_str += f'({err_n_digits})'
 
-    if sys_err != None:
-        sys_err_n_digits = int(sys_err*10**(-(min_size-(n-1))))
-        disp_str += f'({sys_err_n_digits})'
+        if sys_err != None:
+            sys_err_n_digits = int(sys_err*10**(-(min_size-(n-1))))
+            disp_str += f'({sys_err_n_digits})'
 
-    return disp_str
+        return disp_str
 
 
 def st_dev(data, mean=None, **kwargs):

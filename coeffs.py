@@ -2,6 +2,7 @@ from scipy.integrate import quad
 from scipy.special import spence
 from scipy.integrate import odeint
 from scipy.special import polygamma
+from scipy.linalg import expm
 import numpy as np
 
 # ====beta-fn coeffs====================================
@@ -234,3 +235,13 @@ def gamma_1_MS(f):
 beta_0 = Bcoeffs(3)[0]
 gamma_1_RISMOM = r_mtx@gamma_0 - gamma_0@r_mtx + \
     gamma_1_MS(f=3) - 2*beta_0*r_mtx
+
+J = np.loadtxt('J.txt', delimiter=',')
+L = np.loadtxt('L.txt', delimiter=',')
+def K(mu, **kwargs):
+    g_term = g(mu)/(4*np.pi)
+    return np.eye(5) + J*g_term**2 + L*(g_term**2)*np.log(g(mu))
+
+def K_inv(mu, **kwargs):
+    g_term = g(mu)/(4*np.pi)
+    return np.eye(5) - J*g_term**2 - L*(g_term**2)*np.log(g(mu))

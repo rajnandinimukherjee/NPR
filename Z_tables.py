@@ -29,7 +29,17 @@ class ens_table:
         )
         self.ratio = self.Z_A/self.Z_S
 
-    def create_Z_table(self, indices=None):
+    def create_Z_table(self, indices=None, **kwargs):
+        if 'rotate' in kwargs:
+            rot_mtx = kwargs['rotate']
+            self.Z = stat(
+                    val=[rot_mtx@self.Z.val[m]@np.linalg.inv(rot_mtx)
+                         for m in range(self.N_mom)],
+                    err='fill',
+                    btsp=[[rot_mtx@self.Z.btsp[k,m]@np.linalg.inv(rot_mtx)
+                           for m in range(self.N_mom)]
+                          for k in range(N_boot)]
+                    )
         # table_type = 'table' if self.ens != 'F1M' else 'sidewaystable'
         table_type = 'table'
         rv = [r'\begin{'+table_type+'}']
@@ -65,7 +75,7 @@ class ens_table:
             rv += [r'$a\mu$ & '+momenta+r' \\']
             rv += [r'\hline']
             for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
-                if mask[i, j]:
+                if self.Z_obj.mask[i, j]:
                     Z_disp = [err_disp(self.Z.val[m, i, j], self.Z.err[m, i, j])
                               for m in indices]
                     rv += [r'$Z_{'+str(i+1)+str(j+1)+r'}/Z_A^2$ & $' +
@@ -101,7 +111,7 @@ class extrap_table:
         self.sig = sigma(norm=self.norm)
 
     def create_Z_table(self, mu, **kwargs):
-        Z_assign = self.Z_fit.Z_assignment(mu, chiral_extrap=True)
+        Z_assign = self.Z_fit.Z_assignment(mu, chiral_extrap=True, **kwargs)
 
         rv = [r'\begin{table}']
         rv += [r'\caption{Elements of $Z_{ij}^{RI}(\mu={' +\
@@ -123,7 +133,7 @@ class extrap_table:
         rv += [r'$a^{-1}$ [GeV] & '+ainvs+r' \\']
         rv += [r'\hline']
         for i, j in itertools.product(range(5), range(5)):
-            if mask[i, j]:
+            if self.Z_fit.mask[i, j]:
                 Zs = r' & '.join([err_disp(
                     Z_assign[e].val[i, j], Z_assign[e].stat_err[i, j],
                     n=2, sys_err=Z_assign[e].sys_err[i,j])
@@ -155,4 +165,66 @@ class extrap_table:
         f.close()
         print(f'Z table output written to {filename}.')
 
-    #def create_sig_table(self, mu1, mu2, **kwargs):
+    def create_sig_table(self, mu1, mu2, **kwargs):
+        Z_dict_mu1 = self.sig.Z_fits.Z_assignment(mu1, **kwargs)
+        Z_dict_mu2 = self.sig.Z_fits.Z_assignment(mu2, **kwargs)
+        sigmas = {e:stat(
+            val=Z_dict_mu2[e].val@np.linalg.inv(Z_dict_mu1[e].val),
+            err='fill',
+            btsp=np.array([Z_dict_mu2[e].btsp[k]@np.linalg.inv(
+                Z_dict_mu1[e].btsp[k]) for k in range(N_boot)])
+        ) for e in self.sig.relevant_ensembles}
+
+        rv = [r'\begin{tabular}{c|ccccc}']
+        rv += [r'\hline']
+        rv += [r'\hline']
+
+        ainvs = r' & '.join([err_disp(
+            params[ens]['ainv'], params[ens]['ainv_err'])
+            for ens in self.sig.relevant_ensembles])
+
+        rv += [r'$a^{-1}$ [GeV] & '+ainvs+r' \\']
+        rv += [r'\hline']
+        for i, j in itertools.product(range(5), range(5)):
+            if self.Z_fit.mask[i, j]:
+                s_vals = r' & '.join([err_disp(
+                    sigmas[e].val[i, j], sigmas[e].err[i, j])
+                    for e in self.sig.relevant_ensembles])
+                s_name = r'$\sigma_{'+str(i+1)+str(j+1)+r'}$'
+                rv += [s_name+r' & '+s_vals+r' \\']
+                if i == j:
+                    if i != 1 and i != 3:
+                        rv += [r'\hline']
+
+        rv += [r'\hline']
+        rv += [r'\end{tabular}']
+
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/sigma_table_{int(mu1*10)}_{int(mu2*10)}.tex'
+        f = open(filename, 'w')
+        f.write('\n'.join(rv))
+        f.close()
+        print(f'sigma table output written to {filename}.')
+
+    def print_sigmas(self, mu1, mu2, steps=False, **kwargs):
+
+
+        if not steps:
+            sig = self.sig.calc_running(mu1, mu2, **kwargs)
+        else:
+            mus = np.arange(mu1, mu2+0.1, 0.2)
+            sig = stat(val=np.eye(5), btsp='fill')
+            for m in range(1,len(mus)):
+                sig = self.sig.calc_running(mus[m-1], mus[m], **kwargs)@sig
+
+        rv = [r'\begin{bmatrix}']
+        for j in range(5):
+            rv += [' & '.join([err_disp(sig.val[i,j], sig.err[i,j])
+                               for i in range(5)])+r' \\']
+
+        rv += [r'\end{bmatrix}']
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/sigma_matrix_{self.norm}_{steps}.tex'
+        f = open(filename, 'w')
+        f.write('\n'.join(rv))
+        f.close()
+        print(f'sigma table output written to {filename}.')
+

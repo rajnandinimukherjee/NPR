@@ -54,21 +54,7 @@ else:
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 
-rv = [r'\begin{table}']
-rv += [r'\caption{\label{tab:fit_systematics} Chiral-continuum fit '+\
-        r'systematics depending on choice of ansatz at $\mu='+str(mu)+\
-        r'$ GeV. The central value uses an ansatz linear in $a^2$ and $m_\pi^2$ '+\
-        r'and by discarding the highest pion mass datapoint (from C2S). We also list '+\
-        r'how many standard deviations away are fits using '+\
-        r'a $\delta_{m_s^\text{sea}}$ term, making no pion mass cuts, '+\
-        r'making an additional pion mass cuts to discard the M3S and M2S datapoints as well, '+\
-        r'and including the chiral log terms in the fit. '+\
-        r'The color red indicates fits with $p$-values less than 3\%, '+\
-        r'orange indicates marginal fits with $p$-values between 3-5\% and '+\
-        r'green indicates those with $p$-values above 5\%. '+\
-        r'$\gamma/Y_0^\gamma$ represents the relative weight of the fit parameter '+\
-        r' which accounts for $\delta_{m_s^\text{sea}}$ effects.}']
-rv += [r'\begin{tabular}{c|c|c|c|c|c|c|>{\columncolor[gray]{0.95}}c}']
+rv = [r'\begin{tabular}{c|c|c|c|c|c|c|>{\columncolor[gray]{0.95}}c}']
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r' & no C2S & '+\
@@ -144,7 +130,6 @@ for key in quantities.keys():
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
-rv += [r'\end{table}']
 
 filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/fit_systematics_{str(int(10*mu))}.tex'
 f = open(filename, 'w')

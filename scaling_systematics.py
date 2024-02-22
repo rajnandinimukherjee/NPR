@@ -86,17 +86,7 @@ other_systematics = pickle.load(open('other_systematics.p','rb'))
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 
-rv = [r'\begin{table}']
-rv += [r'\caption{\label{tab:scaling_systematics} Bag and ratio parameters at $\mu=3'+\
-        r'$ GeV. Central value comes from using NPR at $\mu=2$ GeV and using non-perturbative '+\
-        r'scaling $\sigma(2,3)$. We also list how many standard deviations away '+\
-        r' are results from scaling in steps, and renormalising directly at 3 GeV. '+\
-        r'The central value uses $Z$-factors with chirally vanishing elements removed (masked) '+\
-        r'from $(P\Lambda)^T$ before the inversion $Z = F((P\Lambda)^T)^{-1}$. '+\
-        r'We list the percent shift in the result by masking $Z$ post-inversion'+\
-        r' and without masking at all. We also compare with performing the entire '+\
-        r'analysis in the NPR basis and then rotating to the SUSY basis.}']
-rv += [r'\begin{tabular}{c|c|c|>{\columncolor[gray]{0.95}}c|c|>{\columncolor[gray]{0.95}}c|c}']
+rv = [r'\begin{tabular}{c|c|c|>{\columncolor[gray]{0.95}}c|c|>{\columncolor[gray]{0.95}}c|c}']
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r' & $\sigma(2\,\mathrm{GeV},3\,\mathrm{GeV})$ & $\sigma('+\
@@ -162,7 +152,6 @@ for key in quantities.keys():
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
-rv += [r'\end{table}']
 
 filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/scaling_systematics.tex'
 f = open(filename, 'w')

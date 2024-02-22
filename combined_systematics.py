@@ -38,13 +38,7 @@ for key in quantities.keys():
                         'discr':discr_err_str,
                         'total':total_err_str}
 
-rv = [r'\begin{table}']
-rv += [r'\caption{\label{tab:error} central values and combined systematic errors '+\
-        r' for ratio and bag parameters at $\mu=3$ GeV in the $\textrm{SMOM}^{(\gamma_\mu,\gamma_\mu)}$ '+\
-        r'scheme. We list the errors arising from statistics, chiral extrapolation, '+\
-        r'residual chiral symmetry breaking (rcsb) effect, and discretisation and combine '+\
-        r'it into total uncertainties.}']
-rv += [r'\begin{tabular}{c|c|cccc|ccccc}']
+rv = [r'\begin{tabular}{c|c|cccc|ccccc}']
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'scheme & & '+' & '.join([val for key,val in quantities.items()])+r'\\']
@@ -60,7 +54,6 @@ for err in ['stat', 'chiral', 'rcsb', 'discr', 'total']:
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
-rv += [r'\end{table}']
 
 filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/all_systematics.tex'
 f = open(filename, 'w')
