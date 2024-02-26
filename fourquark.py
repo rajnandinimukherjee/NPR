@@ -33,6 +33,13 @@ fq_gamma_F = np.array(
       for k2 in operators]
      for k1 in operators])
 
+fq_qslash_F = np.array([
+    [64*N_c*(N_c+1), 0,0,0,0],
+    [0,64*N_c**2,64*N_c,0,0],
+    [0,-32*N_c,-32*N_c**2,0,0],
+    [0,0,0,8*N_c**2,8*N_c],
+    [0,0,0,8*N_c*(N_c+2),8*N_c*(2*N_c+1)]], dtype=complex)
+
 
 def fq_proj_qslash(q_vec):
     qslash = np.sum(np.array([q_vec[i]*gamma[dirs[i]]

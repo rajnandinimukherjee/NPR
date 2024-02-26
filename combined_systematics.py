@@ -1,8 +1,11 @@
 from cont_chir_extrap import *
 
-fit_systematics = pickle.load(open(f'fit_systematics_20_{fit_file}.p', 'rb'))
-scaling_systematics = pickle.load(open('scaling_systematics.p', 'rb'))
-other_systematics = pickle.load(open('other_systematics.p', 'rb'))
+scheme = 'gamma'
+print(f'scheme: {scheme}')
+
+fit_systematics = pickle.load(open(f'fit_systematics_20_{fit_file}_{scheme}.p', 'rb'))
+scaling_systematics = pickle.load(open(f'scaling_systematics_{scheme}.p', 'rb'))
+other_systematics = pickle.load(open(f'other_systematics_{scheme}.p', 'rb'))
 
 errors_dict = {}
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
@@ -55,7 +58,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/all_systematics.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/all_systematics_{scheme}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

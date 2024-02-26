@@ -2,6 +2,7 @@ from cont_chir_extrap import *
 
 mu = 2.0
 run = bool(int(input('run?(0:False/1:True): ')))
+scheme = 'qslash'
 
 if run:
     laxis = {1:1, 2:1, 3:1, 4:0, 5:0}
@@ -21,9 +22,9 @@ if run:
                            }
 
 
-    b = bag_fits(bag_ensembles, obj='bag')
+    b = bag_fits(bag_ensembles, obj='bag', scheme=scheme)
     for op_idx, op in enumerate(b.operators):
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear_{fit_file}/bag_fits_B{op_idx+1}_{int(mu*10)}.pdf'
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear_{fit_file}/bag_fits_B{op_idx+1}_{scheme}_{int(mu*10)}.pdf'
         for fit in record_vals.keys():
             record_vals[fit][f'B{op_idx+1}'] = b.fit_operator(mu, op, rotate=NPR_to_SUSY,
                                                         chiral_extrap=True, rescale=True, fs=14,
@@ -32,9 +33,9 @@ if run:
             del record_vals[fit][f'B{op_idx+1}'].mapping
 
 
-    r = bag_fits(bag_ensembles, obj='ratio')
+    r = bag_fits(bag_ensembles, obj='ratio', scheme=scheme)
     for op_idx, op in enumerate(r.operators):
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear_{fit_file}/ratio_fits_R{op_idx+2}_{int(mu*10)}.pdf'
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear_{fit_file}/ratio_fits_R{op_idx+2}_{scheme}_{int(mu*10)}.pdf'
         for fit in record_vals.keys():
             record_vals[fit][f'R{op_idx+2}'] = r.fit_operator(mu, op, rotate=NPR_to_SUSY,
                                                              chiral_extrap=True, fs=14,
@@ -46,9 +47,9 @@ if run:
     for fit in record_vals.keys():
         del record_vals[fit]['kwargs']
 
-    pickle.dump(record_vals, open(f'fit_systematics_{int(mu*10)}_{fit_file}.p','wb'))
+    pickle.dump(record_vals, open(f'fit_systematics_{int(mu*10)}_{fit_file}_{scheme}.p','wb'))
 else:
-    record_vals = pickle.load(open(f'fit_systematics_{int(mu*10)}_{fit_file}.p', 'rb'))
+    record_vals = pickle.load(open(f'fit_systematics_{int(mu*10)}_{fit_file}_{scheme}.p', 'rb'))
 
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
@@ -131,7 +132,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/fit_systematics_{str(int(10*mu))}.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/fit_systematics_{str(int(10*mu))}_{scheme}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

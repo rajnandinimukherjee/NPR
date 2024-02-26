@@ -41,13 +41,14 @@ def load_info(key, ens, ops=operators, meson='ls', **kwargs):
 
 class Z_analysis:
     N_boot = N_boot
-    filename = 'fourquarks_Z.h5'
     N_ops = len(operators)
 
     def __init__(self, ensemble, action=(0, 0),
-                 norm='V', mask=fq_mask.copy(), **kwargs):
+                 norm='V', mask=fq_mask.copy(),
+                 scheme='gamma', **kwargs):
         self.ens = ensemble
         self.action = action
+        self.scheme = scheme
         self.ainv = stat(
             val=params[self.ens]['ainv'],
             err=params[self.ens]['ainv_err'],
@@ -286,7 +287,7 @@ class Z_analysis:
         call_PDF(filename)
 
     def load_fq_Z(self, norm='A', resid_mask=True, **kwargs):
-        fq_data = h5py.File(self.filename, 'r')[
+        fq_data = h5py.File(f'fourquark_Z_{self.scheme}.h5', 'r')[
             str(self.action)][self.ens][str(self.masses)]
         self.am = stat(
             val=fq_data['ap'][:],
@@ -301,17 +302,18 @@ class Z_analysis:
         )
 
         if resid_mask:
+            F = fq_qslash_F if self.scheme=='qslash' else fq_gamma_F
             Z_mask = np.zeros(shape=Z_ij_Z_q_2.val.shape)
             Z_mask_boot = np.zeros(shape=Z_ij_Z_q_2.btsp.shape)
             try:
                 for m in range(self.N_mom):
-                    Lambda = (np.linalg.inv(Z_ij_Z_q_2.val[m])@fq_gamma_F).T
+                    Lambda = (np.linalg.inv(Z_ij_Z_q_2.val[m])@F).T
                     Lambda = fq_mask*Lambda
-                    Z_mask[m,] = fq_gamma_F@np.linalg.inv(Lambda.T)
+                    Z_mask[m,] = F@np.linalg.inv(Lambda.T)
                     for k in range(N_boot):
-                        Lambda_k = (np.linalg.inv(Z_ij_Z_q_2.btsp[k,m])@fq_gamma_F).T
+                        Lambda_k = (np.linalg.inv(Z_ij_Z_q_2.btsp[k,m])@F).T
                         Lambda_k = fq_mask*Lambda_k
-                        Z_mask_boot[k,m,] = fq_gamma_F@np.linalg.inv(Lambda_k.T)
+                        Z_mask_boot[k,m,] = F@np.linalg.inv(Lambda_k.T)
                 Z_ij_Z_q_2 = stat(
                         val=Z_mask,
                         err='fill',
@@ -322,7 +324,7 @@ class Z_analysis:
                 raise
 
 
-        bl_data = h5py.File('bilinear_Z_gamma.h5', 'r')[
+        bl_data = h5py.File(f'bilinear_Z_{self.scheme}.h5', 'r')[
             str(self.action)][self.ens][str(self.masses)]
 
         if norm == 'bag':

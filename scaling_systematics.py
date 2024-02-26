@@ -1,12 +1,14 @@
 from cont_chir_extrap import *
 
 run = bool(int(input('run?(0:False/1:True): ')))
+scheme = 'gamma'
+print(f'scheme: {scheme}')
 
 if run:
-    s_bag = sigma(norm='bag')
+    s_bag = sigma(norm='bag', scheme=scheme)
     record_vals = {'(2,3)':{}, '(2,3,0.2)':{}, '(3)':{}}
 
-    b = bag_fits(bag_ensembles, obj='bag')
+    b = bag_fits(bag_ensembles, obj='bag', scheme=scheme)
 
     bags = [b.fit_operator(2.0, op, rotate=NPR_to_SUSY,
                            ens_list=[b for b in bag_ensembles if b!='C2'],
@@ -43,8 +45,8 @@ if run:
         record_vals['(3)'][f'B{i+1}'] = b3
 
     del b
-    s_rat = sigma(norm='11')
-    r = bag_fits(bag_ensembles, obj='ratio')
+    s_rat = sigma(norm='11', scheme=scheme)
+    r = bag_fits(bag_ensembles, obj='ratio', scheme=scheme)
     ratios = [r.fit_operator(2.0, op, rotate=NPR_to_SUSY,
                              ens_list=[b for b in bag_ensembles if b!='C2'],
                              plot=False, chiral_extrap=True)
@@ -77,11 +79,11 @@ if run:
         record_vals['(3)'][f'R{i+2}'] = r3
     del r
 
-    pickle.dump(record_vals, open('scaling_systematics.p', 'wb'))
+    pickle.dump(record_vals, open('scaling_systematics_{scheme}.p', 'wb'))
 else:
-    record_vals = pickle.load(open('scaling_systematics.p', 'rb'))
+    record_vals = pickle.load(open('scaling_systematics_{scheme}.p', 'rb'))
 
-other_systematics = pickle.load(open('other_systematics.p','rb'))
+other_systematics = pickle.load(open('other_systematics_{scheme}.p','rb'))
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
@@ -153,7 +155,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/scaling_systematics.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/scaling_systematics_{scheme}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

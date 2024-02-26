@@ -3,6 +3,8 @@ from cont_chir_extrap import *
 mu1 = 2.0
 mu2 = 3.0
 run = bool(int(input('run?(0:False/1:True): ')))
+scheme = 'qslash'
+print(f'scheme: {scheme}')
 
 if run:
     laxis = {1:1, 2:1, 3:1, 4:0, 5:0}
@@ -13,14 +15,14 @@ if run:
 
     print('NPR basis')
     record_vals['NPR'] = {}
-    b = bag_fits(bag_ensembles, obj='bag', mask=fq_mask.copy(), resid_mask=False)
+    b = bag_fits(bag_ensembles, obj='bag', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
     bags_1 = [b.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
                              chiral_extrap=True, rotate=np.eye(len(b.operators)), plot=False)
             for op in b.operators]
 
     pvalues = [bag.pvalue for bag in bags_1]
     bags_1 = join_stats([bag[0] for bag in bags_1])
-    s_b = sigma(norm='bag', mask=fq_mask.copy(), resid_mask=False)
+    s_b = sigma(norm='bag', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
     sig_b = s_b.calc_running(mu1, mu2, chiral_extrap=True)
     bags_2 = sig_b@bags_1
 
@@ -41,7 +43,7 @@ if run:
 
 
     del b
-    r = bag_fits(bag_ensembles, obj='ratio', mask=fq_mask.copy(), resid_mask=False)
+    r = bag_fits(bag_ensembles, obj='ratio', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
     ratios_1 = [r.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
                                chiral_extrap=True, rotate=np.eye(5), plot=False)
                 for op in r.operators]
@@ -49,7 +51,7 @@ if run:
     pvalues = [rat.pvalue for rat in ratios_1]
     one = stat(val=1, err=0, btsp='fill')
     ratios_1 = join_stats([one]+[rat[0] for rat in ratios_1])
-    s_r = sigma(norm='11', mask=fq_mask.copy(), resid_mask=False)
+    s_r = sigma(norm='11', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
     sig_r = s_r.calc_running(mu1, mu2, chiral_extrap=True)
     ratios_2 = sig_r@ratios_1
 
@@ -73,12 +75,12 @@ if run:
 
     for fit in list(record_vals.keys())[:-1]:
         print(fit)
-        b = bag_fits(bag_ensembles, obj='bag', **record_vals[fit]['kwargs'])
+        b = bag_fits(bag_ensembles, obj='bag', scheme=scheme, **record_vals[fit]['kwargs'])
         bags_1 = [b.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
                                     chiral_extrap=True, rotate=NPR_to_SUSY, plot=False)
                 for op in b.operators]
 
-        s_b = sigma(norm='bag', **record_vals[fit]['kwargs'])
+        s_b = sigma(norm='bag', scheme=scheme, **record_vals[fit]['kwargs'])
         sig_b = s_b.calc_running(mu1, mu2, rotate=NPR_to_SUSY, chiral_extrap=True)
         bags_2 = sig_b@join_stats([bag[0] for bag in bags_1])
 
@@ -91,7 +93,7 @@ if run:
 
 
         del b
-        r = bag_fits(bag_ensembles, obj='ratio', **record_vals[fit]['kwargs'])
+        r = bag_fits(bag_ensembles, obj='ratio', scheme=scheme, **record_vals[fit]['kwargs'])
         ratios_1 = [r.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
                                     chiral_extrap=True, rotate=NPR_to_SUSY, plot=False)
                     for op in r.operators]
@@ -100,7 +102,7 @@ if run:
             del rat.mapping
 
         one = stat(val=1, err=0, btsp='fill')
-        s_r = sigma(norm='11', **record_vals[fit]['kwargs'])
+        s_r = sigma(norm='11', scheme=scheme, **record_vals[fit]['kwargs'])
         sig_r = s_r.calc_running(mu1, mu2, rotate=NPR_to_SUSY, chiral_extrap=True)
         ratios_2 = sig_r@join_stats([one]+[rat[0] for rat in ratios_1])
 
@@ -112,9 +114,9 @@ if run:
         del record_vals[fit]['kwargs'], r
 
 
-    pickle.dump(record_vals, open('other_systematics.p', 'wb'))
+    pickle.dump(record_vals, open('other_systematics_{scheme}.p', 'wb'))
 else:
-    record_vals = pickle.load(open('other_systematics.p', 'rb'))
+    record_vals = pickle.load(open('other_systematics_{scheme}.p', 'rb'))
 
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
@@ -180,7 +182,7 @@ rv += [r'\hline']
 rv += [r'\end{tabular}']
 rv += [r'\end{table}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/other_systematics.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/other_systematics_{scheme}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()
