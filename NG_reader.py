@@ -1,6 +1,13 @@
 from fourquark import *
 import glob
 
+fq_qslash_F = np.array([
+    [64*N_c*(N_c+1), 0,0,0,0],
+    [0,64*N_c**2,64*N_c,0,0],
+    [0,-32*N_c,-32*N_c**2,0,0],
+    [0,0,0,8*N_c**2,8*N_c],
+    [0,0,0,8*N_c*(N_c+2),8*N_c*(2*N_c+1)]], dtype=complex)
+
 
 data_ensembles = [
         'C0','C1','C1M','C2',
@@ -40,9 +47,9 @@ for ens in data_ensembles:
 
         if q not in ens_dict:
             ens_dict[q] = stat(
-                    val=central,
+                    val=central.T,
                     err='fill',
-                    btsp=bootstrap)
+                    btsp=np.array([bootstrap[k,:,:].T for k in range(N_boot)]))
 
     momenta = sorted(ens_dict.keys())
     Z_ij_Z_A_2[ens]['ap'] = momenta
