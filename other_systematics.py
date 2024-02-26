@@ -180,7 +180,7 @@ rv += [r'\hline']
 rv += [r'\end{tabular}']
 rv += [r'\end{table}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/other_systematics.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/other_systematics.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

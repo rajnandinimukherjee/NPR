@@ -29,7 +29,7 @@ class ens_table:
         )
         self.ratio = self.Z_A/self.Z_S
 
-    def create_Z_table(self, indices=None, **kwargs):
+    def create_Z_table(self, indices=None, filename=None, **kwargs):
         if 'rotate' in kwargs:
             rot_mtx = kwargs['rotate']
             self.Z = stat(
@@ -94,7 +94,8 @@ class ens_table:
         rv += [r'\end{center}']
         rv += [r'\end{'+table_type+'}']
 
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/{self.ens}_Z_table.tex'
+        if filename==None:
+            filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/{self.ens}_Z_table.tex'
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()
@@ -107,10 +108,10 @@ class extrap_table:
     def __init__(self, norm='V', **kwargs):
 
         self.norm = norm
-        self.Z_fit = Z_fits(self.ens_list, norm=self.norm)
+        self.Z_fit = Z_fits(self.ens_list, norm=self.norm, **kwargs)
         self.sig = sigma(norm=self.norm)
 
-    def create_Z_table(self, mu, **kwargs):
+    def create_Z_table(self, mu, filename=None, **kwargs):
         Z_assign = self.Z_fit.Z_assignment(mu, chiral_extrap=True, **kwargs)
 
         rv = [r'\begin{table}']
@@ -138,28 +139,20 @@ class extrap_table:
                     Z_assign[e].val[i, j], Z_assign[e].stat_err[i, j],
                     n=2, sys_err=Z_assign[e].sys_err[i,j])
                     for e in self.ens_list])
-                norm = r'Z_A^2' if i==0 else r'Z_S^2'
+                norm = r'Z_A^2' if j==0 else r'Z_S^2'
                 Z_name = r'$Z_{'+str(i+1)+str(j+1)+r'}/'+norm+r'$'
                 rv += [Z_name+r' & '+Zs+r' \\']
                 if i == j:
                     if i != 1 and i != 3:
                         rv += [r'\hline']
 
-        # Z_names = r' & '.join([Z for Z in [r'$Z_{'+str(i+1) +
-        #                                   str(j+1)+'}$' for j in range(5)
-        #                                   for i in range(5) if mask[i, j]]])
-        # rv += [r'$a^{-1}\,[\mathrm{GeV}]$ & $\mu\,[\mathrm{GeV}]$ &'+Z_names+r' \\']
-        # for ens in self.ens_list:
-        #    ainv = err_disp(params[ens]['ainv'], params[ens]['ainv_err'])
-        #    Zs = r' & '.join([Z for Z in [err_disp(
-        #        Z_assign[ens].val[i, j], Z_assign[ens].err[i, j])
-        #        for j in range(5) for i in range(5) if mask[i, j]]])
-        #    rv += [ainv+r' & '+str(mu)+' & '+Zs+r' \\']
         rv += [r'\hline']
         rv += [r'\end{tabular}']
         rv += [r'\end{table}']
 
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/extrap_Z_table_{str(int(10*mu))}.tex'
+        if filename==None:
+            filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/'
+            filename += f'tables_{fit_file}/extrap_Z_table_{str(int(10*mu))}.tex'
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()
@@ -199,7 +192,10 @@ class extrap_table:
         rv += [r'\hline']
         rv += [r'\end{tabular}']
 
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/sigma_table_{int(mu1*10)}_{int(mu2*10)}.tex'
+        if filename==None:
+            filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/'
+            filename += f'tables_{fit_file}/sigma_table_{int(mu1*10)}_{int(mu2*10)}.tex'
+
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()

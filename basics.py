@@ -172,6 +172,8 @@ class stat:
             if btsp == 'seed':
                 seed = kwargs['seed']
                 self.calc_btsp(seed=seed)
+        elif type(btsp)==np.ndarray and self.btsp.shape[0]!=self.N_boot:
+            self.N_boot = self.btsp.shape[0]
 
     def calc_err(self):
         if type(self.btsp) == np.ndarray:
@@ -349,7 +351,7 @@ def norm_factors(rotate=np.eye(len(operators)), **kwargs):
 
 def chiral_logs(rotate=np.eye(len(operators)), obj='bag', **kwargs):
     bag_logs_SUSY = np.array([-0.5, -0.5, -0.5, 0.5, 0.5])
-    ratio_logs_SUSY = np.array([1, 1.5, 1.5, 2.5, 2.5])
+    ratio_logs_SUSY = np.array([1, 0, 0, 1, 1])
     if (rotate==NPR_to_SUSY).all():
         if obj=='bag':
             return bag_logs_SUSY

@@ -2,8 +2,9 @@ import itertools
 from scipy.interpolate import interp1d
 from NPR_classes import *
 
-# fit_file = 'Felix'
+#fit_file = 'Felix'
 fit_file = 'Tobi'
+
 all_bag_data = h5py.File(f'kaon_bag_fits_{fit_file}.h5', 'r')
 bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
 ensemble_seeds = {ens: int(hash(ens)) % (2**32)
@@ -19,16 +20,13 @@ def load_info(key, ens, ops=operators, meson='ls', **kwargs):
         error = np.array([np.array(h5_data[
             op][key]['error']).item()
             for op in ops])
-        bootstraps = np.zeros(shape=(N_boot, len(operators)))
-        for i in range(len(operators)):
-            op = ops[i]
-            bootstraps[:, i] = np.array(h5_data[op][key][
-                'Bootstraps'])[:N_boot, 0]
+        bootstraps = np.array([np.array(h5_data[op][key][
+            'Bootstraps'])[:, 0] for op in ops]).T
 
     elif meson == 'll':
         central = np.array(h5_data[key]['central']).item()
         error = np.array(h5_data[key]['error']).item()
-        bootstraps = np.array(h5_data[key]['Bootstraps'])[:N_boot, 0]
+        bootstraps = np.array(h5_data[key]['Bootstraps'])[:, 0]
 
     if key == 'gr-O-gr':
         central[1] *= -1
@@ -63,6 +61,8 @@ class Z_analysis:
 
         try:
             self.m_pi = load_info('m_0', self.ens, operators, meson='ll')
+            if self.m_pi.N_boot != N_boot:
+                self.m_pi = stat(val=self.m_pi.val, err=self.m_pi.err, btsp='fill')
             self.m_f_sq = stat(
                 val=(self.m_pi.val/self.f_pi.val)**2,
                 err='fill',
@@ -327,24 +327,24 @@ class Z_analysis:
 
         if norm == 'bag':
             Z_ij_bag = Z_ij_Z_q_2.val
-            Z_ij_bag[:, 0, 0] = np.array(
-                    [Z_ij_bag[m, 0, 0] *
+            Z_ij_bag[:, :, 0] = np.array(
+                    [Z_ij_bag[m, :, 0] *
                      (bl_data['A']['central'][m]**(-2))
                      for m in range(self.N_mom)])
-            Z_ij_bag[:, 1:, 1:] = np.array(
-                    [Z_ij_bag[m, 1:, 1:] *
+            Z_ij_bag[:, :, 1:] = np.array(
+                    [Z_ij_bag[m, :, 1:] *
                      (bl_data['S']['central'][m]**(-2))
                      for m in range(self.N_mom)])
 
             Z_ij_bag_btsp = Z_ij_Z_q_2.btsp
-            Z_ij_bag_btsp[:, :, 0, 0] = np.array([
-                [Z_ij_bag_btsp[k, m, 0, 0] *
+            Z_ij_bag_btsp[:, :, :, 0] = np.array([
+                [Z_ij_bag_btsp[k, m, :, 0] *
                  (bl_data['A']['bootstrap']
                   [k, m]**(-2))
                  for m in range(self.N_mom)]
                 for k in range(N_boot)])
-            Z_ij_bag_btsp[:, :, 1:, 1:] = np.array([
-                [Z_ij_bag_btsp[k, m, 1:, 1:] *
+            Z_ij_bag_btsp[:, :, :, 1:] = np.array([
+                [Z_ij_bag_btsp[k, m, :, 1:] *
                  (bl_data['S']['bootstrap']
                   [k, m]**(-2))
                  for m in range(self.N_mom)]
@@ -440,6 +440,8 @@ class bag_analysis:
         self.f_pi = f_pi_PDG/self.ainv
 
         self.m_pi = load_info('m_0', self.ens, meson='ll')
+        if self.m_pi.N_boot != N_boot:
+            self.m_pi = stat(val=self.m_pi.val, err=self.m_pi.err, btsp='fill')
         self.m_f_sq = (self.m_pi**2)/(self.f_pi**2)
 
     def ansatz(self, param, operator, fit='central', **kwargs):
@@ -494,6 +496,8 @@ class ratio_analysis:
             self.ZA_L_0 = self.ZA_L_0*(self.m_P)**0.5
 
         self.gr_O_gr = load_info('gr-O-gr', self.ens)
+        self.N_boot = self.gr_O_gr.N_boot
+
         self.Ni = norm_factors()
         B1 = stat(
             val=self.gr_O_gr.val[0]/(
@@ -501,7 +505,7 @@ class ratio_analysis:
             err='fill',
             btsp=np.array([self.gr_O_gr.btsp[k, 0]/(
                 self.Ni[0]*self.ZA_L_0.btsp[k, 0]**2)
-                for k in range(N_boot)])
+                for k in range(self.N_boot)])
         )
 
         B2_5 = [
@@ -511,7 +515,7 @@ class ratio_analysis:
                 err='fill',
                 btsp=np.array([self.gr_O_gr.btsp[k, i]/(
                     self.Ni[i]*self.ZP_L_0.btsp[k, i]**2)
-                    for k in range(N_boot)]))
+                    for k in range(self.N_boot)]))
             for i in range(1, len(operators))]
 
         Bs = [B1]+B2_5
@@ -519,15 +523,26 @@ class ratio_analysis:
             val=[B.val for B in Bs],
             err=[B.err for B in Bs],
             btsp=np.array([[B.btsp[k] for B in Bs]
-                           for k in range(N_boot)])
+                           for k in range(self.N_boot)])
         )
         Ni_diag = stat(
             val=np.diag(self.Ni),
-            btsp='fill'
+            err='fill',
+            btsp=np.array([np.diag(self.Ni) for k in range(self.N_boot)])
         )
         self.B_N = Ni_diag@self.bag
-
         self.ratio = self.gr_O_gr/self.gr_O_gr[0]
+        if self.B_N.N_boot != N_boot:
+            self.B_N = stat(
+                    val=self.B_N.val,
+                    err=self.B_N.err,
+                    btsp='fill'
+                    )
+            self.ratio = stat(
+                    val=self.ratio.val,
+                    err=self.ratio.err,
+                    btsp='fill'
+                    )
         try:
             self.f_P = load_info('f_M', self.ens)
             K_exp_ratio = (m_K_PDG/f_K_PDG)**2

@@ -153,7 +153,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/scaling_systematics.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/scaling_systematics.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

@@ -23,7 +23,7 @@ if run:
 
     b = bag_fits(bag_ensembles, obj='bag')
     for op_idx, op in enumerate(b.operators):
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear/bag_fits_B{op_idx+1}_{int(mu*10)}.pdf'
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear_{fit_file}/bag_fits_B{op_idx+1}_{int(mu*10)}.pdf'
         for fit in record_vals.keys():
             record_vals[fit][f'B{op_idx+1}'] = b.fit_operator(mu, op, rotate=NPR_to_SUSY,
                                                         chiral_extrap=True, rescale=True, fs=14,
@@ -34,7 +34,7 @@ if run:
 
     r = bag_fits(bag_ensembles, obj='ratio')
     for op_idx, op in enumerate(r.operators):
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear/ratio_fits_R{op_idx+2}_{int(mu*10)}.pdf'
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/linear_{fit_file}/ratio_fits_R{op_idx+2}_{int(mu*10)}.pdf'
         for fit in record_vals.keys():
             record_vals[fit][f'R{op_idx+2}'] = r.fit_operator(mu, op, rotate=NPR_to_SUSY,
                                                              chiral_extrap=True, fs=14,
@@ -46,9 +46,9 @@ if run:
     for fit in record_vals.keys():
         del record_vals[fit]['kwargs']
 
-    pickle.dump(record_vals, open(f'fit_systematics_{int(mu*10)}.p','wb'))
+    pickle.dump(record_vals, open(f'fit_systematics_{int(mu*10)}_{fit_file}.p','wb'))
 else:
-    record_vals = pickle.load(open(f'fit_systematics_{int(mu*10)}.p', 'rb'))
+    record_vals = pickle.load(open(f'fit_systematics_{int(mu*10)}_{fit_file}.p', 'rb'))
 
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
@@ -61,7 +61,7 @@ rv += [r' & no C2S & '+\
         r'\multicolumn{2}{c|}{$+\gamma\delta_{m_s^{\text{sea}}}$, no C2S}'+\
         r' & with C2S & no C2S, M3S & no C2S, M3S, M2S & $+L(m_\pi^2)$, no C2S\\']
 rv += [r' & central value & $\gamma$\% & $\delta$ &'+\
-        r' $\delta$ & $\delta$ & $\delta$ & $\delta^\text{Chiral}$ Eq.~\eqref{eq:chiral_delta} \\']
+        r' $\delta$ & $\delta$ & $\delta$ & $\delta^\text{chiral}$ \\']
 
 rv += [r'\hline']
 
@@ -131,7 +131,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/fit_systematics_{str(int(10*mu))}.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/fit_systematics_{str(int(10*mu))}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

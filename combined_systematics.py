@@ -1,6 +1,6 @@
 from cont_chir_extrap import *
 
-fit_systematics = pickle.load(open('fit_systematics_20.p', 'rb'))
+fit_systematics = pickle.load(open(f'fit_systematics_20_{fit_file}.p', 'rb'))
 scaling_systematics = pickle.load(open('scaling_systematics.p', 'rb'))
 other_systematics = pickle.load(open('other_systematics.p', 'rb'))
 
@@ -28,7 +28,7 @@ for key in quantities.keys():
     delta_discr = np.abs(((discr_fit-central)/((discr_fit+central)*0.5)).val*100) 
     discr_err_str = '{0:.2f}'.format(delta_discr)+r'\%'
 
-    total_err = (central_perc_err**2+delta_chiral**2+delta_discr**2)**0.5
+    total_err = (central_perc_err**2+delta_chiral**2+delta_discr**2+delta_rcsb**2)**0.5
     total_err_str = '{0:.2f}'.format(total_err)+r'\%'
 
     errors_dict[key] = {'central':central_val_str,
@@ -55,7 +55,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/all_systematics.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/all_systematics.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()
