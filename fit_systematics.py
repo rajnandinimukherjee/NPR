@@ -2,7 +2,8 @@ from cont_chir_extrap import *
 
 mu = 2.0
 run = bool(int(input('run?(0:False/1:True): ')))
-scheme = 'qslash'
+scheme = 'gamma'
+print(f'scheme: {scheme}')
 
 if run:
     laxis = {1:1, 2:1, 3:1, 4:0, 5:0}
@@ -55,7 +56,7 @@ else:
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 
-rv = [r'\begin{tabular}{c|c|c|c|c|c|c|>{\columncolor[gray]{0.95}}c}']
+rv = [r'\begin{tabular}{c|c|c|c|c|c|c|c}']
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r' & no C2S & '+\
@@ -111,6 +112,8 @@ for key in quantities.keys():
     log_color = pval_color(log_fit.pvalue)
     log_change_str = r'\textcolor{'+log_color+r'}{'+'{0:.2f}'.format(
             np.abs(log_change))+r'\%}' 
+    if key=='R2' or key=='R3':
+        log_change_str = '-'
 
     max_var = max(gamma_change, noC2cut_change, C2M3cut_change, C2M3M2cut_change)
     max_var_str = '{0:.2f}'.format(max_var)+r'\%'

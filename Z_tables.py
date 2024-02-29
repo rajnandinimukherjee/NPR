@@ -40,13 +40,7 @@ class ens_table:
                            for m in range(self.N_mom)]
                           for k in range(N_boot)]
                     )
-        # table_type = 'table' if self.ens != 'F1M' else 'sidewaystable'
-        table_type = 'table'
-        rv = [r'\begin{'+table_type+'}']
-        rv += [r'\begin{center}']
-        rv += [r'\caption{\label{tab:'+self.ens+'renormvals}'+self.ens +
-               r': values of $Z_{ij}/Z_A^2$ and $Z_A/Z_S$ at various lattice momenta}']
-        rv += [r'\begin{tabular}{c|'+' '.join(['c']*self.N_mom_half)+r'}']
+        rv = [r'\begin{tabular}{c|'+' '.join(['c']*self.N_mom_half)+r'}']
         rv += [r'\hline']
         rv += [r'\hline']
 
@@ -91,8 +85,6 @@ class ens_table:
 
         rv += [r'\hline']
         rv += [r'\end{tabular}']
-        rv += [r'\end{center}']
-        rv += [r'\end{'+table_type+'}']
 
         if filename==None:
             filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/{self.ens}_Z_table.tex'
@@ -109,21 +101,12 @@ class extrap_table:
 
         self.norm = norm
         self.Z_fit = Z_fits(self.ens_list, norm=self.norm, **kwargs)
-        self.sig = sigma(norm=self.norm)
+        self.sig = sigma(norm=self.norm, **kwargs)
 
     def create_Z_table(self, mu, filename=None, **kwargs):
         Z_assign = self.Z_fit.Z_assignment(mu, chiral_extrap=True, **kwargs)
 
-        rv = [r'\begin{table}']
-        rv += [r'\caption{Elements of $Z_{ij}^{RI}(\mu={' +\
-               str(mu)+r'}\,\mathrm{GeV})/Z_{A/S}^2$' +\
-               r' extrapolated to the massless limit. The first parenthesis '+\
-               r'is the statistical error and the second is the systematic error. '+\
-               r'The systematic error on the finest ensemble also includes the '+\
-               r'spread in chiral extrapolations using the chiral slopes from '+\
-               r'the four other extrapolations.'+\
-               r'\label{tab:ch-extrap-'+str(mu)+'}}']
-        rv += [r'\begin{tabular}{c|ccccc}']
+        rv = [r'\begin{tabular}{c|ccccc}']
         rv += [r'\hline']
         rv += [r'\hline']
 
@@ -148,7 +131,6 @@ class extrap_table:
 
         rv += [r'\hline']
         rv += [r'\end{tabular}']
-        rv += [r'\end{table}']
 
         if filename==None:
             filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/'

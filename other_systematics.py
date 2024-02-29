@@ -114,9 +114,9 @@ if run:
         del record_vals[fit]['kwargs'], r
 
 
-    pickle.dump(record_vals, open('other_systematics_{scheme}.p', 'wb'))
+    pickle.dump(record_vals, open(f'other_systematics_{scheme}.p', 'wb'))
 else:
-    record_vals = pickle.load(open('other_systematics_{scheme}.p', 'rb'))
+    record_vals = pickle.load(open(f'other_systematics_{scheme}.p', 'rb'))
 
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}

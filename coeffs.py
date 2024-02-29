@@ -150,40 +150,84 @@ z = 0
 
 term_1 = 8 - 12*np.log(2)
 term_2 = C_0 - 8*np.log(2) + 1
-r_11 = (term_1 + (term_2*z/2))*(1 - (1/N))
-r_22 = -3*C_0 + 4 + 4*np.log(2) + z*(-C_0 + 1 + 4*np.log(2))
-r_22 = r_22/(2*N)
-r_23 = -3*C_0 + 4*(1+np.log(2)) + z*(-C_0 + 1 + 4*np.log(2))
-r_32 = np.log(2) - (3/2) + z*(np.log(2) - (C_0/4))
-r_33 = (3/2)*C_0*(N-(1/N)) - 5*N + (2/N)*(1+np.log(2))
-r_33 += z*(-C_0/(2*N) - (N/2) + 1/(2*N) + 2*np.log(2)/N)
-r_44 = (3/2)*C_0*(N-(1/N)-(1/2)) - 5*(N-(1/N)) + \
+r_gg_11 = (term_1 + (term_2*z/2))*(1 - (1/N))
+r_gg_22 = -3*C_0 + 4 + 4*np.log(2) + z*(-C_0 + 1 + 4*np.log(2))
+r_gg_22 = r_gg_22/(2*N)
+r_gg_23 = -3*C_0 + 4*(1+np.log(2)) + z*(-C_0 + 1 + 4*np.log(2))
+r_gg_32 = np.log(2) - (3/2) + z*(np.log(2) - (C_0/4))
+r_gg_33 = (3/2)*C_0*(N-(1/N)) - 5*N + (2/N)*(1+np.log(2))
+r_gg_33 += z*(-C_0/(2*N) - (N/2) + 1/(2*N) + 2*np.log(2)/N)
+r_gg_44 = (3/2)*C_0*(N-(1/N)-(1/2)) - 5*(N-(1/N)) + \
     2*np.log(2)/N + 7 - 4*np.log(2)
-r_44 += z*(-C_0*(1/(2*N) + (1/4)) - (N/2) + 1/(2*N) + 2*np.log(2)/N + (1/2))
-r_45 = 4*((C_0/8)*((1/N)-(1/2)) - 7/(6*N) + 5 *
+r_gg_44 += z*(-C_0*(1/(2*N) + (1/4)) - (N/2) + 1/(2*N) + 2*np.log(2)/N + (1/2))
+r_gg_45 = 4*((C_0/8)*((1/N)-(1/2)) - 7/(6*N) + 5 *
           np.log(2)/(6*N) + (7/12) - 2*np.log(2)/3)
-r_45 += 4*z*((C_0/16) - 1/(12*N) + np.log(2)/(6*N) + (1/24) - (np.log(2)/3))
-r_54 = 6*C_0/N + 9*C_0 - (16/N) + 40*np.log(2)/N + 4 - 32*np.log(2)
-r_54 += z*(3*C_0 - (4/N)*(1-2*np.log(2)) - 2 - 16*np.log(2))
-r_54 = r_54/4
-r_55 = -C_0*((N/2) + 1/(2*N) + (1/4)) + (N/3) - 7/(3*N) + \
+r_gg_45 += 4*z*((C_0/16) - 1/(12*N) + np.log(2)/(6*N) + (1/24) - (np.log(2)/3))
+r_gg_54 = 6*C_0/N + 9*C_0 - (16/N) + 40*np.log(2)/N + 4 - 32*np.log(2)
+r_gg_54 += z*(3*C_0 - (4/N)*(1-2*np.log(2)) - 2 - 16*np.log(2))
+r_gg_54 = r_gg_54/4
+r_gg_55 = -C_0*((N/2) + 1/(2*N) + (1/4)) + (N/3) - 7/(3*N) + \
     26*np.log(2)/(3*N) + 3 - 28*np.log(2)/3
-r_55 += z*(-(C_0/2)*((1/N)-(1/2)) + (1/6)*(N-(1/N)) +
+r_gg_55 += z*(-(C_0/2)*((1/N)-(1/2)) + (1/6)*(N-(1/N)) +
            10*np.log(2)/(3*N) + (1/2) - 8*np.log(2)/3)
 
-r_mtx = np.zeros(shape=(5, 5))
-r_mtx[0, 0] = r_11
-r_mtx[1, 1], r_mtx[1, 2] = r_22, r_23
-r_mtx[2, 2], r_mtx[2, 1] = r_33, r_32
-r_mtx[3, 3], r_mtx[3, 4] = r_44, r_45
-r_mtx[4, 4], r_mtx[4, 3] = r_55, r_54
+r_gg_mtx = np.zeros(shape=(5, 5))
+r_gg_mtx[0, 0] = r_gg_11
+r_gg_mtx[1, 1], r_gg_mtx[1, 2] = r_gg_22, r_gg_23
+r_gg_mtx[2, 2], r_gg_mtx[2, 1] = r_gg_33, r_gg_32
+r_gg_mtx[3, 3], r_gg_mtx[3, 4] = r_gg_44, r_gg_45
+r_gg_mtx[4, 4], r_gg_mtx[4, 3] = r_gg_55, r_gg_54
 
 
-def R_RISMOM_MSbar(mu, **kwargs):
+# ====computing RISMOM(qslash-qslash)->MSbar matching factors======
+
+r_qq_11 = -(9/N) + (12*np.log(2)/N) + 9 - 12*np.log(2) +\
+        z*(-C_0/N + C_0 + (4*np.log(2)/N) - 4*np.log(2))
+r_qq_22 = -3*C_0/(2*N) + (2/N) + 2*np.log(2)/N +\
+        z*(-C_0/(2*N) + 1/(2*N) + 2*np.log(2)/N)
+r_qq_23 = -3*C_0 + 4*(1 + np.log(2)) + z*(-C_0 + 1 + 4*np.log(2))
+r_qq_32 = np.log(2) - 1 - z*(np.log(2)-1/4)
+r_qq_33 = 3*C_0*(N/2 - 1/(2*N)) - 4*N + 2*(1 + np.log(2))/N +\
+        z*(C_0*(N - 1/N)/2 - N + 1/(2*N) + 2*np.log(2)/N)
+r_qq_44 = C_0*(3*N/2 - 1/N - 1/4) - 4*N + 3/N + 2*np.log(2)/N + 6 - 4*np.log(2) +\
+        z*(C_0*(N - 3/N - 3/2)/2 - N + 2*(1 + np.log(2))/N + 3/2)
+r_qq_45 = C_0*(1/N - 5/4)/12 + (-13/2 + 5*np.log(2))/(6*N) + 2*(1 - np.log(2))/3 +\
+        z*(C_0*(1/N + 5/2)/24 + (-1 + np.log(2))/(6*N) - 1/24 - np.log(2)/3)
+r_qq_45 = 4*r_qq_45
+r_qq_54 = C_0*(4*N + 4/N + 11) - 8*N - 12/N + 40*np.log(2)/N - 32*np.log(2) +\
+        z*(C_0*(-4*N + 2/N + 1) + 8*N + 8*(-1 + np.log(2))/N + 2 - 16*np.log(2))
+r_qq_54 = r_qq_54/4
+r_qq_55 = -C_0*(5*N/2 + 1/N + 5/4)/3 + 2*N + (-11 + 26*np.log(2))/(3*N) + 10/3 - 28*np.log(2)/3 +\
+        z*(C_0*(5*N - 7/N + 5/2)/6 - N + (2 + 10*np.log(2))/(3*N) + 1/6 - 8*np.log(2)/3)
+
+
+r_qq_mtx = np.zeros(shape=(5, 5))
+r_qq_mtx[0, 0] = r_qq_11
+r_qq_mtx[1, 1], r_qq_mtx[1, 2] = r_qq_22, r_qq_23
+r_qq_mtx[2, 2], r_qq_mtx[2, 1] = r_qq_33, r_qq_32
+r_qq_mtx[3, 3], r_qq_mtx[3, 4] = r_qq_44, r_qq_45
+r_qq_mtx[4, 4], r_qq_mtx[4, 3] = r_qq_55, r_qq_54
+
+def R_RISMOM_MSbar(mu, scheme='gamma', obj='bag', **kwargs):
+    
+    r_mtx = r_qq_mtx if scheme=='qslash' else r_gg_mtx
+
     R_ij = np.identity(5) - (g(mu)**2)*r_mtx/(16*np.pi**2)
-    CF = 4/3
-    R_P = 1 + alpha_s(mu)/(4*np.pi)*CF*(4 - 3*C0(0)/2)
-    R_ij[1:, 1:] = R_ij[1:, 1:]/(R_P**2)
+
+    if obj=='bag':
+        if mu==3.0:
+            R_S = 1.05259 if scheme=='gamma' else 1.01664
+        else:
+            CF = 4/3
+            R_S = 1 + alpha_s(mu)/(4*np.pi)*CF*(4 - 3*C0(0)/2)
+            R_ij[1:, 1:] = R_ij[1:, 1:]/(R_S**2)
+    elif obj=='ratio':
+        R_ij = R_ij/R_ij[0,0]
+
+    if 'rotate' in kwargs:
+        rot_mtx = kwargs['rotate']
+        R_ij = rot_mtx@R_ij@np.linalg.inv(rot_mtx)
+
     return R_ij
 
 
@@ -233,8 +277,8 @@ def gamma_1_MS(f):
 
 # ====calculating gamma_1_RISMOM=========
 beta_0 = Bcoeffs(3)[0]
-gamma_1_RISMOM = r_mtx@gamma_0 - gamma_0@r_mtx + \
-    gamma_1_MS(f=3) - 2*beta_0*r_mtx
+gamma_1_RISMOM = r_gg_mtx@gamma_0 - gamma_0@r_gg_mtx + \
+    gamma_1_MS(f=3) - 2*beta_0*r_gg_mtx
 
 J = np.loadtxt('J.txt', delimiter=',')
 L = np.loadtxt('L.txt', delimiter=',')

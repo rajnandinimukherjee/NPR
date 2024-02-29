@@ -418,9 +418,11 @@ class sigma:
             if self.mask[i,j]:
                 fig, ax = plt.subplots(figsize=figsize)
 
-                ax.errorbar(mu_grain, npt_scaling.val[:,i,j],
-                             yerr=npt_scaling.err[:,i,j],
-                             fmt='o', capsize=4, label='npt')
+                ax.plot(mu_grain, npt_scaling.val[:,i,j], color='b', label='npt')
+                ax.fill_between(mu_grain,
+                                npt_scaling.val[:,i,j]+npt_scaling.err[:,i,j],
+                                npt_scaling.val[:,i,j]-npt_scaling.err[:,i,j],
+                                color='b', alpha=0.2)
                 ax.plot(mu_grain, LO_scaling[:,i,j],
                          '--', label='LO')
                 ax.plot(mu_grain, NLO_scaling[:,i,j],

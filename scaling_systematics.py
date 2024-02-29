@@ -1,7 +1,7 @@
 from cont_chir_extrap import *
 
 run = bool(int(input('run?(0:False/1:True): ')))
-scheme = 'gamma'
+scheme = 'qslash'
 print(f'scheme: {scheme}')
 
 if run:
@@ -79,22 +79,22 @@ if run:
         record_vals['(3)'][f'R{i+2}'] = r3
     del r
 
-    pickle.dump(record_vals, open('scaling_systematics_{scheme}.p', 'wb'))
+    pickle.dump(record_vals, open(f'scaling_systematics_{scheme}.p', 'wb'))
 else:
-    record_vals = pickle.load(open('scaling_systematics_{scheme}.p', 'rb'))
+    record_vals = pickle.load(open(f'scaling_systematics_{scheme}.p', 'rb'))
 
-other_systematics = pickle.load(open('other_systematics_{scheme}.p','rb'))
+other_systematics = pickle.load(open(f'other_systematics_{scheme}.p','rb'))
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 
-rv = [r'\begin{tabular}{c|c|c|>{\columncolor[gray]{0.95}}c|c|>{\columncolor[gray]{0.95}}c|c}']
+rv = [r'\begin{tabular}{c|c|c|c|c|c|c}']
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r' & $\sigma(2\,\mathrm{GeV},3\,\mathrm{GeV})$ & $\sigma('+\
         r'2\,\mathrm{GeV}\xrightarrow{\Delta=0.2}3\,\mathrm{GeV})$ & NPR at 3 GeV & '+\
         r'mask post-inv & no mask & SUSY$\leftarrow$NPR \\']
-rv += [r' & central value & $\delta$ & $\delta^\text{Discr}$ Eq.~\eqref{eq:discr_delta} & '\
+rv += [r' & central value & $\delta$ & $\delta$ & '\
         r'$\delta$ & $\delta$ & $\delta$ \\']
 rv += [r'\hline']
 

@@ -153,7 +153,7 @@ class stat:
         self.shape = self.val.shape
         self.dtype = self.val.dtype if dtype is None else dtype
 
-        accept_types = [np.ndarray, list, int, float]
+        accept_types = [np.ndarray, list, int, float, np.float64]
         self.err = np.array(err) if type(err) in accept_types else err
         self.btsp = np.array(btsp) if type(btsp) in accept_types else btsp
 
