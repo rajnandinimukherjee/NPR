@@ -79,11 +79,11 @@ if run:
         record_vals['(3)'][f'R{i+2}'] = r3
     del r
 
-    pickle.dump(record_vals, open(f'scaling_systematics_{scheme}.p', 'wb'))
+    pickle.dump(record_vals, open(f'scaling_systematics_{scheme}_{fit_file}.p', 'wb'))
 else:
-    record_vals = pickle.load(open(f'scaling_systematics_{scheme}.p', 'rb'))
+    record_vals = pickle.load(open(f'scaling_systematics_{scheme}_{fit_file}.p', 'rb'))
 
-other_systematics = pickle.load(open(f'other_systematics_{scheme}.p','rb'))
+other_systematics = pickle.load(open(f'other_systematics_{scheme}_{fit_file}.p','rb'))
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})

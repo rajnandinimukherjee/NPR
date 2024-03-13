@@ -122,7 +122,10 @@ class extrap_table:
                     Z_assign[e].val[i, j], Z_assign[e].stat_err[i, j],
                     n=2, sys_err=Z_assign[e].sys_err[i,j])
                     for e in self.ens_list])
-                norm = r'Z_A^2' if j==0 else r'Z_S^2'
+                if self.norm=='bag':
+                    norm = r'Z_A^2' if j==0 else r'Z_S^2'
+                else:
+                    norm = f'Z_{self.norm}^2'
                 Z_name = r'$Z_{'+str(i+1)+str(j+1)+r'}/'+norm+r'$'
                 rv += [Z_name+r' & '+Zs+r' \\']
                 if i == j:
