@@ -7,6 +7,15 @@ norm = mc.BoundaryNorm(np.linspace(0, 1, len(bag_ensembles)), cmap.N)
 ens_colors = {bag_ensembles[k]: list(mc.TABLEAU_COLORS.keys())[
     k] for k in range(len(bag_ensembles))}
 
+def ens_symbols(ens):
+    if ens[0]=='C':
+        return "s"
+    elif ens[0]=='M':
+        return "o"
+    else:
+        return "D"
+
+
 M_ens = ['M0', 'M1', 'M2', 'M3']
 C_ens = ['C0', 'C1', 'C2']
 
@@ -634,7 +643,8 @@ class bag_fits:
                 ax[0].errorbar([a_sq.val], [y_ens.val],
                                yerr=[y_ens.err],
                                xerr=[a_sq.err],
-                               fmt='o', label=e_label,
+                               fmt=ens_symbols(e),
+                               label=e_label,
                                capsize=4, color=ens_colors[e],
                                mfc='None', zorder=10, clip_on=False)
 
@@ -647,7 +657,8 @@ class bag_fits:
                 ax[1].errorbar([mpi_phys.val], [y_ens.val],
                                yerr=[y_ens.err],
                                xerr=[mpi_phys.err],
-                               fmt='o', label=e_label, capsize=4,
+                               fmt=ens_symbols(e),
+                               label=e_label, capsize=4,
                                color=ens_colors[e],
                                mfc='None')
 

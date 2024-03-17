@@ -88,14 +88,15 @@ other_systematics = pickle.load(open(f'other_systematics_{scheme}_{fit_file}.p',
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 
-rv = [r'\begin{tabular}{c|c|c|c|c|c|c}']
+rv = [r'\begin{tabular}{c|c|c|c|c|c}']
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r' & $\sigma(2\,\mathrm{GeV},3\,\mathrm{GeV})$ & $\sigma('+\
-        r'2\,\mathrm{GeV}\xrightarrow{\Delta=0.2}3\,\mathrm{GeV})$ & NPR at 3 GeV & '+\
-        r'mask post-inv & no mask & SUSY$\leftarrow$NPR \\']
+        r'2\,\mathrm{GeV}\xrightarrow{\Delta=0.2}3\,\mathrm{GeV})$ & NPR at 3 GeV '+\
+        #r'& mask post-inv '+\
+        r'& no mask & SUSY$\leftarrow$NPR \\']
 rv += [r' & central value & $\delta$ & $\delta$ & '\
-        r'$\delta$ & $\delta$ & $\delta$ \\']
+        r'$\delta$ & $\delta$ \\']
 rv += [r'\hline']
 
 def pval_color(pval):
@@ -125,10 +126,10 @@ for key in quantities.keys():
     delta_disc = np.abs(((direct-central)/((direct+central)*0.5)).val*100)
     direct_disc_str = r'\textcolor{'+direct_color+r'}{'+'{0:.2f}'.format(delta_disc)+r'\%}'
 
-    post_inv = other_systematics['mask_post_inv'][key][mu2]
-    post_inv_color = pval_color(other_systematics['mask_post_inv'][key][mu1].pvalue) 
-    post_inv_change = np.abs(((post_inv-central)/((post_inv+central)*0.5)).val*100) 
-    post_inv_change_str = r'\textcolor{'+post_inv_color+r'}{'+'{0:.3f}'.format(post_inv_change)+r'\%}'
+    #post_inv = other_systematics['mask_post_inv'][key][mu2]
+    #post_inv_color = pval_color(other_systematics['mask_post_inv'][key][mu1].pvalue) 
+    #post_inv_change = np.abs(((post_inv-central)/((post_inv+central)*0.5)).val*100) 
+    #post_inv_change_str = r'\textcolor{'+post_inv_color+r'}{'+'{0:.3f}'.format(post_inv_change)+r'\%}'
 
     no_mask = other_systematics['no_mask'][key][mu2]
     no_mask_color = pval_color(other_systematics['no_mask'][key][mu1].pvalue) 
@@ -144,7 +145,7 @@ for key in quantities.keys():
                        central_str, 
                        steps_change_str, 
                        direct_disc_str,
-                       post_inv_change_str,
+                       #post_inv_change_str,
                        no_mask_change_str,
                        NPR_change_str
                        ]) + r'\\']

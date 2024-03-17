@@ -216,14 +216,14 @@ def R_RISMOM_MSbar(mu, scheme='gamma', obj='bag', **kwargs):
     R_ij = np.identity(5) - (g(mu)**2)*r_mtx/(16*np.pi**2)
 
     if obj=='bag':
-        #if mu==3.0:
-        #    R_S = 1.05259 if scheme=='gamma' else 1.01664
-        #else:
-        CF = 4/3
-        if scheme=='qslash':
-            R_S = 1 + alpha_s(mu)*CF*(4 - 3*C0(0)/2)/(4*np.pi)
-        elif scheme=='gamma':
-            R_S = 1 + alpha_s(mu)*CF*4/(4*np.pi)
+        if mu==3.0:
+            R_S = 1.05259 if scheme=='gamma' else 1.01664
+        else:
+            CF = 4/3
+            if scheme=='qslash':
+                R_S = 1 + alpha_s(mu)*CF*(4 - 3*C0(0)/2)/(4*np.pi)
+            elif scheme=='gamma':
+                R_S = 1 + alpha_s(mu)*CF*4/(4*np.pi)
         R_ij[1:, 1:] = R_ij[1:, 1:]/(R_S**2)
     elif obj=='ratio':
         R_ij = R_ij/R_ij[0,0]

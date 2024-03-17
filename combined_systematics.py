@@ -11,7 +11,7 @@ RISMOM_results = {'gamma':{}, 'qslash':{}}
 for scheme in errors_dict.keys():
     fit_systematics = pickle.load(open(f'fit_systematics_20_{fit_file}_{scheme}.p', 'rb'))
     scaling_systematics = pickle.load(open(f'scaling_systematics_{scheme}_{fit_file}.p', 'rb'))
-    other_systematics = pickle.load(open(f'other_systematics_{scheme}_{fit_file.p', 'rb'))
+    other_systematics = pickle.load(open(f'other_systematics_{scheme}_{fit_file}.p', 'rb'))
     for key in quantities.keys():
         central = scaling_systematics['(2,3)'][key]
         central_val_str = '{0:.4f}'.format(central.val)
