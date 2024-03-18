@@ -409,7 +409,6 @@ class Z_analysis:
         return closest_idx
 
 
-
 class bag_analysis:
     def __init__(self, ensemble, obj='bag', action=(0, 0), **kwargs):
         self.ens = ensemble
@@ -419,9 +418,43 @@ class bag_analysis:
         if obj == 'bag':
             norm = 'bag'
             self.bag = self.ra.B_N
+            if self.ens=='F1M':
+                if fit_file == 'Tobi':
+                    corr_file = h5py.File('F1M_correction_factors_Tobi.h5','r')
+                    corr_data = corr_file['ratios_0.022170_over_0.021440']
+                    corrections = join_stats([stat(
+                        val=corr_data[f'B{i+1}']['central'][:][0],
+                        err=corr_data[f'B{i+1}']['error'][:][0],
+                        btsp=np.array(corr_data[f'B{i+1}']['Bootstraps'][:])[:,0]
+                        ) for i in range(5)])
+                else:
+                    corrections = stat(
+                            val=[1.00496, 1.004231, 1.003035, 1.003208, 1.003593],
+                            err=[0.00010, 0.000062, 0.000061, 0.000077, 0.000067],
+                            btsp='fill'
+                            )
+                self.bag = corrections*self.bag
+
         elif obj == 'ratio':
             norm = '11'
             self.bag = self.ra.ratio
+            if self.ens=='F1M':
+                if fit_file == 'Tobi':
+                    corr_file = h5py.File('F1M_correction_factors_Tobi.h5','r')
+                    corr_data = corr_file['ratios_0.022170_over_0.021440']
+                    one = stat(val=1, err=0, btsp='fill')
+                    corrections = join_stats([one]+[stat(
+                        val=corr_data[f'R{i+1}']['central'][:][0],
+                        err=corr_data[f'R{i+1}']['error'][:][0],
+                        btsp=np.array(corr_data[f'R{i+1}']['Bootstraps'][:])[:,0]
+                        ) for i in range(1,5)])
+                else:
+                    corrections = stat(
+                            val=[1.0, 0.97007, 0.96891, 0.96908, 0.96945],
+                            err=[0.0, 0.00017, 0.00017, 0.00019, 0.00019],
+                            btsp='fill'
+                            )
+                self.bag = corrections*self.bag
         elif obj == 'ratio2':
             norm = '11/AS'
             self.bag = self.ra.ratio2
@@ -446,7 +479,7 @@ class bag_analysis:
             self.m_pi = stat(val=self.m_pi.val, err=self.m_pi.err, btsp='fill')
         self.m_f_sq = (self.m_pi**2)/(self.f_pi**2)
 
-    def ansatz(self, param, operator, fit='central', **kwargs):
+    def ansatz(self, param, operator, fit='central', log=False, **kwargs):
         op_idx = operators.index(operator)
         if fit == 'central':
             a_sq = self.a_sq.val
@@ -474,12 +507,12 @@ class bag_analysis:
                 func += param[3]*(a_sq**2)
             elif kwargs['addnl_terms'] == 'del_ms':
                 func += param[3]*ms_diff
-            elif kwargs['addnl_terms'] == 'log':
-                chir_log_coeffs = chiral_logs(obj=self.obj, **kwargs)
-                chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
-                log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
-                log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
-                func += param[0]*log_term*m_f_sq
+        if log:
+            chir_log_coeffs = chiral_logs(obj=self.obj, **kwargs)
+            chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
+            log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
+            log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
+            func += param[0]*log_term*m_f_sq
 
         return func
 
@@ -545,10 +578,3 @@ class ratio_analysis:
                     err=self.ratio.err,
                     btsp='fill'
                     )
-        try:
-            self.f_P = load_info('f_M', self.ens)
-            K_exp_ratio = (m_K_PDG/f_K_PDG)**2
-            P_lat_ratio = (self.m_P/self.f_P)**2
-            self.ratio2 = P_lat_ratio*self.ratio/K_exp_ratio
-        except KeyError:
-            pass

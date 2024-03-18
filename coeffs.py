@@ -29,11 +29,11 @@ def Bcoeffs(f, **kwargs):
 
 
 # ====computing alphas at mu values===================
-amz = 0.1185
+amz = 0.118
 gmz = np.sqrt(4*np.pi*amz)
 m_z = 91.1876
-m_c = 1.250
-m_b = 4.200
+m_c = 1.28
+m_b = 4.18
 m_t = 174.200
 
 

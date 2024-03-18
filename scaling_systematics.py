@@ -1,8 +1,7 @@
 from cont_chir_extrap import *
 
 run = bool(int(input('run?(0:False/1:True): ')))
-scheme = 'qslash'
-print(f'scheme: {scheme}')
+print(f'Running scaling systematics in {scheme} scheme using data from {fit_file}')
 
 if run:
     s_bag = sigma(norm='bag', scheme=scheme)
@@ -11,6 +10,8 @@ if run:
     b = bag_fits(bag_ensembles, obj='bag', scheme=scheme)
 
     bags = [b.fit_operator(2.0, op, rotate=NPR_to_SUSY,
+                           log=True, addnl_terms='del_ms',
+                           guess=[1,1e-1,1e-2,1e-2],
                            ens_list=[b for b in bag_ensembles if b!='C2'],
                            chiral_extrap=True)
             for op in b.operators]
@@ -35,6 +36,8 @@ if run:
         record_vals['(2,3,0.2)'][f'B{i+1}'] = (sig_bag_steps@bags)[i]/N_i[i]
 
     bags = [b.fit_operator(3.0, op, rotate=NPR_to_SUSY,
+                           log=True, addnl_terms='del_ms',
+                           guess=[1,1e-1,1e-2,1e-2],
                            ens_list=[b for b in bag_ensembles if b!='C2'],
                            chiral_extrap=True)
             for op in b.operators]
@@ -48,6 +51,8 @@ if run:
     s_rat = sigma(norm='11', scheme=scheme)
     r = bag_fits(bag_ensembles, obj='ratio', scheme=scheme)
     ratios = [r.fit_operator(2.0, op, rotate=NPR_to_SUSY,
+                             log=True, addnl_terms='del_ms',
+                             guess=[1,1e-1,1e-2,1e-2],
                              ens_list=[b for b in bag_ensembles if b!='C2'],
                              plot=False, chiral_extrap=True)
               for op in r.operators]
@@ -69,6 +74,8 @@ if run:
         record_vals['(2,3,0.2)'][f'R{i+1}'] = (sig_rat_steps@ratios)[i]
 
     ratios = [r.fit_operator(3.0, op, rotate=NPR_to_SUSY,
+                             log=True, addnl_terms='del_ms',
+                             guess=[1,1e-1,1e-2,1e-2],
                              ens_list=[b for b in bag_ensembles if b!='C2'],
                              plot=False, chiral_extrap=True)
               for op in r.operators]

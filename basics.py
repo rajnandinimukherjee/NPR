@@ -494,8 +494,6 @@ m_pi_0 = stat(val=134.9700/1000, err=0.0005/1000, btsp='fill')
 
 m_pi_PDG = (m_pi_plus_minus*2 + m_pi_0)/3
 f_pi_PDG = stat(val=130.41/1000, err=0.23/1000, btsp='fill')
-m_K_PDG = stat(val=497.614/1000, err=0.024/1000, btsp='fill')
-f_K_PDG = stat(val=158.1/1000, err=3.9/1000, btsp='fill')
 
 m_f_sq_PDG = (m_pi_PDG/f_pi_PDG)**2
 Lambda_QCD = 1.0

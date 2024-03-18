@@ -1,11 +1,21 @@
 import pdb
 from coeffs import *
 from bag_param_renorm import *
+scheme = 'gamma'
+#scheme = 'qslash'
 
 cmap = plt.cm.tab20b
 norm = mc.BoundaryNorm(np.linspace(0, 1, len(bag_ensembles)), cmap.N)
-ens_colors = {bag_ensembles[k]: list(mc.TABLEAU_COLORS.keys())[
-    k] for k in range(len(bag_ensembles))}
+#ens_colors = {bag_ensembles[k]: list(mc.TABLEAU_COLORS.keys())[
+#    k] for k in range(len(bag_ensembles))}
+ens_colors = {'C0':[1,0,0],
+              'C1':[250./256,128./256,114./256],
+              'C2':[240./256,190./256,128./256],
+              'M0':[0,0,1.],
+              'M1':[30./256,144./256,1],
+              'M2':[135./256,206./256,250./256],
+              'M3':[185./256,206./256,256./256],
+              'F1M':[154./256,205./256,50./256]}
 
 def ens_symbols(ens):
     if ens[0]=='C':
@@ -29,7 +39,7 @@ def mpi_dep(params, m_f_sq, op_idx, **kwargs):
 
 
 def chiral_continuum_ansatz(params, a_sq, m_f_sq, PDG, operator,
-                            obj='bag', **kwargs):
+                            obj='bag', log=False, **kwargs):
     op_idx = operators.index(operator)
     func = params[0] + params[1]*a_sq + \
         mpi_dep(params, m_f_sq, op_idx, **kwargs) - \
@@ -39,12 +49,12 @@ def chiral_continuum_ansatz(params, a_sq, m_f_sq, PDG, operator,
             func += params[3]*(a_sq**2)
         elif kwargs['addnl_terms'] == 'del_ms':
             func += params[3]*kwargs['ms_diff']
-        elif kwargs['addnl_terms'] == 'log':
-            chir_log_coeffs = chiral_logs(obj=obj, **kwargs)
-            chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
-            log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
-            log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
-            func += params[0]*log_term*m_f_sq
+    if log:
+        chir_log_coeffs = chiral_logs(obj=obj, **kwargs)
+        chir_log_coeffs = chir_log_coeffs/((4*np.pi)**2)
+        log_ratio = m_f_sq*(f_pi_PDG.val**2)/(Lambda_QCD**2)
+        log_term = chir_log_coeffs[op_idx]*np.log(log_ratio)
+        func += params[0]*log_term*m_f_sq
 
     return func
 
@@ -427,18 +437,17 @@ class sigma:
             if self.mask[i,j]:
                 fig, ax = plt.subplots(figsize=figsize)
 
-                ax.plot(mu_grain, npt_scaling.val[:,i,j], color='b', label='npt')
-                ax.fill_between(mu_grain,
-                                npt_scaling.val[:,i,j]+npt_scaling.err[:,i,j],
-                                npt_scaling.val[:,i,j]-npt_scaling.err[:,i,j],
-                                color='b', alpha=0.2)
+                ax.errorbar(mu_grain, npt_scaling.val[:,i,j],
+                            yerr=npt_scaling.err[:,i,j], 
+                            fmt='o', capsize=4,
+                            label='npt')
                 ax.plot(mu_grain, LO_scaling[:,i,j],
                          '--', label='LO')
                 ax.plot(mu_grain, NLO_scaling[:,i,j],
                             '-', label='NLO')
-                ax.set_xlabel(r'$\mu_1\,\mathrm{[GeV]}$', fontsize=fs)
+                ax.set_xlabel(r'$\mu\,\mathrm{[GeV]}$', fontsize=fs)
                 ax.set_ylabel(r'$\sigma_{'+str(i+1)+str(j+1)+r'}('+\
-                        str(mu2)+r'\,\mathrm{GeV}, \mu_1)$', fontsize=fs)
+                        str(mu2)+r'\,\mathrm{GeV}, \mu)$', fontsize=fs)
                 ax.yaxis.set_ticks_position('both')
                 ax.legend()
                 if separate:
@@ -540,8 +549,8 @@ class bag_fits:
         cc_coeffs = res[1:]/res[0]
         y_phys = res[0]
 
-        if 'addnl_terms' in kwargs:
-            if kwargs['addnl_terms']=='log':
+        if 'log' in kwargs:
+            if kwargs['log']:
                 log_term = chiral_logs(obj=self.obj, **kwargs)[op_idx]/((4*np.pi)**2)
                 log_term = m_f_sq_PDG*((m_pi_PDG**2)/(Lambda_QCD**2)).use_func(np.log)*log_term
                 y_phys = y_phys + y_phys*log_term
@@ -709,8 +718,8 @@ class bag_fits:
                 filename = f'plots/{self.obj}_fits_{operator}.pdf'
             call_PDF(filename, open=open)
 
-        if 'addnl_terms' in kwargs:
-            if kwargs['addnl_terms'] == 'log':
+        if 'log' in kwargs:
+            if kwargs['log']:
                 res.val[0], res.err[0], res.btsp[:,0] = y_phys.val, y_phys.err, y_phys.btsp
 
         return res

@@ -3,8 +3,7 @@ from cont_chir_extrap import *
 mu1 = 2.0
 mu2 = 3.0
 run = bool(int(input('run?(0:False/1:True): ')))
-scheme = 'qslash'
-print(f'scheme: {scheme}')
+print(f'Running other systematics in {scheme} scheme using data from {fit_file}')
 
 if run:
     laxis = {1:1, 2:1, 3:1, 4:0, 5:0}
@@ -16,7 +15,10 @@ if run:
     print('NPR basis')
     record_vals['NPR'] = {}
     b = bag_fits(bag_ensembles, obj='bag', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
-    bags_1 = [b.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
+    bags_1 = [b.fit_operator(mu1, op, 
+                             ens_list=[k for k in bag_ensembles if k!='C2'],
+                             log=True, addnl_terms='del_ms',
+                             guess=[1,1e-1,1e-2,1e-2],
                              chiral_extrap=True, rotate=np.eye(len(b.operators)), plot=False)
             for op in b.operators]
 
@@ -44,7 +46,10 @@ if run:
 
     del b
     r = bag_fits(bag_ensembles, obj='ratio', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
-    ratios_1 = [r.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
+    ratios_1 = [r.fit_operator(mu1, op,
+                               ens_list=[k for k in bag_ensembles if k!='C2'],
+                               log=True, addnl_terms='del_ms',
+                               guess=[1,1e-1,1e-2,1e-2],
                                chiral_extrap=True, rotate=np.eye(5), plot=False)
                 for op in r.operators]
 
@@ -76,8 +81,12 @@ if run:
     for fit in list(record_vals.keys())[:-1]:
         print(fit)
         b = bag_fits(bag_ensembles, obj='bag', scheme=scheme, **record_vals[fit]['kwargs'])
-        bags_1 = [b.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
-                                    chiral_extrap=True, rotate=NPR_to_SUSY, plot=False)
+        bags_1 = [b.fit_operator(mu1, op, 
+                                 ens_list=[k for k in bag_ensembles if k!='C2'],
+                                 log=True, addnl_terms='del_ms',
+                                 guess=[1,1e-1,1e-2,1e-2],
+                                 chiral_extrap=True, rotate=NPR_to_SUSY,
+                                 plot=False)
                 for op in b.operators]
 
         s_b = sigma(norm='bag', scheme=scheme, **record_vals[fit]['kwargs'])
@@ -94,8 +103,12 @@ if run:
 
         del b
         r = bag_fits(bag_ensembles, obj='ratio', scheme=scheme, **record_vals[fit]['kwargs'])
-        ratios_1 = [r.fit_operator(mu1, op, ens_list=[k for k in bag_ensembles if k!='C2'],
-                                    chiral_extrap=True, rotate=NPR_to_SUSY, plot=False)
+        ratios_1 = [r.fit_operator(mu1, op, 
+                                   ens_list=[k for k in bag_ensembles if k!='C2'],
+                                   log=True, addnl_terms='del_ms',
+                                   guess=[1,1e-1,1e-2,1e-2],
+                                   chiral_extrap=True, rotate=NPR_to_SUSY,
+                                   plot=False)
                     for op in r.operators]
 
         for rat in ratios_1:
