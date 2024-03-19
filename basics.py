@@ -316,7 +316,7 @@ def join_stats(stats):
 
 
 plt.rcParams.update(plotparams)
-path = '/home/rm/external/NPR/'
+path = '/home/rm/external/NPR_new/'
 N_d = 4  # Dirac indices
 N_c = 3  # Color indices
 # N_bl = 16 # number of bilinears

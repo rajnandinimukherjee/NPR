@@ -6,15 +6,15 @@ class bilinear_analysis:
     keys = ['S', 'P', 'V', 'A', 'T', 'm']
     N_boot = N_boot
 
-    def __init__(self, ensemble, mres=False, **kwargs):
+    def __init__(self, ensemble, mres=False, sea_mass_idx=0, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
         self.ainv = params[ensemble]['ainv']
         self.asq = (1/self.ainv)**2
-        self.sea_mass = '{:.4f}'.format(info['masses'][0])
+        self.sea_mass = '{:.4f}'.format(info['masses'][sea_mass_idx])
         self.non_sea_masses = ['{:.4f}'.format(info['masses'][k])
-                               for k in range(1, len(info['masses']))]
+                               for k in range(len(info['masses'])) if k!=sea_mass_idx]
 
         gauge_count = len(info['baseactions'])
         self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
@@ -75,27 +75,30 @@ class bilinear_analysis:
         f = h5py.File(filename, 'a')
         for action in self.Z.keys():
             for masses in self.Z[action].keys():
-                if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
-                    del f[str(action)][self.ens][str(masses)]
-                m_grp = f.create_group(
-                    str(action)+'/'+self.ens+'/'+str(masses))
-                mom = m_grp.create_dataset(
-                    'ap', data=self.momenta[action][masses])
-                for current in self.Z[action][masses][0].keys():
-                    c_grp = m_grp.create_group(current)
-                    Zs = stat(
-                        val=[self.Z[action][masses][mom][current].val
-                             for mom in range(len(self.Z[action][masses]))],
-                        err=[self.Z[action][masses][mom][current].err
-                             for mom in range(len(self.Z[action][masses]))],
-                        btsp=np.array([self.Z[action][masses][mom][current].btsp
-                                       for mom in range(len(self.Z[action][masses]))]).swapaxes(0, 1))
+                if len(self.Z[action][masses])==0:
+                    continue
+                else:
+                    if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
+                        del f[str(action)][self.ens][str(masses)]
+                    m_grp = f.create_group(
+                        str(action)+'/'+self.ens+'/'+str(masses))
+                    mom = m_grp.create_dataset(
+                        'ap', data=self.momenta[action][masses])
+                    for current in self.Z[action][masses][0].keys():
+                        c_grp = m_grp.create_group(current)
+                        Zs = stat(
+                            val=[self.Z[action][masses][mom][current].val
+                                 for mom in range(len(self.Z[action][masses]))],
+                            err=[self.Z[action][masses][mom][current].err
+                                 for mom in range(len(self.Z[action][masses]))],
+                            btsp=np.array([self.Z[action][masses][mom][current].btsp
+                                           for mom in range(len(self.Z[action][masses]))]).swapaxes(0, 1))
 
-                    central = c_grp.create_dataset('central', data=Zs.val)
-                    err = c_grp.create_dataset('errors', data=Zs.err)
-                    btsp = c_grp.create_dataset('bootstrap', data=Zs.btsp)
+                        central = c_grp.create_dataset('central', data=Zs.val)
+                        err = c_grp.create_dataset('errors', data=Zs.err)
+                        btsp = c_grp.create_dataset('bootstrap', data=Zs.btsp)
 
-        print('Saved bilinear NPR results to '+filename)
+        print(f'Saved {self.ens} bilinear NPR results to {filename}')
 
     def NPR_all(self, massive=False, save=True, renorm='mSMOM', **kwargs):
         if massive:
@@ -138,18 +141,15 @@ class bilinear_analysis:
 class fourquark_analysis:
     N_boot = N_boot
 
-    def __init__(self, ensemble, **kwargs):
+    def __init__(self, ensemble, sea_mass_idx=0, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
-        self.sea_mass = '{:.4f}'.format(info['masses'][0])
+        self.sea_mass = '{:.4f}'.format(info['masses'][sea_mass_idx])
 
         gauge_count = len(info['baseactions'])
         self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
                         i in range(gauge_count)]
-        #self.actions = [info['gauges'][0]+'_'+info['baseactions'][0],
-        #                info['gauges'][-1]+'_'+info['baseactions'][-1]]
-
         self.momenta, self.Z = {}, {}
 
     def NPR(self, masses, action=(0, 0), scheme=1, **kwargs):
@@ -203,23 +203,28 @@ class fourquark_analysis:
         f = h5py.File(filename, 'a')
         for action in self.Z.keys():
             for masses in self.Z[action].keys():
-                if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
-                    del f[str(action)][self.ens][str(masses)]
-                m_grp = f.create_group(
-                    str(action)+'/'+self.ens+'/'+str(masses))
-                mom = m_grp.create_dataset(
-                    'ap', data=self.momenta[action][masses])
-                Zs = stat(
-                    val=[self.Z[action][masses][mom].val
-                         for mom in range(len(self.Z[action][masses]))],
-                    err=[self.Z[action][masses][mom].err
-                         for mom in range(len(self.Z[action][masses]))],
-                    btsp=np.array([self.Z[action][masses][mom].btsp
-                                   for mom in range(len(self.Z[action][masses]))]).swapaxes(0, 1))
+                if len(self.Z[action][masses])==0:
+                    continue
+                else:
+                    if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
+                        del f[str(action)][self.ens][str(masses)]
+                    m_grp = f.create_group(
+                        str(action)+'/'+self.ens+'/'+str(masses))
+                    mom = m_grp.create_dataset(
+                        'ap', data=self.momenta[action][masses])
+                    Zs = stat(
+                        val=[self.Z[action][masses][mom].val
+                             for mom in range(len(self.Z[action][masses]))],
+                        err=[self.Z[action][masses][mom].err
+                             for mom in range(len(self.Z[action][masses]))],
+                        btsp=np.array([self.Z[action][masses][mom].btsp
+                                       for mom in range(len(self.Z[action][masses]))]).swapaxes(0, 1))
 
-                central = m_grp.create_dataset('central', data=Zs.val)
-                err = m_grp.create_dataset('errors', data=Zs.err)
-                btsp = m_grp.create_dataset('bootstrap', data=Zs.btsp)
+                    central = m_grp.create_dataset('central', data=Zs.val)
+                    err = m_grp.create_dataset('errors', data=Zs.err)
+                    btsp = m_grp.create_dataset('bootstrap', data=Zs.btsp)
+
+        print(f'Saved {self.ens} fourquark NPR results to {filename}')
 
     def NPR_all(self, save=True, **kwargs):
         N_a = len(self.actions)
