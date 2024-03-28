@@ -10,13 +10,27 @@ fq_qslash_F = np.array([
 
 
 data_ensembles = [
-        'C0','C1','C1M','C2',
-        'M0','M1', 'M1M', 'M2', 'M3',
-        'F1M']
-am_dict = {ens:"{:.4f}".format(params[ens]['masses'][0])
+        #'C0', 'C1M',
+        'C1', 'C2',
+        #'M0', 'M1M',
+        'M1', 'M2', 'M3']
+        #'F1M']
+sea_mass_dict = {
+        'C0':0,
+        'C1':1,
+        'C1M':3,
+        'C2':1,
+        'M0':0,
+        'M1':1,
+        'M1M':3,
+        'M2':1,
+        'M3':1,
+        'F1M':1}
+
+am_dict = {ens:"{:.4f}".format(params[ens]['masses'][sea_mass_dict[ens]])
         for ens in data_ensembles}
 
-NG_path = '/home/rm/external/NPR/NG_data'
+NG_path = path+'NG_data'
 
 # STEP 1: read in Z_4q
 

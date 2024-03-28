@@ -199,7 +199,7 @@ class fourquark_analysis:
                 self.Z[action][masses] = np.array(
                     [results[mom] for mom in self.momenta[action][masses]])
 
-    def save_NPR(self, filename='fourquarks_Z.h5', **kwargs):
+    def save_NPR(self, filename='fourquark_Z_gamma.h5', **kwargs):
         f = h5py.File(filename, 'a')
         for action in self.Z.keys():
             for masses in self.Z[action].keys():
