@@ -3,6 +3,7 @@ from coeffs import *
 from bag_param_renorm import *
 scheme = 'gamma'
 #scheme = 'qslash'
+expand_err = False
 
 cmap = plt.cm.tab20b
 norm = mc.BoundaryNorm(np.linspace(0, 1, len(bag_ensembles)), cmap.N)
@@ -10,25 +11,29 @@ norm = mc.BoundaryNorm(np.linspace(0, 1, len(bag_ensembles)), cmap.N)
 #    k] for k in range(len(bag_ensembles))}
 ens_colors = {'C0':[1,0,0],
               'C1':[250./256,128./256,114./256],
+              'C1M':[128./256,128./256,128./256],
               'C2':[240./256,190./256,128./256],
               'M0':[0,0,1.],
               'M1':[30./256,144./256,1],
+              'M1M':[128./256,128./256,128./256],
               'M2':[135./256,206./256,250./256],
               'M3':[185./256,206./256,256./256],
               'F1M':[154./256,205./256,50./256]}
 
 def ens_symbols(ens):
-    if ens[0]=='C':
+    if ens[0]=='C' and ens[-1]!='M':
         return "s"
-    elif ens[0]=='M':
+    elif ens[0]=='M' and ens[-1]!='M':
         return "o"
     else:
         return "D"
 
 
-M_ens = ['M0', 'M1', 'M2', 'M3']
-C_ens = ['C0', 'C1', 'C2']
+CS = ['C1', 'C2']
+CM = ['C0', 'C1M']
 
+MS = ['M1', 'M2', 'M3']
+MM = ['M0', 'M1M']
 
 def mpi_dep(params, m_f_sq, op_idx, **kwargs):
     f = params[2]*m_f_sq
@@ -69,7 +74,10 @@ class Z_fits:
 
         if norm == '11':
             self.mask[0, 0] = False
-        self.Z_dict = {e: Z_analysis(e, norm=self.norm, mask=self.mask, **kwargs)
+
+        self.Z_dict = {e: Z_analysis(e, norm=self.norm, mask=self.mask, 
+                                     sea_mass_idx=1 if (e in CS+MS or e=='F1M') else 0, 
+                                     **kwargs)
                        for e in bag_ensembles+['C1M', 'M1M']}
 
     def Z_assignment(self, mu, chiral_extrap=False, **kwargs):
@@ -99,24 +107,20 @@ class Z_fits:
             extrap_assign = {}
             for fittype in ['linear', 'quadratic']:
                 extrap_assign[fittype] = {}
-                CS_extrap, CS_fit_params = self.Z_chiral_extrap(
-                    ['C1', 'C2'], mu, fittype=fittype, **kwargs)
-                CM_extrap, CM_fit_params = self.Z_chiral_extrap(
-                    ['C0', 'C1M'], mu, fittype=fittype, **kwargs)
-                MS_extrap, MS_fit_params = self.Z_chiral_extrap(
-                    ['M1', 'M2', 'M3'], mu, fittype=fittype, **kwargs)
-                MM_extrap, MM_fit_params = self.Z_chiral_extrap(
-                    ['M0', 'M1M'], mu, fittype=fittype, **kwargs)
+                CS_extrap, CS_fit_params = self.Z_chiral_extrap(CS, mu, fittype=fittype, **kwargs)
+                CM_extrap, CM_fit_params = self.Z_chiral_extrap(CM, mu, fittype=fittype, **kwargs)
+                MS_extrap, MS_fit_params = self.Z_chiral_extrap(MS, mu, fittype=fittype, **kwargs)
+                MM_extrap, MM_fit_params = self.Z_chiral_extrap(MM, mu, fittype=fittype, **kwargs)
 
                 for ens in self.ens_list:
                     m_pi = self.Z_dict[ens].m_pi
-                    if ens in C_ens[1:]:
+                    if ens in CS:
                         Z = CS_extrap
-                    elif ens in M_ens[1:]:
+                    elif ens in MS:
                         Z = MS_extrap
-                    elif ens == 'C0':
+                    elif ens in CM:
                         Z = CM_extrap
-                    elif ens == 'M0':
+                    elif ens in MM:
                         Z = MM_extrap
                     elif ens == 'F1M':
                         Z0 = self.Z_dict[ens].interpolate(mu, **kwargs)
@@ -177,7 +181,9 @@ class Z_fits:
     def Z_chiral_extrap(self, ens_list, mu, plot=False,
                         extrap_label='0',
                         filename='plots/Z_chiral_extrap.pdf',
-                        fittype='linear', **kwargs):
+                        fittype='linear', 
+                        separate=False, 
+                        **kwargs):
 
         chiral_data = join_stats([self.Z_dict[ens].interpolate(
             mu, fittype=fittype, **kwargs)
@@ -237,51 +243,103 @@ class Z_fits:
             )
             return Z_map
 
+        fit_params.map = mapping
+
         if plot:
-            fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
-                                   figsize=(16, 16))
-            plt.subplots_adjust(hspace=0, wspace=0)
+            if not separate:
+                fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
+                                       figsize=(16, 16))
+                plt.subplots_adjust(hspace=0, wspace=0)
 
-            for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
-                if self.mask[i, j]:
-                    y = stat(
-                        val=chiral_data.val[:, i, j],
-                        err=chiral_data.err[:, i, j],
-                        btsp=chiral_data.btsp[:, :, i, j])
+                for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
+                    if self.mask[i, j]:
+                        y = stat(
+                            val=chiral_data.val[:, i, j],
+                            err=chiral_data.err[:, i, j],
+                            btsp=chiral_data.btsp[:, :, i, j])
 
-                    ax[i, j].errorbar(x.val, y.val,
-                                      yerr=y.err,
-                                      xerr=x.err, fmt='o',
-                                      capsize=4)
-                    xmin, xmax = ax[i, j].get_xlim()
-                    msq_grain = np.linspace(0.0, xmax, 50)
-                    y_grain = mapping(i, j, msq_grain)
-                    ax[i, j].fill_between(msq_grain,
-                                          (y_grain.val-y_grain.err),
-                                          (y_grain.val+y_grain.err),
-                                          alpha=0.1, color='k')
-                    ax[i, j].axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
-                    ax[i, j].errorbar([0.0], extrap.val[i, j],
-                                      yerr=extrap.err[i, j],
-                                      color='0.1', fmt='o', capsize=4)
-                    if j == 2 or j == 4:
-                        ax[i, j].yaxis.tick_right()
-                    if i == 1 or i == 3:
-                        ax[i, j].set_xticks([])
+                        ax[i, j].errorbar(x.val, y.val,
+                                          yerr=y.err,
+                                          xerr=x.err, fmt='o',
+                                          capsize=4)
+                        xmin, xmax = ax[i, j].get_xlim()
+                        msq_grain = np.linspace(0.0, xmax, 50)
+                        y_grain = mapping(i, j, msq_grain)
+                        ax[i, j].fill_between(msq_grain,
+                                              (y_grain.val-y_grain.err),
+                                              (y_grain.val+y_grain.err),
+                                              alpha=0.1, color='k')
+                        ax[i, j].axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
+                        ax[i, j].errorbar([0.0], extrap.val[i, j],
+                                          yerr=extrap.err[i, j],
+                                          color='0.1', fmt='o', capsize=4)
+                        if j == 2 or j == 4:
+                            ax[i, j].yaxis.tick_right()
+                        if i == 1 or i == 3:
+                            ax[i, j].set_xticks([])
 
-                    if i == 0 or i == 1 or i == 3:
-                        ax_twin = ax[i, j].twiny()
-                        ax_twin.set_xlim(ax[i, j].get_xlim())
+                        if i == 0 or i == 1 or i == 3:
+                            ax_twin = ax[i, j].twiny()
+                            ax_twin.set_xlim(ax[i, j].get_xlim())
+                            ax_twin.set_xticks([0]+list(x.val))
+                            ax_twin.set_xticklabels([extrap_label]+ens_list)
+                    else:
+                        ax[i, j].axis('off')
+                plt.suptitle(r'$Z_{ij}^{'+','.join(ens_list) +
+                             '}(\mu='+str(mu)+'$ GeV$)/Z_{'+self.norm+r'}$ vs $(am_\pi)^2$', y=0.9)
+                call_PDF(filename)
+            else:
+                for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
+                    if self.mask[i, j]:
+                        fig, ax = plt.subplots(figsize=(2.5,2))
+                        y = stat(
+                            val=chiral_data.val[:, i, j],
+                            err=chiral_data.err[:, i, j],
+                            btsp=chiral_data.btsp[:, :, i, j])
+
+                        ax.errorbar(x.val, y.val,
+                                    yerr=y.err,
+                                    xerr=x.err, fmt='o',
+                                    capsize=4)
+                        xmin, xmax = ax.get_xlim()
+                        msq_grain = np.linspace(0.0, xmax, 50)
+                        y_grain = mapping(i, j, msq_grain)
+                        ax.fill_between(msq_grain,
+                                        (y_grain.val-y_grain.err),
+                                        (y_grain.val+y_grain.err),
+                                        alpha=0.1, color='k')
+                        ax.axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
+                        ax.errorbar([0.0], extrap.val[i, j],
+                                    yerr=extrap.err[i, j],
+                                    color='0.1', fmt='o', capsize=4)
+                        if self.norm=='bag':
+                            if i==0 and j==0:
+                                denom = 'A'
+                            else:
+                                denom = 'S'
+                            label = '$Z_{'+str(i+1)+str(j+1)+r'}/Z_'+denom+r'^2'
+                            label += r'(\mu = '+str(mu)+r'\,\mathrm{GeV})$'
+
+                        ax.set_title(label, fontsize=12)
+                        ax.set_xlabel(r'$(am_\pi)^2$', fontsize=12)
+
+                        ax_twin = ax.twiny()
+                        ax_twin.set_xlim(ax.get_xlim())
                         ax_twin.set_xticks([0]+list(x.val))
-                        ax_twin.set_xticklabels([extrap_label]+ens_list)
-                else:
-                    ax[i, j].axis('off')
-            plt.suptitle(r'$Z_{ij}^{'+','.join(ens_list) +
-                         '}(\mu='+str(mu)+'$ GeV$)/Z_{'+self.norm+r'}$ vs $(am_\pi)^2$', y=0.9)
-            call_PDF(filename)
+                        ens_list_mod = []
+                        for e in ens_list:
+                            if e[-1]=='0':
+                                ens_list_mod.append(e+'M')
+                            elif e[-1]=='M':
+                                ens_list_mod.append(e)
+                            else:
+                                ens_list_mod.append(e+'S')
+
+                        ax_twin.set_xticklabels([extrap_label]+ens_list_mod)
+
+                call_PDF(filename)
 
         return extrap, fit_params
-
 
 class sigma:
     relevant_ensembles = ['C1', 'C0', 'M1', 'M0', 'F1M']
@@ -294,8 +352,6 @@ class sigma:
             self.mask[0, 0] = False
 
         self.Z_fits = Z_fits(bag_ensembles, norm=self.norm, mask=mask, **kwargs)
-        self.Z_dict = {e: Z_analysis(e, norm=self.norm, mask=mask, **kwargs)
-                       for e in self.relevant_ensembles}
 
     def calc_running(self, mu1, mu2, plot=False, include_C=True,
                      filename='plots/Z_running.pdf', **kwargs):
@@ -316,7 +372,7 @@ class sigma:
         def ansatz(asq, param, **kwargs):
             return param[0] + param[1]*asq
 
-        x = join_stats([self.Z_dict[e].a_sq for e in ens_list])
+        x = join_stats([self.Z_fits.Z_dict[e].a_sq for e in ens_list])
 
         extrap = np.zeros(shape=(self.N_ops, self.N_ops), dtype=object)
         param_save = np.zeros(shape=(2, self.N_ops, self.N_ops))
@@ -439,7 +495,7 @@ class sigma:
 
                 ax.errorbar(mu_grain, npt_scaling.val[:,i,j],
                             yerr=npt_scaling.err[:,i,j], 
-                            fmt='o', capsize=4,
+                            fmt='o:', capsize=4,
                             label='npt')
                 ax.plot(mu_grain, LO_scaling[:,i,j],
                          '--', label='LO')
@@ -500,12 +556,15 @@ class bag_fits:
     def fit_operator(self, mu, operator,
                      ens_list=None,
                      guess=[1e-1, 1e-2, 1e-3],
-                     plot=False, open=False,
+                     plot=False,
+                     open=False,
                      rescale=False,
                      title='',
                      figsize=(15, 6),
                      legend_axis=1,
                      fs=10,
+                     expand_err=False,
+                     print_F1M_recons=False,
                      **kwargs):
 
         if self.mu != mu:
@@ -554,6 +613,26 @@ class bag_fits:
                 log_term = chiral_logs(obj=self.obj, **kwargs)[op_idx]/((4*np.pi)**2)
                 log_term = m_f_sq_PDG*((m_pi_PDG**2)/(Lambda_QCD**2)).use_func(np.log)*log_term
                 y_phys = y_phys + y_phys*log_term
+
+        if expand_err:
+            a_sq_F1M = self.bag_dict['F1M'].a_sq
+            F1M_recons = stat(
+                    val=chiral_continuum_ansatz(res.val, a_sq_F1M.val, m_f_sq_PDG.val,
+                                                m_f_sq_PDG.val, operator, ms_diff=0,
+                                                obj=self.obj, **kwargs),
+                    err='fill',
+                    btsp=np.array([chiral_continuum_ansatz(res.btsp[k,], a_sq_F1M.btsp[k],
+                                                           m_f_sq_PDG.btsp[k], m_f_sq_PDG.btsp[k],
+                                                           operator, ms_diff=0, obj=self.obj, **kwargs)
+                                   for k in range(N_boot)])
+                    )
+            if print_F1M_recons:
+                print(f'{self.obj} {op_idx+1}',err_disp(F1M_recons.val, F1M_recons.err))
+
+            cont_err = np.abs(y_phys.val-F1M_recons.val)/2
+            if y_phys.err < cont_err:
+                y_phys.err = cont_err
+                y_phys.btsp = stat(val=y_phys.val, err=y_phys.err, btsp='fill').btsp
 
         if plot:
             fig, ax = plt.subplots(1, 2, figsize=figsize,
@@ -644,9 +723,9 @@ class bag_fits:
                         y_ens = y_ens - res[-1]*ms_diff
 
                 e_label = e
-                if e=='C0' or e=='M0':
+                if e in CM or e in MM:
                     e_label += 'M'
-                elif e in C_ens[1:] or e in M_ens[1:]:
+                elif e in CS or e in MS:
                     e_label += 'S'
 
                 ax[0].errorbar([a_sq.val], [y_ens.val],
@@ -721,5 +800,6 @@ class bag_fits:
         if 'log' in kwargs:
             if kwargs['log']:
                 res.val[0], res.err[0], res.btsp[:,0] = y_phys.val, y_phys.err, y_phys.btsp
+
 
         return res

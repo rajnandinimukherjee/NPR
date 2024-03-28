@@ -4,16 +4,16 @@ from cont_chir_extrap import *
 class ens_table:
     N_ops = len(operators)
 
-    def __init__(self, ens, norm='V'):
+    def __init__(self, ens, norm='V', sea_mass_idx=0, **kwargs):
         self.ens = ens
-        self.Z_obj = Z_analysis(self.ens, norm=norm)
+        self.Z_obj = Z_analysis(self.ens, norm=norm, sea_mass_idx=sea_mass_idx)
 
         self.am = self.Z_obj.am.val
         self.Z = self.Z_obj.Z
         self.N_mom = len(self.am)
         self.N_mom_half = int(self.N_mom/2)
 
-        self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
+        self.sea_m = "{:.4f}".format(params[self.ens]['masses'][sea_mass_idx])
         self.masses = (self.sea_m, self.sea_m)
         bl_data = h5py.File('bilinear_Z_gamma.h5', 'r')[
             str((0, 0))][self.ens][str(self.masses)]
@@ -64,6 +64,7 @@ class ens_table:
                        r'$ & $'.join(ratio_disp)+r'$ \\']
                 rv += [r'\hline']
         else:
+            pdb.set_trace()
             momenta = r' & '.join(
                 [str(np.around(self.am[m], 5)) for m in indices])
             rv += [r'$a\mu$ & '+momenta+r' \\']

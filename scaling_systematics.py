@@ -3,6 +3,9 @@ from cont_chir_extrap import *
 run = bool(int(input('run?(0:False/1:True): ')))
 print(f'Running scaling systematics in {scheme} scheme using data from {fit_file}')
 
+expand_str = '_expanded' if expand_err else ''
+scaling_filename = f'scaling_systematics_{scheme}_{fit_file}{expand_str}.p'
+
 if run:
     s_bag = sigma(norm='bag', scheme=scheme)
     record_vals = {'(2,3)':{}, '(2,3,0.2)':{}, '(3)':{}}
@@ -13,6 +16,7 @@ if run:
                            log=True, addnl_terms='del_ms',
                            guess=[1,1e-1,1e-2,1e-2],
                            ens_list=[b for b in bag_ensembles if b!='C2'],
+                           expand_err=expand_err,
                            chiral_extrap=True)
             for op in b.operators]
 
@@ -39,6 +43,7 @@ if run:
                            log=True, addnl_terms='del_ms',
                            guess=[1,1e-1,1e-2,1e-2],
                            ens_list=[b for b in bag_ensembles if b!='C2'],
+                           expand_err=expand_err,
                            chiral_extrap=True)
             for op in b.operators]
 
@@ -54,6 +59,7 @@ if run:
                              log=True, addnl_terms='del_ms',
                              guess=[1,1e-1,1e-2,1e-2],
                              ens_list=[b for b in bag_ensembles if b!='C2'],
+                             expand_err=expand_err,
                              plot=False, chiral_extrap=True)
               for op in r.operators]
 
@@ -77,6 +83,7 @@ if run:
                              log=True, addnl_terms='del_ms',
                              guess=[1,1e-1,1e-2,1e-2],
                              ens_list=[b for b in bag_ensembles if b!='C2'],
+                             expand_err=expand_err,
                              plot=False, chiral_extrap=True)
               for op in r.operators]
 
@@ -86,11 +93,11 @@ if run:
         record_vals['(3)'][f'R{i+2}'] = r3
     del r
 
-    pickle.dump(record_vals, open(f'scaling_systematics_{scheme}_{fit_file}.p', 'wb'))
+    pickle.dump(record_vals, open(scaling_filename, 'wb'))
 else:
-    record_vals = pickle.load(open(f'scaling_systematics_{scheme}_{fit_file}.p', 'rb'))
+    record_vals = pickle.load(open(scaling_filename, 'rb'))
 
-other_systematics = pickle.load(open(f'other_systematics_{scheme}_{fit_file}.p','rb'))
+other_systematics = pickle.load(open(f'other_systematics_{scheme}_{fit_file}{expand_str}.p','rb'))
 
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
@@ -98,8 +105,8 @@ quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 rv = [r'\begin{tabular}{c|c|c|c|c|c}']
 rv += [r'\hline']
 rv += [r'\hline']
-rv += [r' & $\sigma(2\,\mathrm{GeV},3\,\mathrm{GeV})$ & $\sigma('+\
-        r'2\,\mathrm{GeV}\xrightarrow{\Delta=0.2}3\,\mathrm{GeV})$ & NPR at 3 GeV '+\
+rv += [r' & $\sigma(3\,\mathrm{GeV},3\,\mathrm{GeV})$ & $\sigma('+\
+        r'3\,\mathrm{GeV}\xleftarrow{\Delta=0.2}2\,\mathrm{GeV})$ & NPR at 3 GeV '+\
         #r'& mask post-inv '+\
         r'& no mask & SUSY$\leftarrow$NPR \\']
 rv += [r' & central value & $\delta$ & $\delta$ & '\
@@ -122,16 +129,16 @@ for key in quantities.keys():
     central = record_vals['(2,3)'][key]
     central_color = pval_color(central.pvalue)
     central_str = err_disp(central.val, central.err)
-    central_str = r'\textcolor{'+central_color+r'}{'+err_disp(central.val, central.err)+r'}'
+    central_str = r'\textcolor{'+central_color+r'}{$'+err_disp(central.val, central.err)+r'$}'
 
     steps = record_vals['(2,3,0.2)'][key]
     steps_change = np.abs(((steps-central)/((steps+central)*0.5)).val*100) 
-    steps_change_str = r'\textcolor{'+central_color+r'}{'+'{0:.2f}'.format(steps_change)+r'\%}'
+    steps_change_str = r'\textcolor{'+central_color+r'}{$'+'{0:.2f}'.format(steps_change)+r'$\%}'
 
     direct = record_vals['(3)'][key]
     direct_color = pval_color(direct.pvalue)
     delta_disc = np.abs(((direct-central)/((direct+central)*0.5)).val*100)
-    direct_disc_str = r'\textcolor{'+direct_color+r'}{'+'{0:.2f}'.format(delta_disc)+r'\%}'
+    direct_disc_str = r'\textcolor{'+direct_color+r'}{$'+'{0:.2f}'.format(delta_disc)+r'$\%}'
 
     #post_inv = other_systematics['mask_post_inv'][key][mu2]
     #post_inv_color = pval_color(other_systematics['mask_post_inv'][key][mu1].pvalue) 
@@ -141,12 +148,12 @@ for key in quantities.keys():
     no_mask = other_systematics['no_mask'][key][mu2]
     no_mask_color = pval_color(other_systematics['no_mask'][key][mu1].pvalue) 
     no_mask_change = np.abs(((no_mask-central)/((no_mask+central)*0.5)).val*100) 
-    no_mask_change_str = r'\textcolor{'+no_mask_color+r'}{'+'{0:.2f}'.format(no_mask_change)+r'\%}'
+    no_mask_change_str = r'\textcolor{'+no_mask_color+r'}{$'+'{0:.2f}'.format(no_mask_change)+r'$\%}'
 
     NPR = other_systematics['NPR'][key][mu2]
     NPR_color = pval_color(other_systematics['NPR'][key][mu1].pvalue)
     NPR_change = np.abs(((NPR-central)/((NPR+central)*0.5)).val*100) 
-    NPR_change_str = r'\textcolor{'+NPR_color+r'}{'+'{0:.2f}'.format(NPR_change)+r'\%}'
+    NPR_change_str = r'\textcolor{'+NPR_color+r'}{$'+'{0:.2f}'.format(NPR_change)+r'$\%}'
 
     rv += [' & '.join([name, 
                        central_str, 
@@ -163,7 +170,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/scaling_systematics_{scheme}.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/scaling_systematics_{scheme}{expand_str}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

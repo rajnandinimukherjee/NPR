@@ -1,5 +1,8 @@
 from cont_chir_extrap import *
 
+expand_str = '_expanded' if expand_err else ''
+fit_filename = f'other_systematics_{scheme}_{fit_file}{expand_str}.p'
+
 mu1 = 2.0
 mu2 = 3.0
 run = bool(int(input('run?(0:False/1:True): ')))
@@ -18,6 +21,7 @@ if run:
     bags_1 = [b.fit_operator(mu1, op, 
                              ens_list=[k for k in bag_ensembles if k!='C2'],
                              log=True, addnl_terms='del_ms',
+                             expand_err=expand_err,
                              guess=[1,1e-1,1e-2,1e-2],
                              chiral_extrap=True, rotate=np.eye(len(b.operators)), plot=False)
             for op in b.operators]
@@ -49,6 +53,7 @@ if run:
     ratios_1 = [r.fit_operator(mu1, op,
                                ens_list=[k for k in bag_ensembles if k!='C2'],
                                log=True, addnl_terms='del_ms',
+                               expand_err=expand_err,
                                guess=[1,1e-1,1e-2,1e-2],
                                chiral_extrap=True, rotate=np.eye(5), plot=False)
                 for op in r.operators]
@@ -86,6 +91,7 @@ if run:
                                  log=True, addnl_terms='del_ms',
                                  guess=[1,1e-1,1e-2,1e-2],
                                  chiral_extrap=True, rotate=NPR_to_SUSY,
+                                 expand_err=expand_err,
                                  plot=False)
                 for op in b.operators]
 
@@ -107,6 +113,7 @@ if run:
                                    ens_list=[k for k in bag_ensembles if k!='C2'],
                                    log=True, addnl_terms='del_ms',
                                    guess=[1,1e-1,1e-2,1e-2],
+                                   expand_err=expand_err,
                                    chiral_extrap=True, rotate=NPR_to_SUSY,
                                    plot=False)
                     for op in r.operators]
@@ -127,78 +134,6 @@ if run:
         del record_vals[fit]['kwargs'], r
 
 
-    pickle.dump(record_vals, open(f'other_systematics_{scheme}_{fit_file}.p', 'wb'))
+    pickle.dump(record_vals, open(fit_filename, 'wb'))
 else:
-    record_vals = pickle.load(open(f'other_systematics_{scheme}_{fit_file}.p', 'rb'))
-
-
-quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
-quantities.update({f'B{i+1}':r'$B_'+str(i+1)+r'$' for i in range(5)})
-
-rv = [r'\begin{table}']
-rv += [r'\caption{\label{tab:other_systematics} Values of bag and ratio '+\
-       r'parameters at 3 GeV. Central value uses $Z$-factors with chirally '+\
-       r'vanishing elements removed(masked) from $(P\Lambda)^T$ before '+\
-       r'the inversion $Z = F((P\Lambda)^T)^{-1}$ '+\
-       r'. We list the percent shift in the result by masking $Z$ post-inversion'+\
-       r' and without masking at all. We also compare with performing the entire '+\
-       r'analysis in the NPR basis and then rotating to the SUSY basis.}']
-rv += [r'\begin{tabular}{c|c|c|c|c}']
-rv += [r'\hline']
-rv += [r'\hline']
-rv += [r' & mask pre-inv & mask post-inv & no mask & NPR$\to$SUSY \\']
-rv += [r' & central value & $\delta$ & $\delta$ & $\delta$ \\']
-rv += [r'\hline']
-
-def pval_color(pval):
-    if pval<0.03:
-        return 'red'
-    elif pval>0.03 and pval<0.05:
-        return 'orange'
-    else:
-        return 'ForestGreen'
-
-for key in quantities.keys():
-    name = quantities[key]
-
-    central = record_vals['mask_pre_inv'][key][mu2]
-    central_color = pval_color(record_vals['mask_pre_inv'][key][mu1].pvalue)
-    central_str = r'\textcolor{'+central_color+r'}{'+err_disp(central.val, central.err)+r'}'
-
-    post_inv = record_vals['mask_post_inv'][key][mu2]
-    post_inv_color = pval_color(record_vals['mask_post_inv'][key][mu1].pvalue) 
-    post_inv_change = np.abs(((post_inv-central)/((post_inv+central)*0.5)).val*100) 
-    post_inv_change_str = r'\textcolor{'+post_inv_color+r'}{'+'{0:.3f}'.format(post_inv_change)+r'\%}'
-
-    no_mask = record_vals['no_mask'][key][mu2]
-    no_mask_color = pval_color(record_vals['no_mask'][key][mu1].pvalue) 
-    no_mask_change = np.abs(((no_mask-central)/((no_mask+central)*0.5)).val*100) 
-    no_mask_change_str = '{0:.2f}'.format(no_mask_change)+r'\%'
-    no_mask_change_str = r'\textcolor{'+no_mask_color+r'}{'+'{0:.2f}'.format(no_mask_change)+r'\%}'
-
-    NPR = record_vals['NPR'][key][mu2]
-    NPR_color = pval_color(record_vals['NPR'][key][mu1].pvalue)
-    NPR_change = np.abs(((NPR-central)/((NPR+central)*0.5)).val*100) 
-    NPR_change_str = r'\textcolor{'+NPR_color+r'}{'+'{0:.2f}'.format(NPR_change)+r'\%}'
-
-    rv += [' & '.join([name, 
-                       central_str, 
-                       post_inv_change_str,
-                       no_mask_change_str,
-                       NPR_change_str
-                       ]) + r'\\']
-    if key=='R5':
-        rv += [r'\hline']
-
-rv += [r'\hline']
-rv += [r'\hline']
-rv += [r'\end{tabular}']
-rv += [r'\end{table}']
-
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/other_systematics_{scheme}.tex'
-f = open(filename, 'w')
-f.write('\n'.join(rv))
-f.close()
-print(f'Z table output written to {filename}.')
-
-
+    record_vals = pickle.load(open(fit_filename, 'rb'))

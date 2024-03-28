@@ -45,7 +45,8 @@ class Z_analysis:
 
     def __init__(self, ensemble, action=(0, 0),
                  norm='V', mask=fq_mask.copy(),
-                 scheme='gamma', **kwargs):
+                 scheme='gamma', sea_mass_idx=0, 
+                 **kwargs):
         self.ens = ensemble
         self.action = action
         self.scheme = scheme
@@ -56,7 +57,7 @@ class Z_analysis:
         self.a_sq = self.ainv**(-2)
         self.mask = mask
 
-        self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
+        self.sea_m = "{:.4f}".format(params[self.ens]['masses'][sea_mass_idx])
         self.masses = (self.sea_m, self.sea_m)
         self.f_pi = f_pi_PDG/self.ainv
 

@@ -68,8 +68,8 @@ def ODE(g, mu, f, **kwargs):
 gmc = odeint(ODE, gmz, [m_z, m_c], args=(None,))[-1]
 
 
-def g(mu, **kwargs):
-    return odeint(ODE, gmc, [m_c, mu], args=(3,))[-1]
+def g(mu, f=3, **kwargs):
+    return odeint(ODE, gmc, [m_c, mu], args=(f,))[-1]
 
 
 # ====C0 function================================================
@@ -127,8 +127,8 @@ def C0_int(u):
         return -quad(real_func, 0, 1)[0]
 
 
-def alpha_s(mu):
-    return (g(mu)**2)/(4*np.pi)
+def alpha_s(mu, f=3):
+    return (g(mu, f=f)**2)/(4*np.pi)
 
 
 def R_mSMOM_to_MSbar(mu, mbar):
