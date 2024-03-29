@@ -57,8 +57,6 @@ class Z_analysis:
         self.a_sq = self.ainv**(-2)
         self.mask = mask
 
-        self.sea_m = "{:.4f}".format(params[self.ens]['masses'][sea_mass_idx])
-        self.masses = (self.sea_m, self.sea_m)
         self.f_pi = f_pi_PDG/self.ainv
 
         try:
@@ -89,7 +87,152 @@ class Z_analysis:
         self.norm = norm
         if norm == '11':
             self.mask[0, 0] = False
-        self.load_fq_Z(norm=self.norm, **kwargs)
+
+        if sea_mass_idx == 'extrap' and self.ens[-1]!='0':
+            self.valence_extrapolation(**kwargs)
+            self.sea_m = "{:.4f}".format(0.0)
+            self.masses = (self.sea_m, self.sea_m)
+        else:
+            self.sea_m = "{:.4f}".format(params[self.ens]['masses'][sea_mass_idx])
+            self.masses = (self.sea_m, self.sea_m)
+            self.load_fq_Z(norm=self.norm, **kwargs)
+
+    def valence_extrapolation(self, plot_valence_extrap=False,
+                              save_valence_extrap=False, 
+                              filename='', **kwargs):
+        am_l = "{:.4f}".format(params[self.ens]['aml_sea'])
+        am_l_twice = "{:.4f}".format(params[self.ens]['aml_sea']*2)
+        am_s_half = "{:.4f}".format(params[self.ens]['ams_sea']/2)
+
+        order_am = [am_l, am_l_twice, am_s_half]
+        names_am = [r'$am_l$', r'$2am_l$', r'$am_s/2$']
+
+        val_am = list(sorted(set(order_am)))
+        Zs = join_stats([self.load_fq_Z(masses=(m, m), pass_val=True, **kwargs)
+                         for m in val_am])
+        if order_am==val_am:
+            ordered_names = names_am
+        else:
+            ordered_names = [names_am[order_am.index(m)] for m in val_am]
+
+        if plot_valence_extrap:
+            fig1, ax1 = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
+                                   figsize=(16,16))
+            plt.subplots_adjust(hspace=0, wspace=0)
+            plt.suptitle(f'Extrapolation in valence quark mass for {self.ens}',
+                             y=0.9)
+
+        def valence_extrap_ansatz(ams, param, **kwargs):
+            return param[0] + param[1]*ams
+
+        x = stat(
+                val=[eval(mass) for mass in val_am],
+                err=np.zeros(len(val_am)),
+                btsp='fill'
+                )
+        extrap_Z = []
+        for mom_idx, mom in enumerate(self.am.val):
+            Z_vals = np.zeros(shape=(self.N_ops, self.N_ops))
+            Z_btsp = np.zeros(shape=(N_boot, self.N_ops, self.N_ops))
+            if plot_valence_extrap:
+                fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
+                                       figsize=(16,16))
+                plt.subplots_adjust(hspace=0, wspace=0)
+            for i,j in itertools.product(range(self.N_ops),range(self.N_ops)):
+                if self.mask[i,j]:
+                    y = stat(
+                            val=Zs.val[:,mom_idx,i,j],
+                            err=Zs.err[:,mom_idx,i,j],
+                            btsp=Zs.btsp[:,:,mom_idx,i,j]
+                            )
+                    res = fit_func(x, y, valence_extrap_ansatz, [1,1e-1])
+                    Z_vals[i,j] = res[0].val
+                    Z_btsp[:,i,j] = res[0].btsp
+
+                    if plot_valence_extrap:
+                        ax[i,j].errorbar(x.val, y.val, yerr=y.err,
+                                         fmt='o', capsize=4)
+                        ax[i,j].axvline(0.0, c='k', 
+                                        linestyle='dashed', alpha=0.2)
+                        ax[i,j].errorbar([0.0], Z_vals[i,j],
+                                         yerr=st_dev(
+                                             Z_btsp[:,i,j],mean=Z_vals[i,j]),
+                                         fmt='o', capsize=4, c='r')
+                        xmin, xmax = ax[i,j].get_xlim()
+                        xgrain = np.linspace(xmin, xmax, 50)
+                        ygrain = res.mapping(xgrain)
+                        ax[i,j].fill_between(xgrain, 
+                                             ygrain.val+ygrain.err,
+                                             ygrain.val-ygrain.err,
+                                             color='r',alpha=0.2)
+                        if j == 2 or j == 4:
+                            ax[i, j].yaxis.tick_right()
+                        if i == 1 or i == 3:
+                            ax[i, j].set_xticks([])
+                        else:
+                            ax[i, j].set_xlabel(r'$am_q^{\mathrm{val}}$')
+
+                        if i == 0 or i == 1 or i == 3:
+                            ax_twin = ax[i, j].twiny()
+                            ax_twin.set_xlim(ax[i, j].get_xlim())
+                            ax_twin.set_xticks([0]+[xi for xi in x.val])
+                            ax_twin.set_xticklabels(['0']+ordered_names)
+                else:
+                    if plot_valence_extrap:
+                        ax[i,j].axis('off')
+
+            extrap_Z.append(stat(
+                val=Z_vals,
+                err='fill',
+                btsp=Z_btsp
+                ))
+            if plot_valence_extrap:
+                plt.suptitle(f'Extrapolation in valence quark mass for ap = {mom}',
+                             y=0.9)
+
+        extrap_Z = join_stats(extrap_Z)
+
+        if plot_valence_extrap:
+            x = self.ainv*self.am
+            for i,j in itertools.product(range(self.N_ops),range(self.N_ops)):
+                if self.mask[i,j]:
+                    for mass_idx, mass in enumerate(val_am):
+                        y = stat(
+                                val=Zs.val[mass_idx, :, i, j],
+                                err=Zs.err[mass_idx, :, i, j],
+                                )
+                        ax1[i,j].errorbar(x.val, y.val, yerr=y.err,
+                                         capsize=4, fmt='o',
+                                         label=names_am[mass_idx]+' : '+mass)
+
+                    ax1[i,j].errorbar(x.val, extrap_Z.val[:,i,j],
+                                     yerr=extrap_Z.err[:,i,j],
+                                     fmt='o', capsize=4, color='k',
+                                     label=r'$\lim\,am_q^{\mathrm{val}}\to 0$')
+                    ax1[i,j].legend()
+                    if j == 2 or j == 4:
+                        ax1[i, j].yaxis.tick_right()
+                    if i == 1 or i == 3:
+                        ax1[i, j].set_xticks([])
+                    else:
+                        ax1[i, j].set_xlabel(r'$\mu$ [GeV]')
+                else:
+                    ax1[i,j].axis('off')
+
+            if filename=='':
+                filename = f'valence_extrap_{self.ens}.pdf'
+
+            call_PDF(filename, open=True)
+
+        self.Z = extrap_Z
+
+
+
+
+
+
+
+        
 
     def interpolate(self, m, xaxis='mu', ainv=None,
                     plot=False, fittype='linear',
@@ -287,19 +430,29 @@ class Z_analysis:
 
         call_PDF(filename)
 
-    def load_fq_Z(self, norm='A', resid_mask=True, **kwargs):
-        fq_data = h5py.File(f'fourquark_Z_{self.scheme}.h5', 'r')[
-            str(self.action)][self.ens][str(self.masses)]
+    def load_fq_Z(self, norm='A', masses=None, resid_mask=True,
+                  pass_val=False, **kwargs):
+        if masses==None:
+            masses = self.masses
+
+        a1, a2 = self.action
+        datafile = f'NPR/action{a1}_action{a2}/'
+        datafile += '__'.join(['NPR', self.ens, params[self.ens]['baseactions'][a1],
+                              params[self.ens]['baseactions'][a2], self.scheme])
+        datafile += '.h5'
+        data = h5py.File(datafile, 'r')[str(masses)]
+
+        key = 'fourquark'
         self.am = stat(
-            val=fq_data['ap'][:],
-            err=np.zeros(len(fq_data['ap'][:])),
+            val=data[key]['ap'][:],
+            err=np.zeros(len(data[key]['ap'][:])),
             btsp='fill'
         )
         self.N_mom = len(self.am.val)
         Z_ij_Z_q_2 = stat(
-            val=(fq_data['central'][:]).real,
-            err=fq_data['errors'][:],
-            btsp=(fq_data['bootstrap'][:]).real
+            val=(data[key]['central'][:]).real,
+            err=data[key]['errors'][:],
+            btsp=(data[key]['bootstrap'][:]).real
         )
 
         if resid_mask:
@@ -325,42 +478,44 @@ class Z_analysis:
                 raise
 
 
-        bl_data = h5py.File(f'bilinear_Z_{self.scheme}.h5', 'r')[
-            str(self.action)][self.ens][str(self.masses)]
-
+        key = 'bilinear'
         if norm == 'bag':
             Z_ij_bag = Z_ij_Z_q_2.val
             Z_ij_bag[:, :, 0] = np.array(
                     [Z_ij_bag[m, :, 0] *
-                     (bl_data['A']['central'][m]**(-2))
+                     (data[key]['A']['central'][m]**(-2))
                      for m in range(self.N_mom)])
             Z_ij_bag[:, :, 1:] = np.array(
                     [Z_ij_bag[m, :, 1:] *
-                     (bl_data['S']['central'][m]**(-2))
+                     (data[key]['S']['central'][m]**(-2))
                      for m in range(self.N_mom)])
 
             Z_ij_bag_btsp = Z_ij_Z_q_2.btsp
             Z_ij_bag_btsp[:, :, :, 0] = np.array([
                 [Z_ij_bag_btsp[k, m, :, 0] *
-                 (bl_data['A']['bootstrap']
+                 (data[key]['A']['bootstrap']
                   [k, m]**(-2))
                  for m in range(self.N_mom)]
                 for k in range(N_boot)])
             Z_ij_bag_btsp[:, :, :, 1:] = np.array([
                 [Z_ij_bag_btsp[k, m, :, 1:] *
-                 (bl_data['S']['bootstrap']
+                 (data[key]['S']['bootstrap']
                   [k, m]**(-2))
                  for m in range(self.N_mom)]
                 for k in range(N_boot)])
 
-            self.Z = stat(
+            Z = stat(
                 val=Z_ij_bag,
                 err='fill',
                 btsp=Z_ij_bag_btsp
             )
+            if not pass_val:
+                self.Z = Z
+            else:
+                return Z
 
         elif norm == '11':
-            self.Z = stat(
+            Z = stat(
                 val=[Z_ij_Z_q_2.val[m, :, :]/Z_ij_Z_q_2.val[m, 0, 0]
                      for m in range(self.N_mom)],
                 err='fill',
@@ -368,27 +523,18 @@ class Z_analysis:
                        for m in range(self.N_mom)]
                       for k in range(N_boot)]
             )
-        elif norm == '11/AS':
-            self.Z = stat(
-                val=[(Z_ij_Z_q_2.val[m, :, :]/Z_ij_Z_q_2.val[m, 0, 0]) *
-                     (bl_data['A']['central'][m]/bl_data['S']['central'][m])**2
-                     for m in range(self.N_mom)],
-                err='fill',
-                btsp=[[(Z_ij_Z_q_2.btsp[k, m, :, :] /
-                       Z_ij_Z_q_2.btsp[k, m, 0, 0]) *
-                       (bl_data['A']['bootstrap'][k, m] /
-                        bl_data['S']['bootstrap'][k, m])**2
-                       for m in range(self.N_mom)]
-                      for k in range(N_boot)]
-            )
+            if not pass_val:
+                self.Z = Z
+            else:
+                return Z
 
         elif norm in bilinear.currents:
             Z_bl_Z_q = stat(
-                val=bl_data[norm]['central'][:],
-                err=bl_data[norm]['errors'][:],
-                btsp=bl_data[norm]['bootstrap'][:]
+                val=data[key][norm]['central'][:],
+                err=data[key][norm]['errors'][:],
+                btsp=data[key][norm]['bootstrap'][:]
             )
-            self.Z = stat(
+            Z = stat(
                 val=[Z_ij_Z_q_2.val[m, :, :]*(Z_bl_Z_q.val[m]**(-2))
                      for m in range(self.N_mom)],
                 err='fill',
@@ -397,6 +543,10 @@ class Z_analysis:
                                for m in range(self.N_mom)]
                                for k in range(N_boot)])
             )
+            if not pass_val:
+                self.Z = Z
+            else:
+                return Z
         else:
             print('Normalisation not recognised!')
 

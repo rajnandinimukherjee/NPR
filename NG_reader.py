@@ -130,13 +130,18 @@ for ens in data_ensembles:
     Z_bl[ens]['Z'] = {c:[ens_dict[m][c] for m in momenta]
             for c in ['S','P','V','A']}
 
-bl_qslash_filename = 'bilinear_Z_qslash.h5'
-bl_file = h5py.File(bl_qslash_filename, 'a')
+action = (0,0)
+a1, a2 = action
 for ens in data_ensembles:
-    grp_name = f'{str((0,0))}/{ens}/{str((am_dict[ens], am_dict[ens]))}'
-    if grp_name in bl_file.keys():
-        del bl_file[grp_name]
-    grp = bl_file.create_group(grp_name)
+    filename = f'NPR/action{a1}_action{a2}/'
+    filename += '__'.join(['NPR', ens, params[ens]['baseactions'][a1],
+                           params[ens]['baseactions'][a2], 'qslash'])
+    filename += '.h5'
+    file = h5py.File(filename, 'a')
+    grp_name = f'{str((am_dict[ens], am_dict[ens]))}/bilinear'
+    if grp_name in file.keys():
+        del file[grp_name]
+    grp = file.create_group(grp_name)
     ap = grp.create_dataset('ap', data=Z_bl[ens]['ap'])
     for c in ['S','P','V','A']:
         c_grp = grp.create_group(c)
@@ -145,15 +150,10 @@ for ens in data_ensembles:
         errors = c_grp.create_dataset('errors', data=Z.err)
         btsp = c_grp.create_dataset('bootstrap', data=Z.btsp)
 
-# STEP 3: Remove division by Z_A on Z_ij_Z_A_2 and save to file
-
-fq_qslash_filename = 'fourquark_Z_qslash.h5'
-fq_file = h5py.File(fq_qslash_filename, 'a')
-for ens in data_ensembles:
-    grp_name = f'{str((0,0))}/{ens}/{str((am_dict[ens], am_dict[ens]))}'
-    if grp_name in fq_file.keys():
-        del fq_file[grp_name]
-    grp = fq_file.create_group(grp_name)
+    grp_name = f'{str((am_dict[ens], am_dict[ens]))}/fourquark'
+    if grp_name in file.keys():
+        del file[grp_name]
+    grp = file.create_group(grp_name)
     ap = grp.create_dataset('ap', data=Z_ij_Z_A_2[ens]['ap'])
 
     Z_ij_A = join_stats(Z_ij_Z_A_2[ens]['Z'])
@@ -168,3 +168,4 @@ for ens in data_ensembles:
     central = grp.create_dataset('central', data=Z.val)
     errors = grp.create_dataset('errors', data=Z.err)
     btsp = grp.create_dataset('bootstrap', data=Z.btsp)
+
