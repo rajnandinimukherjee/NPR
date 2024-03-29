@@ -226,14 +226,6 @@ class Z_analysis:
 
         self.Z = extrap_Z
 
-
-
-
-
-
-
-        
-
     def interpolate(self, m, xaxis='mu', ainv=None,
                     plot=False, fittype='linear',
                     filename='plots/Z_scaling.pdf',

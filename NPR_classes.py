@@ -71,17 +71,25 @@ class bilinear_analysis:
             self.Z[action][(m1, m2)] = np.array(
                 [results[mom] for mom in self.momenta[action][(m1, m2)]])
 
-    def save_NPR(self, filename, **kwargs):
-        f = h5py.File(filename, 'a')
+    def save_NPR(self, filename_add='', **kwargs):
         for action in self.Z.keys():
             for masses in self.Z[action].keys():
                 if len(self.Z[action][masses])==0:
                     continue
                 else:
-                    if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
-                        del f[str(action)][self.ens][str(masses)]
-                    m_grp = f.create_group(
-                        str(action)+'/'+self.ens+'/'+str(masses))
+                    a1, a2 = action
+                    filename = f'NPR/action{a1}_action{a2}/'
+                    filename += '__'.join(['NPR', self.ens,
+                        params[self.ens]['baseactions'][a1],
+                        params[self.ens]['baseactions'][a2],
+                        self.scheme])
+                    filename += filename_add
+                    filename += '.h5'
+                    f = h5py.File(filename, 'a')
+
+                    if str(masses)+'/bilinear' in f.keys():
+                        del f[f'{str(masses)}/bilinear']
+                    m_grp = f.create_group(f'{str(masses)}/bilinear')
                     mom = m_grp.create_dataset(
                         'ap', data=self.momenta[action][masses])
                     for current in self.Z[action][masses][0].keys():
@@ -98,7 +106,7 @@ class bilinear_analysis:
                         err = c_grp.create_dataset('errors', data=Zs.err)
                         btsp = c_grp.create_dataset('bootstrap', data=Zs.btsp)
 
-        print(f'Saved {self.ens} bilinear NPR results to {filename}')
+        print(f'Saved {self.ens} bilinear NPR results.')
 
     def NPR_all(self, massive=False, save=True, renorm='mSMOM', **kwargs):
         if massive:
@@ -108,7 +116,7 @@ class bilinear_analysis:
                      massive=massive, renorm=renorm)
             for mass in self.non_sea_masses:
                 self.NPR((mass, mass), massive=massive, renorm=renorm)
-            filename = f'bilinear_Z_qslash_{renorm}.h5'
+            filename_add = f'_{renorm}'
         else:
             N_a = len(self.actions)
             for a1, a2 in itertools.product(range(N_a), range(N_a)):
@@ -117,10 +125,10 @@ class bilinear_analysis:
                 self.NPR((self.sea_mass, self.sea_mass), action=(a1, a2))
             if N_a == 2:
                 self.merge_mixed()
-            filename = 'bilinear_Z_gamma.h5'
+            filename_add = ''
 
         if save:
-            self.save_NPR(filename)
+            self.save_NPR(filename_add=filename_add)
 
     def merge_mixed(self, **kwargs):
         mass_combinations = self.momenta[(0, 1)].keys()
@@ -199,17 +207,26 @@ class fourquark_analysis:
                 self.Z[action][masses] = np.array(
                     [results[mom] for mom in self.momenta[action][masses]])
 
-    def save_NPR(self, filename='fourquark_Z_gamma.h5', **kwargs):
-        f = h5py.File(filename, 'a')
+    def save_NPR(self, filename_add='', **kwargs):
         for action in self.Z.keys():
             for masses in self.Z[action].keys():
                 if len(self.Z[action][masses])==0:
                     continue
                 else:
-                    if str(action)+'/'+self.ens+'/'+str(masses) in f.keys():
-                        del f[str(action)][self.ens][str(masses)]
-                    m_grp = f.create_group(
-                        str(action)+'/'+self.ens+'/'+str(masses))
+                    a1, a2 = action
+                    filename = f'NPR/action{a1}_action{a2}/'
+                    filename += '__'.join(['NPR', self.ens,
+                        params[self.ens]['baseactions'][a1],
+                        params[self.ens]['baseactions'][a2],
+                        self.scheme])
+                    filename += filename_add
+                    filename += '.h5'
+                    f = h5py.File(filename, 'a')
+
+                    if str(masses)+'/fourquark' in f.keys():
+                        del f[f'{str(masses)}/fourquark']
+                    m_grp = f.create_group(f'{str(masses)}/fourquark')
+
                     mom = m_grp.create_dataset(
                         'ap', data=self.momenta[action][masses])
                     Zs = stat(
@@ -224,7 +241,7 @@ class fourquark_analysis:
                     err = m_grp.create_dataset('errors', data=Zs.err)
                     btsp = m_grp.create_dataset('bootstrap', data=Zs.btsp)
 
-        print(f'Saved {self.ens} fourquark NPR results to {filename}')
+        print(f'Saved {self.ens} fourquark NPR results.')
 
     def NPR_all(self, save=True, **kwargs):
         N_a = len(self.actions)
