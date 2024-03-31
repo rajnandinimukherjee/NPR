@@ -6,7 +6,8 @@ class bilinear_analysis:
     keys = ['S', 'P', 'V', 'A', 'T', 'm']
     N_boot = N_boot
 
-    def __init__(self, ensemble, mres=False, sea_mass_idx=0, **kwargs):
+    def __init__(self, ensemble, mres=False, sea_mass_idx=0,
+            scheme='gamma', **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
@@ -21,6 +22,7 @@ class bilinear_analysis:
                         i in range(gauge_count)]
         self.all_masses = [self.sea_mass]+self.non_sea_masses
         self.mres = mres
+        self.scheme = scheme
 
         self.momenta, self.Z = {}, {}
 
@@ -149,11 +151,12 @@ class bilinear_analysis:
 class fourquark_analysis:
     N_boot = N_boot
 
-    def __init__(self, ensemble, sea_mass_idx=0, **kwargs):
+    def __init__(self, ensemble, sea_mass_idx=0, scheme='gamma', **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
         self.sea_mass = '{:.4f}'.format(info['masses'][sea_mass_idx])
+        self.scheme = scheme
 
         gauge_count = len(info['baseactions'])
         self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
