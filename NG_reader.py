@@ -10,22 +10,29 @@ fq_qslash_F = np.array([
 
 
 data_ensembles = [
-        #'C0', 'C1M',
-        'C1', 'C2',
-        #'M0', 'M1M',
-        'M1', 'M2', 'M3']
-        #'F1M']
+        'C0',
+        'C1M',
+        'C1', 
+        'C2',
+        'M0',
+        'M1M',
+        'M1',
+        'M2',
+        'M3',
+        'F1M'
+        ]
 sea_mass_dict = {
-        'C0':0,
-        'C1':1,
-        'C1M':3,
-        'C2':1,
-        'M0':0,
-        'M1':1,
-        'M1M':3,
-        'M2':1,
-        'M3':1,
-        'F1M':1}
+        'C0': 0,        #[0]
+        'C1': 2,        #[0,1,2]
+        'C1M':3,        #[1,2,3]
+        'C2': 1,        #[0,1]
+        'M0': 0,        #[0]
+        'M1': 2,        #[0,1,2]
+        'M1M':3,        #[1,2,3]
+        'M2': 2,        #[0,1,2]
+        'M3': 2,        #[0,1,2]
+        'F1M':2,        #[0,1,2]
+        }
 
 am_dict = {ens:"{:.4f}".format(params[ens]['masses'][sea_mass_dict[ens]])
         for ens in data_ensembles}
@@ -137,11 +144,14 @@ for ens in data_ensembles:
     filename += '__'.join(['NPR', ens, params[ens]['baseactions'][a1],
                            params[ens]['baseactions'][a2], 'qslash'])
     filename += '.h5'
-    file = h5py.File(filename, 'a')
+    try:
+        datafile = h5py.File(filename, 'a')
+    except OSError:
+        pdb.set_trace()
     grp_name = f'{str((am_dict[ens], am_dict[ens]))}/bilinear'
-    if grp_name in file.keys():
-        del file[grp_name]
-    grp = file.create_group(grp_name)
+    if grp_name in datafile.keys():
+        del datafile[grp_name]
+    grp = datafile.create_group(grp_name)
     ap = grp.create_dataset('ap', data=Z_bl[ens]['ap'])
     for c in ['S','P','V','A']:
         c_grp = grp.create_group(c)
@@ -151,9 +161,9 @@ for ens in data_ensembles:
         btsp = c_grp.create_dataset('bootstrap', data=Z.btsp)
 
     grp_name = f'{str((am_dict[ens], am_dict[ens]))}/fourquark'
-    if grp_name in file.keys():
-        del file[grp_name]
-    grp = file.create_group(grp_name)
+    if grp_name in datafile.keys():
+        del datafile[grp_name]
+    grp = datafile.create_group(grp_name)
     ap = grp.create_dataset('ap', data=Z_ij_Z_A_2[ens]['ap'])
 
     Z_ij_A = join_stats(Z_ij_Z_A_2[ens]['Z'])
