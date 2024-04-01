@@ -46,7 +46,7 @@ class Z_analysis:
     def __init__(self, ensemble, action=(0, 0),
                  norm='V', mask=fq_mask.copy(),
                  scheme='gamma', sea_mass_idx=0, 
-                 **kwargs):
+                 run_extrap=False, **kwargs):
         self.ens = ensemble
         self.action = action
         self.scheme = scheme
@@ -88,28 +88,112 @@ class Z_analysis:
         if norm == '11':
             self.mask[0, 0] = False
 
-        if sea_mass_idx == 'extrap' and self.ens[-1]!='0':
-            self.valence_extrapolation(**kwargs)
-            self.sea_m = "{:.4f}".format(0.0)
-            self.masses = (self.sea_m, self.sea_m)
+        if sea_mass_idx == 'extrap':
+            if scheme=='qslash' and self.ens=='F1M':
+                #print(f'Did not have {self.scheme} data to extrapolate {self.ens}')
+                self.sea_m = "{:.4f}".format(params[self.ens]['masses'][3])
+                self.masses = (self.sea_m, self.sea_m)
+                self.load_fq_Z(norm=self.norm, **kwargs)
+            else:
+                filename = f'Z_ij_{self.norm}_amq_0_{self.scheme}.h5'
+                if self.ens[-1]!='0':
+                    if run_extrap:
+                        self.valence_extrapolation(**kwargs)
+                    else:
+                        self.load_extrap(filename, **kwargs)
+                else:
+                    self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
+                    self.masses = (self.sea_m, self.sea_m)
+                    self.load_fq_Z(norm=self.norm, **kwargs)
+
+                    am_q = eval(self.sea_m)
+                    alt_ens = self.ens[0]+'1M'
+                    alt_ens = Z_analysis(
+                            alt_ens, action=self.action, scheme=self.scheme,
+                            norm=self.norm, mask=self.mask, sea_mass_idx='extrap',
+                            run_extrap=run_extrap, **kwargs)
+                    self.slopes = alt_ens.slopes
+                    self.am = alt_ens.am
+                    self.N_mom = len(self.am.val)
+                    extrap_Z = [self.Z[mom] - self.slopes[mom]*am_q
+                                for mom in range(self.N_mom)]
+                    self.Z = join_stats(extrap_Z)
+                    #print(f'Using {alt_ens.ens} valence extrapolation slope '+\
+                    #f'to extrpolate {self.ens} data at valence mass {am_q}.')
+
+                self.sea_m = "{:.4f}".format(0.0)
+                self.masses = (self.sea_m, self.sea_m)
+                if 'save_extrap' in kwargs:
+                    self.save_extrap(filename, **kwargs)
+
         else:
             self.sea_m = "{:.4f}".format(params[self.ens]['masses'][sea_mass_idx])
             self.masses = (self.sea_m, self.sea_m)
             self.load_fq_Z(norm=self.norm, **kwargs)
 
+    def save_extrap(self, filename, **kwargs):
+        file = h5py.File(filename, 'a')
+        if self.ens in file:
+            del file[self.ens]
+
+        ens_grp = file.create_group(self.ens)
+
+        ens_grp.create_dataset('ap', data=self.am.val)
+        ens_grp.create_dataset('Z/central', data=self.Z.val)
+        ens_grp.create_dataset('Z/errors', data=self.Z.err)
+        ens_grp.create_dataset('Z/bootstrap', data=self.Z.btsp)
+        ens_grp.create_dataset('slope/central', data=self.slopes.val)
+        ens_grp.create_dataset('slope/errors', data=self.slopes.err)
+        ens_grp.create_dataset('slope/bootstrap',
+                               data=self.slopes.btsp)
+
+        file.close()
+        #print(f'Saved valence extrapolated Z factors for '+\
+        #        f'{self.ens} to {filename}.')
+
+    def load_extrap(self, filename, **kwargs):
+        #print(f'Loading valence extrap data for {self.ens} from {filename}.')
+        file = h5py.File(filename, 'r')[self.ens]
+        self.am = stat(
+            val=file['ap'][:],
+            err=np.zeros(len(file['ap'][:])),
+            btsp='fill'
+        )
+        self.N_mom = len(self.am.val)
+        self.Z = stat(
+                val=np.array(file['Z/central'][:]),
+                err=np.array(file['Z/errors'][:]),
+                btsp=np.array(file['Z/bootstrap'][:])
+                )
+        self.slopes = stat(
+                val=np.array(file['slope/central'][:]),
+                err=np.array(file['slope/errors'][:]),
+                btsp=np.array(file['slope/bootstrap'][:])
+                )
+
     def valence_extrapolation(self, plot_valence_extrap=False,
-                              save_valence_extrap=False, 
                               filename='', **kwargs):
+
         am_l = "{:.4f}".format(params[self.ens]['aml_sea'])
         am_l_twice = "{:.4f}".format(params[self.ens]['aml_sea']*2)
         am_s_half = "{:.4f}".format(params[self.ens]['ams_sea']/2)
 
         order_am = [am_l, am_l_twice, am_s_half]
         names_am = [r'$am_l$', r'$2am_l$', r'$am_s/2$']
+        #print(f'Using valence masses {str(order_am)}'+\
+        #        f' to extrapolate {self.ens} Z-factors')
 
         val_am = list(sorted(set(order_am)))
-        Zs = join_stats([self.load_fq_Z(masses=(m, m), pass_val=True, **kwargs)
-                         for m in val_am])
+        try:
+            Zs = join_stats([self.load_fq_Z(
+                masses=(m, m), norm=self.norm, pass_val=True, **kwargs)
+                             for m in val_am])
+        except ValueError:
+            Z_list = [self.load_fq_Z(masses=(m, m), norm=self.norm,
+                                     pass_val=True, **kwargs)
+                             for m in val_am]
+            
+            pdb.set_trace()
         if order_am==val_am:
             ordered_names = names_am
         else:
@@ -131,9 +215,14 @@ class Z_analysis:
                 btsp='fill'
                 )
         extrap_Z = []
+        slopes = []
         for mom_idx, mom in enumerate(self.am.val):
             Z_vals = np.zeros(shape=(self.N_ops, self.N_ops))
             Z_btsp = np.zeros(shape=(N_boot, self.N_ops, self.N_ops))
+
+            Z_slope_vals = np.zeros(shape=(self.N_ops, self.N_ops))
+            Z_slope_btsp = np.zeros(shape=(N_boot, self.N_ops, self.N_ops))
+
             if plot_valence_extrap:
                 fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
                                        figsize=(16,16))
@@ -146,8 +235,12 @@ class Z_analysis:
                             btsp=Zs.btsp[:,:,mom_idx,i,j]
                             )
                     res = fit_func(x, y, valence_extrap_ansatz, [1,1e-1])
+
                     Z_vals[i,j] = res[0].val
                     Z_btsp[:,i,j] = res[0].btsp
+
+                    Z_slope_vals[i,j] = res[1].val
+                    Z_slope_btsp[:,i,j] = res[1].btsp
 
                     if plot_valence_extrap:
                         ax[i,j].errorbar(x.val, y.val, yerr=y.err,
@@ -186,11 +279,18 @@ class Z_analysis:
                 err='fill',
                 btsp=Z_btsp
                 ))
+            slopes.append(stat(
+                val=Z_slope_vals,
+                err='fill',
+                btsp=Z_slope_btsp
+                ))
+
             if plot_valence_extrap:
                 plt.suptitle(f'Extrapolation in valence quark mass for ap = {mom}',
                              y=0.9)
 
-        extrap_Z = join_stats(extrap_Z)
+        self.Z = join_stats(extrap_Z)
+        self.slopes = join_stats(slopes)
 
         if plot_valence_extrap:
             x = self.ainv*self.am
@@ -205,8 +305,8 @@ class Z_analysis:
                                          capsize=4, fmt='o',
                                          label=names_am[mass_idx]+' : '+mass)
 
-                    ax1[i,j].errorbar(x.val, extrap_Z.val[:,i,j],
-                                     yerr=extrap_Z.err[:,i,j],
+                    ax1[i,j].errorbar(x.val, self.Z.val[:,i,j],
+                                     yerr=self.Z.err[:,i,j],
                                      fmt='o', capsize=4, color='k',
                                      label=r'$\lim\,am_q^{\mathrm{val}}\to 0$')
                     ax1[i,j].legend()
@@ -223,8 +323,6 @@ class Z_analysis:
                 filename = f'valence_extrap_{self.ens}.pdf'
 
             call_PDF(filename, open=True)
-
-        self.Z = extrap_Z
 
     def interpolate(self, m, xaxis='mu', ainv=None,
                     plot=False, fittype='linear',

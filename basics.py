@@ -82,7 +82,9 @@ def fit_func(x, y, ansatz, guess,
              start=0, end=None,
              verbose=False,
              correlated=False,
-             pause=False, **kwargs):
+             pause=False, 
+             chi_sq_rescale=False,
+             **kwargs):
 
     if end == None:
         end = len(x.val)
@@ -108,6 +110,7 @@ def fit_func(x, y, ansatz, guess,
 
     chi_sq = LD(res.x).dot(LD(res.x))
     DOF = len(x.val[start:end])-np.count_nonzero(guess)
+    pvalue = gammaincc(DOF/2, chi_sq/2)
 
     res_btsp = np.zeros(shape=(N_boot, len(guess)))
     for k in range(N_boot):
@@ -119,6 +122,12 @@ def fit_func(x, y, ansatz, guess,
         res_btsp[k,] = res_k.x
 
     res = stat(val=res.x, err='fill', btsp=res_btsp)
+    if pvalue < 0.05 and chi_sq_rescale:
+        res = stat(
+                val=res.val,
+                err=res.err*((chi_sq/DOF)**0.2),
+                btsp='fill'
+                )
 
     def mapping(am):
         if not isinstance(am, stat):
@@ -135,7 +144,7 @@ def fit_func(x, y, ansatz, guess,
     res.mapping = mapping
     res.chi_sq = chi_sq
     res.DOF = DOF
-    res.pvalue = gammaincc(DOF/2, chi_sq/2)
+    res.pvalue = pvalue
     res.range = (start, end)
     if pause:
         pdb.set_trace()

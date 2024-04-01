@@ -2,6 +2,7 @@ from cont_chir_extrap import *
 
 mu = 2.0
 expand_str = '_expanded' if expand_err else ''
+chiral_extrap = True
 fit_filename = f'fit_systematics_{str(int(mu*10))}_{fit_file}_{scheme}{expand_str}.p'
 run = bool(int(input('run?(0:False/1:True): ')))
 print(f'Running fit systematics in {scheme} scheme using data from {fit_file}')
@@ -51,7 +52,7 @@ if run:
         filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/new_{fit_file}/bag_fits_B{op_idx+1}_{scheme}{expand_str}_{int(mu*10)}.pdf'
         for fit in record_vals.keys():
             record_vals[fit][f'B{op_idx+1}'] = b.fit_operator(mu, op, rotate=NPR_to_SUSY,
-                                                        chiral_extrap=True, rescale=True, fs=14,
+                                                        chiral_extrap=chiral_extrap, rescale=True, fs=14,
                                                         figsize=(10,3), label='', legend_axis=laxis[op_idx+1],
                                                         filename=filename, **record_vals[fit]['kwargs'])
             del record_vals[fit][f'B{op_idx+1}'].mapping
@@ -62,7 +63,7 @@ if run:
         filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/new_{fit_file}/ratio_fits_R{op_idx+2}_{scheme}{expand_str}_{int(mu*10)}.pdf'
         for fit in record_vals.keys():
             record_vals[fit][f'R{op_idx+2}'] = r.fit_operator(mu, op, rotate=NPR_to_SUSY,
-                                                             chiral_extrap=True, fs=14,
+                                                             chiral_extrap=chiral_extrap, fs=14,
                                                              figsize=(10,3), label='', legend_axis=1,
                                                              filename=filename, **record_vals[fit]['kwargs'])
             del record_vals[fit][f'R{op_idx+2}'].mapping

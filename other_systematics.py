@@ -10,14 +10,19 @@ print(f'Running other systematics in {scheme} scheme using data from {fit_file}'
 
 if run:
     laxis = {1:1, 2:1, 3:1, 4:0, 5:0}
-    record_vals = {'mask_pre_inv':{'kwargs':{'resid_mask':True, 'mask':fq_mask.copy()}},
-                   'mask_post_inv':{'kwargs':{'resid_mask':False, 'mask':fq_mask.copy()}},
+    record_vals = {'mask_pre_inv':{'kwargs':{'resid_mask':True,
+                                             'mask':fq_mask.copy()}},
+                   'mask_post_inv':{'kwargs':{'resid_mask':False,
+                                              'mask':fq_mask.copy(),
+                                              'run_extrap':True}},
                    'no_mask':{'kwargs':{'mask':np.ones((5,5),dtype=bool),
-                                        'resid_mask':False}}}
+                                        'resid_mask':False,
+                                        'run_extrap':True}}}
 
     print('NPR basis')
     record_vals['NPR'] = {}
-    b = bag_fits(bag_ensembles, obj='bag', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
+    b = bag_fits(bag_ensembles, obj='bag', mask=fq_mask.copy(), resid_mask=False,
+                 scheme=scheme, run_extrap=True)
     bags_1 = [b.fit_operator(mu1, op, 
                              ens_list=[k for k in bag_ensembles if k!='C2'],
                              log=True, addnl_terms='del_ms',

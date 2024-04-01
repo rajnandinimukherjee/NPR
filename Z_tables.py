@@ -4,9 +4,15 @@ from cont_chir_extrap import *
 class ens_table:
     N_ops = len(operators)
 
-    def __init__(self, ens, norm='V', sea_mass_idx=0, **kwargs):
+    def __init__(self, ens, norm='V', sea_mass_idx=0, 
+                 action=(0,0), scheme='gamma', **kwargs):
         self.ens = ens
-        self.Z_obj = Z_analysis(self.ens, norm=norm, sea_mass_idx=sea_mass_idx)
+        self.action = action
+        self.scheme = scheme
+        self.norm = norm
+        self.Z_obj = Z_analysis(self.ens, norm=norm, action=action,
+                                sea_mass_idx=sea_mass_idx, 
+                                scheme=scheme, **kwargs)
 
         self.am = self.Z_obj.am.val
         self.Z = self.Z_obj.Z
@@ -15,8 +21,14 @@ class ens_table:
 
         self.sea_m = "{:.4f}".format(params[self.ens]['masses'][sea_mass_idx])
         self.masses = (self.sea_m, self.sea_m)
-        bl_data = h5py.File('bilinear_Z_gamma.h5', 'r')[
-            str((0, 0))][self.ens][str(self.masses)]
+        a1, a2 = self.action
+        datafile = f'NPR/action{a1}_action{a2}/'
+        datafile += '__'.join(['NPR', self.ens,
+                               params[self.ens]['baseactions'][a1],
+                               params[self.ens]['baseactions'][a2],
+                               self.scheme])
+        datafile += '.h5'
+        bl_data = h5py.File(datafile, 'r')[str(self.masses)]['bilinear']
         self.Z_A = stat(
             val=bl_data['A']['central'][:],
             err=bl_data['A']['errors'][:],
@@ -64,7 +76,6 @@ class ens_table:
                        r'$ & $'.join(ratio_disp)+r'$ \\']
                 rv += [r'\hline']
         else:
-            pdb.set_trace()
             momenta = r' & '.join(
                 [str(np.around(self.am[m], 5)) for m in indices])
             rv += [r'$a\mu$ & '+momenta+r' \\']
@@ -144,7 +155,7 @@ class extrap_table:
         f.close()
         print(f'Z table output written to {filename}.')
 
-    def create_sig_table(self, mu1, mu2, **kwargs):
+    def create_sig_table(self, mu1, mu2, filename=None, **kwargs):
         Z_dict_mu1 = self.sig.Z_fits.Z_assignment(mu1, **kwargs)
         Z_dict_mu2 = self.sig.Z_fits.Z_assignment(mu2, **kwargs)
         sigmas = {e:stat(
@@ -187,13 +198,13 @@ class extrap_table:
         f.close()
         print(f'sigma table output written to {filename}.')
 
-    def print_sigmas(self, mu1, mu2, steps=False, **kwargs):
+    def print_sigmas(self, mu1, mu2, steps=False, stepsize=0.2, **kwargs):
 
 
         if not steps:
             sig = self.sig.calc_running(mu1, mu2, **kwargs)
         else:
-            mus = np.arange(mu1, mu2+0.1, 0.2)
+            mus = np.arange(mu1, mu2+0.1, stepsize)
             sig = stat(val=np.eye(5), btsp='fill')
             for m in range(1,len(mus)):
                 sig = self.sig.calc_running(mus[m-1], mus[m], **kwargs)@sig
@@ -204,7 +215,8 @@ class extrap_table:
                                for i in range(5)])+r' \\']
 
         rv += [r'\end{bmatrix}']
-        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables/sigma_matrix_{self.norm}_{steps}.tex'
+        filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/'+\
+                f'tables_{fit_file}/sigma_matrix_{self.norm}_{steps}.tex'
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()

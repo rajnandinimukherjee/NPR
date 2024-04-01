@@ -67,7 +67,9 @@ def chiral_continuum_ansatz(params, a_sq, m_f_sq, PDG, operator,
 class Z_fits:
     N_ops = len(operators)
 
-    def __init__(self, ens_list, norm='V', mask=fq_mask.copy(), **kwargs):
+    def __init__(self, ens_list, norm='V',
+                 mask=fq_mask.copy(),
+                 run_extrap=False, **kwargs):
         self.ens_list = ens_list
         self.norm = norm
         self.mask = mask
@@ -76,7 +78,9 @@ class Z_fits:
             self.mask[0, 0] = False
 
         self.Z_dict = {e: Z_analysis(e, norm=self.norm, mask=self.mask, 
-                                     sea_mass_idx=1 if (e in CS+MS or e=='F1M') else 0, 
+                                     sea_mass_idx='extrap',
+                                     #sea_mass_idx=3 if e=='F1M' else 'extrap',
+                                     run_extrap=run_extrap, 
                                      **kwargs)
                        for e in bag_ensembles+['C1M', 'M1M']}
 
@@ -107,10 +111,14 @@ class Z_fits:
             extrap_assign = {}
             for fittype in ['linear', 'quadratic']:
                 extrap_assign[fittype] = {}
-                CS_extrap, CS_fit_params = self.Z_chiral_extrap(CS, mu, fittype=fittype, **kwargs)
-                CM_extrap, CM_fit_params = self.Z_chiral_extrap(CM, mu, fittype=fittype, **kwargs)
-                MS_extrap, MS_fit_params = self.Z_chiral_extrap(MS, mu, fittype=fittype, **kwargs)
-                MM_extrap, MM_fit_params = self.Z_chiral_extrap(MM, mu, fittype=fittype, **kwargs)
+                CS_extrap, CS_fit_params = self.Z_chiral_extrap(
+                        CS, mu, fittype=fittype, **kwargs)
+                CM_extrap, CM_fit_params = self.Z_chiral_extrap(
+                        CM, mu, fittype=fittype, **kwargs)
+                MS_extrap, MS_fit_params = self.Z_chiral_extrap(
+                        MS, mu, fittype=fittype, **kwargs)
+                MM_extrap, MM_fit_params = self.Z_chiral_extrap(
+                        MM, mu, fittype=fittype, **kwargs)
 
                 for ens in self.ens_list:
                     m_pi = self.Z_dict[ens].m_pi
@@ -354,7 +362,8 @@ class sigma:
         self.Z_fits = Z_fits(bag_ensembles, norm=self.norm, mask=mask, **kwargs)
 
     def calc_running(self, mu1, mu2, plot=False, include_C=True,
-                     filename='plots/Z_running.pdf', **kwargs):
+                     filename='plots/Z_running.pdf',
+                     chi_sq_rescale=False, **kwargs):
         if not include_C:
             ens_list = self.relevant_ensembles[2:]
         else:
@@ -387,7 +396,9 @@ class sigma:
                                    for k in range(N_boot)])
                 )
 
-                res = fit_func(x, y, ansatz, [1, 1e-1], **kwargs)
+                res = fit_func(x, y, ansatz, [1, 1e-1],
+                               chi_sq_rescale=chi_sq_rescale,
+                               **kwargs)
                 param_save[:, i, j] = res.val
                 param_save_btsp[:, :, i, j] = res.btsp
                 extrap[i, j] = res.mapping(0.0)
