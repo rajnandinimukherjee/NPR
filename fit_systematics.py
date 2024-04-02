@@ -96,11 +96,14 @@ rv += [r'\hline']
 
 def pval_color(pval):
     if pval<0.03:
-        return 'red'
+        #return 'red'
+        return 'black'
     elif pval>0.03 and pval<0.05:
-        return 'orange'
+        #return 'orange'
+        return 'black'
     else:
-        return 'ForestGreen'
+        #return 'ForestGreen'
+        return 'black'
 
 for key in quantities.keys():
     name = quantities[key]

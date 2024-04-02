@@ -156,28 +156,33 @@ for scheme in MS_bar_results.keys():
             gamma_central = MS_bar_results['gamma'][key]['central'].val
             qslash_central = MS_bar_results['qslash'][key]['central'].val
             central = (gamma_central+qslash_central)/2
-            stat_err = np.max([MS_bar_results[scheme][key]['central'].err
-                               for scheme in ['gamma','qslash']])
+            stat_err = MS_bar_results['gamma'][key]['central'].err
+            #stat_err = np.max([MS_bar_results[scheme][key]['central'].err
+            #                   for scheme in ['gamma','qslash']])
             stat_err_perc = np.abs(stat_err/central)*100
             stat_err_str = '{0:.2f}'.format(stat_err_perc)+r'\%'
 
-            chiral_err = np.max([MS_bar_results[scheme][key]['chiral'].err
-                               for scheme in ['gamma','qslash']])
+            chiral_err = MS_bar_results['gamma'][key]['chiral'].err
+            #chiral_err = np.max([MS_bar_results[scheme][key]['chiral'].err
+            #                   for scheme in ['gamma','qslash']])
             chiral_err_perc = np.abs(chiral_err/central)*100
             chiral_err_str = '{0:.2f}'.format(chiral_err_perc)+r'\%'
 
-            rcsb_err = np.max([MS_bar_results[scheme][key]['rcsb'].err
-                               for scheme in ['gamma','qslash']])
+            rcsb_err = MS_bar_results['gamma'][key]['rcsb'].err
+            #rcsb_err = np.max([MS_bar_results[scheme][key]['rcsb'].err
+            #                   for scheme in ['gamma','qslash']])
             rcsb_err_perc = np.abs(rcsb_err/central)*100
             rcsb_err_str = '{0:.2f}'.format(rcsb_err_perc)+r'\%'
 
-            discr_err = np.max([MS_bar_results[scheme][key]['discr'].err
-                                for scheme in ['gamma','qslash']])
+            discr_err = MS_bar_results['gamma'][key]['discr'].err
+            #discr_err = np.max([MS_bar_results[scheme][key]['discr'].err
+            #                    for scheme in ['gamma','qslash']])
             discr_err_perc = np.abs(discr_err/central)*100
             discr_err_str = '{0:.2f}'.format(discr_err_perc)+r'\%'
 
-            NPR_err = np.max([MS_bar_results[scheme][key]['basis'].err
-                             for scheme in ['gamma','qslash']])
+            NPR_err = MS_bar_results['gamma'][key]['basis'].err
+            #NPR_err = np.max([MS_bar_results[scheme][key]['basis'].err
+            #                 for scheme in ['gamma','qslash']])
             NPR_err_perc = np.abs(NPR_err/central)*100
             NPR_err_str = '{0:.2f}'.format(NPR_err_perc)+r'\%'
 
@@ -199,20 +204,22 @@ for scheme in MS_bar_results.keys():
             key_stat.disp = err_disp(key_stat.val, stat_err, 
                                      sys_err=np.abs(total_sys_err))
 
-            total_lat_err = np.abs(((chiral_err_perc**2+rcsb_err_perc**2+\
+            lat_err = np.abs(((chiral_err_perc**2+rcsb_err_perc**2+\
                     discr_err_perc**2+stat_err_perc**2+NPR_err_perc**2)**0.5)*central/100)
-            key_stat.alt_disp = err_disp(key_stat.val, total_lat_err,
+            lat_err_str = '{0:.2f}'.format(np.abs(lat_err/central)*100)+r'\%'
+            key_stat.alt_disp = err_disp(key_stat.val, lat_err,
                                          sys_err=np.abs(PT_err_perc*central/100))
 
             num_digits = int(np.floor(np.abs(np.log10(key_stat.err))))+2
             central_val_str = r'$'+('{0:.%df}'%num_digits).format(central)+r'$'
 
             MS_bar_results[scheme][key]['str'] = {'central':central_val_str,
-                                                  'stat':stat_err_str,
-                                                  'chiral':chiral_err_str,
-                                                  'rcsb':rcsb_err_str,
-                                                  'discr':discr_err_str,
-                                                  'basis':NPR_err_str,
+                                                  #'stat':stat_err_str,
+                                                  #'chiral':chiral_err_str,
+                                                  #'rcsb':rcsb_err_str,
+                                                  #'discr':discr_err_str,
+                                                  #'basis':NPR_err_str,
+                                                  'lattice': lat_err_str,
                                                   'PT': PT_err_str,
                                                   'total':total_err_str}
             MS_bar_results[scheme][key]['store'] = key_stat
@@ -240,7 +247,7 @@ rv += [r'\multirow{6}{*}{'+MS_bar_results['combined']['name']+r'} & central & '+
         ' & '.join([MS_bar_results['combined'][key]['str']['central']
                     for key in list(quantities.keys())])+r' \\']
 rv += [r'\cline{2-11}']
-for err in ['stat', 'chiral', 'rcsb', 'discr', 'basis', 'PT', 'total']:
+for err in ['lattice', 'PT', 'total']:
     rv += [r' & '+err+r' & '+' & '.join([MS_bar_results['combined'][key]['str'][err]
                                          for key in list(quantities.keys())])+r' \\']
     if err=='PT':
@@ -310,10 +317,10 @@ x = stat(val=np.arange(2,6), err=np.zeros(4), btsp='fill')
 y = join_stats(NB_R)
 res = fit_func(x,y,constant_ansatz,guess=[0.5,0],
                correlated=True, start=0,end=4)
-ax.axhspan(res.val[0]+res.err[0],
-           res.val[0]-res.err[0],
-           color='r', alpha=0.2)
-ax.axhline(res.val[0], color='r', label=err_disp(res.val[0], res.err[0]))
+#ax.axhspan(res.val[0]+res.err[0],
+#           res.val[0]-res.err[0],
+#           color='r', alpha=0.2)
+#ax.axhline(res.val[0], color='r', label=err_disp(res.val[0], res.err[0]))
 
 ax.errorbar(np.arange(2,6),
             [k.val for k in NB_R],
@@ -322,7 +329,7 @@ ax.errorbar(np.arange(2,6),
 ax.set_ylabel(r'$N_i\mathcal{B}_i^{\mathrm{RI}}/R_i^{\mathrm{RI}}$', size=16)
 ax.set_xlabel(r'$i$', size=16)
 ax.set_xticks([2,3,4,5])
-ax.legend()
+#ax.legend()
 
 N1 = norm_factors()[0]
 B1 = RISMOM_results['gamma']['B1']['total']

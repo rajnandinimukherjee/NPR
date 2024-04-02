@@ -154,10 +154,10 @@ x = stat(val=np.arange(2,6), err=np.zeros(4), btsp='fill')
 y = join_stats(NB_R)
 res = fit_func(x,y,constant_ansatz,guess=[0.5,0],
                correlated=True, start=0,end=4)
-ax.axhspan(res.val[0]+res.err[0],
-           res.val[0]-res.err[0],
-           color='r', alpha=0.1)
-ax.axhline(res.val[0], color='r', label=err_disp(res.val[0], res.err[0]))
+#ax.axhspan(res.val[0]+res.err[0],
+#           res.val[0]-res.err[0],
+#           color='r', alpha=0.1)
+#ax.axhline(res.val[0], color='r', label=err_disp(res.val[0], res.err[0]))
 mass_sum_pred = (res[0]*(m_K**2)/(B1*N1))**0.5
 print(f'(m_s+m_d) in MS-bar: {err_disp(mass_sum_pred.val, mass_sum_pred.err)}')
 
@@ -169,9 +169,8 @@ ax.axhspan(const.val+const.err,
 ax.errorbar(np.arange(2,6),
             [k.val for k in NB_R],
             yerr=[k.err for k in NB_R],
-            fmt='o', capsize=4, c='k',
-            label='This Work')
-ax.legend()
+            fmt='o', capsize=4, c='k')
+ax.legend(frameon=False)
 ax.set_xticks([2,3,4,5])
 ax.set_ylabel(r'$N_i\mathcal{B}_i^{\overline{\mathrm{MS}}}/R_i^{\overline{\mathrm{MS}}}$', size=16)
 ax.set_xlabel(r'$i$', size=16)
@@ -190,7 +189,7 @@ fit_dicts = [ETM12, ETM15, SWME15, UKQCD16, UKQCD24]
 num_fits = len(fit_dicts)
 for idx in range(4):
     ax[idx].set_title(r'$\mathcal{B}_{'+str(idx+2)+r'}$', fontsize=14)
-    j = 1
+    j = 2
     ax[idx].axvspan(FLAG21[f'B{idx+2}'].val-FLAG21[f'B{idx+2}'].err,
                       FLAG21[f'B{idx+2}'].val+FLAG21[f'B{idx+2}'].err,
                       color='k', alpha=0.1, label=r'FLAG21 $N_f=2+1$')
@@ -199,15 +198,15 @@ for idx in range(4):
                            xerr=[fitter[f'B{idx+2}'].err],
                            fmt=fitter['marker'], capsize=4, label=fitter['name'])
         j += 1
-    ax[idx].set_ylim([0,num_fits+1])
+    ax[idx].set_ylim([0,num_fits+2])
     ax[idx].set_yticks([])
 
 handles, labels = ax[-1].get_legend_handles_labels()
 fig.legend(reversed(handles), reversed(labels), loc='center right', 
-           bbox_to_anchor=(1.1,0.427), labelspacing=2.8, frameon=False)
+           bbox_to_anchor=(1.1,0.49), labelspacing=2.25, frameon=False)
 
 filename = '/Users/rajnandinimukherjee/Desktop/draft_plots/summary_plots/comparison_plot.pdf'
-call_PDF(filename, open=False)
+call_PDF(filename, open=True)
 
 #==================================================================================================
 # plot B_K

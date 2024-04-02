@@ -118,7 +118,7 @@ quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 rv = [r'\begin{tabular}{c|c|c|c|c|c|c}']
 rv += [r'\hline']
 rv += [r'\hline']
-rv += [r' & $\sigma(3\,\mathrm{GeV},3\,\mathrm{GeV})$ & $\sigma('+\
+rv += [r' & $\sigma(3\,\mathrm{GeV},2\,\mathrm{GeV})$ & $\sigma('+\
         r'3\,\mathrm{GeV}\xleftarrow{\Delta=0.5}2\,\mathrm{GeV})$'+\
         r' & $\sigma(3\,\mathrm{GeV}\xleftarrow{\Delta=0.33}2\,\mathrm{GeV})$'+\
         ' & NPR at 3 GeV '+\
@@ -130,11 +130,14 @@ rv += [r'\hline']
 
 def pval_color(pval):
     if pval<0.03:
-        return 'red'
+        #return 'red'
+        return 'black'
     elif pval>0.03 and pval<0.05:
-        return 'orange'
+        #return 'orange'
+        return 'black'
     else:
-        return 'ForestGreen'
+        #return 'ForestGreen'
+        return 'black'
 
 
 mu1, mu2 = 2.0, 3.0
