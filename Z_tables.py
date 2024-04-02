@@ -198,16 +198,13 @@ class extrap_table:
         f.close()
         print(f'sigma table output written to {filename}.')
 
-    def print_sigmas(self, mu1, mu2, steps=False, stepsize=0.2, **kwargs):
-
-
-        if not steps:
-            sig = self.sig.calc_running(mu1, mu2, **kwargs)
-        else:
-            mus = np.arange(mu1, mu2+0.1, stepsize)
-            sig = stat(val=np.eye(5), btsp='fill')
-            for m in range(1,len(mus)):
-                sig = self.sig.calc_running(mus[m-1], mus[m], **kwargs)@sig
+    def print_sigmas(self, mu1, mu2, stepsize=1.0, **kwargs):
+        mus = np.arange(mu1, mu2+0.1, stepsize)
+        sig = stat(val=np.eye(5), btsp='fill')
+        for m in range(1,len(mus)):
+            sig = self.sig.calc_running(mus[m-1], mus[m], 
+                                        chi_sq_rescale=True, 
+                                        **kwargs)@sig
 
         rv = [r'\begin{bmatrix}']
         for j in range(5):
@@ -216,7 +213,7 @@ class extrap_table:
 
         rv += [r'\end{bmatrix}']
         filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/'+\
-                f'tables_{fit_file}/sigma_matrix_{self.norm}_{steps}.tex'
+                f'tables_{fit_file}/sigma_matrix_{self.norm}_{np.around(stepsize,2)}.tex'
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()

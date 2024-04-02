@@ -362,7 +362,7 @@ class sigma:
         self.Z_fits = Z_fits(bag_ensembles, norm=self.norm, mask=mask, **kwargs)
 
     def calc_running(self, mu1, mu2, plot=False, include_C=True,
-                     filename='plots/Z_running.pdf',
+                     filename='plots/Z_running.pdf', separate=False,
                      chi_sq_rescale=False, **kwargs):
         if not include_C:
             ens_list = self.relevant_ensembles[2:]
@@ -387,6 +387,7 @@ class sigma:
         param_save = np.zeros(shape=(2, self.N_ops, self.N_ops))
         param_save_btsp = np.zeros(shape=(N_boot, 2, self.N_ops, self.N_ops))
         GOF = np.zeros(shape=(self.N_ops, self.N_ops), dtype=object)
+        rescaling = np.zeros(shape=(self.N_ops, self.N_ops), dtype=object)
         for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
             if self.mask[i, j]:
                 y = stat(
@@ -403,6 +404,7 @@ class sigma:
                 param_save_btsp[:, :, i, j] = res.btsp
                 extrap[i, j] = res.mapping(0.0)
                 GOF[i, j] = str(np.around(res.pvalue, 3))
+                rescaling[i, j] = str(np.around((res.chi_sq/res.DOF)**0.5, 3))
             else:
                 if i==0 and j==0:
                     extrap[i, j] = stat(val=1, btsp='fill')
@@ -437,45 +439,90 @@ class sigma:
             return sig_map
 
         if plot:
-            fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
-                                   figsize=(16, 16))
-            plt.subplots_adjust(hspace=0, wspace=0)
-            for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
-                if self.mask[i, j]:
-                    y = stat(
-                        val=sigmas.val[:, i, j],
-                        err=sigmas.err[:, i, j],
-                        btsp=np.array([sigmas.btsp[k, :, i, j]
-                                       for k in range(N_boot)])
-                    )
-                    ax[i, j].errorbar(x.val, y.val,
-                                      yerr=y.err,
-                                      xerr=x.err, fmt='o',
-                                      capsize=4)
-                    xmin, xmax = ax[i, j].get_xlim()
-                    asq_grain = np.linspace(0.0, xmax, 50)
-                    y_grain = mapping(i, j, asq_grain)
-                    ax[i, j].fill_between(asq_grain,
-                                          (y_grain.val-y_grain.err),
-                                          (y_grain.val+y_grain.err),
-                                          alpha=0.1, color='k')
-                    ax[i, j].axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
-                    ax[i, j].errorbar([0.0], extrap.val[i, j],
-                                      yerr=extrap.err[i, j],
-                                      color='0.1', fmt='o', capsize=4)
-                    ax[i, j].text(0.5, 0.1, r'$p$-val:'+GOF[i, j]+r'',
-                                  va='center', ha='center',
-                                  transform=ax[i, j].transAxes)
-                    if j == 2 or j == 4:
-                        ax[i, j].yaxis.tick_right()
+            if not separate:
+                fig, ax = plt.subplots(nrows=self.N_ops, ncols=self.N_ops,
+                                       figsize=(16, 16))
+                plt.subplots_adjust(hspace=0, wspace=0)
+                for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
+                    if self.mask[i, j]:
+                        y = stat(
+                            val=sigmas.val[:, i, j],
+                            err=sigmas.err[:, i, j],
+                            btsp=np.array([sigmas.btsp[k, :, i, j]
+                                           for k in range(N_boot)])
+                        )
+                        ax[i, j].errorbar(x.val, y.val,
+                                          yerr=y.err,
+                                          xerr=x.err, fmt='o',
+                                          capsize=4)
+                        xmin, xmax = ax[i, j].get_xlim()
+                        asq_grain = np.linspace(0.0, xmax, 50)
+                        y_grain = mapping(i, j, asq_grain)
+                        ax[i, j].fill_between(asq_grain,
+                                              (y_grain.val-y_grain.err),
+                                              (y_grain.val+y_grain.err),
+                                              alpha=0.1, color='k')
+                        ax[i, j].axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
+                        ax[i, j].errorbar([0.0], extrap.val[i, j],
+                                          yerr=extrap.err[i, j],
+                                          color='0.1', fmt='o', capsize=4)
+                        ax[i, j].text(0.5, 0.1, r'$p$-val:'+GOF[i, j]+r'',
+                                      va='center', ha='center',
+                                      transform=ax[i, j].transAxes)
+                        if eval(GOF[i,j])<0.05 and chi_sq_rescale:
+                            ax[i, j].text(0.5, 0.15,
+                                          r'rescaling: '+rescaling[i, j]+r'',
+                                          va='center', ha='center',
+                                          transform=ax[i, j].transAxes)
 
-                    if i == 1 or i == 3:
-                        ax[i, j].set_xticks([])
+                        if j == 2 or j == 4:
+                            ax[i, j].yaxis.tick_right()
 
-                else:
-                    ax[i, j].axis('off')
-            plt.suptitle(r'$\sigma^{'+','.join(ens_list) +
-                         '}_{'+self.norm+r'}('+str(mu1)+','+str(mu2)+r')$ vs $a^2$', y=0.9)
+                        if i == 1 or i == 3:
+                            ax[i, j].set_xticks([])
+
+                    else:
+                        ax[i, j].axis('off')
+                plt.suptitle(r'$\sigma^{'+','.join(ens_list) +
+                             '}_{'+self.norm+r'}('+str(mu1)+','+str(mu2)+r')$ vs $a^2$', y=0.9)
+            else:
+                for i, j in itertools.product(range(self.N_ops), range(self.N_ops)):
+
+                    if self.mask[i, j]:
+                        fig, ax = plt.subplots(figsize=(2.5,2))
+                        y = stat(
+                            val=sigmas.val[:, i, j],
+                            err=sigmas.err[:, i, j],
+                            btsp=np.array([sigmas.btsp[k, :, i, j]
+                                           for k in range(N_boot)])
+                        )
+                        ax.errorbar(x.val, y.val,
+                                    yerr=y.err,
+                                    xerr=x.err, fmt='o',
+                                    capsize=4)
+                        xmin, xmax = ax.get_xlim()
+                        asq_grain = np.linspace(0.0, xmax, 50)
+                        y_grain = mapping(i, j, asq_grain)
+                        ax.fill_between(asq_grain,
+                                        (y_grain.val-y_grain.err),
+                                        (y_grain.val+y_grain.err),
+                                        alpha=0.1, color='k')
+                        ax.axvline(0.0, c='k', linestyle='dashed', alpha=0.1)
+                        ax.errorbar([0.0], extrap.val[i, j],
+                                    yerr=extrap.err[i, j],
+                                    color='0.1', fmt='o', capsize=4)
+                        ax.text(0.03, 0.9, r'$p$-val:'+GOF[i, j]+r'',
+                                va='center', ha='left',
+                                transform=ax.transAxes)
+                        if eval(GOF[i,j])<0.05 and chi_sq_rescale:
+                            ax.text(0.03, 0.82,
+                                    r'rescaling: '+rescaling[i, j]+r'',
+                                    va='center', ha='left',
+                                    transform=ax.transAxes)
+                        ax.set_title(r'$\sigma_{'+str(i+1)+str(j+1)+\
+                                r'}(2\,\mathrm{GeV}, 3\,\mathrm{GeV})$')
+                        ax.set_xlabel(r'$a^2\, [\mathrm{GeV}^2]$')
+
             call_PDF(filename)
 
         return extrap
@@ -491,7 +538,8 @@ class sigma:
         if os.path.isfile(npt_filename):
             npt_scaling = pickle.load(open(npt_filename, 'rb'))
         else:
-            npt_scaling = join_stats([self.calc_running(mu_grain[m_idx], mu2, **kwargs)
+            npt_scaling = join_stats([self.calc_running(
+                mu_grain[m_idx], mu2, **kwargs)
                                      for m_idx in tqdm(range(len(mu_grain)))])
             pickle.dump(npt_scaling, open(npt_filename, 'wb'))
 

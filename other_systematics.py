@@ -28,13 +28,15 @@ if run:
                              log=True, addnl_terms='del_ms',
                              expand_err=expand_err,
                              guess=[1,1e-1,1e-2,1e-2],
-                             chiral_extrap=True, rotate=np.eye(len(b.operators)), plot=False)
+                             chiral_extrap=True,
+                             rotate=np.eye(len(b.operators)),
+                             plot=False)
             for op in b.operators]
 
     pvalues = [bag.pvalue for bag in bags_1]
     bags_1 = join_stats([bag[0] for bag in bags_1])
     s_b = sigma(norm='bag', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
-    sig_b = s_b.calc_running(mu1, mu2, chiral_extrap=True)
+    sig_b = s_b.calc_running(mu1, mu2, chi_sq_rescale=True, chiral_extrap=True)
     bags_2 = sig_b@bags_1
 
     NPR_to_SUSY_stat = stat(val=NPR_to_SUSY, err=np.zeros(shape=NPR_to_SUSY.shape), btsp='fill')
@@ -60,14 +62,16 @@ if run:
                                log=True, addnl_terms='del_ms',
                                expand_err=expand_err,
                                guess=[1,1e-1,1e-2,1e-2],
-                               chiral_extrap=True, rotate=np.eye(5), plot=False)
+                               chiral_extrap=True,
+                               rotate=np.eye(5),
+                               plot=False)
                 for op in r.operators]
 
     pvalues = [rat.pvalue for rat in ratios_1]
     one = stat(val=1, err=0, btsp='fill')
     ratios_1 = join_stats([one]+[rat[0] for rat in ratios_1])
     s_r = sigma(norm='11', mask=fq_mask.copy(), resid_mask=False, scheme=scheme)
-    sig_r = s_r.calc_running(mu1, mu2, chiral_extrap=True)
+    sig_r = s_r.calc_running(mu1, mu2, chi_sq_rescale=True, chiral_extrap=True)
     ratios_2 = sig_r@ratios_1
 
     ratios_1 = NPR_to_SUSY_stat@ratios_1
@@ -86,8 +90,6 @@ if run:
     del r
 
 
-
-
     for fit in list(record_vals.keys())[:-1]:
         print(fit)
         b = bag_fits(bag_ensembles, obj='bag', scheme=scheme, **record_vals[fit]['kwargs'])
@@ -101,7 +103,8 @@ if run:
                 for op in b.operators]
 
         s_b = sigma(norm='bag', scheme=scheme, **record_vals[fit]['kwargs'])
-        sig_b = s_b.calc_running(mu1, mu2, rotate=NPR_to_SUSY, chiral_extrap=True)
+        sig_b = s_b.calc_running(mu1, mu2, rotate=NPR_to_SUSY,
+                                 chiral_extrap=True, chi_sq_rescale=True)
         bags_2 = sig_b@join_stats([bag[0] for bag in bags_1])
 
         N_i = norm_factors(rotate=NPR_to_SUSY) 
@@ -128,7 +131,8 @@ if run:
 
         one = stat(val=1, err=0, btsp='fill')
         s_r = sigma(norm='11', scheme=scheme, **record_vals[fit]['kwargs'])
-        sig_r = s_r.calc_running(mu1, mu2, rotate=NPR_to_SUSY, chiral_extrap=True)
+        sig_r = s_r.calc_running(mu1, mu2, rotate=NPR_to_SUSY,
+                                 chiral_extrap=True, chi_sq_rescale=True)
         ratios_2 = sig_r@join_stats([one]+[rat[0] for rat in ratios_1])
 
         for op_idx in range(len(r.operators)):

@@ -29,7 +29,7 @@ for scheme in errors_dict.keys():
         delta_rcsb = np.abs(((rcsb-central)/((rcsb+central)*0.5)).val*100)
         rcsb_err_str = '{0:.2f}'.format(delta_rcsb)+r'\%'
 
-        discr_fits = [scaling_systematics[fittype][key] for fittype in ['(3)', '(2,3,0.2)']]
+        discr_fits = [scaling_systematics[fittype][key] for fittype in ['(3)', '(2,3,0.5)', '(2,3,0.33)']]
         delta_discrs = [np.abs(((discr_fit-central)/((discr_fit+central)*0.5)).val*100)
                         for discr_fit in discr_fits]
         delta_discr = max(delta_discrs)
@@ -41,7 +41,6 @@ for scheme in errors_dict.keys():
 
         total_err = (central_perc_err**2+delta_chiral**2+\
                 delta_discr**2+delta_rcsb**2+delta_NPR**2)**0.5
-        print(scheme, central.val, key, total_err)
         total_err_str = '{0:.2f}'.format(total_err)+r'\%'
 
         num_digits = int(np.floor(np.abs(
@@ -199,6 +198,12 @@ for scheme in MS_bar_results.keys():
                     )
             key_stat.disp = err_disp(key_stat.val, stat_err, 
                                      sys_err=np.abs(total_sys_err))
+
+            total_lat_err = np.abs(((chiral_err_perc**2+rcsb_err_perc**2+\
+                    discr_err_perc**2+stat_err_perc**2+NPR_err_perc**2)**0.5)*central/100)
+            key_stat.alt_disp = err_disp(key_stat.val, total_lat_err,
+                                         sys_err=np.abs(PT_err_perc*central/100))
+
             num_digits = int(np.floor(np.abs(np.log10(key_stat.err))))+2
             central_val_str = r'$'+('{0:.%df}'%num_digits).format(central)+r'$'
 
@@ -211,6 +216,7 @@ for scheme in MS_bar_results.keys():
                                                   'PT': PT_err_str,
                                                   'total':total_err_str}
             MS_bar_results[scheme][key]['store'] = key_stat
+            print(key, key_stat.alt_disp)
 #========================================================================================================
 # all_systematics.tex
 

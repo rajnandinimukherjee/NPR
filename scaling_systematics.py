@@ -8,7 +8,8 @@ scaling_filename = f'scaling_systematics_{scheme}_{fit_file}{expand_str}.p'
 
 if run:
     s_bag = sigma(norm='bag', scheme=scheme)
-    record_vals = {'(2,3)':{}, '(2,3,0.2)':{}, '(3)':{}}
+    record_vals = {'(2,3)':{}, '(2,3,0.5)':{},
+                   '(2,3,0.33)':{}, '(3)':{}}
 
     b = bag_fits(bag_ensembles, obj='bag', scheme=scheme)
 
@@ -23,21 +24,26 @@ if run:
     pvalues = [bag.pvalue for bag in bags]
     bags = join_stats([bag[0] for bag in bags])
     sig_bag = s_bag.calc_running(2.0, 3.0, chiral_extrap=True,
-                                 rotate=NPR_to_SUSY)
-    steps = np.linspace(2.0,3.0,6)
-    sig_bag_steps = stat(val=np.eye(len(b.operators)),
-                         btsp=[np.eye(len(b.operators))
-                               for k in range(N_boot)])
-    for i in range(len(steps)-1):
-        sig_bag_steps = s_bag.calc_running(steps[i], steps[i+1],
-                                           chiral_extrap=True,
-                                           rotate=NPR_to_SUSY)@sig_bag_steps
-
+                                 rotate=NPR_to_SUSY,
+                                 chi_sq_rescale=True)
     N_i = norm_factors(rotate=NPR_to_SUSY)
     for i in range(len(bags.val)):
         record_vals['(2,3)'][f'B{i+1}'] = (sig_bag@bags)[i]/N_i[i]
         record_vals['(2,3)'][f'B{i+1}'].pvalue = pvalues[i]
-        record_vals['(2,3,0.2)'][f'B{i+1}'] = (sig_bag_steps@bags)[i]/N_i[i]
+
+    for stepsize in [1/3, 0.5]:
+        steps = np.arange(2.0,3.0+0.1,stepsize)
+        sig_bag_steps = stat(val=np.eye(len(b.operators)),
+                             btsp=[np.eye(len(b.operators))
+                                   for k in range(N_boot)])
+        for i in range(len(steps)-1):
+            sig_bag_steps = s_bag.calc_running(steps[i], steps[i+1],
+                                               chiral_extrap=True,
+                                               rotate=NPR_to_SUSY,
+                                               chi_sq_rescale=True)@sig_bag_steps
+        for i in range(len(bags.val)):
+            record_vals[f'(2,3,{np.around(stepsize,2)})'
+                        ][f'B{i+1}'] = (sig_bag_steps@bags)[i]/N_i[i]
 
     bags = [b.fit_operator(3.0, op, rotate=NPR_to_SUSY,
                            log=True, addnl_terms='del_ms',
@@ -67,17 +73,24 @@ if run:
     one = stat(val=1, err=0, btsp='fill')
     ratios = join_stats([one]+[rat[0] for rat in ratios])
     sig_rat = s_rat.calc_running(2.0, 3.0, chiral_extrap=True,
-                                 rotate=NPR_to_SUSY)
-    sig_rat_steps = stat(val=np.eye(5),
-                         btsp=[np.eye(5) for k in range(N_boot)])
-    for i in range(len(steps)-1):
-        sig_rat_steps = s_rat.calc_running(steps[i], steps[i+1],
-                                           chiral_extrap=True,
-                                           rotate=NPR_to_SUSY)@sig_rat_steps
+                                 rotate=NPR_to_SUSY,
+                                 chi_sq_rescale=True)
     for i in range(1, len(ratios.val)):
         record_vals['(2,3)'][f'R{i+1}'] = (sig_rat@ratios)[i]
         record_vals['(2,3)'][f'R{i+1}'].pvalue = pvalues[i-1]
-        record_vals['(2,3,0.2)'][f'R{i+1}'] = (sig_rat_steps@ratios)[i]
+
+    for stepsize in [1/3, 0.5]:
+        steps = np.arange(2.0,3.0+0.1,stepsize)
+        sig_rat_steps = stat(val=np.eye(5),
+                             btsp=[np.eye(5) for k in range(N_boot)])
+        for i in range(len(steps)-1):
+            sig_rat_steps = s_rat.calc_running(steps[i], steps[i+1],
+                                               chiral_extrap=True,
+                                               rotate=NPR_to_SUSY,
+                                               chi_sq_rescale=True)@sig_rat_steps
+        for i in range(1, len(ratios.val)):
+            record_vals[f'(2,3,{np.around(stepsize,2)})'
+                        ][f'R{i+1}'] = (sig_rat_steps@ratios)[i]
 
     ratios = [r.fit_operator(3.0, op, rotate=NPR_to_SUSY,
                              log=True, addnl_terms='del_ms',
@@ -102,11 +115,13 @@ other_systematics = pickle.load(open(f'other_systematics_{scheme}_{fit_file}{exp
 quantities = {f'R{i+2}':r'$R_'+str(i+2)+r'$' for i in range(4)}
 quantities.update({f'B{i+1}':r'$\mathcal{B}_'+str(i+1)+r'$' for i in range(5)})
 
-rv = [r'\begin{tabular}{c|c|c|c|c|c}']
+rv = [r'\begin{tabular}{c|c|c|c|c|c|c}']
 rv += [r'\hline']
 rv += [r'\hline']
 rv += [r' & $\sigma(3\,\mathrm{GeV},3\,\mathrm{GeV})$ & $\sigma('+\
-        r'3\,\mathrm{GeV}\xleftarrow{\Delta=0.2}2\,\mathrm{GeV})$ & NPR at 3 GeV '+\
+        r'3\,\mathrm{GeV}\xleftarrow{\Delta=0.5}2\,\mathrm{GeV})$'+\
+        r' & $\sigma(3\,\mathrm{GeV}\xleftarrow{\Delta=0.33}2\,\mathrm{GeV})$'+\
+        ' & NPR at 3 GeV '+\
         #r'& mask post-inv '+\
         r'& no mask & SUSY$\leftarrow$NPR \\']
 rv += [r' & central value & $\delta$ & $\delta$ & '\
@@ -131,9 +146,13 @@ for key in quantities.keys():
     central_str = err_disp(central.val, central.err)
     central_str = r'\textcolor{'+central_color+r'}{$'+err_disp(central.val, central.err)+r'$}'
 
-    steps = record_vals['(2,3,0.2)'][key]
-    steps_change = np.abs(((steps-central)/((steps+central)*0.5)).val*100) 
-    steps_change_str = r'\textcolor{'+central_color+r'}{$'+'{0:.2f}'.format(steps_change)+r'$\%}'
+    steps1 = record_vals['(2,3,0.5)'][key]
+    steps1_change = np.abs(((steps1-central)/((steps1+central)*0.5)).val*100) 
+    steps1_change_str = r'\textcolor{'+central_color+r'}{$'+'{0:.2f}'.format(steps1_change)+r'$\%}'
+
+    steps2 = record_vals['(2,3,0.33)'][key]
+    steps2_change = np.abs(((steps2-central)/((steps2+central)*0.5)).val*100) 
+    steps2_change_str = r'\textcolor{'+central_color+r'}{$'+'{0:.2f}'.format(steps2_change)+r'$\%}'
 
     direct = record_vals['(3)'][key]
     direct_color = pval_color(direct.pvalue)
@@ -157,7 +176,8 @@ for key in quantities.keys():
 
     rv += [' & '.join([name, 
                        central_str, 
-                       steps_change_str, 
+                       steps1_change_str, 
+                       steps2_change_str, 
                        direct_disc_str,
                        #post_inv_change_str,
                        no_mask_change_str,
