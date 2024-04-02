@@ -10,15 +10,15 @@ fq_qslash_F = np.array([
 
 
 data_ensembles = [
-        'C0',
-        'C1M',
-        'C1', 
-        'C2',
-        'M0',
-        'M1M',
-        'M1',
-        'M2',
-        'M3',
+        #'C0',
+        #'C1M',
+        #'C1', 
+        #'C2',
+        #'M0',
+        #'M1M',
+        #'M1',
+        #'M2',
+        #'M3',
         'F1M'
         ]
 sea_mass_dict = {
@@ -31,7 +31,7 @@ sea_mass_dict = {
         'M1M':3,        #[1,2,3]
         'M2': 2,        #[0,1,2]
         'M3': 2,        #[0,1,2]
-        'F1M':2,        #[0,1,2]
+        'F1M':0,        #[0,1,2]
         }
 
 am_dict = {ens:"{:.4f}".format(params[ens]['masses'][sea_mass_dict[ens]])
@@ -41,7 +41,10 @@ NG_path = path+'NG_data'
 
 # STEP 1: read in Z_4q
 
-fq_scheme = 'qq'
+#fq_scheme = 'qq'
+#scheme = 'qslash'
+fq_scheme = 'gg'
+scheme = 'gamma'
 
 Z_4q_files = {ens: glob.glob(f'{NG_path}/{fq_scheme}/Z_4q_{fq_scheme}_{ens}_am_{am_dict[ens]}*{N_boot}.h5')
         for ens in data_ensembles}
@@ -78,7 +81,8 @@ for ens in data_ensembles:
 
 # STEP 2: read in As
 
-A_scheme = 'q'
+#A_scheme = 'q'
+A_scheme = 'g'
 
 Z_AV_files = {ens: glob.glob(f'{NG_path}/{A_scheme}/Lambda_bil_VA_{A_scheme}_{ens}_am_{am_dict[ens]}*{N_boot}.h5')
         for ens in data_ensembles} 
@@ -88,27 +92,28 @@ Z_bl = {ens:{} for ens in data_ensembles}
 
 for ens in data_ensembles:
     ens_dict = {}
-    for f in Z_AV_files[ens]:
-        filename = f.rsplit('/')[-1]
-        info_list = filename.rsplit('_')
-        tw1 = np.array([float(t) for t in info_list[8:12]])
-        mom1 = np.array([float(m) for m in info_list[15:19]])
-        tw2 = np.array([float(t) for t in info_list[20:24]])
-        mom2 = np.array([float(m) for m in info_list[27:31]])
+    if A_scheme=='q':
+        for f in Z_AV_files[ens]:
+            filename = f.rsplit('/')[-1]
+            info_list = filename.rsplit('_')
+            tw1 = np.array([float(t) for t in info_list[8:12]])
+            mom1 = np.array([float(m) for m in info_list[15:19]])
+            tw2 = np.array([float(t) for t in info_list[20:24]])
+            mom2 = np.array([float(m) for m in info_list[27:31]])
 
-        coeff = 2*np.pi/params[ens]['XX']
-        p1 = coeff*(mom1+tw1)
-        p2 = coeff*(mom2+tw2)
-        q = np.linalg.norm(p1-p2)
+            coeff = 2*np.pi/params[ens]['XX']
+            p1 = coeff*(mom1+tw1)
+            p2 = coeff*(mom2+tw2)
+            q = np.linalg.norm(p1-p2)
 
-        data = h5py.File(f,'r')[f'Lambda_bil_VA_{A_scheme}']
-        VA = stat(
-                val=np.array(data['central'][:]),
-                err='fill',
-                btsp=np.array(data['bootstraps'][:]).reshape(2,1000).T)
-        V, A = VA[0]**(-1), VA[1]**(-1)
-        if q not in ens_dict:
-            ens_dict[q] = {'V':V, 'A':A}
+            data = h5py.File(f,'r')[f'Lambda_bil_VA_{A_scheme}']
+            VA = stat(
+                    val=np.array(data['central'][:]),
+                    err='fill',
+                    btsp=np.array(data['bootstraps'][:]).reshape(2,1000).T)
+            V, A = VA[0]**(-1), VA[1]**(-1)
+            if q not in ens_dict:
+                ens_dict[q] = {'V':V, 'A':A}
 
     for f in Z_SP_files[ens]:
         filename = f.rsplit('/')[-1]
@@ -129,8 +134,15 @@ for ens in data_ensembles:
                 err='fill',
                 btsp=np.array(data['bootstraps'][:]).reshape(5,1000).T)
         S, P = SVTAP[0]**(-1), SVTAP[4]**(-1)
-        if 'S' not in ens_dict[q]:
-            ens_dict[q].update({'S':S, 'P':P})
+        if scheme=='qslash':
+            if 'S' not in ens_dict[q]:
+                ens_dict[q].update({'S':S, 'P':P})
+        else:
+            A, V = SVTAP[3]**(-1), SVTAP[1]**(-1)
+            if q not in ens_dict:
+                ens_dict[q] = {'S':S, 'P':P, 'A':A, 'V':V}
+
+
 
     momenta = sorted(ens_dict.keys())
     Z_bl[ens]['ap'] = momenta
@@ -142,7 +154,7 @@ a1, a2 = action
 for ens in data_ensembles:
     filename = f'NPR/action{a1}_action{a2}/'
     filename += '__'.join(['NPR', ens, params[ens]['baseactions'][a1],
-                           params[ens]['baseactions'][a2], 'qslash'])
+                           params[ens]['baseactions'][a2], scheme])
     filename += '.h5'
     try:
         datafile = h5py.File(filename, 'a')
