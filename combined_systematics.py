@@ -29,30 +29,32 @@ for scheme in errors_dict.keys():
         delta_rcsb = np.abs(((rcsb-central)/((rcsb+central)*0.5)).val*100)
         rcsb_err_str = '{0:.2f}'.format(delta_rcsb)+r'\%'
 
+        NPR = other_systematics['NPR'][key][3.0]
+        delta_NPR = np.abs(((NPR-central)/((NPR+central)*0.5)).val*100)
+        #NPR_err_str = '{0:.2f}'.format(delta_NPR)+r'\%'
         discr_fits = [scaling_systematics[fittype][key] for fittype in ['(3)', '(2,3,0.5)', '(2,3,0.33)']]
         delta_discrs = [np.abs(((discr_fit-central)/((discr_fit+central)*0.5)).val*100)
-                        for discr_fit in discr_fits]
+                        for discr_fit in discr_fits]+[delta_NPR]
         delta_discr = max(delta_discrs)
         discr_err_str = '{0:.2f}'.format(delta_discr)+r'\%'
 
-        NPR = other_systematics['NPR'][key][3.0]
-        delta_NPR = np.abs(((NPR-central)/((NPR+central)*0.5)).val*100)
-        NPR_err_str = '{0:.2f}'.format(delta_NPR)+r'\%'
 
         total_err = (central_perc_err**2+delta_chiral**2+\
-                delta_discr**2+delta_rcsb**2+delta_NPR**2)**0.5
+                delta_discr**2+delta_rcsb**2)**0.5
         total_err_str = '{0:.2f}'.format(total_err)+r'\%'
 
         num_digits = int(np.floor(np.abs(
             np.log10(np.abs(total_err*central.val/100)))))+2
+        if key=='B5' and scheme=='qslash':
+            num_digits += 1
         central_val_str = r'$'+('{0:.%df}'%num_digits).format(central.val)+r'$'
+        print(key, scheme, central_val_str[1:-1], total_err_str[:-2])
 
         errors_dict[scheme][key] = {'central':central_val_str,
                                     'stat':stat_err_str,
                                     'chiral':chiral_err_str,
                                     'rcsb':rcsb_err_str,
                                     'discr':discr_err_str,
-                                    'basis':NPR_err_str,
                                     'total':total_err_str}
 
         RISMOM_results[scheme][key] = {'central':central,
@@ -69,11 +71,6 @@ for scheme in errors_dict.keys():
                                        'discr':stat(
                                            val=central.val,
                                            err=np.abs(central.val*delta_discr)/100,
-                                           btsp='fill'
-                                           ),
-                                       'basis':stat(
-                                           val=central.val,
-                                           err=np.abs(central.val*delta_NPR)/100,
                                            btsp='fill'
                                            ),
                                        'total':stat(
@@ -101,7 +98,7 @@ for scheme in MS_bar_results.keys():
                     rotate=NPR_to_SUSY)@np.diag(N_i)
         R_conv_bag = stat(val=R_conv_bag, err=np.zeros((5,5)), btsp='fill')
 
-        for err_type in ['central', 'chiral', 'rcsb', 'discr', 'basis']:
+        for err_type in ['central', 'chiral', 'rcsb', 'discr']:
             bags = join_stats([RISMOM_results[scheme][f'B{idx+1}'][err_type] for idx in range(5)])
             MS_bag = R_conv_bag@bags
             for idx in range(5):
@@ -112,7 +109,7 @@ for scheme in MS_bar_results.keys():
                     rotate=NPR_to_SUSY)
         R_conv_rat = stat(val=R_conv_rat, err=np.zeros((5,5)), btsp='fill')
 
-        for err_type in ['central', 'chiral', 'rcsb', 'discr', 'basis']:
+        for err_type in ['central', 'chiral', 'rcsb', 'discr']:
             ratios = join_stats([stat(val=1,err=0,btsp='fill')]+[
                 RISMOM_results[scheme][f'R{idx+2}'][err_type] for idx in range(4)])
             MS_rat = R_conv_rat@ratios
@@ -133,15 +130,13 @@ for scheme in MS_bar_results.keys():
             discr_perc_err = np.abs(MS_bar_results[scheme][key]['discr'].err*100/central.val)
             discr_err_str = '{0:.2f}'.format(discr_perc_err)+r'\%'
 
-            NPR_perc_err = np.abs(MS_bar_results[scheme][key]['basis'].err*100/central.val)
-            NPR_err_str = '{0:.2f}'.format(NPR_perc_err)+r'\%'
-
-            total_err = (central_perc_err**2+chiral_perc_err**2+rcsb_perc_err**2+\
-                    discr_perc_err**2+NPR_perc_err**2)**0.5
+            total_err = (central_perc_err**2+chiral_perc_err**2+rcsb_perc_err**2+discr_perc_err**2)**0.5
             total_err_str = '{0:.2f}'.format(total_err)+r'\%'
 
             total_err = np.abs(total_err*central.val/100)
             num_digits = int(np.floor(np.abs(np.log10(total_err))))+2
+            if key=='B5' and scheme=='qslash':
+                num_digits += 1
             central_val_str = r'$'+('{0:.%df}'%num_digits).format(central.val)+r'$'
 
             MS_bar_results[scheme][key]['str'] = {'central':central_val_str,
@@ -149,7 +144,6 @@ for scheme in MS_bar_results.keys():
                                                   'chiral':chiral_err_str,
                                                   'rcsb':rcsb_err_str,
                                                   'discr':discr_err_str,
-                                                  'basis':NPR_err_str,
                                                   'total':total_err_str}
     else:
         for key in quantities.keys():
@@ -180,22 +174,16 @@ for scheme in MS_bar_results.keys():
             discr_err_perc = np.abs(discr_err/central)*100
             discr_err_str = '{0:.2f}'.format(discr_err_perc)+r'\%'
 
-            NPR_err = MS_bar_results['gamma'][key]['basis'].err
-            #NPR_err = np.max([MS_bar_results[scheme][key]['basis'].err
-            #                 for scheme in ['gamma','qslash']])
-            NPR_err_perc = np.abs(NPR_err/central)*100
-            NPR_err_str = '{0:.2f}'.format(NPR_err_perc)+r'\%'
-
             PT_err_perc = np.abs((gamma_central-qslash_central)/central)*50
             PT_err_str = '{0:.2f}'.format(PT_err_perc)+r'\%'
 
 
             total_err = (stat_err_perc**2+chiral_err_perc**2+rcsb_err_perc**2+\
-                    discr_err_perc**2+PT_err_perc**2+NPR_err_perc**2)**0.5
+                    discr_err_perc**2+PT_err_perc**2)**0.5
             total_err_str = '{0:.2f}'.format(total_err)+r'\%'
 
             total_sys_err = np.abs(((chiral_err_perc**2+rcsb_err_perc**2+\
-                    discr_err_perc**2+PT_err_perc**2+NPR_err_perc**2)**0.5)*central/100)
+                    discr_err_perc**2+PT_err_perc**2)**0.5)*central/100)
             key_stat = stat(
                     val=central,
                     err=(stat_err**2+total_sys_err**2)**0.5,
@@ -205,20 +193,19 @@ for scheme in MS_bar_results.keys():
                                      sys_err=np.abs(total_sys_err))
 
             lat_err = np.abs(((chiral_err_perc**2+rcsb_err_perc**2+\
-                    discr_err_perc**2+stat_err_perc**2+NPR_err_perc**2)**0.5)*central/100)
+                    discr_err_perc**2+stat_err_perc**2)**0.5)*central/100)
             lat_err_str = '{0:.2f}'.format(np.abs(lat_err/central)*100)+r'\%'
             key_stat.alt_disp = err_disp(key_stat.val, lat_err,
                                          sys_err=np.abs(PT_err_perc*central/100))
 
             num_digits = int(np.floor(np.abs(np.log10(key_stat.err))))+2
+            if key=='B5' or key=='R3' or key=='B4':
+                num_digits += 1
             central_val_str = r'$'+('{0:.%df}'%num_digits).format(central)+r'$'
 
             MS_bar_results[scheme][key]['str'] = {'central':central_val_str,
-                                                  #'stat':stat_err_str,
-                                                  #'chiral':chiral_err_str,
-                                                  #'rcsb':rcsb_err_str,
-                                                  #'discr':discr_err_str,
-                                                  #'basis':NPR_err_str,
+                                                  r'$(\gamma_\mu,\gamma_\mu)$': MS_bar_results['gamma'][key]['str']['central'],
+                                                  r'$(\slashed{q},\slashed{q})$': MS_bar_results['qslash'][key]['str']['central'],
                                                   'lattice': lat_err_str,
                                                   'PT': PT_err_str,
                                                   'total':total_err_str}
@@ -236,28 +223,27 @@ for scheme in errors_dict.keys():
     rv += [r'\multirow{6}{*}{'+errors_dict[scheme]['name']+r'} & central & '+\
             ' & '.join([errors_dict[scheme][key]['central'] for key in list(quantities.keys())])+r' \\']
     rv += [r'\cline{2-11}']
-    for err in ['stat', 'chiral', 'rcsb', 'discr', 'basis', 'total']:
+    for err in ['stat', 'chiral', 'rcsb', 'discr', 'total']:
         if err=='total':
             rv += [r'\cline{2-11}']
         rv += [r' & '+err+r' & '+' & '.join([errors_dict[scheme][key][err]
                                              for key in list(quantities.keys())])+r' \\']
     rv += [r'\hline']
 
-rv += [r'\multirow{6}{*}{'+MS_bar_results['combined']['name']+r'} & central & '+\
-        ' & '.join([MS_bar_results['combined'][key]['str']['central']
+rv += [r'\multirow{6}{*}{'+MS_bar_results['combined']['name']+r'} & $(\gamma_\mu,\gamma_\mu)$ & '+\
+        ' & '.join([MS_bar_results['combined'][key]['str'][r'$(\gamma_\mu,\gamma_\mu)$']
                     for key in list(quantities.keys())])+r' \\']
-rv += [r'\cline{2-11}']
-for err in ['lattice', 'PT', 'total']:
+for err in [r'$(\slashed{q},\slashed{q})$', 'central', 'lattice', 'PT', 'total']:
     rv += [r' & '+err+r' & '+' & '.join([MS_bar_results['combined'][key]['str'][err]
                                          for key in list(quantities.keys())])+r' \\']
-    if err=='PT':
+    if err=='PT' or err=='central':
         rv += [r'\cline{2-11}']
 rv += [r'\hline']
 
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/all_systematics{expand_str}.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/table_all_systematics{expand_str}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()
@@ -277,7 +263,7 @@ for scheme in ['gamma', 'qslash']:
             ' & '.join([MS_bar_results[scheme][key]['str']['central']
                         for key in list(quantities.keys())])+r' \\']
     rv += [r'\cline{2-11}']
-    for err in ['stat', 'chiral', 'rcsb', 'discr', 'basis', 'total']:
+    for err in ['stat', 'chiral', 'rcsb', 'discr', 'total']:
         if err=='total':
             rv += [r'\cline{2-11}']
         rv += [r' & '+err+r' & '+' & '.join([MS_bar_results[scheme][key]['str'][err]
@@ -286,7 +272,7 @@ for scheme in ['gamma', 'qslash']:
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/scheme_systematics{expand_str}.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/table_scheme_systematics{expand_str}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()
@@ -310,18 +296,6 @@ for idx in range(1,5):
     NB_R.append(ki)
     print(f'{idx+1}:{err_disp(ki.val, ki.err)}')
 
-def constant_ansatz(x, param, **kwargs):
-    return param[0]*np.ones(len(x))
-
-x = stat(val=np.arange(2,6), err=np.zeros(4), btsp='fill')
-y = join_stats(NB_R)
-res = fit_func(x,y,constant_ansatz,guess=[0.5,0],
-               correlated=True, start=0,end=4)
-#ax.axhspan(res.val[0]+res.err[0],
-#           res.val[0]-res.err[0],
-#           color='r', alpha=0.2)
-#ax.axhline(res.val[0], color='r', label=err_disp(res.val[0], res.err[0]))
-
 ax.errorbar(np.arange(2,6),
             [k.val for k in NB_R],
             yerr=[k.err for k in NB_R],
@@ -336,8 +310,8 @@ B1 = RISMOM_results['gamma']['B1']['total']
 m_K_pm = stat(val=493.677, err=0.013, btsp='fill')/1000
 m_K_0 = stat(val=498.611, err=0.013, btsp='fill')/1000
 m_K = (m_K_0+m_K_pm)/2
-mass_sum_pred = (res[0]*(m_K**2)/(B1*N1))**0.5
-print(f'(m_s+m_d) in RISMOM: {err_disp(mass_sum_pred.val, mass_sum_pred.err)}')
+mass_sum_pred = (NB_R[0]*(m_K**2)/(B1*N1))**0.5
+print(f'(m_s+m_d) in RISMOM using O2: {err_disp(mass_sum_pred.val, mass_sum_pred.err)}')
 
 filename = '/Users/rajnandinimukherjee/Desktop/draft_plots/summary_plots/NiBioverRi_comparison_RISMOM.pdf'
 call_PDF(filename, open=True)

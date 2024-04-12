@@ -123,9 +123,9 @@ rv += [r' & $\sigma(3\,\mathrm{GeV},2\,\mathrm{GeV})$ & $\sigma('+\
         r' & $\sigma(3\,\mathrm{GeV}\xleftarrow{\Delta=0.33}2\,\mathrm{GeV})$'+\
         ' & NPR at 3 GeV '+\
         #r'& mask post-inv '+\
-        r'& no mask & SUSY$\leftarrow$NPR \\']
-rv += [r' & central value & $\delta$ & $\delta$ & '\
-        r'$\delta$ & $\delta$ \\']
+        r'& rcsb & SUSY$\leftarrow$NPR \\']
+#rv += [r' & central value & $\delta$ & $\delta$ & '\
+#        r'$\delta$ & $\delta$ \\']
 rv += [r'\hline']
 
 def pval_color(pval):
@@ -193,7 +193,7 @@ rv += [r'\hline']
 rv += [r'\hline']
 rv += [r'\end{tabular}']
 
-filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/scaling_systematics_{scheme}{expand_str}.tex'
+filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/tables_{fit_file}/table_scaling_systematics_{scheme}{expand_str}.tex'
 f = open(filename, 'w')
 f.write('\n'.join(rv))
 f.close()

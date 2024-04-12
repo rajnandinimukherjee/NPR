@@ -48,14 +48,16 @@ UKQCD16 = {'ratios':{'val':[-19.48, 6.08, 43.11, 10.99],
            'bags': {'val':[0.488, 0.743, 0.920, 0.707],
                     'err':[0.007, 0.014, 0.012, 0.008],
                     'sys':[0.017, 0.065, 0.016, 0.044]},
-           'marker':'d',
-           'name':'RBC-UKQCD16'}
+           'kwargs':{'fmt':'x',
+           'label':'RBC-UKQCD16',
+           'color':'tab:cyan'}}
 
 SWME15 = {'bags':{'val':[0.525, 0.772, 0.981, 0.751],
                   'err':[0.001, 0.005, 0.003, 0.007],
                   'sys':[0.023, 0.035, 0.062, 0.068]},
-          'marker':'x',
-          'name':'SWME15'}
+          'kwargs':{'fmt':'d',
+          'label':'SWME15',
+          'color':'tab:blue'}}
 
 FLAG21 = {'bags':{'val':[0.502, 0.766, 0.926, 0.720],
                   'err':[0.014, 0.032, 0.019, 0.038]}}
@@ -63,14 +65,16 @@ FLAG21 = {'bags':{'val':[0.502, 0.766, 0.926, 0.720],
 ETM15 = {'bags':{'val':[0.46, 0.79, 0.78, 0.49],
                  'err':[0.01, 0.02, 0.02, 0.03],
                  'sys':[0.03, 0.05, 0.04, 0.03]},
-         'marker':'^',
-         'name':'ETM15'}
+         'kwargs':{'fmt':'^',
+         'label':'ETM15',
+         'color':'tab:orange'}}
 
 ETM12 = {'bags':{'val':[0.47, 0.78, 0.76, 0.58],
                  'err':[0.02, 0.04, 0.02, 0.02],
                  'sys':[0.01, 0.02, 0.02, 0.02]},
-         'marker':'v',
-         'name':'ETM12'}
+         'kwargs':{'fmt':'v',
+         'label':'ETM12',
+         'color':'tab:red'}}
 
 for idx in range(4):
     for fitter in [UKQCD16, SWME15, ETM15, ETM12]:
@@ -102,8 +106,7 @@ for idx in range(4):
 
 
 UKQCD24 = {key:val['store'] for key, val in MS_bar_results['combined'].items() if key!='name'}
-UKQCD24['name'] = 'RBC-UKQCD24'
-UKQCD24['marker'] = 'o'
+UKQCD24.update({'kwargs':{'label':'RBC-UKQCD24', 'fmt':'o', 'color':'k'}})
 
 NB_R = []
 N1 = norm_factors(rotate=NPR_to_SUSY)[0]
@@ -146,20 +149,8 @@ for idx in range(1,5):
           f' {err_disp(const.val, const.err)}')
 
 fig, ax = plt.subplots(figsize=(4,2.5))
-
-def constant_ansatz(x, param, **kwargs):
-    return param[0]*np.ones(len(x))
-
-x = stat(val=np.arange(2,6), err=np.zeros(4), btsp='fill')
-y = join_stats(NB_R)
-res = fit_func(x,y,constant_ansatz,guess=[0.5,0],
-               correlated=True, start=0,end=4)
-#ax.axhspan(res.val[0]+res.err[0],
-#           res.val[0]-res.err[0],
-#           color='r', alpha=0.1)
-#ax.axhline(res.val[0], color='r', label=err_disp(res.val[0], res.err[0]))
-mass_sum_pred = (res[0]*(m_K**2)/(B1*N1))**0.5
-print(f'(m_s+m_d) in MS-bar: {err_disp(mass_sum_pred.val, mass_sum_pred.err)}')
+mass_sum_pred = (NB_R[0]*(m_K**2)/(B1*N1))**0.5
+print(f'(m_s+m_d) in MS-bar using O2: {err_disp(mass_sum_pred.val, mass_sum_pred.err)}')
 
 ax.axhline(const.val, color='0.7')
 ax.axhspan(const.val+const.err,
@@ -194,9 +185,10 @@ for idx in range(4):
                       FLAG21[f'B{idx+2}'].val+FLAG21[f'B{idx+2}'].err,
                       color='k', alpha=0.1, label=r'FLAG21 $N_f=2+1$')
     for fitter in fit_dicts:
+        kwargs = fitter['kwargs']
         ax[idx].errorbar([fitter[f'B{idx+2}'].val], [j],
                            xerr=[fitter[f'B{idx+2}'].err],
-                           fmt=fitter['marker'], capsize=4, label=fitter['name'])
+                           capsize=4, **kwargs)
         j += 1
     ax[idx].set_ylim([0,num_fits+2])
     ax[idx].set_yticks([])
@@ -225,10 +217,11 @@ B_K_dict = {
 num_B_K = len(B_K_dict.keys()) 
 for key, B_hat in B_K_dict.items():
     if key!='FLAG21':
+        kwargs = {'color':'k'} if key=='RBC-UKQCD24' else {}
         idx = list(B_K_dict.keys()).index(key)
         ax.errorbar(B_hat.val, num_B_K-idx, xerr=B_hat.err,
                     fmt=marker_list[idx], capsize=4,
-                    label=key)
+                    label=key, **kwargs)
     else:
         ax.axvspan(B_hat.val+B_hat.err,
                    B_hat.val-B_hat.err,

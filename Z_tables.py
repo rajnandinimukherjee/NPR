@@ -149,7 +149,7 @@ class extrap_table:
 
         if filename==None:
             filename = f'/Users/rajnandinimukherjee/Desktop/draft_plots/'
-            filename += f'tables_{fit_file}/extrap_Z_table_{str(int(10*mu))}.tex'
+            filename += f'tables_{fit_file}/table_extrap_Z_table_{str(int(10*mu))}.tex'
         f = open(filename, 'w')
         f.write('\n'.join(rv))
         f.close()

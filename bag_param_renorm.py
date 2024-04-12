@@ -89,42 +89,36 @@ class Z_analysis:
             self.mask[0, 0] = False
 
         if sea_mass_idx == 'extrap':
-            if scheme=='qslash' and self.ens=='F1M':
-                #print(f'Did not have {self.scheme} data to extrapolate {self.ens}')
-                self.sea_m = "{:.4f}".format(params[self.ens]['masses'][3])
+            filename = f'Z_ij_{self.norm}_amq_0_{self.scheme}.h5'
+            if self.ens[-1]!='0':
+                if run_extrap:
+                    self.valence_extrapolation(**kwargs)
+                else:
+                    self.load_extrap(filename, **kwargs)
+            else:
+                self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
                 self.masses = (self.sea_m, self.sea_m)
                 self.load_fq_Z(norm=self.norm, **kwargs)
-            else:
-                filename = f'Z_ij_{self.norm}_amq_0_{self.scheme}.h5'
-                if self.ens[-1]!='0':
-                    if run_extrap:
-                        self.valence_extrapolation(**kwargs)
-                    else:
-                        self.load_extrap(filename, **kwargs)
-                else:
-                    self.sea_m = "{:.4f}".format(params[self.ens]['masses'][0])
-                    self.masses = (self.sea_m, self.sea_m)
-                    self.load_fq_Z(norm=self.norm, **kwargs)
 
-                    am_q = eval(self.sea_m)
-                    alt_ens = self.ens[0]+'1M'
-                    alt_ens = Z_analysis(
-                            alt_ens, action=self.action, scheme=self.scheme,
-                            norm=self.norm, mask=self.mask, sea_mass_idx='extrap',
-                            run_extrap=run_extrap, **kwargs)
-                    self.slopes = alt_ens.slopes
-                    self.am = alt_ens.am
-                    self.N_mom = len(self.am.val)
-                    extrap_Z = [self.Z[mom] - self.slopes[mom]*am_q
-                                for mom in range(self.N_mom)]
-                    self.Z = join_stats(extrap_Z)
-                    #print(f'Using {alt_ens.ens} valence extrapolation slope '+\
-                    #f'to extrpolate {self.ens} data at valence mass {am_q}.')
+                am_q = eval(self.sea_m)
+                alt_ens = self.ens[0]+'1M'
+                alt_ens = Z_analysis(
+                        alt_ens, action=self.action, scheme=self.scheme,
+                        norm=self.norm, mask=self.mask, sea_mass_idx='extrap',
+                        run_extrap=run_extrap, **kwargs)
+                self.slopes = alt_ens.slopes
+                self.am = alt_ens.am
+                self.N_mom = len(self.am.val)
+                extrap_Z = [self.Z[mom] - self.slopes[mom]*am_q
+                            for mom in range(self.N_mom)]
+                self.Z = join_stats(extrap_Z)
+                #print(f'Using {alt_ens.ens} valence extrapolation slope '+\
+                #f'to extrpolate {self.ens} data at valence mass {am_q}.')
 
-                self.sea_m = "{:.4f}".format(0.0)
-                self.masses = (self.sea_m, self.sea_m)
-                if 'save_extrap' in kwargs:
-                    self.save_extrap(filename, **kwargs)
+            self.sea_m = "{:.4f}".format(0.0)
+            self.masses = (self.sea_m, self.sea_m)
+            if 'save_extrap' in kwargs:
+                self.save_extrap(filename, **kwargs)
 
         else:
             self.sea_m = "{:.4f}".format(params[self.ens]['masses'][sea_mass_idx])
@@ -192,8 +186,17 @@ class Z_analysis:
             Z_list = [self.load_fq_Z(masses=(m, m), norm=self.norm,
                                      pass_val=True, **kwargs)
                              for m in val_am]
-            
-            pdb.set_trace()
+            if self.ens=='F1M':
+                Z_0 = self.load_fq_Z(masses=(val_am[0], val_am[0]),
+                                     norm=self.norm, pass_val=True, **kwargs)
+                N_mom = len(self.am.val)
+                Z_list[-1] = stat(
+                        val=Z_list[-1].val[:N_mom],
+                        err=Z_list[-1].err[:N_mom],
+                        btsp=Z_list[-1].btsp[:,:N_mom]
+                        )
+                Zs = join_stats(Z_list)
+
         if order_am==val_am:
             ordered_names = names_am
         else:
