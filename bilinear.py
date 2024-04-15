@@ -82,8 +82,12 @@ class bilinear:
                 m = '0.02144'
             try:
                 self.mres = info[m]['am_res']
+                if self.mres.btsp.shape[0]!=N_boot:
+                    self.mres = stat(val=self.mres.val, err=self.mres.err, btsp='fill')
             except KeyError:
-                self.mres = stat(val=0, btsp='fill')
+                self.mres = stat(val=0, err=0, btsp='fill')
+        else:
+            self.mres = stat(val=0, err=0, btsp='fill')
 
     def gamma_Z(self, operators, **kwargs):
         projected = {c: np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]

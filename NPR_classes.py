@@ -43,7 +43,8 @@ class bilinear_analysis:
 
             results = {}
 
-            for b in tqdm(range(len(self.bl_list)), leave=False):
+            desc = '_'.join([self.ens, m1, m2, str(action)])
+            for b in tqdm(range(len(self.bl_list)), leave=False, desc=desc):
                 prop1_name, prop2_name = self.bl_list[b].split('__')
                 prop1_info, prop2_info = decode_prop(
                     prop1_name), decode_prop(prop2_name)
@@ -84,8 +85,7 @@ class bilinear_analysis:
                     filename = f'NPR/action{a1}_action{a2}/'
                     filename += '__'.join(['NPR', self.ens,
                         params[self.ens]['baseactions'][a1],
-                        params[self.ens]['baseactions'][a2],
-                        self.scheme])
+                        params[self.ens]['baseactions'][a2]])
                     filename += filename_add
                     filename += '.h5'
                     f = h5py.File(filename, 'a')
@@ -130,7 +130,7 @@ class bilinear_analysis:
                 self.NPR((self.sea_mass, self.sea_mass), action=(a1, a2))
             if N_a == 2:
                 self.merge_mixed()
-            filename_add = ''
+            filename_add = '_{self.scheme}'
 
         if save:
             self.save_NPR(filename_add=filename_add)

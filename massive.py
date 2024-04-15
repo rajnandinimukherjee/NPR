@@ -12,13 +12,19 @@ eta_stars = [1.6, 2.2, float(eta_PDG.val)]
 
 class Z_bl_analysis:
 
+    grp = 'bilinear'
+
     def __init__(self, ens, action=(0, 0), scheme='qslash',
                  renorm='mSMOM', **kwargs):
 
         self.ens = ens
-        self.datafolder = h5py.File(
-            f'bilinear_Z_{scheme}_{renorm}.h5', 'r')[
-            str(action)][ens]
+
+        a1, a2 = action
+        datafile = f'NPR/action{a1}_action{a2}/'
+        datafile += '__'.join(['NPR', self.ens, params[self.ens]['baseactions'][a1],
+                              params[self.ens]['baseactions'][a2]])
+        datafile += f'_{renorm}.h5'
+        self.data = h5py.File(datafile, 'r')
 
         info = params[self.ens]
         self.ainv = stat(
@@ -33,20 +39,40 @@ class Z_bl_analysis:
 
         self.momenta, self.Z = {}, {}
 
-        for m in self.datafolder.keys():
+        for m in self.data.keys():
             masses = (m[2:8], m[12:18])
             self.momenta[masses] = stat(
-                val=self.datafolder[m]['momenta'][:],
+                val=self.data[m][self.grp]['ap'][:],
                 btsp='fill')
 
             self.Z[masses] = {}
-            for key in self.datafolder[m].keys():
-                if key != 'momenta':
+            for key in self.data[m][self.grp].keys():
+                if key != 'ap':
                     self.Z[masses][key] = stat(
-                        val=self.datafolder[m][key]['central'][:],
-                        err=self.datafolder[m][key]['errors'][:],
-                        btsp=self.datafolder[m][key]['bootstrap'][:]
+                        val=self.data[m][self.grp][key]['central'][:],
+                        err=self.data[m][self.grp][key]['errors'][:],
+                        btsp=self.data[m][self.grp][key]['bootstrap'][:]
                     )
+
+    def plot_mass_dependence(self, mu, key, start=0, stop=None, 
+                             open_file=True,
+                             filename='', **kwargs):
+        if stop==None:
+            stop = len(self.all_masses)
+
+        plt.figure()
+
+        x = [eval(m) for m in self.all_masses[start:stop]]
+        y = join_stats([self.interpolate(mu, (m,m), key)
+                        for m in self.all_masses[start:stop]])
+        plt.errorbar(x, y.val, yerr=y.err,
+                     capsize=4, fmt='o')
+        plt.title(r'$Z_'+key+'(\mu='+str(mu)+'\,\mathrm{GeV})$')
+        plt.xlabel('$am_q$')
+        if filename=='':
+            filename = f'mSMOM_{self.ens}_vs_amq.pdf'
+
+        call_PDF(filename, open=open_file)
 
     def interpolate(self, mu, masses, key,
                     method='scipy', plot=False,
@@ -141,6 +167,7 @@ class Z_bl_analysis:
         else:
             filename = f'plots/Z_{key}_v_ap.pdf'
             call_PDF(filename)
+
 
 
 class mNPR:

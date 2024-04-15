@@ -325,7 +325,8 @@ def join_stats(stats):
 
 
 plt.rcParams.update(plotparams)
-path = '/home/rm/external/NPR_new/'
+#path = '/home/rm/external/NPR_new/'
+path = '/home/dp207/dp207/dc-mukh1/NPR/NPR_data_new/NPR/'
 N_d = 4  # Dirac indices
 N_c = 3  # Color indices
 # N_bl = 16 # number of bilinears
@@ -475,7 +476,7 @@ def common_cf_files(data, corr, prefix=None):
 
     common_files = list(set.intersection(*map(set, list_of_cf_files)))
     common_files.sort()
-    return cfgs, common_files
+    return common_files, cfgs
 
 
 def decode_prop(prop_name):
