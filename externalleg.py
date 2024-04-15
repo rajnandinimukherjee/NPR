@@ -8,12 +8,16 @@ class external:
     def __init__(self, ensemble, momentum=[-3, -3, 0, 0],
                  twist=[0.00, 0.00, 0.00, 0.00],
                  prop='fgauge_SDWF', Ls='16', M5='1.80', am='0.0100',
-                 filename='', **kwargs):
+                 filename='', cfgs=None, **kwargs):
 
         data = path+ensemble
         L = params[ensemble]['XX']
-        cfgs = sorted(os.listdir(data)[1:])
-        self.N_cf = len(cfgs)  # number of configs)
+        if cfgs==None:
+            self.cfgs = sorted(os.listdir(data)[1:])
+        else:
+            self.cfgs = cfgs
+
+        self.N_cf = len(self.cfgs)  # number of configs)
         if filename != '':
             self.filename = filename
             self.info = decode_prop(self.filename)
@@ -42,7 +46,7 @@ class external:
         self.propagator = stat(val=np.empty(
             shape=(self.N_cf, 12, 12), dtype='complex128'))
         for cf in range(self.N_cf):
-            c = cfgs[cf]
+            c = self.cfgs[cf]
             h5_path = f'{data}/{c}/NPR/{self.obj}/{self.prefix}{self.filename}.{c}.h5'
             h5_data = h5py.File(h5_path, 'r')['ExternalLeg']['corr'][0, 0, :]
             self.propagator.val[cf, :] = np.array(h5_data['re'] +

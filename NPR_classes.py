@@ -38,7 +38,7 @@ class bilinear_analysis:
         if not os.path.isdir(self.data):
             print('NPR data for this ensemble could not be found on this machine')
         else:
-            self.bl_list = common_cf_files(
+            self.bl_list, self.cfgs = common_cf_files(
                 self.data, 'bilinears', prefix='bi_')
 
             results = {}
@@ -54,8 +54,8 @@ class bilinear_analysis:
                               a1 and prop2_info['prop'] == a2)
 
                 if (condition1 and condition2):
-                    prop1 = external(self.ens, filename=prop1_name)
-                    prop2 = external(self.ens, filename=prop2_name)
+                    prop1 = external(self.ens, filename=prop1_name, cfgs=self.cfgs)
+                    prop2 = external(self.ens, filename=prop2_name, cfgs=self.cfgs)
                     mom_diff = prop1.total_momentum-prop2.total_momentum
 
                     condition3 = prop1.momentum_squared == prop2.momentum_squared
@@ -63,7 +63,8 @@ class bilinear_analysis:
                         np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
-                        bl = bilinear(self.ens, prop1, prop2, mres=self.mres)
+                        bl = bilinear(self.ens, prop1, prop2, mres=self.mres,
+                                      cfgs=self.cfgs)
                         mom = bl.q
                         if mom not in results.keys():
                             bl.NPR(massive=massive, **kwargs)
@@ -92,6 +93,8 @@ class bilinear_analysis:
                     if str(masses)+'/bilinear' in f.keys():
                         del f[f'{str(masses)}/bilinear']
                     m_grp = f.create_group(f'{str(masses)}/bilinear')
+                    m_grp.attrs['cfgs'] = self.cfgs
+
                     mom = m_grp.create_dataset(
                         'ap', data=self.momenta[action][masses])
                     for current in self.Z[action][masses][0].keys():
@@ -175,8 +178,8 @@ class fourquark_analysis:
         if not os.path.isdir(self.data):
             print('NPR data for this ensemble could not be found on this machine')
         else:
-            self.fq_list = common_cf_files(self.data,
-                                           'fourquarks', prefix='fourquarks_')
+            self.fq_list, self.cfgs = common_cf_files(
+                    self.data, 'fourquarks', prefix='fourquarks_')
 
             results = {}
 
@@ -192,8 +195,8 @@ class fourquark_analysis:
                               a1 and prop2_info['prop'] == a2)
 
                 if (condition1 and condition2):
-                    prop1 = external(self.ens, filename=prop1_name)
-                    prop2 = external(self.ens, filename=prop2_name)
+                    prop1 = external(self.ens, filename=prop1_name, cfgs=self.cfgs)
+                    prop2 = external(self.ens, filename=prop2_name, cfgs=self.cfgs)
                     mom_diff = prop1.total_momentum-prop2.total_momentum
 
                     condition3 = prop1.momentum_squared == prop2.momentum_squared
@@ -201,7 +204,7 @@ class fourquark_analysis:
                         np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
-                        fq = fourquark(self.ens, prop1, prop2)
+                        fq = fourquark(self.ens, prop1, prop2, cfgs=self.cfgs)
                         if fq.q not in results.keys():
                             fq.NPR()
                             results[fq.q] = fq.Z
@@ -229,6 +232,7 @@ class fourquark_analysis:
                     if str(masses)+'/fourquark' in f.keys():
                         del f[f'{str(masses)}/fourquark']
                     m_grp = f.create_group(f'{str(masses)}/fourquark')
+                    m_grp.attrs['cfgs'] = self.cfgs
 
                     mom = m_grp.create_dataset(
                         'ap', data=self.momenta[action][masses])

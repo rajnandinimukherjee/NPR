@@ -103,11 +103,14 @@ class fourquark:
     prefix = 'fourquarks_'
     fq_str = 'FourQuarkFullyConnected'
 
-    def __init__(self, ensemble, prop1, prop2, scheme='gamma', **kwargs):
+    def __init__(self, ensemble, prop1, prop2, scheme='gamma',
+                 cfgs=None, **kwargs):
 
         data = path+ensemble
-        cfgs = os.listdir(data)[1:]
-        cfgs.sort()
+        if cfgs==None:
+            self.cfgs = sorted(os.listdir(data)[1:])
+        else:
+            self.cfgs = cfgs
         self.filename = prop1.filename+'__'+prop2.filename
         self.scheme = scheme
 

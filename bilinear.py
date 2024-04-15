@@ -23,12 +23,16 @@ class bilinear:
     prefix = 'bi_'
 
     def __init__(self, ensemble, prop1, prop2, scheme='gamma',
-                 mres=True, **kwargs):
+                 mres=True, cfgs=None, **kwargs):
 
         data = path+ensemble
         self.ens = ensemble
         self.L = params[ensemble]['XX']
-        self.cfgs = sorted(os.listdir(data)[1:])
+        if cfgs==None:
+            self.cfgs = sorted(os.listdir(data)[1:])
+        else:
+            self.cfgs = cfgs
+
         self.N_cf = len(self.cfgs)
         self.filename = prop1.filename+'__'+prop2.filename
         self.h5_path = f'{data}/{self.cfgs[0]}/NPR/{self.obj}/{self.prefix}{self.filename}.{self.cfgs[0]}.h5'

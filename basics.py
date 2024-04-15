@@ -475,7 +475,7 @@ def common_cf_files(data, corr, prefix=None):
 
     common_files = list(set.intersection(*map(set, list_of_cf_files)))
     common_files.sort()
-    return common_files
+    return cfgs, common_files
 
 
 def decode_prop(prop_name):

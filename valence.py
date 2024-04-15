@@ -124,11 +124,14 @@ class valence:
         else:
             return res, fit_mass
 
-    def fit_all(self, key, plot=False, **kwargs):
+    def fit_all(self, key, plot=False, save=True, **kwargs):
         for mass in self.all_masses:
             res, fit_mass, plt = self.fit_data(
                 mass, key=key, pass_plot=True, **kwargs)
             plt.title(r'$am_{in}=$'+str(mass))
+
+        if save:
+            self.save_to_H5()
 
         if plot:
             filename = f'plots/all_fits_{self.ens}.pdf'
