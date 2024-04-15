@@ -11,6 +11,7 @@ class external:
                  filename='', cfgs=None, **kwargs):
 
         data = path+ensemble
+        data += 'S/results' if ensemble[-1]!='M' else '/results'
         L = params[ensemble]['XX']
         if cfgs==None:
             self.cfgs = sorted(os.listdir(data)[1:])

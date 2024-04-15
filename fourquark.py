@@ -107,6 +107,7 @@ class fourquark:
                  cfgs=None, **kwargs):
 
         data = path+ensemble
+        data += 'S/results' if ensemble[-1]!='M' else '/results'
         if cfgs==None:
             self.cfgs = sorted(os.listdir(data)[1:])
         else:

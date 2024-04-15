@@ -26,6 +26,7 @@ class bilinear:
                  mres=True, cfgs=None, **kwargs):
 
         data = path+ensemble
+        data += 'S/results' if ensemble[-1]!='M' else '/results'
         self.ens = ensemble
         self.L = params[ensemble]['XX']
         if cfgs==None:
