@@ -7,10 +7,11 @@ class bilinear_analysis:
     N_boot = N_boot
 
     def __init__(self, ensemble, mres=False, sea_mass_idx=0,
-            scheme='gamma', **kwargs):
+            scheme='gamma', cfgs=None, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
+        self.cfgs = info['NPR_cfgs'] if cfgs==None else cfgs
         self.ainv = params[ensemble]['ainv']
         self.asq = (1/self.ainv)**2
         self.sea_mass = '{:.4f}'.format(info['masses'][sea_mass_idx])
@@ -34,12 +35,12 @@ class bilinear_analysis:
         self.momenta[action][masses] = {}
         self.Z[action][masses] = {}
 
-        self.data = path+self.ens
+        self.data = path+self.ens+'/results/'
         if not os.path.isdir(self.data):
             print('NPR data for this ensemble could not be found on this machine')
         else:
-            self.bl_list, self.cfgs = common_cf_files(
-                self.data, 'bilinears', prefix='bi_')
+            self.bl_list = common_cf_files(
+                self.data, self.cfgs, 'bilinears', prefix='bi_')
 
             results = {}
 
@@ -154,10 +155,12 @@ class bilinear_analysis:
 class fourquark_analysis:
     N_boot = N_boot
 
-    def __init__(self, ensemble, sea_mass_idx=0, scheme='gamma', **kwargs):
+    def __init__(self, ensemble, sea_mass_idx=0, scheme='gamma', 
+                 cfgs=None, **kwargs):
 
         self.ens = ensemble
         info = params[self.ens]
+        self.cfgs = info['NPR_cfgs'] if cfgs==None else cfgs
         self.sea_mass = '{:.4f}'.format(info['masses'][sea_mass_idx])
         self.scheme = scheme
 
@@ -174,12 +177,12 @@ class fourquark_analysis:
         self.momenta[action] = {masses: {}}
         self.Z[action] = {masses: {}}
 
-        self.data = path+self.ens
+        self.data = path+self.ens+'/results/'
         if not os.path.isdir(self.data):
             print('NPR data for this ensemble could not be found on this machine')
         else:
-            self.fq_list, self.cfgs = common_cf_files(
-                    self.data, 'fourquarks', prefix='fourquarks_')
+            self.fq_list = common_cf_files(
+                    self.data, self.cfgs, 'fourquarks', prefix='fourquarks_')
 
             results = {}
 

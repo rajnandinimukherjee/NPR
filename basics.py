@@ -1,3 +1,5 @@
+path = '/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/'
+
 import glob
 import itertools
 import os
@@ -325,8 +327,6 @@ def join_stats(stats):
 
 
 plt.rcParams.update(plotparams)
-#path = '/home/rm/external/NPR_new/'
-path = '/home/dp207/dp207/dc-mukh1/NPR/NPR_data_new/NPR/'
 N_d = 4  # Dirac indices
 N_c = 3  # Color indices
 # N_bl = 16 # number of bilinears
@@ -460,9 +460,7 @@ def m_eff(data, ansatz='cosh', **kwargs):
 # =====parsing filenames===================================================
 
 
-def common_cf_files(data, corr, prefix=None):
-    cfgs = os.listdir(data)[1:]
-    cfgs.sort()
+def common_cf_files(data, cfgs, corr, prefix=None):
     file_names = {cf: os.listdir(f'{data}/{cf}/NPR/{corr}/')
                   for cf in cfgs}
 
@@ -476,7 +474,7 @@ def common_cf_files(data, corr, prefix=None):
 
     common_files = list(set.intersection(*map(set, list_of_cf_files)))
     common_files.sort()
-    return common_files, cfgs
+    return common_files
 
 
 def decode_prop(prop_name):
