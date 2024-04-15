@@ -35,7 +35,8 @@ class bilinear_analysis:
         self.momenta[action][masses] = {}
         self.Z[action][masses] = {}
 
-        self.data = path+self.ens+'/results/'
+        self.data = path+self.ens
+        self.data += 'S/results/' if self.ens[-1]!='M' else '/results/'
         if not os.path.isdir(self.data):
             print('NPR data for this ensemble could not be found on this machine')
         else:
