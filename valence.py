@@ -32,7 +32,8 @@ class valence:
 
     def amres_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
-                         N_src=16, save=True, 
+                         N_src=16, save=True,
+                         num_end_points=5,
                          **kwargs):
 
         a1, a2 = self.action
@@ -69,9 +70,19 @@ class valence:
                 btsp=bootstrap(corr)
                 )
 
-            meson = self.meson_correlator(mass, meson_num=meson_num,
+            meson, meson_fit = self.meson_correlator(mass, meson_num=meson_num,
                                           load=False)
             corr = corr/meson
+            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+
+            fit_points = np.arange(int(self.T/2))[-num_end_points:]
+            def constant_mass(t, param, **kwargs):
+                return param[0]*np.ones(len(t))
+            x = stat(val=fit_points, btsp='fill')
+            y = folded_corr[fit_points]
+            res = fit_func(x, y, constant_mass, [0.1, 0])
+            fit = res[0] if res[0].val!=0 else folded_corr[-1]
+            print(f'For am_q={mass}, am_res={err_disp(fit.val,fit.err)}')
 
             if save:
                 f = h5py.File(fname, 'a')
@@ -81,36 +92,34 @@ class valence:
                 mes_grp.create_dataset('central', data=corr.val) 
                 mes_grp.create_dataset('errors', data=corr.err) 
                 mes_grp.create_dataset('bootstrap', data=corr.btsp) 
+
+                mes_grp.create_dataset('fit/central', data=fit.val) 
+                mes_grp.create_dataset('fit/errors', data=fit.err) 
+                mes_grp.create_dataset('fit/bootstrap', data=fit.btsp) 
                 f.close()
-                print(f'Saved PJ5q data to {grp_name} in {fname}')
+                print(f'Saved amres data and fit to {grp_name} in {fname}')
         else:
             f = h5py.File(fname, 'r')[grp_name]
             corr = stat(
                     val=np.array(f['central'][:]),
                     err=np.array(f['errors'][:]),
                     btsp=np.array(f['bootstrap'][:]))
-        return corr
+            fit = stat(
+                    val=np.array(f['fit/central']),
+                    err=np.array(f['fit/errors']),
+                    btsp=np.array(f['fit/bootstrap'][:]))
+        return corr, fit
 
-    def compute_amres(self, masses=None, num_end_points=5, plot=False, **kwargs):
-        fit_points = np.arange(int(self.T/2))[-num_end_points:]
+    def compute_amres(self, masses=None, plot=False, **kwargs):
         self.amres = {}
-        def constant_mass(t, param, **kwargs):
-            return param[0]*np.ones(len(t))
-
         if masses==None:
             masses = self.all_masses
 
         for mass in masses:
-            corr = self.amres_correlator(mass, **kwargs)
+            corr, fit = self.amres_correlator(mass, **kwargs)
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
 
-            x = stat(val=fit_points, btsp='fill')
-            y = folded_corr[fit_points]
-            res = fit_func(x, y, constant_mass, [0.1, 0])
-            self.amres[mass] = res[0] if res[0].val!=0 else folded_corr[-1]
-            print(f'For am_q={mass}, am_res='+
-                    f'{err_disp(self.amres[mass].val,self.amres[mass].err)}')
-
+            self.amres[mass] = fit
             if plot:
                 fig, ax = plt.subplots()
                 ax.errorbar(np.arange(2,int(self.T/2)), folded_corr.val[2:],
@@ -129,6 +138,7 @@ class valence:
     def meson_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
                          N_src=16, save=True, 
+                         fit_start=15, fit_end=30, 
                          **kwargs):
 
         a1, a2 = self.action
@@ -168,6 +178,18 @@ class valence:
                 btsp=bootstrap(corr)
                 )
 
+            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+            div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
+            m_eff = div.use_func(np.arccosh)
+
+            def constant_mass(t, param, **kwargs):
+                return param[0]*np.ones(len(t))
+            x = stat(val=np.arange(fit_start, fit_end), btsp='fill')
+            y = m_eff[fit_start:fit_end]
+            res = fit_func(x, y, constant_mass, [0.1, 0])
+            fit = res[0]
+            print(f'For am_q={mass}, am_eta_h={err_disp(fit.val, fit.err)}')
+
             if save:
                 f = h5py.File(fname, 'a')
                 if grp_name in f:
@@ -176,32 +198,35 @@ class valence:
                 mes_grp.create_dataset('central', data=corr.val) 
                 mes_grp.create_dataset('errors', data=corr.err) 
                 mes_grp.create_dataset('bootstrap', data=corr.btsp) 
+
+                mes_grp.create_dataset('fit/central', data=fit.val) 
+                mes_grp.create_dataset('fit/errors', data=fit.err) 
+                mes_grp.create_dataset('fit/bootstrap', data=fit.btsp) 
+                
                 f.close()
-                print(f'Saved meson_{meson_num} corr data to {grp_name} in {fname}')
+                print(f'Saved meson_{meson_num} corr data '+\
+                        f'and fit to {grp_name} in {fname}')
         else:
             f = h5py.File(fname, 'r')[grp_name]
             corr = stat(
                     val=np.array(f['central'][:]),
                     err=np.array(f['errors'][:]),
                     btsp=np.array(f['bootstrap'][:]))
-        return corr
+            fit = stat(
+                    val=np.array(f['fit/central']),
+                    err=np.array(f['fit/errors']),
+                    btsp=np.array(f['fit/bootstrap'][:]))
+        return corr, fit
 
-    def compute_eta_h(self, fit_start=15, fit_end=30, plot=False, **kwargs):
+    def compute_eta_h(self, plot=False, **kwargs):
         self.eta_h_masses = {}
-        def constant_mass(t, param, **kwargs):
-            return param[0]*np.ones(len(t))
-
         for mass in self.all_masses:
-            corr = self.meson_correlator(mass, meson_num=1, **kwargs)
+            corr, fit = self.meson_correlator(mass, meson_num=1, **kwargs)
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
             div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
             m_eff = div.use_func(np.arccosh)
 
-            x = stat(val=np.arange(fit_start, fit_end), btsp='fill')
-            y = m_eff[fit_start:fit_end]
-            res = fit_func(x, y, constant_mass, [0.1, 0])
-            self.eta_h_masses[mass] = res[0]
-            print(f'For am_q={mass}, am_eta_h={err_disp(res.val[0],res.err[0])}')
+            self.eta_h_masses[mass] = fit
 
             if plot:
                 fig, ax = plt.subplots(figsize=(8,2))
@@ -209,8 +234,8 @@ class valence:
                             yerr=m_eff.err, fmt='o', capsize=4,
                             label=mass)
                 ax.fill_between(x.val,
-                                (res[0].val+res[0].err)*np.ones(len(x.val)),
-                                (res[0].val-res[0].err)*np.ones(len(x.val)),
+                                (fit.val+fit.err)*np.ones(len(x.val)),
+                                (fit.val-fit.err)*np.ones(len(x.val)),
                                 color='k', alpha=0.1)
                 ax.legend()
                 ax.set_xlabel(r'$at$')
@@ -230,4 +255,8 @@ class valence:
 
         if plot:
             call_PDF(f'{self.ens}_eta_h.pdf', open=True)
+
+    def calc_all(self, **kwargs):
+        self.compute_eta_h(**kwargs)
+        self.compute_amres(**kwargs)
 
