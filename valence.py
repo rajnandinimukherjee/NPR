@@ -88,14 +88,14 @@ class valence:
                     btsp=np.array(f['bootstrap'][:]))
         return corr
 
-    def compute_amres(self, num_end_points=5, **kwargs):
+    def compute_amres(self, num_end_points=5, plot=False, **kwargs):
         fit_points = np.arange(int(self.T/2))[-num_end_points:]
         self.amres = {}
         def constant_mass(t, param, **kwargs):
-            return param[0]*t
+            return param[0]*np.ones(len(t))
 
         for mass in self.all_masses:
-            corr = self.amres_correlator(mass)
+            corr = self.amres_correlator(mass, **kwargs)
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
 
             x = stat(val=fit_points, btsp='fill')
@@ -104,6 +104,21 @@ class valence:
             self.amres[mass] = res[0] if res[0].val!=0 else folded_corr[-1]
             print(f'For am_q={mass}, am_res='+
                     f'{err_disp(self.amres[mass].val,self.amres[mass].err)}')
+
+            if plot:
+                fig, ax = plt.subplots()
+                ax.errorbar(np.arange(2,int(self.T/2)), folded_corr.val[2:],
+                            yerr=folded_corr.err[2:], fmt='o', capsize=4,
+                            label=mass)
+                ax.axhspan(self.amres[mass].val+self.amres[mass].err,
+                           self.amres[mass].val-self.amres[mass].err,
+                           color='k', alpha=0.1)
+                ax.set_xlabel(r'$at$')
+                ax.set_ylabel(r'PJ5q/PP')
+                ax.legend()
+
+        if plot:
+            call_PDF(f'{self.ens}_amres.pdf', open=True)
 
     def meson_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
@@ -165,13 +180,13 @@ class valence:
                     btsp=np.array(f['bootstrap'][:]))
         return corr
 
-    def compute_eta_h(self, fit_start=15, fit_end=30, **kwargs):
+    def compute_eta_h(self, fit_start=15, fit_end=30, plot=False, **kwargs):
         self.eta_h_masses = {}
         def constant_mass(t, param, **kwargs):
-            return param[0]*t
+            return param[0]*np.ones(len(t))
 
         for mass in self.all_masses:
-            corr = self.meson_correlator(mass, meson_num=1)
+            corr = self.meson_correlator(mass, meson_num=1, **kwargs)
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
             div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
             m_eff = div.use_func(np.arccosh)
@@ -181,5 +196,21 @@ class valence:
             res = fit_func(x, y, constant_mass, [0.1, 0])
             self.eta_h_masses[mass] = res[0]
             print(f'For am_q={mass}, am_eta_h={err_disp(res.val[0],res.err[0])}')
+
+            if plot:
+                fig, ax = plt.subplots(figsize=(8,2))
+                ax.errorbar(np.arange(1,int(self.T/2)-1), m_eff.val,
+                            yerr=m_eff.err, fmt='o', capsize=4,
+                            label=mass)
+                ax.fill_between(x.val,
+                                (res[0].val+res[0].err)*np.ones(len(x.val)),
+                                (res[0].val-res[0].err)*np.ones(len(x.val)),
+                                color='k', alpha=0.1)
+                ax.legend()
+                ax.set_xlabel(r'$at$')
+                ax.set_ylabel(r'$m_\mathrm{eff}$')
+
+        if plot:
+            call_PDF(f'{self.ens}_eta_h.pdf', open=True)
 
 
