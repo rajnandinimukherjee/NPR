@@ -10,7 +10,7 @@ class valence:
         self.ainv = stat(
             val=self.info['ainv'],
             err=self.info['ainv_err'],
-            btsp='seed')
+            btsp='fill')
 
         self.T = int(self.info['TT'])
         self.all_masses = ['{:.4f}'.format(m) for m in self.info['masses']]
@@ -218,12 +218,13 @@ class valence:
 
         if 'amres' in self.__dict__.keys():
             fig, ax = plt.subplots(figsize=(5,6))
-            x = join_stats([self.amres[mass]+self.info[self.all_masses.index(mass)]
-                    for mass in self.all_masses)])
+            x = join_stats([self.amres[mass]+self.info['masses'][
+                self.all_masses.index(mass)]
+                    for mass in self.all_masses])
             y = join_stats([self.ainv*self.eta_h_masses[mass]
                 for mass in self.all_masses])
             ax.errorbar(x.val, y.val, yerr=y.err, xerr=x.err,
-                    fmt='o', cpasize=4)
+                    fmt='o', capsize=4)
             ax.set_xlabel(r'$am_q+am_\mathrm{res}$')
             ax.set_ylabel(r'$M_{\eta_h}$')
 

@@ -36,6 +36,10 @@ class Z_bl_analysis:
         self.non_sea_masses = ['{:.4f}'.format(info['masses'][k])
                                for k in range(1, len(info['masses']))]
         self.all_masses = [self.sea_mass]+self.non_sea_masses
+        self.valence = valence(self.ens)
+        self.valence.compute_amres(load=False)
+        self.am_res = self.valence.amres
+        self.valence.compute_eta_h(plot=True, load=False)
 
         self.momenta, self.Z = {}, {}
 
@@ -62,10 +66,11 @@ class Z_bl_analysis:
 
         plt.figure()
 
-        x = [eval(m) for m in self.all_masses[start:stop]]
+        x = join_stats([self.am_res[m]+eval(m)
+                        for m in self.all_masses[start:stop]])
         y = join_stats([self.interpolate(mu, (m,m), key)
                         for m in self.all_masses[start:stop]])
-        plt.errorbar(x, y.val, yerr=y.err,
+        plt.errorbar(x.err, y.val, yerr=y.err,
                      capsize=4, fmt='o')
         plt.title(r'$Z_'+key+'(\mu='+str(mu)+'\,\mathrm{GeV})$')
         plt.xlabel('$am_q$')
