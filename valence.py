@@ -3,207 +3,183 @@ from eta_c import *
 
 
 class valence:
-    filename = 'eta_C.h5'
     eta_h_gamma = ('Gamma5', 'Gamma5')
 
-    def __init__(self, ens, **kwargs):
+    def __init__(self, ens, action=(0,0), **kwargs):
         self.ens = ens
+        self.action = action
         self.info = params[self.ens]
-        self.all_masses = ['{:.4f}'.format(m) for m in info['masses']]
+        self.T = int(self.info['TT'])
+        self.all_masses = ['{:.4f}'.format(m) for m in self.info['masses']]
         self.N_mass = len(self.all_masses)
         self.mass_names = {self.all_masses[0]: 'l',
                            self.all_masses[1]: 'l_double',
                            self.all_masses[2]: 's_half',
                            self.all_masses[3]: 's'}
         self.mass_names.update(
-            {self.all_masses[m]: f'c{m-1}'
+            {self.all_masses[m]: f'c{m-4}'
              for m in range(4, self.N_mass)})
-        self.mass_dict = {m: {} for m in self.all_masses}
-        self.fit_dict = {m: {} for m in self.all_masses}
 
-    def meson_correlator(self, mass, cfgs=None, meson_num=1, **kwargs):
-        datapath = path+self.ens
-        datapath += 'S/results' if self.ens[-1]!='M' else 'results'
-        R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
-        massname = self.mass_names[mass]
-        foldername = f'{massname}_{R}__{massname}_{R}'
+        #self.compute_amres(load=False)
+        #self.compute_eta_h(load=False)
+        #self.masses = {}
+        #for m_idx, mass in enumerate(self.all_masses):
+        #    original_mass = self.info['masses'][m_idx]
+        #    self.masses[mass] = eval(original_mass)+self.amres[mass]
 
-        self.cfgs = info['valence_cfgs'] if cfgs==None else cfgs
-        t_src_range = range(0,64,4)
-        corr = np.zeros(shape=(len(self.cfgs), len(t_src_range), 64))
+    def amres_correlator(self, mass, load=True, 
+                         cfgs=None, meson_num=1,
+                         N_src=16, save=True, 
+                         **kwargs):
 
-        for cf_idx, cf in enumerate(self.cfgs):
-            for t_idx, t_src in enumerate(t_src_range):
-                filename = f'{datapath}/{cf}/mesons/{mass}_'
+        a1, a2 = self.action
+        fname = f'NPR/action{a1}_action{a2}/'
+        fname += '__'.join(['NPR', self.ens,
+                    self.info['baseactions'][a1],
+                    self.info['baseactions'][a2]])
+        fname += '_mSMOM.h5'
+        grp_name = f'{str((mass, mass))}/PJ5q'
 
-    def load_data(self, mass, key='corr', plot=False,
-                  **kwargs):
-        file = h5py.File(self.filename, 'r')
-        data = np.array(file[self.ens][str(
-            self.mass_comb[mass])][key][:])
+        if load:
+            datapath = path+self.ens
+            datapath += 'S/results' if self.ens[-1]!='M' else '/results'
+            R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
+            massname = self.mass_names[mass]
 
-        if data.shape[0] == 1:
-            data = stat(
-                val=data[0, :],
+            self.cfgs = self.info['valence_cfgs'] if cfgs==None else cfgs
+            t_src_range = range(0,self.T,int(self.T/N_src))
+            corr = np.zeros(shape=(len(self.cfgs), N_src, self.T))
+
+            for cf_idx, cf in enumerate(self.cfgs):
+                filename = f'{datapath}/{cf}/conserved/'
+                for t_idx, t_src in enumerate(t_src_range):
+                    f_string = f'prop_{massname}_{R}_Z2_t'+'{:02d}'.format(t_src)
+                    f_string += f'_p+0_+0_+0.{cf}.h5'
+                    data = h5py.File(filename+f_string, 'r')['wardIdentity']
+                    corr[cf_idx,t_idx,:] = np.roll(
+                            np.array(data['PJ5q'][:]['re']),-t_src)
+
+            corr = np.mean(corr, axis=1)
+            corr = stat(
+                val=np.mean(corr,axis=0),
                 err='fill',
-                btsp=np.array(file[self.ens+'_expanded'][str(
-                    self.mass_comb[mass])][key][:])
-            )
+                btsp=bootstrap(corr)
+                )
+
+            meson = self.meson_correlator(mass, meson_num=meson_num,
+                                          load=False)
+            corr = corr/meson
+
+            if save:
+                f = h5py.File(fname, 'a')
+                if grp_name in f:
+                    del f[grp_name]
+                mes_grp = f.create_group(grp_name)
+                mes_grp.create_dataset('central', data=corr.val) 
+                mes_grp.create_dataset('errors', data=corr.err) 
+                mes_grp.create_dataset('bootstrap', data=corr.btsp) 
+                f.close()
+                print(f'Saved PJ5q data to {grp_name} in {fname}')
         else:
-            data = stat(
-                val=np.mean(data, axis=0),
+            f = h5py.File(fname, 'r')[grp_name]
+            corr = stat(
+                    val=np.array(f['central'][:]),
+                    err=np.array(f['errors'][:]),
+                    btsp=np.array(f['bootstrap'][:]))
+        return corr
+
+    def compute_amres(self, num_end_points=5, **kwargs):
+        fit_points = np.arange(int(self.T/2))[-num_end_points:]
+        self.amres = {}
+        def constant_mass(t, param, **kwargs):
+            return param[0]*t
+
+        for mass in self.all_masses:
+            corr = self.amres_correlator(mass)
+            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+
+            x = stat(val=fit_points, btsp='fill')
+            y = folded_corr[fit_points]
+            res = fit_func(x, y, constant_mass, [0.1, 0])
+            self.amres[mass] = res[0] if res[0].val!=0 else folded_corr[-1]
+            print(f'For am_q={mass}, am_res='+
+                    f'{err_disp(self.amres[mass].val,self.amres[mass].err)}')
+
+    def meson_correlator(self, mass, load=True, 
+                         cfgs=None, meson_num=1,
+                         N_src=16, save=True, 
+                         **kwargs):
+
+        a1, a2 = self.action
+        fname = f'NPR/action{a1}_action{a2}/'
+        fname += '__'.join(['NPR', self.ens,
+                    self.info['baseactions'][a1],
+                    self.info['baseactions'][a2]])
+        fname += '_mSMOM.h5'
+        grp_name = f'{str((mass, mass))}/meson_{meson_num}/corr'
+
+        if load:
+            datapath = path+self.ens
+            datapath += 'S/results' if self.ens[-1]!='M' else '/results'
+            R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
+            massname = self.mass_names[mass]
+            foldername = f'{massname}_{R}__{massname}_{R}'
+            mes = f'meson_{meson_num}'
+
+            self.cfgs = self.info['valence_cfgs'] if cfgs==None else cfgs
+            t_src_range = range(0,self.T,int(self.T/N_src))
+            corr = np.zeros(shape=(len(self.cfgs), N_src, self.T))
+
+            for cf_idx, cf in enumerate(self.cfgs):
+                filename = f'{datapath}/{cf}/mesons/{foldername}/meson_'
+                for t_idx, t_src in enumerate(t_src_range):
+                    f_string = f'prop_{massname}_{R}_Z2_t'+'{:02d}'.format(t_src)
+                    f_string += '_p+0_+0_+0'
+                    fstring = '__'.join([f_string, f_string, f'snk_0_0_0.{cf}.h5'])
+                    data = h5py.File(filename+fstring, 'r')['meson'][mes]
+                    corr[cf_idx,t_idx,:] = np.roll(
+                            np.array(data['corr'][:]['re']),-t_src)
+
+            corr = np.mean(corr, axis=1)
+            corr = stat(
+                val=np.mean(corr,axis=0),
                 err='fill',
-                btsp=bootstrap(data, K=N_boot)
-            )
+                btsp=bootstrap(corr)
+                )
 
-        if plot:
-            plt.figure()
-            plt.errorbar(range(len(data.val)), data.val,
-                         yerr=data.err, capsize=4, fmt='o')
-            plt.xlabel(r'at')
-            filename = f'plots/valence_data_plot_{self.ens}.pdf'
-            call_PDF(filename)
-
-        return data
-
-    def fit_data(self, mass, key='corr', plot=False,
-                 start=12, end=25, pass_plot=False,
-                 update=True, **kwargs):
-        data = self.load_data(mass, key=key, **kwargs)
-        if key == 'PJ5q':
-            denom = self.load_data(mass, key='corr')
-            data = data/denom
-        if key == 'corr':
-            data = data.use_func(np.log)
-
-        T = len(data.val)
-        T_half = int(T/2)
-
-        def fold(array):
-            return 0.5*(array[1:]+array[::-1][:-1])[:T_half]
-        folded_data = data.use_func(fold)
-
-        x = stat(np.arange(T_half), btsp='fill')
-        y = folded_data
-
-        if key == 'corr':
-            guess = [1, 1]
-
-            def ansatz(t, param, **kwargs):
-                return param[1] - param[0]*t
-
-        elif key == 'PJ5q':
-            guess = [0.1, 0]
-
-            def ansatz(t, param, **kwargs):
-                return param[0]*np.ones(len(t))
-
-        res = fit_func(x, y, ansatz, guess,
-                       start=start, end=end, **kwargs)
-        fit_mass = stat(
-            val=res.val[0],
-            err=res.err[0],
-            btsp=res.btsp[:, 0]
-        )
-
-        if update:
-            if res.pvalue > 0.05:
-                label = 'aM_eta_h' if key == 'corr' else 'am_res'
-                self.mass_dict[mass][label] = fit_mass
-                self.fit_dict[mass][label] = [start, end]
-
-        if pass_plot:
-            plt.figure()
-            if key == 'corr':
-                y = y.use_func(np.exp)
-                y = y.use_func(m_eff, ansatz='exp')
-                x.val = x.val[:-1]
-                plt.ylabel(r'$aM_{\eta_h}^{eff}$')
-            else:
-                plt.ylabel(r'$am_{res}$')
-            plt.errorbar(x.val[10:], y.val[10:],
-                         yerr=y.err[10:],
-                         capsize=4, fmt='o')
-            plt.fill_between(np.arange(start, end),
-                             fit_mass.val+fit_mass.err,
-                             fit_mass.val-fit_mass.err,
-                             color='0.5')
-            plt.text(0.5, 0.08, r'$\chi^2$/DOF:' +
-                     str(np.around(res.chi_sq/res.DOF, 3)),
-                     va='center', ha='center',
-                     transform=plt.gca().transAxes)
-            plt.xlabel('at')
-            if plot:
-                filename = f'plots/valence_data_fit_{self.ens}.pdf'
-                call_PDF(filename)
-
-            return res, fit_mass, plt
+            if save:
+                f = h5py.File(fname, 'a')
+                if grp_name in f:
+                    del f[grp_name]
+                mes_grp = f.create_group(grp_name)
+                mes_grp.create_dataset('central', data=corr.val) 
+                mes_grp.create_dataset('errors', data=corr.err) 
+                mes_grp.create_dataset('bootstrap', data=corr.btsp) 
+                f.close()
+                print(f'Saved meson_{meson_num} corr data to {grp_name} in {fname}')
         else:
-            return res, fit_mass
+            f = h5py.File(fname, 'r')[grp_name]
+            corr = stat(
+                    val=np.array(f['central'][:]),
+                    err=np.array(f['errors'][:]),
+                    btsp=np.array(f['bootstrap'][:]))
+        return corr
 
-    def fit_all(self, key, plot=False, save=True, **kwargs):
+    def compute_eta_h(self, fit_start=15, fit_end=30, **kwargs):
+        self.eta_h_masses = {}
+        def constant_mass(t, param, **kwargs):
+            return param[0]*t
+
         for mass in self.all_masses:
-            res, fit_mass, plt = self.fit_data(
-                mass, key=key, pass_plot=True, **kwargs)
-            plt.title(r'$am_{in}=$'+str(mass))
+            corr = self.meson_correlator(mass, meson_num=1)
+            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+            div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
+            m_eff = div.use_func(np.arccosh)
 
-        if save:
-            self.save_to_H5()
+            x = stat(val=np.arange(fit_start, fit_end), btsp='fill')
+            y = m_eff[fit_start:fit_end]
+            res = fit_func(x, y, constant_mass, [0.1, 0])
+            self.eta_h_masses[mass] = res[0]
+            print(f'For am_q={mass}, am_eta_h={err_disp(res.val[0],res.err[0])}')
 
-        if plot:
-            filename = f'plots/all_fits_{self.ens}.pdf'
-            call_PDF(filename)
 
-    def plot_from_dict(self, key, **kwargs):
-        label = 'aM_eta_h' if key == 'corr' else 'am_res'
-        for mass in self.all_masses:
-            if label in self.mass_dict[mass]:
-                start, end = self.fit_dict[mass][label]
-                res, fit, plt = self.fit_data(
-                    mass, key, pass_plot=True,
-                    start=start, end=end)
-                plt.title(r'$am_{in}=$'+str(mass))
-
-        filename = f'plots/all_fits_{self.ens}.pdf'
-        call_PDF(filename)
-
-    def save_to_H5(self, filename='eta_fits.h5'):
-        with h5py.File(filename, 'a') as file:
-            if self.ens in file.keys():
-                del file[self.ens]
-
-            ens = file.create_group(self.ens)
-            for mass in self.all_masses:
-                for key in ['aM_eta_h', 'am_res']:
-                    if key in self.mass_dict[mass].keys():
-                        key_group = ens.create_group(mass+'/'+key)
-
-                        obj = self.mass_dict[mass][key]
-                        key_group.create_dataset('central', data=obj.val)
-                        key_group.create_dataset('errors', data=obj.err)
-                        key_group.create_dataset('bootstrap', data=obj.btsp)
-
-                        start, end = self.fit_dict[mass][key]
-                        key_group.attrs['fit_start'] = start
-                        key_group.attrs['fit_end'] = end
-            print(f'Added fit data to {self.ens} in {filename}.')
-
-    def load_from_H5(self, filename='eta_fits.h5'):
-        file = h5py.File(filename, 'r')
-        if self.ens not in file.keys():
-            print(f'Data for {self.ens} not found in {filename}.')
-        else:
-            for mass in file[self.ens].keys():
-                for key in file[self.ens][mass]:
-                    folder = file[self.ens][mass][key]
-
-                    obj = stat(
-                        val=np.array(folder['central']),
-                        err=np.array(folder['errors']),
-                        btsp=np.array(folder['bootstrap'][:])
-                    )
-                    self.mass_dict[mass][key] = obj
-
-                    start = file[self.ens][mass][key].attrs['fit_start']
-                    end = file[self.ens][mass][key].attrs['fit_end']
-                    self.fit_dict[mass][key] = [start, end]
