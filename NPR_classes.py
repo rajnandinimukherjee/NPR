@@ -1,12 +1,13 @@
 from basics import *
 from fourquark import *
+from valence import *
 
 
 class bilinear_analysis:
     keys = ['S', 'P', 'V', 'A', 'T', 'm']
     N_boot = N_boot
 
-    def __init__(self, ensemble, mres=False, sea_mass_idx=0,
+    def __init__(self, ensemble, sea_mass_idx=0,
             scheme='gamma', cfgs=None, **kwargs):
 
         self.ens = ensemble
@@ -22,12 +23,12 @@ class bilinear_analysis:
         self.actions = [info['gauges'][i]+'_'+info['baseactions'][i] for
                         i in range(gauge_count)]
         self.all_masses = [self.sea_mass]+self.non_sea_masses
-        self.mres = mres
         self.scheme = scheme
 
         self.momenta, self.Z = {}, {}
 
-    def NPR(self, masses, action=(0, 0), scheme=1, massive=False, **kwargs):
+    def NPR(self, masses, action=(0, 0), scheme=1,
+            massive=False, mres=None,  **kwargs):
         m1, m2 = masses
         a1, a2 = action
         a1, a2 = self.actions[a1], self.actions[a2]
@@ -66,8 +67,9 @@ class bilinear_analysis:
                         np.linalg.norm(mom_diff)**2
 
                     if (condition3 and condition4):
-                        bl = bilinear(self.ens, prop1, prop2, mres=self.mres,
-                                      cfgs=self.cfgs)
+                        bl = bilinear(self.ens, prop1, prop2,
+                                      cfgs=self.cfgs, mres=mres, 
+                                      **kwargs)
                         mom = bl.q
                         if mom not in results.keys():
                             bl.NPR(massive=massive, **kwargs)
@@ -117,12 +119,18 @@ class bilinear_analysis:
 
     def NPR_all(self, massive=False, save=True, renorm='mSMOM', **kwargs):
         if massive:
+            self.valence = valence(self.ens)
+            self.valence.compute_amres(load=False)
+            self.amres_dict = self.valence.amres
+
             self.momenta[(0, 0)] = {}
             self.Z[(0, 0)] = {}
             self.NPR((self.sea_mass, self.sea_mass),
-                     massive=massive, renorm=renorm)
+                     massive=massive, renorm=renorm,
+                     mres=self.amres_dict[self.sea_mass])
             for mass in self.non_sea_masses:
-                self.NPR((mass, mass), massive=massive, renorm=renorm)
+                self.NPR((mass, mass), massive=massive,
+                        renorm=renorm, mres=self.amres_dict[mass])
             filename_add = f'_{renorm}'
         else:
             N_a = len(self.actions)

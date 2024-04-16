@@ -1,6 +1,5 @@
 from externalleg import *
 import pandas as pd
-from valence import *
 
 # =====bilinear projectors==============================
 bl_gamma_proj = {'S': [Gamma['I']],
@@ -23,7 +22,7 @@ class bilinear:
     prefix = 'bi_'
 
     def __init__(self, ensemble, prop1, prop2, scheme='gamma',
-                 mres=True, cfgs=None, **kwargs):
+                 mres=None, cfgs=None, **kwargs):
 
         data = path+ensemble
         data += 'S/results' if ensemble[-1]!='M' else '/results'
@@ -74,21 +73,10 @@ class bilinear:
                                        for i in range(self.N_bl)])
 
         self.m_q = float(self.prop_in.info['am'])
-        if ensemble in valence_ens and mres:
-            self.valence = valence(ensemble)
-            self.valence.load_from_H5()
-            info = self.valence.mass_dict
-            m = str(self.m_q)
-            if m == '0.0214':
-                m = '0.02144'
-            try:
-                self.mres = info[m]['am_res']
-                if self.mres.btsp.shape[0]!=N_boot:
-                    self.mres = stat(val=self.mres.val, err=self.mres.err, btsp='fill')
-            except KeyError:
-                self.mres = stat(val=0, err=0, btsp='fill')
-        else:
+        if mres==None:
             self.mres = stat(val=0, err=0, btsp='fill')
+        else:
+            self.mres = mres
 
     def gamma_Z(self, operators, **kwargs):
         projected = {c: np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]

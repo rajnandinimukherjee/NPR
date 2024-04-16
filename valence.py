@@ -1,6 +1,4 @@
 from basics import *
-from eta_c import *
-
 
 class valence:
     eta_h_gamma = ('Gamma5', 'Gamma5')
@@ -9,6 +7,11 @@ class valence:
         self.ens = ens
         self.action = action
         self.info = params[self.ens]
+        self.ainv = stat(
+            val=self.info['ainv'],
+            err=self.info['ainv_err'],
+            btsp='seed')
+
         self.T = int(self.info['TT'])
         self.all_masses = ['{:.4f}'.format(m) for m in self.info['masses']]
         self.N_mass = len(self.all_masses)
@@ -88,13 +91,16 @@ class valence:
                     btsp=np.array(f['bootstrap'][:]))
         return corr
 
-    def compute_amres(self, num_end_points=5, plot=False, **kwargs):
+    def compute_amres(self, masses=None, num_end_points=5, plot=False, **kwargs):
         fit_points = np.arange(int(self.T/2))[-num_end_points:]
         self.amres = {}
         def constant_mass(t, param, **kwargs):
             return param[0]*np.ones(len(t))
 
-        for mass in self.all_masses:
+        if masses==None:
+            masses = self.all_masses
+
+        for mass in masses:
             corr = self.amres_correlator(mass, **kwargs)
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
 
@@ -210,7 +216,17 @@ class valence:
                 ax.set_xlabel(r'$at$')
                 ax.set_ylabel(r'$m_\mathrm{eff}$')
 
+        if 'amres' in self.__dict__.keys():
+            fig, ax = plt.subplots(figsize=(5,6))
+            x = join_stats([self.amres[mass]+self.info[self.all_masses.index(mass)]
+                    for mass in self.all_masses)])
+            y = join_stats([self.ainv*self.eta_h_masses[mass]
+                for mass in self.all_masses])
+            ax.errorbar(x.val, y.val, yerr=y.err, xerr=x.err,
+                    fmt='o', cpasize=4)
+            ax.set_xlabel(r'$am_q+am_\mathrm{res}$')
+            ax.set_ylabel(r'$M_{\eta_h}$')
+
         if plot:
             call_PDF(f'{self.ens}_eta_h.pdf', open=True)
-
 
