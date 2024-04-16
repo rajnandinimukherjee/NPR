@@ -9,15 +9,27 @@ class valence:
 
     def __init__(self, ens, **kwargs):
         self.ens = ens
-        self.all_masses = [str(m) for m in params[self.ens]['masses']]
+        self.info = params[self.ens]
+        self.all_masses = [str(m) for m in info['masses']]
         self.sea_mass = self.all_masses[0]
         self.N_mass = len(self.all_masses)
-        self.mass_comb = {self.all_masses[0]: ('l', 'l')}
+        self.mass_comb = {self.all_masses[0]: ('l', 'l'),
+                          self.all_masses[1]: ('l_double', 'l_double'),
+                          self.all_masses[2]: ('s_half', 's_half'),
+                          self.all_masses[3]: ('s', 's')}
         self.mass_comb.update(
             {self.all_masses[m]: (f'c{m-1}', f'c{m-1}')
-             for m in range(1, self.N_mass)})
+             for m in range(4, self.N_mass)})
         self.mass_dict = {m: {} for m in self.all_masses}
         self.fit_dict = {m: {} for m in self.all_masses}
+
+    def meson_correlator(self, mass, cfgs=None, meson_num=1, **kwargs):
+        self.cfgs = info['valence_cfgs'] if cfgs==None else cfgs
+        t_src_range = np.arange(0,64,4)
+
+
+
+
 
     def load_data(self, mass, key='corr', plot=False,
                   **kwargs):
