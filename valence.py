@@ -233,15 +233,13 @@ class valence:
                 ax.errorbar(np.arange(1,int(self.T/2)-1), m_eff.val,
                             yerr=m_eff.err, fmt='o', capsize=4,
                             label=mass)
-                ax.fill_between(x.val,
-                                (fit.val+fit.err)*np.ones(len(x.val)),
-                                (fit.val-fit.err)*np.ones(len(x.val)),
-                                color='k', alpha=0.1)
+                ax.axhspan(fit.val+fit.err, fit.val-fit.err,
+                            color='k', alpha=0.1)
                 ax.legend()
                 ax.set_xlabel(r'$at$')
                 ax.set_ylabel(r'$m_\mathrm{eff}$')
 
-        if 'amres' in self.__dict__.keys():
+        if 'amres' in self.__dict__.keys() and plot:
             fig, ax = plt.subplots(figsize=(5,6))
             x = join_stats([self.amres[mass]+self.info['masses'][
                 self.all_masses.index(mass)]

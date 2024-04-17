@@ -7,7 +7,7 @@ eta_PDG = stat(
     err=0.5/1000,
     btsp='fill')
 
-eta_stars = [1.6, 2.2, float(eta_PDG.val)]
+eta_star = eta_PDG/2
 
 
 class Z_bl_analysis:
@@ -37,9 +37,7 @@ class Z_bl_analysis:
                                for k in range(1, len(info['masses']))]
         self.all_masses = [self.sea_mass]+self.non_sea_masses
         self.valence = valence(self.ens)
-        self.valence.compute_amres(load=False)
-        self.am_res = self.valence.amres
-        self.valence.compute_eta_h(plot=True, load=False)
+        self.valence.calc_all(load=False)
 
         self.momenta, self.Z = {}, {}
 
@@ -58,26 +56,205 @@ class Z_bl_analysis:
                         btsp=self.data[m][self.grp][key]['bootstrap'][:]
                     )
 
-    def plot_mass_dependence(self, mu, key, start=0, stop=None, 
-                             open_file=True,
-                             filename='', **kwargs):
+    def plot_mass_dependence(self, mu, key='m', start=0,
+                             stop=None, open_file=True,
+                             filename='', add_PDG=False,
+                             pass_vals=False, **kwargs):
         if stop==None:
             stop = len(self.all_masses)
 
-        plt.figure()
+        fig, ax = plt.subplots(nrows=3, ncols=1, 
+                               sharex='col',
+                               figsize=(3,10))
+        plt.subplots_adjust(hspace=0, wspace=0)
 
-        x = join_stats([self.am_res[m]+eval(m)
+        x = join_stats([self.valence.amres[m]+eval(m)
                         for m in self.all_masses[start:stop]])
+
+        y = join_stats([self.valence.eta_h_masses[m]*self.ainv
+                        for m in self.all_masses[start:stop]])
+        def eta_mass_ansatz(am, param, **kwargs):
+            return param[0] + param[1]*am**0.5 + param[2]*am
+        ax[0].text(1.05, 0.5,
+                   r'$\alpha + \beta\sqrt{am_q} + \gamma\,am_q$',
+                   va='center', ha='center', rotation=90,
+                   color='k', alpha=0.3,
+                   transform=ax[0].transAxes)
+
+        res = fit_func(x, y, eta_mass_ansatz, [0.1,1,1], verbose=False)
+        def pred_amq(eta_mass, param, **kwargs):
+            a, b, c = param
+            root = (-b+(b**2 + 4*c*(eta_mass-a))**0.5)/(2*c)
+            return root**2
+        am_c = stat(
+                val=pred_amq(eta_PDG.val, res.val),
+                err='fill',
+                btsp=[pred_amq(eta_PDG.btsp[k], res.btsp[k])
+                      for k in range(N_boot)]
+                )
+        am_star = stat(
+                   val=pred_amq(eta_star.val, res.val),
+                   err='fill',
+                   btsp=[pred_amq(eta_star.btsp[k], res.btsp[k])
+                         for k in range(N_boot)]
+                   )
+
+        ax[0].errorbar(x.val, y.val, yerr=y.err,
+                    capsize=4, fmt='o')
+        if add_PDG:
+            ymin, ymax = ax[0].get_ylim()
+            ax[0].hlines(y=eta_PDG.val, xmin=0, xmax=am_c.val, color='k')
+            ax[0].text(0.05, eta_PDG.val-0.05, r'$M_{\eta_c}^\mathrm{PDG}$',
+                       va='top', ha='center', color='k')
+            ax[0].fill_between(np.linspace(0,am_c.val,100),
+                               eta_PDG.val+eta_PDG.err,
+                               eta_PDG.val-eta_PDG.err,
+                               color='k', alpha=0.2)
+            ax[0].vlines(x=am_c.val, ymin=ymin, ymax=eta_PDG.val,
+                         color='k', linestyle='dashed')
+            ax[0].text(am_c.val, 0.5, r'$am_c$', rotation=90,
+                       va='center', ha='right', color='k')
+            ax[0].fill_between(np.linspace(am_c.val-am_c.err,
+                                           am_c.val+am_c.err,100),
+                               ymin, eta_PDG.val+eta_PDG.err,
+                               color='k', alpha=0.2)
+
+            ax[0].hlines(y=eta_star.val, xmin=0, xmax=am_star.val, color='r')
+            ax[0].text(0.05, eta_star.val-0.05, r'$M^\star$',
+                       va='top', ha='center', color='r')
+            ax[0].fill_between(np.linspace(0,am_star.val,100),
+                               eta_star.val+eta_star.err,
+                               eta_star.val-eta_star.err,
+                               color='r', alpha=0.2)
+            ax[0].vlines(x=am_star.val, ymin=ymin, ymax=eta_star.val,
+                         color='r', linestyle='dashed')
+            ax[0].text(am_star.val, 0.5, r'$am^\star$', rotation=90,
+                       va='center', ha='right', color='r')
+            ax[0].fill_between(np.linspace(am_star.val-am_star.err,
+                                           am_star.val+am_star.err,100),
+                               ymin, eta_star.val+eta_star.err,
+                               color='r', alpha=0.2)
+
+            discard, new_ymax = ax[0].get_ylim()
+            ax[0].set_ylim([ymin, new_ymax])
+
+        xmin, xmax = ax[0].get_xlim()
+        xrange = np.linspace(0.002, xmax, 100)
+        yrange = res.mapping(xrange)
+        ax[0].text(0.5, 0.05, r'$\chi^2/\mathrm{DOF}:'+\
+                str(np.around(res.chi_sq/res.DOF, 3))+r'$',
+                ha='center', va='center',
+                transform=ax[0].transAxes)
+        ax[0].fill_between(xrange, yrange.val+yrange.err,
+                        yrange.val-yrange.err,
+                        color='k', alpha=0.1)
+        ax[0].set_ylabel(r'$M_{\eta_h}\,[\mathrm{GeV}]$')
+        ax[0].set_xlim(0, xmax)
+        ax[0].set_title(f'{self.ens}')
+
+
+
+
+
         y = join_stats([self.interpolate(mu, (m,m), key)
-                        for m in self.all_masses[start:stop]])
-        plt.errorbar(x.err, y.val, yerr=y.err,
-                     capsize=4, fmt='o')
-        plt.title(r'$Z_'+key+'(\mu='+str(mu)+'\,\mathrm{GeV})$')
-        plt.xlabel('$am_q$')
+                        for m in self.all_masses[start:stop]])*am_c*self.ainv
+        def Z_m_ansatz(am, param, **kwargs):
+            return param[0] + param[1]/am + param[2]*am + param[3]*am**2
+        ax[1].text(1.05, 0.5,
+                   r'$\alpha + \beta/am_q + \gamma\,am_q + \delta\,(am_q)^2$',
+                   va='center', ha='center', rotation=90,
+                   color='k', alpha=0.3,
+                   transform=ax[1].transAxes)
+
+        res = fit_func(x, y, Z_m_ansatz, [0.1,0.1,0.1,0.1], verbose=False)
+        Z_m_amstar = res.mapping(am_star)
+
+        ax[1].errorbar(x.val, y.val, xerr=x.err,
+                       yerr=y.err, capsize=4, fmt='o')
+        if add_PDG:
+            ymin, ymax = ax[1].get_ylim()
+            ax[1].errorbar([am_star.val], [Z_m_amstar.val],
+                           xerr=[am_star.err], yerr=[Z_m_amstar.err],
+                           fmt='o', capsize=4, color='r')
+            ax[1].vlines(x=am_star.val, ymin=ymin, ymax=ymax,
+                         color='r', linestyle='dashed')
+            ax[1].fill_between(np.linspace(am_star.val-am_star.err,
+                                           am_star.val+am_star.err,100),
+                               ymin, eta_star.val+eta_star.err,
+                               color='r', alpha=0.2)
+
+            ax[1].set_ylim([ymin, ymax])
+
+        xmin, xmax = ax[1].get_xlim()
+        xrange = np.linspace(0.002, xmax, 100)
+        yrange = res.mapping(xrange)
+        ax[1].text(0.5, 0.05, r'$\chi^2/\mathrm{DOF}:'+\
+                str(np.around(res.chi_sq/res.DOF, 3))+r'$',
+                ha='center', va='center',
+                transform=ax[1].transAxes)
+        ax[1].fill_between(xrange, yrange.val+yrange.err,
+                        yrange.val-yrange.err,
+                        color='k', alpha=0.1)
+        ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
+                #r'\,\mathrm{GeV})$')
+                r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$')
+        ax[1].set_xlim(0, xmax)
+
+
+
+
+
+
+        y = (x*y)/am_c
+        def Z_m_m_q_ansatz(am, param, **kwargs):
+            return param[0]*am + param[1] + param[2]*am**2
+        ax[2].text(1.05, 0.5,
+                   r'$\alpha + \beta\,am_q + \gamma\,(am_q)^2$',
+                   va='center', ha='center', rotation=90,
+                   color='k', alpha=0.3,
+                   transform=ax[2].transAxes)
+
+        res = fit_func(x, y, Z_m_m_q_ansatz, [0.1,1,1], verbose=False)
+        mbar = res.mapping(am_star) 
+
+        ax[2].errorbar(x.val, y.val, xerr=x.err,
+                       yerr=y.err,
+                    capsize=4, fmt='o')
+        if add_PDG:
+            ymin, ymax = ax[2].get_ylim()
+            ax[2].errorbar([am_star.val], [mbar.val],
+                           xerr=[am_c.err], yerr=[mbar.err],
+                           fmt='o', capsize=4, color='r')
+            ax[2].vlines(x=am_star.val, ymin=ymin, ymax=ymax,
+                         color='r', linestyle='dashed')
+            ax[2].fill_between(np.linspace(am_star.val-am_star.err,
+                                           am_star.val+am_star.err,100),
+                               ymin, eta_star.val+eta_star.err,
+                               color='r', alpha=0.2)
+
+            ax[2].set_ylim([ymin, ymax])
+        xmin, xmax = ax[2].get_xlim()
+        xrange = np.linspace(0.002, xmax, 100)
+        yrange = res.mapping(xrange)
+        ax[2].text(0.5, 0.05, r'$\chi^2/\mathrm{DOF}:'+\
+                str(np.around(res.chi_sq/res.DOF, 3))+r'$',
+                ha='center', va='center',
+                transform=ax[2].transAxes)
+        ax[2].fill_between(xrange, yrange.val+yrange.err,
+                        yrange.val-yrange.err,
+                        color='k', alpha=0.1)
+        ax[2].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
+                '\,\mathrm{GeV})\cdot am_q\cdot a^{-1}\, [\mathrm{GeV}]$')
+        ax[2].set_xlabel(r'$am_q+am_\mathrm{res}$')
+
+
         if filename=='':
             filename = f'mSMOM_{self.ens}_vs_amq.pdf'
 
         call_PDF(filename, open=open_file)
+
+        if pass_vals:
+            return Z_m_amstar, mbar
 
     def interpolate(self, mu, masses, key,
                     method='scipy', plot=False,
