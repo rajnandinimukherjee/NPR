@@ -34,7 +34,7 @@ class valence:
     def Z_A_correlator(self, mass, load=True,
                        cfgs=None, meson_num=33,
                        N_src=16, save=True,
-                       num_end_points=8, 
+                       fit_start=20, fit_end=30, 
                        **kwargs):
 
         a1, a2 = self.action
@@ -90,7 +90,7 @@ class valence:
 
             folded_corr = (corr_new[1:]+corr_new[::-1][:-1])[:int(self.T/2)]*0.5
 
-            fit_points = np.arange(int(self.T/2))[-num_end_points:]
+            fit_points = np.arange(fit_start, fit_end)
             def constant_Z_A(t, param, **kwargs):
                 return param[0]*np.ones(len(t))
             x = stat(val=fit_points, btsp='fill')
