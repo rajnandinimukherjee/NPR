@@ -43,7 +43,7 @@ class valence:
                     self.info['baseactions'][a1],
                     self.info['baseactions'][a2]])
         fname += '_mSMOM.h5'
-        grp_name = f'{str((mass, mass))}/PJ5q'
+        grp_name = f'{str((mass, mass))}/PA0'
 
         if load:
             datapath = path+self.ens
@@ -62,7 +62,7 @@ class valence:
                     f_string += f'_p+0_+0_+0.{cf}.h5'
                     data = h5py.File(filename+f_string, 'r')['wardIdentity']
                     corr[cf_idx,t_idx,:] = np.roll(
-                            np.array(data['PJ5q'][:]['re']),-t_src)
+                            np.array(data['PA0'][:]['re']),-t_src)
 
             corr = np.mean(corr, axis=1)
             corr = stat(
@@ -210,6 +210,9 @@ class valence:
 
         for mass in masses:
             corr, fit = self.amres_correlator(mass, **kwargs)
+            meson, meson_fit = self.meson_correlator(mass, meson_num=meson_num,
+                                          load=False)
+            corr_new = corr/meson
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
 
             self.amres[mass] = fit
