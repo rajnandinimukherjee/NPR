@@ -71,8 +71,8 @@ class valence:
                 btsp=bootstrap(corr)
                 )
 
-            meson, meson_fit = self.meson_correlator(
-                    mass, meson_num=meson_num, load=False)
+            meson = self.meson_correlator(mass, meson_num=meson_num,
+                                          fit_corr=False, load=False)
 
             corr_rolled = stat(
                     val=np.roll(corr.val, -1),
@@ -85,15 +85,15 @@ class valence:
                     btsp=np.roll(meson.btsp, 1, axis=1)
                     )
             pdb.set_trace()
-            corr = (corr+corr_rolled)/meson + corr/(meson+meson_rolled)
+            corr_new = (corr+corr_rolled)/meson + corr/(meson+meson_rolled)
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
 
             fit_points = np.arange(int(self.T/2))[-num_end_points:]
-            def constant_mass(t, param, **kwargs):
+            def constant_Z_A(t, param, **kwargs):
                 return param[0]*np.ones(len(t))
             x = stat(val=fit_points, btsp='fill')
             y = folded_corr[fit_points]
-            res = fit_func(x, y, constant_mass, [0.1, 0])
+            res = fit_func(x, y, constant_Z_A, [1, 0])
             fit = res[0] if res[0].val!=0 else folded_corr[-1]
             print(f'For am_q={mass}, am_res={err_disp(fit.val,fit.err)}')
 
@@ -165,8 +165,8 @@ class valence:
 
             meson, meson_fit = self.meson_correlator(mass, meson_num=meson_num,
                                           load=False)
-            corr = corr/meson
-            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+            corr_new = corr/meson
+            folded_corr = (corr_new[1:]+corr_new[::-1][:-1])[:int(self.T/2)]*0.5
 
             fit_points = np.arange(int(self.T/2))[-num_end_points:]
             def constant_mass(t, param, **kwargs):
