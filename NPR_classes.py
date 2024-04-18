@@ -122,15 +122,18 @@ class bilinear_analysis:
             self.valence = valence(self.ens)
             self.valence.compute_amres(load=False)
             self.amres_dict = self.valence.amres
+            self.Z_A_dict = self.valence.Z_A
 
             self.momenta[(0, 0)] = {}
             self.Z[(0, 0)] = {}
             self.NPR((self.sea_mass, self.sea_mass),
                      massive=massive, renorm=renorm,
-                     mres=self.amres_dict[self.sea_mass])
+                     mres=self.amres_dict[self.sea_mass],
+                     Z_A_input=self.Z_A_dict[self.sea_mass])
             for mass in self.non_sea_masses:
                 self.NPR((mass, mass), massive=massive,
-                        renorm=renorm, mres=self.amres_dict[mass])
+                        renorm=renorm, mres=self.amres_dict[mass],
+                        Z_A_input=self.Z_A_dict[mass])
             filename_add = f'_{renorm}'
         else:
             N_a = len(self.actions)

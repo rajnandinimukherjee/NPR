@@ -75,27 +75,29 @@ class valence:
                                           fit_corr=False, load=False)
 
             corr_rolled = stat(
-                    val=np.roll(corr.val, -1),
-                    err=np.roll(corr.err, -1),
-                    btsp=np.roll(corr.err, -1, axis=1)
+                    val=np.roll(corr.val, 1),
+                    err=np.roll(corr.err, 1),
+                    btsp=np.roll(corr.btsp, 1, axis=1)
                     )
             meson_rolled = stat(
-                    val=np.roll(meson.val, 1),
-                    err=np.roll(meson.err, 1),
-                    btsp=np.roll(meson.btsp, 1, axis=1)
+                    val=np.roll(meson.val, -1),
+                    err=np.roll(meson.err, -1),
+                    btsp=np.roll(meson.btsp, -1, axis=1)
                     )
-            pdb.set_trace()
-            corr_new = (corr+corr_rolled)/meson + corr/(meson+meson_rolled)
-            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+            corr_new = (corr+corr_rolled)/(meson*2)
+            corr_new = corr_new + (corr*2)/(meson+meson_rolled)
+            corr_new = corr_new*0.5
 
-            fit_points = np.arange(int(self.T/2))[-num_end_points:]
+            folded_corr = (corr_new[1:]+corr_new[::-1][:-1])[:int(self.T/2)]*0.5
+
+            fit_points = np.arange(fit_start, fit_end)
             def constant_Z_A(t, param, **kwargs):
                 return param[0]*np.ones(len(t))
             x = stat(val=fit_points, btsp='fill')
             y = folded_corr[fit_points]
             res = fit_func(x, y, constant_Z_A, [1, 0])
             fit = res[0] if res[0].val!=0 else folded_corr[-1]
-            print(f'For am_q={mass}, am_res={err_disp(fit.val,fit.err)}')
+            print(f'For am_q={mass}, Z_A={err_disp(fit.val,fit.err)}')
 
             if save:
                 f = h5py.File(fname, 'a')
@@ -122,6 +124,48 @@ class valence:
                     err=np.array(f['fit/errors']),
                     btsp=np.array(f['fit/bootstrap'][:]))
         return corr, fit
+
+    def compute_Z_A(self, masses=None, plot=False, 
+            meson_num=33, **kwargs):
+
+        self.Z_A = {}
+        if masses==None:
+            masses = self.all_masses
+
+        for mass in masses:
+            corr, fit = self.amres_correlator(mass, **kwargs)
+            meson, meson_fit = self.meson_correlator(mass, meson_num=meson_num,
+                                          load=False)
+            corr_rolled = stat(
+                    val=np.roll(corr.val, 1),
+                    err=np.roll(corr.err, 1),
+                    btsp=np.roll(corr.btsp, 1, axis=1)
+                    )
+            meson_rolled = stat(
+                    val=np.roll(meson.val, -1),
+                    err=np.roll(meson.err, -1),
+                    btsp=np.roll(meson.btsp, -1, axis=1)
+                    )
+            corr_new = (corr+corr_rolled)/(meson*2)
+            corr_new = corr_new + (corr*2)/(meson+meson_rolled)
+            corr_new = corr_new*0.5
+            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+
+            self.Z_A[mass] = fit
+            if plot:
+                fig, ax = plt.subplots()
+                ax.errorbar(np.arange(2,int(self.T/2)), folded_corr.val[2:],
+                            yerr=folded_corr.err[2:], fmt='o', capsize=4,
+                            label=mass)
+                ax.axhspan(self.Z_A[mass].val+self.Z_A[mass].err,
+                           self.Z_A[mass].val-self.Z_A[mass].err,
+                           color='k', alpha=0.1)
+                ax.set_xlabel(r'$at$')
+                ax.set_ylabel(r'PA0/PP')
+                ax.legend()
+
+        if plot:
+            call_PDF(f'{self.ens}_Z_A.pdf', open=True)
 
     def amres_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,

@@ -22,7 +22,7 @@ class bilinear:
     prefix = 'bi_'
 
     def __init__(self, ensemble, prop1, prop2, scheme='gamma',
-                 mres=None, cfgs=None, **kwargs):
+                 mres=None, Z_A_input=None, cfgs=None, **kwargs):
 
         data = path+ensemble
         data += 'S/results' if ensemble[-1]!='M' else '/results'
@@ -77,6 +77,7 @@ class bilinear:
             self.mres = stat(val=0, err=0, btsp='fill')
         else:
             self.mres = mres
+        self.Z_A_input = Z_A_input
 
     def gamma_Z(self, operators, **kwargs):
         projected = {c: np.trace(np.sum([bl_gamma_proj[c][i]@operators[c][i]
@@ -96,7 +97,8 @@ class bilinear:
         return Z_q
 
 
-    def qslash_Z(self, operators, S, mres, renorm='mSMOM', **kwargs):
+    def qslash_Z(self, operators, S, mres, renorm='mSMOM',
+            Z_A_input=None, **kwargs):
 
         S_inv_in, S_inv_out = S
 
@@ -107,6 +109,13 @@ class bilinear:
         Z_q_out = self.calc_Z_q(S_inv_out, p_vec_out)
 
         Z_q = (Z_q_in*Z_q_out)**0.5
+
+        if Z_A_input!=None:
+            Z_q_over_Z_V = (np.trace(np.sum([q_vec[i]*operators['V'][i]
+                                        for i in range(len(dirs))],
+                                       axis=0)@qslash).real/(12*q_sq))
+            Z_q = Z_q_over_Z_V*Z_A_input
+
 
         q_vec = self.tot_mom
         qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
@@ -180,7 +189,9 @@ class bilinear:
             projected, Z = self.gamma_Z(operators)
         else:
             mres = self.mres.val
-            Z = self.qslash_Z(operators, [S_in,S_out], mres, **kwargs)
+            Z_A_input = self.Z_A_input.val if self.Z_A_input!=None else None
+            Z = self.qslash_Z(operators, [S_in,S_out], mres,
+                    Z_A_input=Z_A_input, **kwargs)
 
         # ==bootstrap===
         Z_btsp = {c: np.zeros(N_boot) for c in Z.keys()}
@@ -198,7 +209,9 @@ class bilinear:
                     Z_btsp[c][k] = Z_k[c]
             else:
                 mres = self.mres.btsp[k]
-                Z_k = self.qslash_Z(operators, [S_in, S_out], mres, **kwargs)
+                Z_A_input = self.Z_A_input.btsp[k] if self.Z_A_input!=None else None
+                Z_k = self.qslash_Z(operators, [S_in, S_out], mres,
+                        Z_A_input=Z_A_input, **kwargs)
                 for c in Z_k.keys():
                     Z_btsp[c][k] = Z_k[c].real
 
