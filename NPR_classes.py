@@ -28,7 +28,7 @@ class bilinear_analysis:
         self.momenta, self.Z = {}, {}
 
     def NPR(self, masses, action=(0, 0), scheme=1,
-            massive=False, mres=None,  **kwargs):
+            massive=False, mres=None, Z_A_input=None, **kwargs):
         m1, m2 = masses
         a1, a2 = action
         a1, a2 = self.actions[a1], self.actions[a2]
@@ -68,7 +68,8 @@ class bilinear_analysis:
 
                     if (condition3 and condition4):
                         bl = bilinear(self.ens, prop1, prop2,
-                                      cfgs=self.cfgs, mres=mres, 
+                                      cfgs=self.cfgs, mres=mres,
+                                      Z_A_input=Z_A_input,
                                       **kwargs)
                         mom = bl.q
                         if mom not in results.keys():
@@ -121,6 +122,7 @@ class bilinear_analysis:
         if massive:
             self.valence = valence(self.ens)
             self.valence.compute_amres(load=False)
+            self.valence.compute_Z_A(load=False)
             self.amres_dict = self.valence.amres
             self.Z_A_dict = self.valence.Z_A
 

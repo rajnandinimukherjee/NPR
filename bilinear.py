@@ -109,6 +109,10 @@ class bilinear:
         Z_q_out = self.calc_Z_q(S_inv_out, p_vec_out)
 
         Z_q = (Z_q_in*Z_q_out)**0.5
+        q_vec = self.tot_mom
+        qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
+                        for i in range(len(dirs))], axis=0)
+        q_sq = np.linalg.norm(q_vec)**2
 
         if Z_A_input!=None:
             Z_q_over_Z_V = (np.trace(np.sum([q_vec[i]*operators['V'][i]
@@ -116,11 +120,6 @@ class bilinear:
                                        axis=0)@qslash).real/(12*q_sq))
             Z_q = Z_q_over_Z_V*Z_A_input
 
-
-        q_vec = self.tot_mom
-        qslash = np.sum([q_vec[i]*Gamma[dirs[i]]
-                        for i in range(len(dirs))], axis=0)
-        q_sq = np.linalg.norm(q_vec)**2
 
         Z_P = Z_q*self.gamma_Z(operators)[1]['P']
         Z_T = Z_q*self.gamma_Z(operators)[1]['T']

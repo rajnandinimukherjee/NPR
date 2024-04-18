@@ -255,7 +255,7 @@ class valence:
 
         for mass in masses:
             corr, fit = self.amres_correlator(mass, **kwargs)
-            meson, meson_fit = self.meson_correlator(mass, meson_num=meson_num,
+            meson, meson_fit = self.meson_correlator(mass, meson_num=1,
                                           load=False)
             corr_new = corr/meson
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
