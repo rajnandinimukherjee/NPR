@@ -34,7 +34,7 @@ class valence:
     def Z_A_correlator(self, mass, load=True,
                        cfgs=None, meson_num=33,
                        N_src=16, save=True,
-                       fit_start=20, fit_end=30, 
+                       fit_start=19, fit_end=28, 
                        **kwargs):
 
         a1, a2 = self.action
@@ -149,13 +149,14 @@ class valence:
             corr_new = (corr+corr_rolled)/(meson*2)
             corr_new = corr_new + (corr*2)/(meson+meson_rolled)
             corr_new = corr_new*0.5
-            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+            folded_corr = (corr_new[1:]+corr_new[::-1][:-1])[:int(self.T/2)]*0.5
 
             self.Z_A[mass] = fit
             if plot:
                 fig, ax = plt.subplots()
-                ax.errorbar(np.arange(2,int(self.T/2)), folded_corr.val[2:],
-                            yerr=folded_corr.err[2:], fmt='o', capsize=4,
+                ax.errorbar(np.arange(1,int(self.T/2)-1),
+                            folded_corr.val[1:-1],
+                            yerr=folded_corr.err[1:-1], fmt='o', capsize=4,
                             label=mass)
                 ax.axhspan(self.Z_A[mass].val+self.Z_A[mass].err,
                            self.Z_A[mass].val-self.Z_A[mass].err,
