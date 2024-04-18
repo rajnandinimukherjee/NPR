@@ -314,7 +314,7 @@ class valence:
     def compute_eta_h(self, plot=False, **kwargs):
         self.eta_h_masses = {}
         for mass in self.all_masses:
-            corr, fit = self.meson_correlator(mass, meson_num=1, **kwargs)
+            corr, fit = self.meson_correlator(mass, **kwargs)
             folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
             div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
             m_eff = div.use_func(np.arccosh)
