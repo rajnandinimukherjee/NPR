@@ -230,7 +230,7 @@ class valence:
 
     def meson_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
-                         N_src=16, save=True, 
+                         N_src=16, save=True, fit_corr=True, 
                          fit_start=15, fit_end=30, 
                          **kwargs):
 
@@ -271,17 +271,19 @@ class valence:
                 btsp=bootstrap(corr)
                 )
 
-            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
-            div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
-            m_eff = div.use_func(np.arccosh)
 
-            def constant_mass(t, param, **kwargs):
-                return param[0]*np.ones(len(t))
-            x = stat(val=np.arange(fit_start, fit_end), btsp='fill')
-            y = m_eff[fit_start:fit_end]
-            res = fit_func(x, y, constant_mass, [0.1, 0])
-            fit = res[0]
-            print(f'For am_q={mass}, am_eta_h={err_disp(fit.val, fit.err)}')
+            if fit_corr:
+                folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+                div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
+                m_eff = div.use_func(np.arccosh)
+
+                def constant_mass(t, param, **kwargs):
+                    return param[0]*np.ones(len(t))
+                x = stat(val=np.arange(fit_start, fit_end), btsp='fill')
+                y = m_eff[fit_start:fit_end]
+                res = fit_func(x, y, constant_mass, [0.1, 0])
+                fit = res[0]
+                print(f'For am_q={mass}, am_eta_h={err_disp(fit.val, fit.err)}')
 
             if save:
                 f = h5py.File(fname, 'a')
@@ -292,9 +294,10 @@ class valence:
                 mes_grp.create_dataset('errors', data=corr.err) 
                 mes_grp.create_dataset('bootstrap', data=corr.btsp) 
 
-                mes_grp.create_dataset('fit/central', data=fit.val) 
-                mes_grp.create_dataset('fit/errors', data=fit.err) 
-                mes_grp.create_dataset('fit/bootstrap', data=fit.btsp) 
+                if fit_corr:
+                    mes_grp.create_dataset('fit/central', data=fit.val) 
+                    mes_grp.create_dataset('fit/errors', data=fit.err) 
+                    mes_grp.create_dataset('fit/bootstrap', data=fit.btsp) 
                 
                 f.close()
                 print(f'Saved meson_{meson_num} corr data '+\
@@ -305,11 +308,17 @@ class valence:
                     val=np.array(f['central'][:]),
                     err=np.array(f['errors'][:]),
                     btsp=np.array(f['bootstrap'][:]))
-            fit = stat(
-                    val=np.array(f['fit/central']),
-                    err=np.array(f['fit/errors']),
-                    btsp=np.array(f['fit/bootstrap'][:]))
-        return corr, fit
+
+            if fit_corr:
+                fit = stat(
+                        val=np.array(f['fit/central']),
+                        err=np.array(f['fit/errors']),
+                        btsp=np.array(f['fit/bootstrap'][:]))
+
+        if fit_corr:
+            return corr, fit
+        else:
+            return corr
 
     def compute_eta_h(self, plot=False, **kwargs):
         self.eta_h_masses = {}
