@@ -222,7 +222,7 @@ class Z_bl_analysis:
 
 
             y = join_stats([self.interpolate(mu, (m,m), key)
-                            for m in self.all_masses[start:stop]])*am_c*self.ainv
+                            for m in self.all_masses[start:stop]])#*am_c*self.ainv
             def Z_m_ansatz(am, param, **kwargs):
                 return param[0] + param[1]/am + param[2]*am + param[3]*am**2
             ax[1].text(1.05, 0.5,
@@ -231,7 +231,8 @@ class Z_bl_analysis:
                        color='k', alpha=0.3,
                        transform=ax[1].transAxes)
 
-            res = fit_func(x, y, Z_m_ansatz, [0.1,0.1,0.1,0.1], verbose=False)
+            res = fit_func(x, y, Z_m_ansatz, [0.1,0.1,0.1,0.1],
+                           pause=False, verbose=False)
             Z_m_amstar = res.mapping(am_star)
 
             ax[1].errorbar(x.val, y.val, xerr=x.err,
@@ -267,14 +268,14 @@ class Z_bl_analysis:
                                                  open_file=False,
                                                  key_only=True,
                                                  pass_vals=True)
-            Z_m_amc_SMOM = Z_m_SMOM*am_c*self.ainv
+            Z_m_amc_SMOM = Z_m_SMOM#*am_c*self.ainv
             ax[1].axhspan(Z_m_amc_SMOM.val+Z_m_amc_SMOM.err,
                           Z_m_amc_SMOM.val-Z_m_amc_SMOM.err,
                           color='r', alpha=0.1)
 
             ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
-                    #r'\,\mathrm{GeV})$')
-                    r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$')
+                    r'\,\mathrm{GeV})$')
+                    #r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$')
             ax[1].set_xlim(0, xmax)
 
 
@@ -282,7 +283,7 @@ class Z_bl_analysis:
 
 
 
-            y = (x*y)/am_c
+            y = (x*y)*self.ainv
             def Z_m_m_q_ansatz(am, param, **kwargs):
                 return param[0]*am + param[1] + param[2]*am**2
             ax[2].text(1.05, 0.5,
@@ -323,6 +324,7 @@ class Z_bl_analysis:
             ax[2].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
                     '\,\mathrm{GeV})\cdot am_q\cdot a^{-1}\, [\mathrm{GeV}]$')
             ax[2].set_xlabel(r'$am_q+am_\mathrm{res}$')
+            #ax[2].set_xlim([0.001, 0.005])
 
             if pass_vals:
                 plt.close(fig)
@@ -369,10 +371,14 @@ class Z_bl_analysis:
 
     def fit_momentum_dependence(self, masses, key,
                                 plot=False, fittype='quadratic',
-                                pass_plot=False, **kwargs):
+                                pass_plot=False, normalise=False,
+                                **kwargs):
 
         x = self.momenta[masses]*self.ainv
         y = self.Z[masses][key]
+        if normalise:
+            q = self.Z[masses]['q']
+            y = y/q
 
         if fittype == 'quadratic':
             guess = [1, 1e-1, 1e-2]
@@ -459,9 +465,7 @@ class cont_extrap:
 
     def plot_cont_extrap(self, mu, eta_pdg, eta_star, **kwargs):
 
-        def linear_ansatz(asq, param, **kwargs):
-            return param[0] + param[1]*asq
-
+        ansatz, guess = self.ansatz()
         x = self.a_sq
         y_mc_mSMOM, y_mc_SMOM, y_mbar = self.load_renorm_masses(
                 mu, eta_pdg, eta_star)
@@ -477,7 +481,7 @@ class cont_extrap:
                        fmt='o', capsize=4, color='b', 
                        mfc='None', label='mSMOM')
 
-        res_mc_mSMOM = fit_func(x, y_mc_mSMOM, linear_ansatz, [1, 1e-1])
+        res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
         y_mc_mSMOM_phys = res_mc_mSMOM[0]
 
         xmin, xmax = ax[0].get_xlim()
@@ -496,7 +500,7 @@ class cont_extrap:
                        fmt='o', capsize=4, color='k',
                        mfc='None', label='SMOM')
 
-        res_mc_SMOM = fit_func(x, y_mc_SMOM, linear_ansatz, [1, 1e-1])
+        res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess)
         y_mc_SMOM_phys = res_mc_SMOM[0]
 
         yrange = res_mc_SMOM.mapping(xrange)
@@ -512,7 +516,7 @@ class cont_extrap:
                        fmt='o', capsize=4, color='b',
                        mfc='None', label='mSMOM')
 
-        res_mbar = fit_func(x, y_mbar, linear_ansatz, [1, 1e-1])
+        res_mbar = fit_func(x, y_mbar, ansatz, guess)
         y_mbar_phys = res_mbar[0]
 
         yrange = res_mbar.mapping(xrange)
@@ -523,6 +527,7 @@ class cont_extrap:
                            yrange.val-yrange.err,
                            color='b', alpha=0.2)
         ax[1].set_xlim([-0.02, xmax])
+        ax[0].set_ylim([0.002,0.004])
 
         ax[0].set_title(r'$M_{\eta_c}:'+err_disp(eta_pdg.val, eta_pdg.err)+\
                 r', M^\star:'+err_disp(eta_star.val, eta_star.err)+r'$')
@@ -544,8 +549,7 @@ class cont_extrap:
 
     def plot_M_eta_pdg_variations(self, mu, M_pdg_list, eta_star,
                                   filename='', **kwargs):
-        def linear_ansatz(asq, param, **kwargs):
-            return param[0] + param[1]*asq
+        ansatz, guess = self.ansatz()
         if type(eta_star)==list:
             print('eta_star cannot be a list!')
         else:
@@ -566,7 +570,7 @@ class cont_extrap:
                                fmt='o', capsize=4, color=color, 
                                mfc='None', label=label)
 
-                res_mc_mSMOM = fit_func(x, y_mc_mSMOM, linear_ansatz, [1, 1e-1])
+                res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
                 y_mc_mSMOM_phys = res_mc_mSMOM[0]
 
                 if eta_idx==0:
@@ -586,7 +590,7 @@ class cont_extrap:
                                fmt='x', capsize=4, color=color,
                                mfc='None')
 
-                res_mc_SMOM = fit_func(x, y_mc_SMOM, linear_ansatz, [1, 1e-1])
+                res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess)
                 y_mc_SMOM_phys = res_mc_SMOM[0]
 
                 yrange = res_mc_SMOM.mapping(xrange)
@@ -602,7 +606,7 @@ class cont_extrap:
                            fmt='o', capsize=4, color='k',
                            mfc='None', label=label)
 
-            res_mbar = fit_func(x, y_mbar, linear_ansatz, [1, 1e-1])
+            res_mbar = fit_func(x, y_mbar, ansatz, guess)
             y_mbar_phys = res_mbar[0]
 
             yrange = res_mbar.mapping(xrange)
@@ -634,8 +638,7 @@ class cont_extrap:
 
     def plot_M_star_variations(self, mu, eta_pdg, M_star_list,
                                filename='', **kwargs):
-        def linear_ansatz(asq, param, **kwargs):
-            return param[0] + param[1]*asq
+        ansatz, guess = self.ansatz()
         if type(eta_pdg)==list:
             print('eta_PDG cannot be a list!')
         else:
@@ -655,7 +658,7 @@ class cont_extrap:
                                fmt='o', capsize=4, color=color, 
                                mfc='None', label=label)
 
-                res_mc_mSMOM = fit_func(x, y_mc_mSMOM, linear_ansatz, [1, 1e-1])
+                res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
                 y_mc_mSMOM_phys = res_mc_mSMOM[0]
 
                 xmin, xmax = ax[0].get_xlim()
@@ -674,7 +677,7 @@ class cont_extrap:
                                fmt='o', capsize=4, color=color,
                                mfc='None', label=label)
 
-                res_mbar = fit_func(x, y_mbar, linear_ansatz, [1, 1e-1])
+                res_mbar = fit_func(x, y_mbar, ansatz, guess)
                 y_mbar_phys = res_mbar[0]
 
                 yrange = res_mbar.mapping(xrange)
@@ -691,7 +694,7 @@ class cont_extrap:
                            fmt='x', capsize=4, color='k',
                            mfc='None')
 
-            res_mc_SMOM = fit_func(x, y_mc_SMOM, linear_ansatz, [1, 1e-1])
+            res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess)
             y_mc_SMOM_phys = res_mc_SMOM[0]
 
             yrange = res_mc_SMOM.mapping(xrange)
@@ -736,5 +739,17 @@ class cont_extrap:
                     f'_mu_{int(mu)}GeV.pdf'
             self.plot_M_star_variations(mu, eta_pdg, mass_list, 
                                      filename=filename, **kwargs)
+
+    def ansatz(self,**kwargs):
+
+        def linear_ansatz(asq, param, **kwargs):
+            return param[0] + param[1]*asq
+        def quadratic_ansatz(asq, param, **kwargs):
+            return param[0] + param[1]*asq + param[2]*(asq**2)
+
+        ansatz = linear_ansatz if len(self.ens_list)==2 else quadratic_ansatz
+        guess = [1, 1e-1] if len(self.ens_list)==2 else [1,1e-1,1e-2]
+        return ansatz, guess 
+
 
 

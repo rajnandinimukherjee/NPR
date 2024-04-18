@@ -2,6 +2,7 @@ from basics import *
 
 class valence:
     eta_h_gamma = ('Gamma5', 'Gamma5')
+    Z_A_gamma = ('Gamma5', 'GammaTGamma5')
 
     def __init__(self, ens, action=(0,0), **kwargs):
         self.ens = ens
@@ -29,6 +30,98 @@ class valence:
         #for m_idx, mass in enumerate(self.all_masses):
         #    original_mass = self.info['masses'][m_idx]
         #    self.masses[mass] = eval(original_mass)+self.amres[mass]
+
+    def Z_A_correlator(self, mass, load=True,
+                       cfgs=None, meson_num=33,
+                       N_src=16, save=True,
+                       fit_start=15, fit_end=30, 
+                       **kwargs):
+
+        a1, a2 = self.action
+        fname = f'NPR/action{a1}_action{a2}/'
+        fname += '__'.join(['NPR', self.ens,
+                    self.info['baseactions'][a1],
+                    self.info['baseactions'][a2]])
+        fname += '_mSMOM.h5'
+        grp_name = f'{str((mass, mass))}/PJ5q'
+
+        if load:
+            datapath = path+self.ens
+            datapath += 'S/results' if self.ens[-1]!='M' else '/results'
+            R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
+            massname = self.mass_names[mass]
+
+            self.cfgs = self.info['valence_cfgs'] if cfgs==None else cfgs
+            t_src_range = range(0,self.T,int(self.T/N_src))
+            corr = np.zeros(shape=(len(self.cfgs), N_src, self.T))
+
+            for cf_idx, cf in enumerate(self.cfgs):
+                filename = f'{datapath}/{cf}/conserved/'
+                for t_idx, t_src in enumerate(t_src_range):
+                    f_string = f'prop_{massname}_{R}_Z2_t'+'{:02d}'.format(t_src)
+                    f_string += f'_p+0_+0_+0.{cf}.h5'
+                    data = h5py.File(filename+f_string, 'r')['wardIdentity']
+                    corr[cf_idx,t_idx,:] = np.roll(
+                            np.array(data['PJ5q'][:]['re']),-t_src)
+
+            corr = np.mean(corr, axis=1)
+            corr = stat(
+                val=np.mean(corr,axis=0),
+                err='fill',
+                btsp=bootstrap(corr)
+                )
+
+            meson, meson_fit = self.meson_correlator(
+                    mass, meson_num=meson_num, load=False)
+
+            corr_rolled = stat(
+                    val=np.roll(corr.val, -1),
+                    err=np.roll(corr.err, -1),
+                    btsp=np.roll(corr.err, -1, axis=1)
+                    )
+            meson_rolled = stat(
+                    val=np.roll(meson.val, 1),
+                    err=np.roll(meson.err, 1),
+                    btsp=np.roll(meson.btsp, 1, axis=1)
+                    )
+            pdb.set_trace()
+            corr = (corr+corr_rolled)/meson + corr/(meson+meson_rolled)
+            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+
+            fit_points = np.arange(int(self.T/2))[-num_end_points:]
+            def constant_mass(t, param, **kwargs):
+                return param[0]*np.ones(len(t))
+            x = stat(val=fit_points, btsp='fill')
+            y = folded_corr[fit_points]
+            res = fit_func(x, y, constant_mass, [0.1, 0])
+            fit = res[0] if res[0].val!=0 else folded_corr[-1]
+            print(f'For am_q={mass}, am_res={err_disp(fit.val,fit.err)}')
+
+            if save:
+                f = h5py.File(fname, 'a')
+                if grp_name in f:
+                    del f[grp_name]
+                mes_grp = f.create_group(grp_name)
+                mes_grp.create_dataset('central', data=corr.val) 
+                mes_grp.create_dataset('errors', data=corr.err) 
+                mes_grp.create_dataset('bootstrap', data=corr.btsp) 
+
+                mes_grp.create_dataset('fit/central', data=fit.val) 
+                mes_grp.create_dataset('fit/errors', data=fit.err) 
+                mes_grp.create_dataset('fit/bootstrap', data=fit.btsp) 
+                f.close()
+                print(f'Saved amres data and fit to {grp_name} in {fname}')
+        else:
+            f = h5py.File(fname, 'r')[grp_name]
+            corr = stat(
+                    val=np.array(f['central'][:]),
+                    err=np.array(f['errors'][:]),
+                    btsp=np.array(f['bootstrap'][:]))
+            fit = stat(
+                    val=np.array(f['fit/central']),
+                    err=np.array(f['fit/errors']),
+                    btsp=np.array(f['fit/bootstrap'][:]))
+        return corr, fit
 
     def amres_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
