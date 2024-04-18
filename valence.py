@@ -133,7 +133,7 @@ class valence:
             masses = self.all_masses
 
         for mass in masses:
-            corr, fit = self.amres_correlator(mass, **kwargs)
+            corr, fit = self.Z_A_correlator(mass, **kwargs)
             meson = self.meson_correlator(mass, meson_num=meson_num,
                                           load=False, fit_corr=False)
             corr_rolled = stat(
