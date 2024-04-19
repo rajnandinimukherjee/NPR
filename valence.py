@@ -407,4 +407,7 @@ class valence:
     def calc_all(self, **kwargs):
         self.compute_eta_h(**kwargs)
         self.compute_amres(**kwargs)
+        for mass in self.all_masses:
+            self.meson_correlator(mass, meson_num=33, fit_corr=False, **kwargs)
+        self.compute_Z_A(**kwargs)
 
