@@ -73,6 +73,7 @@ class Z_bl_analysis:
                         for m in self.all_masses[start:stop]])
         if key_only:
             fig, ax = plt.subplots(figsize=(3,3))
+            ax.set_title(self.ens)
             if key=='m' and self.renorm=='SMOM':
                 n_pts = 4
                 y = join_stats([self.interpolate(mu, (m,m), 'S')
@@ -308,6 +309,7 @@ class Z_bl_analysis:
                 var.set_xticks(np.arange(1,len(names)+1))
                 var.set_xticklabels(names, rotation=90, fontsize=8)
             if Z_only:
+                ax[1].set_xlabel(r'$am_q+am_\mathrm{res}$')
                 Z_m_amstar = Z_m_amstar*am_c*self.ainv
                 mbar = Z_m_amstar*am_star*self.ainv
 
@@ -669,6 +671,7 @@ class cont_extrap:
                                    figsize=(3,5.5),
                                    gridspec_kw={'height_ratios':[2,1]})
             plt.subplots_adjust(hspace=0, wspace=0)
+            y_phys = []
             for eta_idx, eta_pdg in enumerate(M_pdg_list):
                 label = r'$M_{\eta_c}$:'+err_disp(eta_pdg.val, eta_pdg.err)
                 color = color_list[eta_idx]
@@ -682,6 +685,7 @@ class cont_extrap:
 
                 res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
                 y_mc_mSMOM_phys = res_mc_mSMOM[0]
+                y_phys.append(y_mc_mSMOM_phys)
 
                 if eta_idx==0:
                     xmin, xmax = ax[0].get_xlim()
@@ -741,6 +745,18 @@ class cont_extrap:
                 ax[idx].vlines(x=0.0, ymin=ymin, ymax=ymax,
                              color='k', linestyle='dashed')
                 ax[idx].set_ylim([ymin, ymax])
+
+            fig, ax = plt.subplots(figsize=(3,4))
+            x = join_stats(M_pdg_list)
+            y = join_stats(y_phys)
+            ax.errorbar(x.val, y.val, xerr=x.err, yerr=y.err,
+                        fmt='o', capsize=4)
+            ymin, ymax = ax.get_ylim()
+            ax.vlines(x=eta_PDG.val, ymin=ymin, ymax=ymax,
+                      color='k', linestyle='dashed')
+            ax.set_ylim([ymin, ymax])
+            ax.set_ylabel(r'$m_{c,R}$ (GeV)')
+            ax.set_xlabel(r'$M_{\eta_c}$ (GeV)')
 
             if filename=='':
                 filename = '_'.join(self.ens_list)+'_cont_extrap.pdf'
