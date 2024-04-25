@@ -203,7 +203,7 @@ class valence:
                     btsp=np.array(f['fit/bootstrap'][:]))
         return corr, fit
 
-    def compute_amres(self, masses=None, plot=False, **kwargs):
+    def compute_amres(self, masses=None, plot=False, meson_num=1, **kwargs):
         self.amres = {}
         if masses==None:
             masses = self.all_masses

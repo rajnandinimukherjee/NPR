@@ -62,7 +62,7 @@ class Z_bl_analysis:
                              stop=None, open_file=True,
                              filename='', add_pdg=False,
                              pass_vals=False, key_only=False,
-                             normalise=False,
+                             normalise=False, Z_m_only=False,
                              **kwargs):
 
         if filename=='':
@@ -72,6 +72,7 @@ class Z_bl_analysis:
                         for m in self.all_masses[start:stop]])
         if key_only:
             fig, ax = plt.subplots(figsize=(3,3))
+            ax.set_title(self.ens)
             if key=='m' and self.renorm=='SMOM':
                 n_pts = 4
                 y = join_stats([self.interpolate(mu, (m,m), 'P')
@@ -131,9 +132,11 @@ class Z_bl_analysis:
             if stop==None:
                 stop = len(self.all_masses)
 
-            fig, ax = plt.subplots(nrows=3, ncols=1, 
+            nrows = 2 if Z_m_only else 3
+            figsize = (3,7) if Z_m_only else (3,10)
+            fig, ax = plt.subplots(nrows=nrows, ncols=1, 
                                    sharex='col',
-                                   figsize=(3,10))
+                                   figsize=figsize)
             plt.subplots_adjust(hspace=0, wspace=0)
 
             y = join_stats([self.valence.eta_h_masses[m]*self.ainv
@@ -222,7 +225,10 @@ class Z_bl_analysis:
 
 
             y = join_stats([self.interpolate(mu, (m,m), key)
-                            for m in self.all_masses[start:stop]])#*am_c*self.ainv
+                            for m in self.all_masses[start:stop]])
+            if not Z_m_only:
+                y = y*am_c*self.ainv
+
             def Z_m_ansatz(am, param, **kwargs):
                 return param[0] + param[1]/am + param[2]*am + param[3]*am**2
             ax[1].text(1.05, 0.5,
@@ -268,63 +274,69 @@ class Z_bl_analysis:
                                                  open_file=False,
                                                  key_only=True,
                                                  pass_vals=True)
-            Z_m_amc_SMOM = Z_m_SMOM#*am_c*self.ainv
+            Z_m_amc_SMOM = Z_m_SMOM
+            if not Z_m_only:
+                Z_m_amc_SMOM = Z_m_amc_SMOM*am_c*self.ainv
+
             ax[1].axhspan(Z_m_amc_SMOM.val+Z_m_amc_SMOM.err,
                           Z_m_amc_SMOM.val-Z_m_amc_SMOM.err,
                           color='r', alpha=0.1)
 
-            ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
-                    r'\,\mathrm{GeV})$')
-                    #r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$')
+            label = r'\,\mathrm{GeV})$' if Z_m_only else\
+                    r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$'
+            ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+label)
             ax[1].set_xlim(0, xmax)
+            if Z_m_only:
+                ax[1].set_xlabel(r'$am_q+am_\mathrm{res}$')
 
 
 
 
 
 
-            y = (x*y)*self.ainv
-            def Z_m_m_q_ansatz(am, param, **kwargs):
-                return param[0]*am + param[1] + param[2]*am**2
-            ax[2].text(1.05, 0.5,
-                       r'$\alpha + \beta\,am_q + \gamma\,(am_q)^2$',
-                       va='center', ha='center', rotation=90,
-                       color='k', alpha=0.3,
-                       transform=ax[2].transAxes)
+            if not Z_m_only:
+                y = (x*y)*self.ainv
+                def Z_m_m_q_ansatz(am, param, **kwargs):
+                    return param[0]*am + param[1] + param[2]*am**2
+                ax[2].text(1.05, 0.5,
+                           r'$\alpha + \beta\,am_q + \gamma\,(am_q)^2$',
+                           va='center', ha='center', rotation=90,
+                           color='k', alpha=0.3,
+                           transform=ax[2].transAxes)
 
-            res = fit_func(x, y, Z_m_m_q_ansatz, [0.1,1,1], verbose=False)
-            mbar = res.mapping(am_star) 
+                res = fit_func(x, y, Z_m_m_q_ansatz, [0.1,1,1], verbose=False)
+                mbar = res.mapping(am_star) 
 
-            ax[2].errorbar(x.val, y.val, xerr=x.err,
-                           yerr=y.err,
-                        capsize=4, fmt='o')
-            if add_pdg:
-                ymin, ymax = ax[2].get_ylim()
-                ax[2].errorbar([am_star.val], [mbar.val],
-                               xerr=[am_c.err], yerr=[mbar.err],
-                               fmt='o', capsize=4, color='r')
-                ax[2].vlines(x=am_star.val, ymin=ymin, ymax=ymax,
-                             color='r', linestyle='dashed')
-                ax[2].fill_between(np.linspace(am_star.val-am_star.err,
-                                               am_star.val+am_star.err,100),
-                                   ymin, eta_star.val+eta_star.err,
-                                   color='r', alpha=0.2)
+                ax[2].errorbar(x.val, y.val, xerr=x.err,
+                               yerr=y.err,
+                            capsize=4, fmt='o')
+                if add_pdg:
+                    ymin, ymax = ax[2].get_ylim()
+                    ax[2].errorbar([am_star.val], [mbar.val],
+                                   xerr=[am_c.err], yerr=[mbar.err],
+                                   fmt='o', capsize=4, color='r')
+                    ax[2].vlines(x=am_star.val, ymin=ymin, ymax=ymax,
+                                 color='r', linestyle='dashed')
+                    ax[2].fill_between(np.linspace(am_star.val-am_star.err,
+                                                   am_star.val+am_star.err,100),
+                                       ymin, eta_star.val+eta_star.err,
+                                       color='r', alpha=0.2)
 
-                ax[2].set_ylim([ymin, ymax])
-            xmin, xmax = ax[2].get_xlim()
-            xrange = np.linspace(x.val[0], xmax, 100)
-            yrange = res.mapping(xrange)
-            ax[2].text(0.5, 0.05, r'$\chi^2/\mathrm{DOF}:'+\
-                    str(np.around(res.chi_sq/res.DOF, 3))+r'$',
-                    ha='center', va='center',
-                    transform=ax[2].transAxes)
-            ax[2].fill_between(xrange, yrange.val+yrange.err,
-                            yrange.val-yrange.err,
-                            color='k', alpha=0.1)
-            ax[2].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
-                    '\,\mathrm{GeV})\cdot am_q\cdot a^{-1}\, [\mathrm{GeV}]$')
-            ax[2].set_xlabel(r'$am_q+am_\mathrm{res}$')
-            #ax[2].set_xlim([0.001, 0.005])
+                    ax[2].set_ylim([ymin, ymax])
+                xmin, xmax = ax[2].get_xlim()
+                xrange = np.linspace(x.val[0], xmax, 100)
+                yrange = res.mapping(xrange)
+                ax[2].text(0.5, 0.05, r'$\chi^2/\mathrm{DOF}:'+\
+                        str(np.around(res.chi_sq/res.DOF, 3))+r'$',
+                        ha='center', va='center',
+                        transform=ax[2].transAxes)
+                ax[2].fill_between(xrange, yrange.val+yrange.err,
+                                yrange.val-yrange.err,
+                                color='k', alpha=0.1)
+                ax[2].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
+                        '\,\mathrm{GeV})\cdot am_q\cdot a^{-1}\, [\mathrm{GeV}]$')
+                ax[2].set_xlabel(r'$am_q+am_\mathrm{res}$')
+                #ax[2].set_xlim([0.001, 0.005])
 
             if pass_vals:
                 plt.close(fig)
@@ -527,7 +539,6 @@ class cont_extrap:
                            yrange.val-yrange.err,
                            color='b', alpha=0.2)
         ax[1].set_xlim([-0.02, xmax])
-        ax[0].set_ylim([0.002,0.004])
 
         ax[0].set_title(r'$M_{\eta_c}:'+err_disp(eta_pdg.val, eta_pdg.err)+\
                 r', M^\star:'+err_disp(eta_star.val, eta_star.err)+r'$')
