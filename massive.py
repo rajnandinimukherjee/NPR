@@ -62,7 +62,7 @@ class Z_bl_analysis:
                              stop=None, open_file=True,
                              filename='', add_pdg=False,
                              pass_vals=False, key_only=False,
-                             normalise=False, Z_m_only=False,
+                             normalise=False, Z_only=False,
                              **kwargs):
 
         if filename=='':
@@ -132,8 +132,8 @@ class Z_bl_analysis:
             if stop==None:
                 stop = len(self.all_masses)
 
-            nrows = 2 if Z_m_only else 3
-            figsize = (3,7) if Z_m_only else (3,10)
+            nrows = 2 if Z_only else 3
+            figsize = (3,7) if Z_only else (3,10)
             fig, ax = plt.subplots(nrows=nrows, ncols=1, 
                                    sharex='col',
                                    figsize=figsize)
@@ -226,7 +226,7 @@ class Z_bl_analysis:
 
             y = join_stats([self.interpolate(mu, (m,m), key)
                             for m in self.all_masses[start:stop]])
-            if not Z_m_only:
+            if not Z_only:
                 y = y*am_c*self.ainv
 
             def Z_m_ansatz(am, param, **kwargs):
@@ -275,18 +275,18 @@ class Z_bl_analysis:
                                                  key_only=True,
                                                  pass_vals=True)
             Z_m_amc_SMOM = Z_m_SMOM
-            if not Z_m_only:
+            if not Z_only:
                 Z_m_amc_SMOM = Z_m_amc_SMOM*am_c*self.ainv
 
             ax[1].axhspan(Z_m_amc_SMOM.val+Z_m_amc_SMOM.err,
                           Z_m_amc_SMOM.val-Z_m_amc_SMOM.err,
                           color='r', alpha=0.1)
 
-            label = r'\,\mathrm{GeV})$' if Z_m_only else\
+            label = r'\,\mathrm{GeV})$' if Z_only else\
                     r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$'
             ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+label)
             ax[1].set_xlim(0, xmax)
-            if Z_m_only:
+            if Z_only:
                 ax[1].set_xlabel(r'$am_q+am_\mathrm{res}$')
 
 
@@ -294,7 +294,7 @@ class Z_bl_analysis:
 
 
 
-            if not Z_m_only:
+            if not Z_only:
                 y = (x*y)*self.ainv
                 def Z_m_m_q_ansatz(am, param, **kwargs):
                     return param[0]*am + param[1] + param[2]*am**2
