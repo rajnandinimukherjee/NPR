@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from progress.bar import Bar
 from matplotlib.backends.backend_pdf import PdfPages
+from mpl_toolkits.axes_grid.inset_locator import inset_axes
 from matplotlib.ticker import FormatStrFormatter
 from scipy.interpolate import interp1d
 from scipy.optimize import least_squares

@@ -197,7 +197,6 @@ for scheme in MS_bar_results.keys():
             lat_err_str = '{0:.2f}'.format(np.abs(lat_err/central)*100)+r'\%'
             key_stat.alt_disp = err_disp(key_stat.val, lat_err,
                                          sys_err=np.abs(PT_err_perc*central/100))
-
             num_digits = int(np.floor(np.abs(np.log10(key_stat.err))))+2
             if key=='B5' or key=='R3' or key=='B4':
                 num_digits += 1

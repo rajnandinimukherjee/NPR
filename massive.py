@@ -62,7 +62,8 @@ class Z_bl_analysis:
                              stop=None, open_file=True,
                              filename='', add_pdg=False,
                              pass_vals=False, key_only=False,
-                             normalise=False,
+                             normalise=False, alt_fit=False,
+                             Z_only=False,
                              **kwargs):
 
         if filename=='':
@@ -74,9 +75,9 @@ class Z_bl_analysis:
             fig, ax = plt.subplots(figsize=(3,3))
             if key=='m' and self.renorm=='SMOM':
                 n_pts = 4
-                y = join_stats([self.interpolate(mu, (m,m), 'P')
+                y = join_stats([self.interpolate(mu, (m,m), 'S')
                                 for m in self.all_masses[start:stop]])**(-1)
-                ax.set_ylabel(r'$Z_m(\mu='+str(mu)+r'\,\mathrm{GeV}) = 1/Z_P$')
+                ax.set_ylabel(r'$Z_m(\mu='+str(mu)+r'\,\mathrm{GeV}) = 1/Z_S$')
                 ax.errorbar(x.val, y.val, xerr=x.err, yerr=y.err,
                             capsize=4, fmt='o')
                 ax.errorbar(x.val[:n_pts], y.val[:n_pts],
@@ -131,9 +132,11 @@ class Z_bl_analysis:
             if stop==None:
                 stop = len(self.all_masses)
 
-            fig, ax = plt.subplots(nrows=3, ncols=1, 
+            nrows = 2 if Z_only else 3
+            figsize = (3,7.5) if Z_only else (3,10)
+            fig, ax = plt.subplots(nrows=nrows, ncols=1, 
                                    sharex='col',
-                                   figsize=(3,10))
+                                   figsize=figsize)
             plt.subplots_adjust(hspace=0, wspace=0)
 
             y = join_stats([self.valence.eta_h_masses[m]*self.ainv
@@ -222,11 +225,14 @@ class Z_bl_analysis:
 
 
             y = join_stats([self.interpolate(mu, (m,m), key)
-                            for m in self.all_masses[start:stop]])#*am_c*self.ainv
+                            for m in self.all_masses[start:stop]])
+            if not Z_only:
+                y = y*am_c*self.ainv
+
             def Z_m_ansatz(am, param, **kwargs):
-                return param[0] + param[1]/am + param[2]*am + param[3]*am**2
+                return param[0]/am + param[1] + param[2]*am + param[3]*am**2
             ax[1].text(1.05, 0.5,
-                       r'$\alpha + \beta/am_q + \gamma\,am_q + \delta\,(am_q)^2$',
+                       r'$\alpha/am_q + \beta + \gamma\,am_q + \delta\,(am_q)^2$',
                        va='center', ha='center', rotation=90,
                        color='k', alpha=0.3,
                        transform=ax[1].transAxes)
@@ -263,68 +269,117 @@ class Z_bl_analysis:
                             color='k', alpha=0.1)
 
             SMOM = Z_bl_analysis(self.ens, renorm='SMOM')
-            Z_m_SMOM = SMOM.plot_mass_dependence(mu, eta_pdg, eta_star,
+            Z_m_amc_SMOM = SMOM.plot_mass_dependence(mu, eta_pdg, eta_star,
                                                  key=key, stop=stop,
                                                  open_file=False,
                                                  key_only=True,
                                                  pass_vals=True)
-            Z_m_amc_SMOM = Z_m_SMOM#*am_c*self.ainv
+            if not Z_only:
+                Z_m_amc_SMOM = Z_m_amc_SMOM*am_c*self.ainv
             ax[1].axhspan(Z_m_amc_SMOM.val+Z_m_amc_SMOM.err,
                           Z_m_amc_SMOM.val-Z_m_amc_SMOM.err,
                           color='r', alpha=0.1)
 
-            ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
-                    r'\,\mathrm{GeV})$')
-                    #r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$')
+            label = r'\,\mathrm{GeV})$' if Z_only else\
+                    r'\,\mathrm{GeV})\cdot am_c\cdot a^{-1}\, [\mathrm{GeV}]$'
+            ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+label)
             ax[1].set_xlim(0, xmax)
 
+            variations, names = self.fit_variations(x, y, am_star)
+            variations = join_stats([Z_m_amstar]+variations)
+            names = ['all-pts']+names
+            if alt_fit:
+                fit_vals = [fit.val for fit in variations]
+                stat_err = max([fit.err for fit in variations])
+                sys_err = (max(fit_vals)-min(fit_vals))/2
+                Z_m_amstar = stat(
+                        val=np.mean(fit_vals),
+                        err=(stat_err**2+sys_err**2)**0.5,
+                        btsp='fill'
+                        )
+
+
+            if alt_fit:
+                var = inset_axes(ax[1], width="40%", height="15%", loc=10)
+                var.errorbar(np.arange(1,len(names)+1), variations.val,
+                             yerr=variations.err, fmt='o', capsize=4,
+                             color='k')
+                var.tick_params(axis='y', labelsize=8)
+                var.set_xticks(np.arange(1,len(names)+1))
+                var.set_xticklabels(names, rotation=90, fontsize=8)
+            if Z_only:
+                Z_m_amstar = Z_m_amstar*am_c*self.ainv
+                mbar = Z_m_amstar*am_star*self.ainv
 
 
 
 
 
-            y = (x*y)*self.ainv
-            def Z_m_m_q_ansatz(am, param, **kwargs):
-                return param[0]*am + param[1] + param[2]*am**2
-            ax[2].text(1.05, 0.5,
-                       r'$\alpha + \beta\,am_q + \gamma\,(am_q)^2$',
-                       va='center', ha='center', rotation=90,
-                       color='k', alpha=0.3,
-                       transform=ax[2].transAxes)
+            if not Z_only:
+                y = (x*y)/am_c
+                def Z_m_m_q_ansatz(am, param, **kwargs):
+                    return param[0]*am + param[1] + param[2]*am**2 + param[3]*am**3
+                ax[2].text(1.05, 0.5,
+                        r'$\alpha+\beta\,am_q+\gamma\,(am_q)^2 +\delta\,(am_q)^3$',
+                           va='center', ha='center', rotation=90,
+                           color='k', alpha=0.3,
+                           transform=ax[2].transAxes)
 
-            res = fit_func(x, y, Z_m_m_q_ansatz, [0.1,1,1], verbose=False)
-            mbar = res.mapping(am_star) 
+                res = fit_func(x, y, Z_m_m_q_ansatz, [1,1e-1,1e-1,1e-2],
+                               verbose=False)
+                mbar = res.mapping(am_star) 
 
-            ax[2].errorbar(x.val, y.val, xerr=x.err,
-                           yerr=y.err,
-                        capsize=4, fmt='o')
-            if add_pdg:
-                ymin, ymax = ax[2].get_ylim()
-                ax[2].errorbar([am_star.val], [mbar.val],
-                               xerr=[am_c.err], yerr=[mbar.err],
-                               fmt='o', capsize=4, color='r')
-                ax[2].vlines(x=am_star.val, ymin=ymin, ymax=ymax,
-                             color='r', linestyle='dashed')
-                ax[2].fill_between(np.linspace(am_star.val-am_star.err,
-                                               am_star.val+am_star.err,100),
-                                   ymin, eta_star.val+eta_star.err,
-                                   color='r', alpha=0.2)
+                ax[2].errorbar(x.val, y.val, xerr=x.err,
+                               yerr=y.err,
+                            capsize=4, fmt='o')
+                if add_pdg:
+                    ymin, ymax = ax[2].get_ylim()
+                    ax[2].errorbar([am_star.val], [mbar.val],
+                                   xerr=[am_c.err], yerr=[mbar.err],
+                                   fmt='o', capsize=4, color='r')
+                    ax[2].vlines(x=am_star.val, ymin=ymin, ymax=ymax,
+                                 color='r', linestyle='dashed')
+                    ax[2].fill_between(np.linspace(am_star.val-am_star.err,
+                                                   am_star.val+am_star.err,100),
+                                       ymin, eta_star.val+eta_star.err,
+                                       color='r', alpha=0.2)
 
-                ax[2].set_ylim([ymin, ymax])
-            xmin, xmax = ax[2].get_xlim()
-            xrange = np.linspace(x.val[0], xmax, 100)
-            yrange = res.mapping(xrange)
-            ax[2].text(0.5, 0.05, r'$\chi^2/\mathrm{DOF}:'+\
-                    str(np.around(res.chi_sq/res.DOF, 3))+r'$',
-                    ha='center', va='center',
-                    transform=ax[2].transAxes)
-            ax[2].fill_between(xrange, yrange.val+yrange.err,
-                            yrange.val-yrange.err,
-                            color='k', alpha=0.1)
-            ax[2].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
-                    '\,\mathrm{GeV})\cdot am_q\cdot a^{-1}\, [\mathrm{GeV}]$')
-            ax[2].set_xlabel(r'$am_q+am_\mathrm{res}$')
-            #ax[2].set_xlim([0.001, 0.005])
+                    ax[2].set_ylim([ymin, ymax])
+                xmin, xmax = ax[2].get_xlim()
+                xrange = np.linspace(x.val[0], xmax, 100)
+                yrange = res.mapping(xrange)
+                ax[2].text(0.5, 0.05, r'$\chi^2/\mathrm{DOF}:'+\
+                        str(np.around(res.chi_sq/res.DOF, 3))+r'$',
+                        ha='center', va='center',
+                        transform=ax[2].transAxes)
+                ax[2].fill_between(xrange, yrange.val+yrange.err,
+                                yrange.val-yrange.err,
+                                color='k', alpha=0.1)
+                ax[2].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+\
+                        '\,\mathrm{GeV})\cdot am_q\cdot a^{-1}\, [\mathrm{GeV}]$')
+                ax[2].set_xlabel(r'$am_q+am_\mathrm{res}$')
+
+                variations, names = self.fit_variations(x, y, am_star)
+                variations = join_stats([mbar]+variations)
+                names = ['all-pts']+names
+                if alt_fit:
+                    fit_vals = [fit.val for fit in variations]
+                    stat_err = max([fit.err for fit in variations])
+                    sys_err = (max(fit_vals)-min(fit_vals))/2
+                    mbar = stat(
+                            val=np.mean(fit_vals),
+                            err=(stat_err**2+sys_err**2)**0.5,
+                            btsp='fill'
+                            )
+
+                    var = inset_axes(ax[2], width="40%", height="15%", loc=2)
+                    var.errorbar(np.arange(1,len(names)+1), variations.val,
+                                 yerr=variations.err, fmt='o', capsize=4,
+                                 color='k')
+                    var.tick_params(axis='y', labelsize=8)
+                    var.set_xticks(np.arange(1,len(names)+1))
+                    var.set_xticklabels(names, rotation=90, fontsize=8)
+                    var.yaxis.tick_right()
 
             if pass_vals:
                 plt.close(fig)
@@ -332,31 +387,71 @@ class Z_bl_analysis:
             else:
                 call_PDF(filename, open=open_file)
 
+    def fit_variations(self, x, y, am_star, **kwargs):
+        def two_pt_ansatz(am, param, **kwargs):
+            return param[0] + param[1]*am
+        indices = np.sort(self.closest_n_points(
+            am_star.val, x.val, n=2))
+        res = fit_func(x[indices], y[indices],
+                       two_pt_ansatz, [1,1e-1])
+        fit_2 = res.mapping(am_star)
 
+        def three_pt_ansatz(am, param, **kwargs):
+            return param[0] + param[1]*am + param[2]*(am**2)
+        indices = np.sort(self.closest_n_points(
+            am_star.val, x.val, n=3))
+        res = fit_func(x[indices], y[indices],
+                       three_pt_ansatz, [1,1e-1,1e-2])
+        fit_3 = res.mapping(am_star)
+        farthest_point = indices[-1]
 
+        indices = list(np.sort(self.closest_n_points(
+            am_star.val, x.val, n=4)))
+        indices.remove(farthest_point)
+        res = fit_func(x[indices], y[indices],
+                       three_pt_ansatz, [1,1e-1,1e-2])
+        fit_3_alt = res.mapping(am_star)
+
+        def four_pt_ansatz(am, param, **kwargs):
+            return param[0] + param[1]*am +\
+                    param[2]*(am**2) + param[3]*(am**3)
+        indices = np.sort(self.closest_n_points(
+            am_star.val, x.val, n=4))
+        res = fit_func(x[indices], y[indices],
+                       four_pt_ansatz, [1,1e-1,1e-2,1e-3])
+        fit_4 = res.mapping(am_star)
+        farthest_point = indices[-1]
+
+        indices = list(np.sort(self.closest_n_points(
+            am_star.val, x.val, n=5)))
+        indices.remove(farthest_point)
+        res = fit_func(x[indices], y[indices],
+                       four_pt_ansatz, [1,1e-1,1e-2,1e-3])
+        fit_4_alt = res.mapping(am_star)
+
+        fits = [fit_2, fit_3, fit_3_alt, fit_4]#, fit_4_alt]
+        names = ['2-pt', '3-pt', '3-pt(alt)', '4-pt']#, '4-pt(alt)']
+        return fits, names
 
     def interpolate(self, mu, masses, key,
-                    method='scipy', plot=False,
-                    pass_plot=False, **kwargs):
+                    plot=False, pass_plot=False,
+                    **kwargs):
+
         x = self.momenta[masses]*self.ainv
         y = self.Z[masses][key]
 
-        if method == 'fit':
-            mapping = self.fit_momentum_dependence(
-                masses, key, **kwargs)
-            Z_mu = mapping(mu)
-        else:
-            Z_mu = stat(
-                val=interp1d(x.val, y.val,
-                             fill_value='extrapolate')(mu),
-                err='fill',
-                btsp=np.array([interp1d(x.btsp[k], y.btsp[k],
-                                        fill_value='extrapolate')(mu)
-                               for k in range(N_boot)])
-            )
-            if pass_plot or plot:
-                plt = self.plot_momentum_dependence(
-                    masses, key, pass_fig=True, **kwargs)
+        linear_Z = self.fit_momentum_dependence(mu,
+                masses, key, fittype='linear', **kwargs)
+        quadratic_Z = self.fit_momentum_dependence(mu,
+                masses, key, fittype='quadratic', **kwargs)
+
+        stat_err = max(linear_Z.err, quadratic_Z.err)
+        sys_err = np.abs(quadratic_Z.val-linear_Z.val)/2
+        Z_mu = stat(
+                val=(linear_Z.val+quadratic_Z.val)/2,
+                err=(stat_err**2+sys_err**2)**0.5,
+                btsp='fill'
+                )
 
         if pass_plot or plot:
             plt.errorbar([mu], Z_mu.val, yerr=Z_mu.err,
@@ -369,63 +464,74 @@ class Z_bl_analysis:
                 return Z_mu, plt
         return Z_mu
 
-    def fit_momentum_dependence(self, masses, key,
+    def fit_momentum_dependence(self, mu, masses, key,
                                 plot=False, fittype='quadratic',
                                 pass_plot=False, normalise=False,
                                 **kwargs):
 
         x = self.momenta[masses]*self.ainv
         y = self.Z[masses][key]
-        if normalise:
-            q = self.Z[masses]['q']
-            y = y/q
 
-        if fittype == 'quadratic':
-            guess = [1, 1e-1, 1e-2]
+        if fittype == 'linear':
+            indices = np.sort(
+                self.closest_n_points(mu, x.val, n=2))
+            x_1, y_1 = x[indices[0]], y[indices[0]]
+            x_2, y_2 = x[indices[1]], y[indices[1]]
+            slope = (y_2-y_1)/(x_2-x_1)
+            intercept = y_1 - slope*x_1
 
-            def ansatz(mus, param, **kwargs):
-                return param[0] + param[1]*mus + param[2]*(mus**2)
-        elif fittype == 'linear':
-            guess = [1, 1e-1]
+            pred = intercept + slope*mu
 
-            def ansatz(mus, param, **kwargs):
-                return param[0] + param[1]*mus
+        elif fittype == 'quadratic':
+            indices = np.sort(
+                self.closest_n_points(mu, x.val, n=3))
+            x_1, y_1 = x[indices[0]], y[indices[0]]
+            x_2, y_2 = x[indices[1]], y[indices[1]]
+            x_3, y_3 = x[indices[2]], y[indices[2]]
 
-        res = fit_func(x, y, ansatz, guess)
+            a = y_1/((x_1-x_2)*(x_1-x_3)) + y_2 / \
+                ((x_2-x_1)*(x_2-x_3)) + y_3/((x_3-x_1)*(x_3-x_2))
 
-        if pass_plot or plot:
-            plt = self.plot_momentum_dependence(
-                masses, key, pass_fig=True, **kwargs)
-            xmin, xmax = plt.xlim()
-            mu_grain = np.linspace(xmin, xmax, 100)
-            Z_grain = res.mapping(mu_grain)
-            plt.fill_between(mu_grain,
-                             Z_grain.val+Z_grain.err,
-                             Z_grain.val-Z_grain.err,
-                             color='0.8')
-            plt.text(0.5, 0.9, r'$\chi^2$/DOF:'+str(np.around(
-                res.chi_sq/res.DOF, 3)), va='center', ha='center',
-                transform=plt.gca().transAxes)
+            b = (-y_1*(x_2+x_3)/((x_1-x_2)*(x_1-x_3))
+                 - y_2*(x_1+x_3)/((x_2-x_1)*(x_2-x_3))
+                 - y_3*(x_1+x_2)/((x_3-x_1)*(x_3-x_2)))
 
-            filename = f'plots/Z_{key}_v_ap.pdf'
-            if plot:
-                call_PDF(filename)
-            if pass_plot:
-                return res.mapping, plt
-        return res.mapping
+            c = (y_1*x_2*x_3/((x_1-x_2)*(x_1-x_3))
+                 + y_2*x_1*x_3/((x_2-x_1)*(x_2-x_3))
+                 + y_3*x_1*x_2/((x_3-x_1)*(x_3-x_2)))
 
-    def plot_momentum_dependence(self, masses, key,
-                                 pass_fig=False, **kwargs):
+            pred = a*(mu**2) + b*mu + c
+
+        return pred
+
+    def closest_n_points(self, target, values, n, **kwargs):
+        diff = np.abs(np.array(values)-np.array(target))
+        sort = np.sort(diff)
+        closest_idx = []
+        for n_idx in range(n):
+            nth_closest_point = list(diff).index(sort[n_idx])
+            closest_idx.append(nth_closest_point)
+        return closest_idx
+
+    def plot_momentum_dependence(self, masses, key, x_sq=False,
+                                 pass_fig=False, normalise=False,
+                                 **kwargs):
         plt.figure()
 
         x = self.momenta[masses]*self.ainv
+        if x_sq:
+            x = x**2
         y = self.Z[masses][key]
+        if normalise:
+            y = y/self.Z[masses]['q']
 
         plt.errorbar(x.val, y.val,
                      xerr=x.err, yerr=y.err,
                      capsize=4, fmt='o:')
-        plt.xlabel(r'$\mu$ (GeV)')
-        plt.ylabel(r'$Z_'+key+r'$')
+        xlabel = r'$\mu^2\, \mathrm{[GeV]}^2$' if x_sq else r'$\mu$ (GeV)'
+        plt.xlabel(xlabel)
+        ylabel = r'$Z_'+key+r'/Z_q$' if normalise else r'$Z_'+key+r'$'
+        plt.ylabel(ylabel)
 
         if pass_fig:
             return plt
@@ -464,8 +570,7 @@ class cont_extrap:
                 join_stats(m_bar)
 
     def plot_cont_extrap(self, mu, eta_pdg, eta_star, **kwargs):
-
-        ansatz, guess = self.ansatz()
+        ansatz, guess = self.ansatz(**kwargs)
         x = self.a_sq
         y_mc_mSMOM, y_mc_SMOM, y_mbar = self.load_renorm_masses(
                 mu, eta_pdg, eta_star)
@@ -482,6 +587,8 @@ class cont_extrap:
                        mfc='None', label='mSMOM')
 
         res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
+        print(f'Fit to mSMOM data: chi_sq/DOF:'+\
+                f'{res_mc_mSMOM.chi_sq/res_mc_mSMOM.DOF}')
         y_mc_mSMOM_phys = res_mc_mSMOM[0]
 
         xmin, xmax = ax[0].get_xlim()
@@ -497,10 +604,12 @@ class cont_extrap:
 
         ax[0].errorbar(x.val, y_mc_SMOM.val, 
                        xerr=x.err, yerr=y_mc_SMOM.err,
-                       fmt='o', capsize=4, color='k',
+                       fmt='x', capsize=4, color='k',
                        mfc='None', label='SMOM')
 
         res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess)
+        print(f'Fit to SMOM data: chi_sq/DOF:'+\
+                f'{res_mc_SMOM.chi_sq/res_mc_SMOM.DOF}')
         y_mc_SMOM_phys = res_mc_SMOM[0]
 
         yrange = res_mc_SMOM.mapping(xrange)
@@ -517,6 +626,8 @@ class cont_extrap:
                        mfc='None', label='mSMOM')
 
         res_mbar = fit_func(x, y_mbar, ansatz, guess)
+        print(f'Fit to mbar data: chi_sq/DOF:'+\
+                f'{res_mbar.chi_sq/res_mbar.DOF}')
         y_mbar_phys = res_mbar[0]
 
         yrange = res_mbar.mapping(xrange)
@@ -527,7 +638,6 @@ class cont_extrap:
                            yrange.val-yrange.err,
                            color='b', alpha=0.2)
         ax[1].set_xlim([-0.02, xmax])
-        ax[0].set_ylim([0.002,0.004])
 
         ax[0].set_title(r'$M_{\eta_c}:'+err_disp(eta_pdg.val, eta_pdg.err)+\
                 r', M^\star:'+err_disp(eta_star.val, eta_star.err)+r'$')
@@ -549,7 +659,7 @@ class cont_extrap:
 
     def plot_M_eta_pdg_variations(self, mu, M_pdg_list, eta_star,
                                   filename='', **kwargs):
-        ansatz, guess = self.ansatz()
+        ansatz, guess = self.ansatz(**kwargs)
         if type(eta_star)==list:
             print('eta_star cannot be a list!')
         else:
@@ -638,7 +748,7 @@ class cont_extrap:
 
     def plot_M_star_variations(self, mu, eta_pdg, M_star_list,
                                filename='', **kwargs):
-        ansatz, guess = self.ansatz()
+        ansatz, guess = self.ansatz(**kwargs)
         if type(eta_pdg)==list:
             print('eta_PDG cannot be a list!')
         else:
@@ -740,7 +850,7 @@ class cont_extrap:
             self.plot_M_star_variations(mu, eta_pdg, mass_list, 
                                      filename=filename, **kwargs)
 
-    def ansatz(self,**kwargs):
+    def ansatz(self, choose=None, **kwargs):
 
         def linear_ansatz(asq, param, **kwargs):
             return param[0] + param[1]*asq
@@ -749,7 +859,12 @@ class cont_extrap:
 
         ansatz = linear_ansatz if len(self.ens_list)==2 else quadratic_ansatz
         guess = [1, 1e-1] if len(self.ens_list)==2 else [1,1e-1,1e-2]
-        return ansatz, guess 
+        if choose=='linear':
+            return linear_ansatz, [1, 1e-1]
+        elif choose=='quadtratic':
+            return quadratic_ansatz, [1, 1e-1, 1e-2]
+        else:
+            return ansatz, guess 
 
 
 
