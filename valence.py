@@ -24,12 +24,6 @@ class valence:
             {self.all_masses[m]: f'c{m-4}'
              for m in range(4, self.N_mass)})
 
-        #self.compute_amres(load=False)
-        #self.compute_eta_h(load=False)
-        #self.masses = {}
-        #for m_idx, mass in enumerate(self.all_masses):
-        #    original_mass = self.info['masses'][m_idx]
-        #    self.masses[mass] = eval(original_mass)+self.amres[mass]
 
     def Z_A_correlator(self, mass, load=True,
                        cfgs=None, meson_num=33,
@@ -165,6 +159,18 @@ class valence:
                 ax.set_ylabel(r'PA0/PP')
                 ax.legend()
 
+
+        if 'amres' in self.__dict__.keys() and plot:
+            fig, ax = plt.subplots(figsize=(5,6))
+            x = join_stats([self.amres[mass]+self.info['masses'][
+                self.all_masses.index(mass)]
+                    for mass in self.all_masses])
+            y = join_stats([self.Z_A[mass] for mass in self.all_masses])
+            ax.errorbar(x.val, y.val, yerr=y.err, xerr=x.err,
+                    fmt='o', capsize=4)
+            ax.set_xlabel(r'$am_q+am_\mathrm{res}$')
+            ax.set_ylabel(r'$Z_A^\mathrm{eff}$')
+
         if plot:
             call_PDF(f'{self.ens}_Z_A.pdf', open=True)
 
@@ -255,6 +261,7 @@ class valence:
 
         for mass in masses:
             corr, fit = self.amres_correlator(mass, **kwargs)
+            pdb.set_trace()
             meson, meson_fit = self.meson_correlator(mass, meson_num=1,
                                           load=False)
             corr_new = corr/meson
