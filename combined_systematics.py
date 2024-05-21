@@ -48,7 +48,7 @@ for scheme in errors_dict.keys():
         if key=='B5' and scheme=='qslash':
             num_digits += 1
         central_val_str = r'$'+('{0:.%df}'%num_digits).format(central.val)+r'$'
-        print(key, scheme, central_val_str[1:-1], total_err_str[:-2])
+        #print(key, scheme, central_val_str[1:-1], total_err_str[:-2])
 
         errors_dict[scheme][key] = {'central':central_val_str,
                                     'stat':stat_err_str,
@@ -209,7 +209,7 @@ for scheme in MS_bar_results.keys():
                                                   'PT': PT_err_str,
                                                   'total':total_err_str}
             MS_bar_results[scheme][key]['store'] = key_stat
-            print(key, key_stat.alt_disp)
+            #print(key, key_stat.alt_disp)
 #========================================================================================================
 # all_systematics.tex
 
@@ -293,7 +293,7 @@ for idx in range(1,5):
 
     ki = (Bi/Ri)*Ni
     NB_R.append(ki)
-    print(f'{idx+1}:{err_disp(ki.val, ki.err)}')
+    #print(f'{idx+1}:{err_disp(ki.val, ki.err)}')
 
 ax.errorbar(np.arange(2,6),
             [k.val for k in NB_R],
@@ -313,4 +313,55 @@ mass_sum_pred = (NB_R[0]*(m_K**2)/(B1*N1))**0.5
 print(f'(m_s+m_d) in RISMOM using O2: {err_disp(mass_sum_pred.val, mass_sum_pred.err)}')
 
 filename = '/Users/rajnandinimukherjee/Desktop/draft_plots/summary_plots/NiBioverRi_comparison_RISMOM.pdf'
-call_PDF(filename, open=True)
+call_PDF(filename, open=False)
+
+
+#===================================================================================
+# B_K at 2GeV
+
+MS_BK_2GeV = {}
+for key in ['gamma', 'qslash']:
+    MS_BK_2GeV[key] = {}
+    RISMOM_BK_3GeV = RISMOM_results[key]['B1']
+    RISMOM_BK_2GeV = pickle.load(open(f'fit_systematics_20_{fit_file}_{key}{expand_str}.p',\
+            'rb'))['central']['B1'][0]
+    BK_running = RISMOM_BK_2GeV/RISMOM_BK_3GeV['central']
+    MS_conv_factor = R_RISMOM_MSbar(2.0, scheme=key, obj='bag',
+                                    rotate=NPR_to_SUSY)[0,0]
+    print(f'{key}: sig(2,3): {err_disp(BK_running.val, BK_running.err)}, MS_conv:{MS_conv_factor}')
+    for error_key, BK in RISMOM_BK_3GeV.items():
+        RISMOM_BK_2GeV_key = BK_running*BK 
+        MS_BK_2GeV[key][error_key] = RISMOM_BK_2GeV_key*MS_conv_factor
+        print(f'{key}, {error_key}: BK(3GeV): {err_disp(BK.val, BK.err)}, BK(2GeV): {err_disp(RISMOM_BK_2GeV_key.val, RISMOM_BK_2GeV_key.err)}, MS_BK(2GeV):{err_disp(MS_BK_2GeV[key][error_key].val, MS_BK_2GeV[key][error_key].err)}\n')
+
+BK_2GeV_central = (MS_BK_2GeV['gamma']['central'].val+MS_BK_2GeV['qslash']['central'].val)/2
+MS_BK_2GeV['combined'] = {
+    error_key: stat(
+            val=BK_2GeV_central,
+            err=(MS_BK_2GeV['gamma'][error_key].err/\
+                    MS_BK_2GeV['gamma'][error_key].val)*BK_2GeV_central,
+            btsp='seed',
+            seed=1
+            ) for error_key in MS_BK_2GeV['gamma'].keys()}
+
+lat_errors = [val.err for error_key, val in MS_BK_2GeV['combined'].items()]
+breakdown = [err_disp(BK_2GeV_central, val.err)+error_key
+             for error_key, val in MS_BK_2GeV['combined'].items()]
+breakdown[0] = breakdown[0][:-7]+'stat'
+
+lat_err = sum([err**2 for err in lat_errors[:-1]])**0.5
+
+
+MS_BK_2GeV['combined']['PT'] = stat(
+        val=(MS_BK_2GeV['gamma']['central'].val+MS_BK_2GeV['qslash']['central'].val)/2,
+        err=np.abs((MS_BK_2GeV['gamma']['central'].val-\
+                MS_BK_2GeV['qslash']['central'].val)/\
+                ((MS_BK_2GeV['gamma']['central'].val+\
+                MS_BK_2GeV['qslash']['central'].val)/2))/2,
+        btsp='fill'
+        )
+
+PT_err = MS_BK_2GeV['combined']['PT'].err
+print(f'BK(2GeV) = {err_disp(BK_2GeV_central, lat_err, sys_err=PT_err)}')
+print('lat err breakdown:'+' '.join(breakdown))
+

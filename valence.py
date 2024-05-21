@@ -120,7 +120,7 @@ class valence:
         return corr, fit
 
     def compute_Z_A(self, masses=None, plot=False, 
-            meson_num=33, **kwargs):
+            meson_num=33, leave_out=None, **kwargs):
 
         self.Z_A = {}
         if masses==None:
@@ -165,9 +165,12 @@ class valence:
             x = join_stats([self.amres[mass]+self.info['masses'][
                 self.all_masses.index(mass)]
                     for mass in self.all_masses])
+            if leave_out==None:
+                leave_out = len(x.val)
             y = join_stats([self.Z_A[mass] for mass in self.all_masses])
-            ax.errorbar(x.val, y.val, yerr=y.err, xerr=x.err,
-                    fmt='o', capsize=4)
+            ax.errorbar(x.val[:leave_out], y.val[:leave_out],
+                        yerr=y.err[:leave_out], xerr=x.err[:leave_out],
+                        fmt='o', capsize=4)
             ax.set_xlabel(r'$am_q+am_\mathrm{res}$')
             ax.set_ylabel(r'$Z_A^\mathrm{eff}$')
 
@@ -261,11 +264,10 @@ class valence:
 
         for mass in masses:
             corr, fit = self.amres_correlator(mass, **kwargs)
-            pdb.set_trace()
             meson, meson_fit = self.meson_correlator(mass, meson_num=1,
                                           load=False)
             corr_new = corr/meson
-            folded_corr = (corr[1:]+corr[::-1][:-1])[:int(self.T/2)]*0.5
+            folded_corr = (corr_new[1:]+corr_new[::-1][:-1])[:int(self.T/2)]*0.5
 
             self.amres[mass] = fit
             if plot:

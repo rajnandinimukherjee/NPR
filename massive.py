@@ -660,8 +660,7 @@ class cont_extrap:
         call_PDF(filename, open=True)
 
     def plot_M_eta_pdg_variations(self, mu, M_pdg_list, eta_star,
-                                  filename='', **kwargs):
-        ansatz, guess = self.ansatz(**kwargs)
+                                  filename='', choose=None, **kwargs):
         if type(eta_star)==list:
             print('eta_star cannot be a list!')
         else:
@@ -683,13 +682,22 @@ class cont_extrap:
                                fmt='o', capsize=4, color=color, 
                                mfc='None', label=label)
 
-                res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
+                if eta_idx==0:
+                    xmin, xmax = ax[0].get_xlim()
+
+                if eta_pdg.val>eta_PDG.val*0.75:
+                    ansatz, guess = self.ansatz(choose='linear', **kwargs)
+                    end = -1
+                    xrange = np.linspace(0, x.val[-2])
+                else:
+                    ansatz, guess = self.ansatz(choose=choose, **kwargs)
+                    end = None
+                    xrange = np.linspace(0, xmax)
+
+                res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess, end=end)
                 y_mc_mSMOM_phys = res_mc_mSMOM[0]
                 y_phys.append(y_mc_mSMOM_phys)
 
-                if eta_idx==0:
-                    xmin, xmax = ax[0].get_xlim()
-                xrange = np.linspace(0, xmax)
                 yrange = res_mc_mSMOM.mapping(xrange)
 
                 ax[0].errorbar([0.0], [y_mc_mSMOM_phys.val],
@@ -715,6 +723,8 @@ class cont_extrap:
                                    yrange.val-yrange.err,
                                    color=color, alpha=0.1)
 
+
+            ansatz, guess = self.ansatz(**kwargs)
             ax[1].errorbar(x.val, y_mbar.val, 
                            xerr=x.err, yerr=y_mbar.err,
                            fmt='o', capsize=4, color='k',
@@ -750,13 +760,38 @@ class cont_extrap:
             x = join_stats(M_pdg_list)
             y = join_stats(y_phys)
             ax.errorbar(x.val, y.val, xerr=x.err, yerr=y.err,
-                        fmt='o', capsize=4)
+                        fmt='o', capsize=4, c='k')
             ymin, ymax = ax.get_ylim()
             ax.vlines(x=eta_PDG.val, ymin=ymin, ymax=ymax,
                       color='k', linestyle='dashed')
             ax.set_ylim([ymin, ymax])
             ax.set_ylabel(r'$m_{c,R}$ (GeV)')
             ax.set_xlabel(r'$M_{\eta_c}$ (GeV)')
+
+            ansatz, guess = self.ansatz(choose='quadratic', **kwargs)
+            fit_indices = [idx for idx,val in enumerate(list(x.val)) if val<=0.75*eta_PDG.val]
+            ax.errorbar(x.val[fit_indices], y.val[fit_indices],
+                        xerr=x.err[fit_indices], yerr=y.err[fit_indices],
+                        fmt='o', capsize=4, c='r')
+            res = fit_func(x[fit_indices], y[fit_indices], ansatz, guess,
+                           correlated=True)
+            xmin, xmax = ax.get_xlim()
+            xrange = np.linspace(xmin, xmax)
+            yrange = res.mapping(xrange)
+            ax.fill_between(xrange, yrange.val+yrange.err,
+                            yrange.val-yrange.err,
+                            color='k', alpha=0.1)
+            ax.set_xlim([xmin, xmax])
+            ax.text(0.5, 0.90, r'$\chi^2/\mathrm{DOF}:'+\
+                 str(np.around(res.chi_sq/res.DOF, 3))+r'$',
+                 ha='center', va='center',
+                 transform=ax.transAxes)
+            ax.text(1.05, 0.5,
+                    r'$\alpha + \beta\,M_{\eta_c} + \gamma\,M_{\eta_c}^2$',
+                    va='center', ha='center', rotation=90,
+                    color='k', alpha=0.3,
+                    transform=ax.transAxes)
+
 
             if filename=='':
                 filename = '_'.join(self.ens_list)+'_cont_extrap.pdf'

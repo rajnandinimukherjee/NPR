@@ -44,7 +44,7 @@ def err_disp(num, err, n=2, sys_err=None, **kwargs):
 
         num_size = int(np.floor(np.log10(np.abs(num))))
         min_size = min(err_size, num_size+(n-1))
-        err_n_digits = int(err*10**(-(min_size-(n-1))))
+        err_n_digits = int(np.round(err*10**(-(min_size-(n-1)))))
 
         if min_size > (n-1):
             disp_str = f'{num}({err})'
@@ -53,7 +53,7 @@ def err_disp(num, err, n=2, sys_err=None, **kwargs):
             disp_str += f'({err_n_digits})'
 
         if sys_err != None:
-            sys_err_n_digits = int(sys_err*10**(-(min_size-(n-1))))
+            sys_err_n_digits = int(np.round(sys_err*10**(-(min_size-(n-1)))))
             disp_str += f'({sys_err_n_digits})'
 
         return disp_str
