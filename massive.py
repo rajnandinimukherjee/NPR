@@ -660,7 +660,8 @@ class cont_extrap:
         call_PDF(filename, open=True)
 
     def plot_M_eta_pdg_variations(self, mu, M_pdg_list, eta_star,
-                                  filename='', choose=None, **kwargs):
+                                  filename='', choose=None, axis=None,
+                                  pass_only=False, **kwargs):
         if type(eta_star)==list:
             print('eta_star cannot be a list!')
         else:
@@ -756,7 +757,11 @@ class cont_extrap:
                              color='k', linestyle='dashed')
                 ax[idx].set_ylim([ymin, ymax])
 
+            if pass_only:
+                plt.close(fig)
+
             fig, ax = plt.subplots(figsize=(3,4))
+
             x = join_stats(M_pdg_list)
             y = join_stats(y_phys)
             ax.errorbar(x.val, y.val, xerr=x.err, yerr=y.err,
@@ -792,10 +797,62 @@ class cont_extrap:
                     color='k', alpha=0.3,
                     transform=ax.transAxes)
 
+            if pass_only:
+                plt.close(fig)
+                return x, y
 
             if filename=='':
                 filename = '_'.join(self.ens_list)+'_cont_extrap.pdf'
             call_PDF(filename, open=True)
+
+    def combined_M_eta_variations(self, mu, M_pdg_list, M_star, filename='', **kwargs):
+        x, y_lin = self.plot_M_eta_pdg_variations(
+                mu, M_pdg_list, M_star, choose='linear', pass_only=True, **kwargs)
+        y_lin = y_lin/x
+        x, y_quad = self.plot_M_eta_pdg_variations(
+                mu, M_pdg_list, M_star, choose='quadratic', pass_only=True, **kwargs)
+        y_quad = y_quad/x
+
+        fig, ax = plt.subplots(figsize=(4,3))
+        fit_indices = [idx for idx,val in enumerate(list(x.val)) if val<=0.75*eta_PDG.val]
+        ax.errorbar(x.val, y_lin.val, xerr=x.err, yerr=y_lin.err,
+                    fmt='o', capsize=4, c='r', label='linear')
+        ax.errorbar(x.val[fit_indices], y_quad.val[fit_indices],
+                    xerr=x.err[fit_indices], yerr=y_quad.err[fit_indices],
+                    fmt='o', capsize=4, c='b', label='quadratic')
+        ymin, ymax = ax.get_ylim()
+        ax.vlines(x=eta_PDG.val, ymin=ymin, ymax=ymax,
+                  color='k', linestyle='dashed')
+        ax.set_ylim([ymin, ymax])
+
+        xmin, xmax = ax.get_xlim()
+        xrange = np.linspace(xmin, xmax)
+        def ansatz(m, param, **kwargs):
+            return param[0]/m + param[1] + param[2]*m
+        guess = [1, 1e-1, 1e-2]
+        res = fit_func(x, y_lin, ansatz, guess)
+        yrange = res.mapping(xrange)
+        ax.fill_between(xrange, yrange.val+yrange.err,
+                        yrange.val-yrange.err,
+                        color='r', alpha=0.1)
+        res = fit_func(x, y_quad, ansatz, guess)
+        yrange = res.mapping(xrange)
+        ax.fill_between(xrange, yrange.val+yrange.err,
+                        yrange.val-yrange.err,
+                        color='b', alpha=0.1)
+        ax.set_xlim([xmin, xmax])
+        ax.set_ylabel(r'$m_{c,R}/M_{\eta_c}$')
+        ax.set_xlabel(r'$M_{\eta_c}$ (GeV)')
+        ax.text(1.05, 0.5,
+                r'$\alpha/M_{\eta_c} + \beta + \gamma\,M_{\eta_c}$',
+                va='center', ha='center', rotation=90,
+                color='k', alpha=0.3,
+                transform=ax.transAxes)
+        ax.legend()
+
+        if filename=='':
+            filename = '_'.join(self.ens_list)+'_M_pdg_variations.pdf'
+        call_PDF(filename, open=True)
 
     def plot_M_star_variations(self, mu, eta_pdg, M_star_list,
                                filename='', **kwargs):
