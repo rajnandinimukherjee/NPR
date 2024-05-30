@@ -41,7 +41,7 @@ class valence:
 
         if load:
             datapath = path+self.ens
-            datapath += 'S/results' if self.ens[-1]!='M' else '/results'
+            datapath += 'S/results' if self.ens[-1] not in ['M', 'S'] else '/results'
             R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
             massname = self.mass_names[mass]
 
@@ -193,7 +193,7 @@ class valence:
 
         if load:
             datapath = path+self.ens
-            datapath += 'S/results' if self.ens[-1]!='M' else '/results'
+            datapath += 'S/results' if self.ens[-1] not in ['M', 'S'] else '/results'
             R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
             massname = self.mass_names[mass]
 
@@ -301,7 +301,7 @@ class valence:
 
         if load:
             datapath = path+self.ens
-            datapath += 'S/results' if self.ens[-1]!='M' else '/results'
+            datapath += 'S/results' if self.ens[-1] not in ['M', 'S'] else '/results'
             R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
             massname = self.mass_names[mass]
             foldername = f'{massname}_{R}__{massname}_{R}'
