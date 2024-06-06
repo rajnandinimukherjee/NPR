@@ -294,13 +294,10 @@ class Z_bl_analysis:
                 stat_err = max([fit.err for fit in variations])
                 sys_err = (max(fit_vals)-min(fit_vals))/2
                 Z_m_amstar = stat(
-                        val=np.mean(fit_vals),
+                        val=fit_vals[2],
                         err=(stat_err**2+sys_err**2)**0.5,
                         btsp='fill'
                         )
-
-
-            if alt_fit:
                 var = inset_axes(ax[1], width="40%", height="15%", loc=10)
                 var.errorbar(np.arange(1,len(names)+1), variations.val,
                              yerr=variations.err, fmt='o', capsize=4,
@@ -308,6 +305,7 @@ class Z_bl_analysis:
                 var.tick_params(axis='y', labelsize=8)
                 var.set_xticks(np.arange(1,len(names)+1))
                 var.set_xticklabels(names, rotation=90, fontsize=8)
+
             if Z_only:
                 ax[1].set_xlabel(r'$am_q+am_\mathrm{res}$')
                 Z_m_amstar = Z_m_amstar*am_c*self.ainv
@@ -560,8 +558,9 @@ class cont_extrap:
         m_bar = []
 
         for ens in self.ens_list:
+            s = 3 if ens in ['F1M', 'F1S'] else 2
             quantities = self.mSMOM_dict[ens].plot_mass_dependence(
-                    mu, eta_pdg, eta_star, key='m', stop=-2, 
+                    mu, eta_pdg, eta_star, key='m', stop=-s, 
                     open_file=False, pass_vals=True, **kwargs)
 
             m_c_ren_mSMOM.append(quantities[0])
@@ -571,8 +570,25 @@ class cont_extrap:
         return join_stats(m_c_ren_mSMOM), join_stats(m_c_ren_SMOM),\
                 join_stats(m_bar)
 
-    def plot_cont_extrap(self, mu, eta_pdg, eta_star, **kwargs):
+    def plot_cont_extrap(self, mu, eta_pdg, eta_star,
+                         with_amres=False, **kwargs):
         ansatz, guess = self.ansatz(**kwargs)
+        if with_amres and len(self.ens_list)>3:
+            amres = join_stats(
+                    [self.mSMOM_dict[ens].valence.interpolate_amres(
+                        eta_pdg, stop=-3 if ens[0]=='F' else -2)
+                     for ens in self.ens_list])
+            def ansatz(asq, param, **kw):
+                if kw['fit']=='central':
+                    am = amres.val
+                elif kw['fit']=='recon':
+                    am = asq*0
+                else:
+                    am = amres.btsp[kw['k'],:]
+                return param[0] + param[1]*asq**2 +\
+                        param[2]*asq**2 + param[3]*am
+            guess.append(1e-1)
+
         x = self.a_sq
         y_mc_mSMOM, y_mc_SMOM, y_mbar = self.load_renorm_masses(
                 mu, eta_pdg, eta_star)
@@ -687,9 +703,15 @@ class cont_extrap:
                     xmin, xmax = ax[0].get_xlim()
 
                 if eta_pdg.val>eta_PDG.val*0.75:
-                    ansatz, guess = self.ansatz(choose='linear', **kwargs)
-                    end = -1
-                    xrange = np.linspace(0, x.val[-2])
+                    if len(self.ens_list)==3:
+                        ansatz, guess = self.ansatz(choose='linear', **kwargs)
+                        end = -1
+                        xrange = np.linspace(0, x.val[-2])
+                    else:
+                        ansatz, guess = self.ansatz(choose='linear', **kwargs)
+                        end = -2
+                        xrange = np.linspace(0, x.val[-3])
+                        
                 else:
                     ansatz, guess = self.ansatz(choose=choose, **kwargs)
                     end = None
@@ -746,7 +768,7 @@ class cont_extrap:
             ax[0].set_title(r'$M^\star:'+err_disp(eta_star.val, eta_star.err)+r'$')
             ax[0].set_ylabel(r'$m_{c,R}(\mu='+str(mu)+r'\,\mathrm{GeV})$')
             ax[1].set_ylabel(r'$\overline{m}(\mu='+str(mu)+r'\,\mathrm{GeV})$')
-            ax[1].set_xlabel(r'$a^2\,[\mathrm{GeV}^2]$')
+            ax[1].set_xlabel(r'$a^2\,[\mathrm{GeV}^{-2}]$')
 
             ax[0].legend(bbox_to_anchor=(1, 0.4))
 
@@ -764,22 +786,20 @@ class cont_extrap:
 
             x = join_stats(M_pdg_list)
             y = join_stats(y_phys)
+            y = y/x
             ax.errorbar(x.val, y.val, xerr=x.err, yerr=y.err,
                         fmt='o', capsize=4, c='k')
             ymin, ymax = ax.get_ylim()
             ax.vlines(x=eta_PDG.val, ymin=ymin, ymax=ymax,
                       color='k', linestyle='dashed')
             ax.set_ylim([ymin, ymax])
-            ax.set_ylabel(r'$m_{c,R}$ (GeV)')
+            ax.set_ylabel(r'$m_{c,R}/M_{\eta_c}$')
             ax.set_xlabel(r'$M_{\eta_c}$ (GeV)')
 
-            ansatz, guess = self.ansatz(choose='quadratic', **kwargs)
-            fit_indices = [idx for idx,val in enumerate(list(x.val)) if val<=0.75*eta_PDG.val]
-            ax.errorbar(x.val[fit_indices], y.val[fit_indices],
-                        xerr=x.err[fit_indices], yerr=y.err[fit_indices],
-                        fmt='o', capsize=4, c='r')
-            res = fit_func(x[fit_indices], y[fit_indices], ansatz, guess,
-                           correlated=True)
+            def ansatz(m, param, **kwargs):
+                return param[0]/m + param[1] + param[2]*m
+            guess = [1, 1e-1, 1e-2]
+            res = fit_func(x, y, ansatz, guess)
             xmin, xmax = ax.get_xlim()
             xrange = np.linspace(xmin, xmax)
             yrange = res.mapping(xrange)
@@ -792,7 +812,7 @@ class cont_extrap:
                  ha='center', va='center',
                  transform=ax.transAxes)
             ax.text(1.05, 0.5,
-                    r'$\alpha + \beta\,M_{\eta_c} + \gamma\,M_{\eta_c}^2$',
+                    r'$\alpha/M_{\eta_c} + \beta + \gamma\,M_{\eta_c}$',
                     va='center', ha='center', rotation=90,
                     color='k', alpha=0.3,
                     transform=ax.transAxes)
@@ -969,7 +989,7 @@ class cont_extrap:
         guess = [1, 1e-1] if len(self.ens_list)==2 else [1,1e-1,1e-2]
         if choose=='linear':
             return linear_ansatz, [1, 1e-1]
-        elif choose=='quadtratic':
+        elif choose=='quadratic':
             return quadratic_ansatz, [1, 1e-1, 1e-2]
         else:
             return ansatz, guess 

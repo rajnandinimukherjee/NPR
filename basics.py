@@ -99,8 +99,8 @@ def fit_func(x, y, ansatz, guess,
     else:
         L = np.diag(1/y.err[start:end])
 
-    def diff(inp, out, param, fit='central', k=0):
-        return out - ansatz(inp, param, fit=fit, k=0, **kwargs)
+    def diff(inp, out, param, **kwargs):
+        return out - ansatz(inp, param, **kwargs)
 
     def LD(param):
         return L.dot(diff(x.val[start:end],
@@ -139,9 +139,10 @@ def fit_func(x, y, ansatz, guess,
                 btsp='fill')
 
         return stat(
-            val=ansatz(am.val, res.val),
+            val=ansatz(am.val, res.val, fit='recon'),
             err='fill',
-            btsp=np.array([ansatz(am.btsp[k,], res.btsp[k])
+            btsp=np.array([ansatz(am.btsp[k,], res.btsp[k],
+                                  fit='recon')
                            for k in range(N_boot)])
         )
     res.mapping = mapping

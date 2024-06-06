@@ -420,3 +420,73 @@ class valence:
             self.meson_correlator(mass, meson_num=33, fit_corr=False, **kwargs)
         self.compute_Z_A(**kwargs)
 
+    def interpolate_amres(self, M, start=0, stop=None,
+                          plot=False, **kwargs):
+        if stop==None:
+            stop = len(self.all_masses)
+
+        x = join_stats([self.eta_h_masses[m] for m in self.all_masses[start:stop]])
+        x = x*self.ainv
+        y = join_stats([self.amres[m] for m in self.all_masses[start:stop]])
+
+        lin_indices = np.sort(
+            self.closest_n_points(M.val, x.val, n=2))
+        x_1, y_1 = x[lin_indices[0]], y[lin_indices[0]]
+        x_2, y_2 = x[lin_indices[1]], y[lin_indices[1]]
+        slope = (y_2-y_1)/(x_2-x_1)
+        intercept = y_1 - slope*x_1
+
+        lin_pred = intercept + slope*M
+
+        quad_indices = np.sort(
+            self.closest_n_points(M.val, x.val, n=3))
+        x_1, y_1 = x[quad_indices[0]], y[quad_indices[0]]
+        x_2, y_2 = x[quad_indices[1]], y[quad_indices[1]]
+        x_3, y_3 = x[quad_indices[2]], y[quad_indices[2]]
+
+        a = y_1/((x_1-x_2)*(x_1-x_3)) + y_2 / \
+            ((x_2-x_1)*(x_2-x_3)) + y_3/((x_3-x_1)*(x_3-x_2))
+
+        b = (-y_1*(x_2+x_3)/((x_1-x_2)*(x_1-x_3))
+             - y_2*(x_1+x_3)/((x_2-x_1)*(x_2-x_3))
+             - y_3*(x_1+x_2)/((x_3-x_1)*(x_3-x_2)))
+
+        c = (y_1*x_2*x_3/((x_1-x_2)*(x_1-x_3))
+             + y_2*x_1*x_3/((x_2-x_1)*(x_2-x_3))
+             + y_3*x_1*x_2/((x_3-x_1)*(x_3-x_2)))
+
+        quad_pred = a*(M**2) + b*M + c
+
+        stat_err = max(lin_pred.err, quad_pred.err)
+        sys_err = np.abs(quad_pred.val-lin_pred.val)/2
+        pred = stat(
+                val=(lin_pred.val+quad_pred.val)/2,
+                err=(stat_err**2+sys_err**2)**0.5,
+                btsp='fill'
+                )
+
+        if plot:
+            fig, ax = plt.subplots()
+            ax.errorbar(x.val, y.val, xerr=x.err, yerr=y.err,
+                        fmt='o', capsize=4)
+            ax.errorbar([M.val], [pred.val],
+                        xerr=M.err, yerr=pred.err,
+                        fmt='o', capsize=4, c='k')
+
+            ax.set_xlabel(r'$M_{\eta_h}\,[\mathrm{GeV}]$')
+            ax.set_ylabel(r'$am_\mathrm{res}$')
+            ax.set_title(self.ens)
+            filename = f'{self.ens}_amres_variation.pdf'
+            call_PDF(filename, open=True)
+
+        return pred
+
+    def closest_n_points(self, target, values, n, **kwargs):
+        diff = np.abs(np.array(values)-np.array(target))
+        sort = np.sort(diff)
+        closest_idx = []
+        for n_idx in range(n):
+            nth_closest_point = list(diff).index(sort[n_idx])
+            closest_idx.append(nth_closest_point)
+        return closest_idx
+
