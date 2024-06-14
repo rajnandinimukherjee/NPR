@@ -151,8 +151,8 @@ def R_mSMOM_to_MSbar_alt(mu, mbar):
 
     order_a = 2*C0(sq)-2*C0(0)
     if mbar!=0.0:
-        mass = 1+4*np.log(mrat)-sq*np.log(mrat)
-        mass = -sq*mass-3*np.log(sq/mrat)
+        mass = 1+4*np.log(mrat)+sq*np.log(mrat)
+        mass = -sq*mass+3*np.log(sq/mrat)
         order_a -= mass
     order_a *= CF/(4*np.pi)
     order_a += k1

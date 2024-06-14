@@ -1,4 +1,4 @@
-from basics import *
+path = '/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/'
 import glob
 import pandas as pd
 from ensemble_parameters import *

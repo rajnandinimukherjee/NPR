@@ -570,8 +570,8 @@ class cont_extrap:
         return join_stats(m_c_ren_mSMOM), join_stats(m_c_ren_SMOM),\
                 join_stats(m_bar)
 
-    def plot_cont_extrap(self, mu, eta_pdg, eta_star,
-                         with_amres=False, **kwargs):
+    def plot_cont_extrap(self, mu, eta_pdg, eta_star, with_amres=False, 
+                         eta_pdg_label='', eta_star_label='', **kwargs):
         ansatz, guess = self.ansatz(**kwargs)
         if with_amres and len(self.ens_list)>3:
             amres = join_stats(
@@ -604,9 +604,10 @@ class cont_extrap:
                        fmt='o', capsize=4, color='b', 
                        mfc='None', label='mSMOM')
 
-        res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
+        res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess, verbose=True)
         print(f'Fit to mSMOM data: chi_sq/DOF:'+\
                 f'{res_mc_mSMOM.chi_sq/res_mc_mSMOM.DOF}')
+        print(f'delta:{err_disp(res_mc_mSMOM[-1].val, res_mc_mSMOM[-1].err)}')
         y_mc_mSMOM_phys = res_mc_mSMOM[0]
 
         xmin, xmax = ax[0].get_xlim()
@@ -625,7 +626,7 @@ class cont_extrap:
                        fmt='x', capsize=4, color='k',
                        mfc='None', label='SMOM')
 
-        res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess)
+        res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess, verbose=True)
         print(f'Fit to SMOM data: chi_sq/DOF:'+\
                 f'{res_mc_SMOM.chi_sq/res_mc_SMOM.DOF}')
         y_mc_SMOM_phys = res_mc_SMOM[0]
@@ -643,7 +644,7 @@ class cont_extrap:
                        fmt='o', capsize=4, color='b',
                        mfc='None', label='mSMOM')
 
-        res_mbar = fit_func(x, y_mbar, ansatz, guess)
+        res_mbar = fit_func(x, y_mbar, ansatz, guess, verbose=True)
         print(f'Fit to mbar data: chi_sq/DOF:'+\
                 f'{res_mbar.chi_sq/res_mbar.DOF}')
         y_mbar_phys = res_mbar[0]
@@ -657,11 +658,21 @@ class cont_extrap:
                            color='b', alpha=0.2)
         ax[1].set_xlim([-0.02, xmax])
 
-        ax[0].set_title(r'$M_{\eta_c}:'+err_disp(eta_pdg.val, eta_pdg.err)+\
-                r', M^\star:'+err_disp(eta_star.val, eta_star.err)+r'$')
-        ax[0].set_ylabel(r'$m_{c,R}(\mu='+str(mu)+r'\,\mathrm{GeV})$')
+        label1, label2 = r'$M_i:$', r'$\overline{M}:$'
+        label1 += err_disp(eta_pdg.val, eta_pdg.err) if\
+                eta_pdg_label=='' else eta_pdg_label
+        label2 += err_disp(eta_star.val, eta_star.err) if\
+                eta_star_label=='' else eta_star_label
+        ax[0].set_title(label1+r', '+label2)
+        ax[0].set_ylabel(r'$m_c^R(\mu='+str(mu)+r'\,\mathrm{GeV})$')
         ax[1].set_ylabel(r'$\overline{m}(\mu='+str(mu)+r'\,\mathrm{GeV})$')
-        ax[1].set_xlabel(r'$a^2\,[\mathrm{GeV}^2]$')
+        ax[1].set_xlabel(r'$a^2\,[\mathrm{GeV}^{-2}]$')
+        ax[0].text(1.05, 0,
+                   r'$\alpha + \beta\,a^2 + \gamma\,a^4 +'+\
+                           r' \delta\,am_\mathrm{res}(M_i)$',
+                   va='center', ha='center', rotation=90,
+                   color='k', alpha=0.3,
+                   transform=ax[0].transAxes)
 
         for idx in range(2):
             ymin, ymax = ax[idx].get_ylim()
