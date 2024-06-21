@@ -102,7 +102,7 @@ def mylog(x):
 
 def C0_int(u):
     if u == 0:
-        return 2.34239
+        return C0(0)
     else:
         d1 = (-1+1j*np.sqrt(3))/2
         n1 = (-2-(1/u)-np.sqrt((u**-2)+(4/u)))/2
@@ -131,35 +131,33 @@ def alpha_s(mu, f=3):
     return (g(mu, f=f)**2)/(4*np.pi)
 
 
-def R_mSMOM_to_MSbar(mu, mbar):
+def Z_m_mSMOM(mu, mbar, gauge='Landau'):
     CF = 4/3
     sq = (mbar/mu)**2
-    mrat = (mbar**2)/(mbar**2 + mu**2)
+    mratio = (mbar**2)/(mbar**2 + mu**2)
 
-    cons = -4-(C0(0)/2)+2*C0(sq)
-    if mbar != 0.0:
-        mass = 1+4*np.log(mrat)-sq*np.log(mrat)
-        mass = -sq*mass-3*np.log(sq/mrat)
-        cons += mass
-    return 1 + (alpha_s(mu)*CF/(4*np.pi))*(cons)
-
-def R_mSMOM_to_MSbar_alt(mu, mbar):
-    CF = 4/3
-    sq = (mbar/mu)**2
-    mrat = (mbar**2)/(mbar**2 + mu**2)
-    k1 = -0.0514 # Table 1, 1805.06225
-
-    order_a = 2*C0(sq)-2*C0(0)
-    if mbar!=0.0:
-        mass = 1+4*np.log(mrat)+sq*np.log(mrat)
-        mass = -sq*mass+3*np.log(sq/mrat)
-        order_a -= mass
-    order_a *= CF/(4*np.pi)
-    order_a += k1
+    if gauge=='Landau':
+        order_a = 4-(3/2)*C0_int(sq)
+        if mbar!=0.0:
+            order_a += -3*np.log(1+sq)+3*sq*np.log(sq/(1+sq))
+    else:
+        order_a = 5-2*C0_int(sq)
+        if mbar!=0.0:
+            mass = 1 + 4*np.log(mratio) + sq*np.log(mratio)
+            mass = sq*mass - 3*np.log(sq/mratio)
+            order_a += mass
+        order_a *= CF/(4*np.pi)
     return 1 + alpha_s(mu)*order_a
 
+def R_mSMOM_to_MSbar(mu, mbar):
+    MSbar = 1
+    mSMOM = Z_m_mSMOM(mu, mbar)-1
+    return MSbar - mSMOM
 
-
+def R_mSMOM_to_SMOM(mu, mbar):
+    SMOM = Z_m_mSMOM(mu, 0.0)
+    mSMOM = Z_m_mSMOM(mu, mbar)
+    return SMOM/mSMOM
 
 
 # ====computing RISMOM(gamma-gamma)->MSbar matching factors======

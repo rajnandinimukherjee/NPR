@@ -9,9 +9,16 @@ eta_PDG = stat(
 
 eta_star = eta_PDG/2
 
+def closest_n_points(target, values, n, **kwargs):
+    diff = np.abs(np.array(values)-np.array(target))
+    sort = np.sort(diff)
+    closest_idx = []
+    for n_idx in range(n):
+        nth_closest_point = list(diff).index(sort[n_idx])
+        closest_idx.append(nth_closest_point)
+    return closest_idx
 
 class Z_bl_analysis:
-
     grp = 'bilinear'
 
     def __init__(self, ens, action=(0, 0), scheme='qslash',
@@ -150,7 +157,7 @@ class Z_bl_analysis:
                        color='k', alpha=0.3,
                        transform=ax[0].transAxes)
 
-            res = fit_func(x, y, eta_mass_ansatz, [0.1,1,1], verbose=False)
+            res = fit_func(x, y, eta_mass_ansatz, [0.1,1,1])
             def pred_amq(eta_mass, param, **kwargs):
                 a, b, c = param
                 root = (-b+(b**2 + 4*c*(eta_mass-a))**0.5)/(2*c)
@@ -168,12 +175,30 @@ class Z_bl_analysis:
                              for k in range(N_boot)]
                        )
 
+            if alt_fit:
+                variations, names = self.fit_variations(y, x, eta_pdg)
+                am_c = stat(
+                        val=variations[2].val,
+                        err=(max([var.err for var in variations])**2 +\
+                                np.abs((max(var.val for var in variations)-\
+                                min(var.val for var in variations))/2)**2)**0.5,
+                        btsp='fill'
+                        )
+                variations, names = self.fit_variations(y, x, eta_star)
+                am_star = stat(
+                        val=variations[2].val,
+                        err=(max([var.err for var in variations])**2 +\
+                                np.abs((max(var.val for var in variations)-\
+                                min(var.val for var in variations))/2)**2)**0.5,
+                        btsp='fill'
+                        )
+
             ax[0].errorbar(x.val, y.val, yerr=y.err,
                         capsize=4, fmt='o')
             if add_pdg:
                 ymin, ymax = ax[0].get_ylim()
                 ax[0].hlines(y=eta_pdg.val, xmin=0, xmax=am_c.val, color='k')
-                ax[0].text(0.05, eta_pdg.val-0.05, r'$M_{\eta_c}^\mathrm{PDG}$',
+                ax[0].text(0.05, eta_pdg.val-0.05, r'$M_i$',
                            va='top', ha='center', color='k')
                 ax[0].fill_between(np.linspace(0,am_c.val,100),
                                    eta_pdg.val+eta_pdg.err,
@@ -189,7 +214,7 @@ class Z_bl_analysis:
                                    color='k', alpha=0.2)
 
                 ax[0].hlines(y=eta_star.val, xmin=0, xmax=am_star.val, color='r')
-                ax[0].text(0.05, eta_star.val-0.05, r'$M^\star$',
+                ax[0].text(0.05, eta_star.val-0.05, r'$\overline{M}$',
                            va='top', ha='center', color='r')
                 ax[0].fill_between(np.linspace(0,am_star.val,100),
                                    eta_star.val+eta_star.err,
@@ -220,8 +245,6 @@ class Z_bl_analysis:
             ax[0].set_ylabel(r'$M_{\eta_h}\,[\mathrm{GeV}]$')
             ax[0].set_xlim(0, xmax)
             ax[0].set_title(f'{self.ens}')
-
-
 
 
 
@@ -286,10 +309,10 @@ class Z_bl_analysis:
             ax[1].set_ylabel(r'$Z_'+key+'(\mu='+str(mu)+label)
             ax[1].set_xlim(0, xmax)
 
-            variations, names = self.fit_variations(x, y, am_star)
-            variations = join_stats([Z_m_amstar]+variations)
-            names = ['all-pts']+names
             if alt_fit:
+                variations, names = self.fit_variations(x, y, am_star)
+                variations = join_stats([Z_m_amstar]+variations)
+                names = ['all-pts']+names
                 fit_vals = [fit.val for fit in variations]
                 stat_err = max([fit.err for fit in variations])
                 sys_err = (max(fit_vals)-min(fit_vals))/2
@@ -310,10 +333,6 @@ class Z_bl_analysis:
                 ax[1].set_xlabel(r'$am_q+am_\mathrm{res}$')
                 Z_m_amstar = Z_m_amstar*am_c*self.ainv
                 mbar = Z_m_amstar*am_star*self.ainv
-
-
-
-
 
             if not Z_only:
                 y = (x*y)/am_c
@@ -390,7 +409,7 @@ class Z_bl_analysis:
     def fit_variations(self, x, y, am_star, **kwargs):
         def two_pt_ansatz(am, param, **kwargs):
             return param[0] + param[1]*am
-        indices = np.sort(self.closest_n_points(
+        indices = np.sort(closest_n_points(
             am_star.val, x.val, n=2))
         res = fit_func(x[indices], y[indices],
                        two_pt_ansatz, [1,1e-1])
@@ -398,14 +417,14 @@ class Z_bl_analysis:
 
         def three_pt_ansatz(am, param, **kwargs):
             return param[0] + param[1]*am + param[2]*(am**2)
-        indices = np.sort(self.closest_n_points(
+        indices = np.sort(closest_n_points(
             am_star.val, x.val, n=3))
         res = fit_func(x[indices], y[indices],
                        three_pt_ansatz, [1,1e-1,1e-2])
         fit_3 = res.mapping(am_star)
         farthest_point = indices[-1]
 
-        indices = list(np.sort(self.closest_n_points(
+        indices = list(np.sort(closest_n_points(
             am_star.val, x.val, n=4)))
         indices.remove(farthest_point)
         res = fit_func(x[indices], y[indices],
@@ -415,14 +434,14 @@ class Z_bl_analysis:
         def four_pt_ansatz(am, param, **kwargs):
             return param[0] + param[1]*am +\
                     param[2]*(am**2) + param[3]*(am**3)
-        indices = np.sort(self.closest_n_points(
+        indices = np.sort(closest_n_points(
             am_star.val, x.val, n=4))
         res = fit_func(x[indices], y[indices],
                        four_pt_ansatz, [1,1e-1,1e-2,1e-3])
         fit_4 = res.mapping(am_star)
         farthest_point = indices[-1]
 
-        indices = list(np.sort(self.closest_n_points(
+        indices = list(np.sort(closest_n_points(
             am_star.val, x.val, n=5)))
         indices.remove(farthest_point)
         res = fit_func(x[indices], y[indices],
@@ -474,7 +493,7 @@ class Z_bl_analysis:
 
         if fittype == 'linear':
             indices = np.sort(
-                self.closest_n_points(mu, x.val, n=2))
+                closest_n_points(mu, x.val, n=2))
             x_1, y_1 = x[indices[0]], y[indices[0]]
             x_2, y_2 = x[indices[1]], y[indices[1]]
             slope = (y_2-y_1)/(x_2-x_1)
@@ -484,7 +503,7 @@ class Z_bl_analysis:
 
         elif fittype == 'quadratic':
             indices = np.sort(
-                self.closest_n_points(mu, x.val, n=3))
+                closest_n_points(mu, x.val, n=3))
             x_1, y_1 = x[indices[0]], y[indices[0]]
             x_2, y_2 = x[indices[1]], y[indices[1]]
             x_3, y_3 = x[indices[2]], y[indices[2]]
@@ -504,14 +523,6 @@ class Z_bl_analysis:
 
         return pred
 
-    def closest_n_points(self, target, values, n, **kwargs):
-        diff = np.abs(np.array(values)-np.array(target))
-        sort = np.sort(diff)
-        closest_idx = []
-        for n_idx in range(n):
-            nth_closest_point = list(diff).index(sort[n_idx])
-            closest_idx.append(nth_closest_point)
-        return closest_idx
 
     def plot_momentum_dependence(self, masses, key, x_sq=False,
                                  pass_fig=False, normalise=False,
@@ -539,9 +550,7 @@ class Z_bl_analysis:
             filename = f'plots/Z_{key}_v_ap.pdf'
             call_PDF(filename)
 
-
 class cont_extrap:
-
     def __init__(self, ens_list):
         self.ens_list = ens_list
         self.mSMOM_dict = {ens: Z_bl_analysis(ens, renorm='mSMOM')
@@ -571,13 +580,14 @@ class cont_extrap:
                 join_stats(m_bar)
 
     def plot_cont_extrap(self, mu, eta_pdg, eta_star, with_amres=False, 
-                         eta_pdg_label='', eta_star_label='', **kwargs):
+                         eta_pdg_label='', eta_star_label='', quad=False,
+                         **kwargs):
         ansatz, guess = self.ansatz(**kwargs)
+        amres = join_stats(
+                [self.mSMOM_dict[ens].valence.interpolate_amres(
+                    eta_pdg, stop=-3 if ens[0]=='F' else -2)
+                 for ens in self.ens_list])
         if with_amres and len(self.ens_list)>3:
-            amres = join_stats(
-                    [self.mSMOM_dict[ens].valence.interpolate_amres(
-                        eta_pdg, stop=-3 if ens[0]=='F' else -2)
-                     for ens in self.ens_list])
             def ansatz(asq, param, **kw):
                 if kw['fit']=='central':
                     am = amres.val
@@ -585,51 +595,75 @@ class cont_extrap:
                     am = asq*0
                 else:
                     am = amres.btsp[kw['k'],:]
-                return param[0] + param[1]*asq**2 +\
-                        param[2]*asq**2 + param[3]*am
-            guess.append(1e-1)
+                    
+                if quad:
+                    return param[0] + param[1]*asq + param[2]*asq**2 + param[3]*am
+                else:
+                    return param[0] + param[1]*asq + param[2]*am
+
+            ansatz_name = r'$\alpha+\beta\,a^2+\gamma\,am_\mathrm{res}(M_i)$'
+            if quad:
+                guess.append(1e-1)
+                ansatz_name = r'$\alpha+\beta\,a^2+\gamma\,a^4+'+\
+                        r'\delta\,am_\mathrm{res}(M_i)$'
 
         x = self.a_sq
         y_mc_mSMOM, y_mc_SMOM, y_mbar = self.load_renorm_masses(
                 mu, eta_pdg, eta_star)
+
+        res_mbar = fit_func(x, y_mbar, ansatz, guess)
+        print('mbar fit params: '+', '.join([err_disp(res_mbar[i].val, res_mbar[i].err)
+                                              for i in range(len(guess))])+\
+              '\tchi_sq/DOF:'+f'{res_mbar.chi_sq/res_mbar.DOF}')
+        y_mbar_phys = res_mbar[0]
+        res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess)
+        print('mSMOM fit params: '+', '.join([err_disp(res_mc_mSMOM[i].val,
+                                                       res_mc_mSMOM[i].err)
+                                              for i in range(len(guess))])+\
+              '\tchi_sq/DOF:'+f'{res_mc_mSMOM.chi_sq/res_mc_mSMOM.DOF}')
+        y_mc_mSMOM_phys = res_mc_mSMOM[0]
+        res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess)
+        print('SMOM fit params: '+', '.join([err_disp(res_mc_SMOM[i].val,
+                                                      res_mc_SMOM[i].err)
+                                              for i in range(len(guess))])+\
+              '\tchi_sq/DOF:'+f'{res_mc_SMOM.chi_sq/res_mc_SMOM.DOF}')
+        y_mc_SMOM_phys = res_mc_SMOM[0]
+
+
+
 
         fig, ax = plt.subplots(nrows=2, ncols=1,
                                sharex='col',
                                figsize=(3,5))
         plt.subplots_adjust(hspace=0, wspace=0)
 
+        if with_amres:
+            y_mc_mSMOM = y_mc_mSMOM-res_mc_mSMOM[-1]*amres
 
-        ax[0].errorbar(x.val, y_mc_mSMOM.val, 
+        conv = R_mSMOM_to_SMOM(mu, y_mbar_phys.val)
+        ax[0].errorbar(x.val, y_mc_mSMOM.val*conv, 
                        xerr=x.err, yerr=y_mc_mSMOM.err,
                        fmt='o', capsize=4, color='b', 
-                       mfc='None', label='mSMOM')
-
-        res_mc_mSMOM = fit_func(x, y_mc_mSMOM, ansatz, guess, verbose=True)
-        print(f'Fit to mSMOM data: chi_sq/DOF:'+\
-                f'{res_mc_mSMOM.chi_sq/res_mc_mSMOM.DOF}')
-        print(f'delta:{err_disp(res_mc_mSMOM[-1].val, res_mc_mSMOM[-1].err)}')
-        y_mc_mSMOM_phys = res_mc_mSMOM[0]
+                       mfc='None', label='mSMOM->SMOM')
 
         xmin, xmax = ax[0].get_xlim()
         xrange = np.linspace(0, xmax)
-        yrange = res_mc_mSMOM.mapping(xrange)
+        yrange = res_mc_mSMOM.mapping(xrange)*conv
 
-        ax[0].errorbar([0.0], [y_mc_mSMOM_phys.val],
+        ax[0].errorbar([0.0], [y_mc_mSMOM_phys.val*conv],
                        yerr=[y_mc_mSMOM_phys.err],
                        capsize=4, fmt='o', color='b')
         ax[0].fill_between(xrange, yrange.val+yrange.err,
                            yrange.val-yrange.err,
                            color='b', alpha=0.2)
 
+
+        if with_amres:
+            y_mc_SMOM = y_mc_SMOM-res_mc_SMOM[-1]*amres
         ax[0].errorbar(x.val, y_mc_SMOM.val, 
                        xerr=x.err, yerr=y_mc_SMOM.err,
                        fmt='x', capsize=4, color='k',
                        mfc='None', label='SMOM')
-
-        res_mc_SMOM = fit_func(x, y_mc_SMOM, ansatz, guess, verbose=True)
-        print(f'Fit to SMOM data: chi_sq/DOF:'+\
-                f'{res_mc_SMOM.chi_sq/res_mc_SMOM.DOF}')
-        y_mc_SMOM_phys = res_mc_SMOM[0]
 
         yrange = res_mc_SMOM.mapping(xrange)
         ax[0].errorbar([0.0], [y_mc_SMOM_phys.val],
@@ -639,15 +673,13 @@ class cont_extrap:
                            yrange.val-yrange.err,
                            color='k', alpha=0.1)
 
+
+        if with_amres:
+            y_mbar = y_mbar-res_mbar[-1]*amres
         ax[1].errorbar(x.val, y_mbar.val, 
                        xerr=x.err, yerr=y_mbar.err,
                        fmt='o', capsize=4, color='b',
                        mfc='None', label='mSMOM')
-
-        res_mbar = fit_func(x, y_mbar, ansatz, guess, verbose=True)
-        print(f'Fit to mbar data: chi_sq/DOF:'+\
-                f'{res_mbar.chi_sq/res_mbar.DOF}')
-        y_mbar_phys = res_mbar[0]
 
         yrange = res_mbar.mapping(xrange)
         ax[1].errorbar([0.0], [y_mbar_phys.val],
@@ -667,9 +699,7 @@ class cont_extrap:
         ax[0].set_ylabel(r'$m_c^R(\mu='+str(mu)+r'\,\mathrm{GeV})$')
         ax[1].set_ylabel(r'$\overline{m}(\mu='+str(mu)+r'\,\mathrm{GeV})$')
         ax[1].set_xlabel(r'$a^2\,[\mathrm{GeV}^{-2}]$')
-        ax[0].text(1.05, 0,
-                   r'$\alpha + \beta\,a^2 + \gamma\,a^4 +'+\
-                           r' \delta\,am_\mathrm{res}(M_i)$',
+        ax[0].text(1.05, 0, ansatz_name,
                    va='center', ha='center', rotation=90,
                    color='k', alpha=0.3,
                    transform=ax[0].transAxes)
@@ -1004,6 +1034,5 @@ class cont_extrap:
             return quadratic_ansatz, [1, 1e-1, 1e-2]
         else:
             return ansatz, guess 
-
 
 
