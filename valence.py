@@ -26,33 +26,29 @@ class valence:
             {self.all_masses[m]: f'c{m-4}'
              for m in range(4, self.N_mass)})
 
+        self.sm = '_sm' if smeared else ''
         self.smeared = smeared
-        if load:
-            self.cfgs = self.info['valence_cfgs']
-            df = check_valence(self.ens+'S'\
-                    if ens in ['C1', 'M1'] else self.ens, pass_only=True)
-            if smeared:
-                if self.ens[:2]=='M1':
-                    for mass in self.all_masses[-3:]:
-                        df[mass].replace(16, 32, inplace=True)
-                df.replace(32, 100, inplace=True)
-            else:
-                if self.ens[:2]=='M1':
-                    for mass in self.all_masses[-3:]:
-                        df[mass].replace(16, 0, inplace=True)
-                df.replace(16, 100, inplace=True)
-
-            self.mass_cfgs = {m:df.index[df[m].eq(100)].to_list()
-                              for m in self.all_masses}
-            for mass in self.all_masses.copy():
-                if len(self.mass_cfgs[mass])==0:
-                    self.all_masses.remove(mass)
-
-            self.cfgs_df = df
+        self.cfgs = self.info['valence_cfgs']
+        df = check_valence(self.ens+'S'\
+                if ens in ['C1', 'M1'] else self.ens, pass_only=True)
+        if smeared:
+            if self.ens[:2]=='M1':
+                for mass in self.all_masses[-3:]:
+                    df[mass].replace(16, 32, inplace=True)
+            df.replace(32, 100, inplace=True)
         else:
-            if self.ens[:2]=='M1' and not smeared:
-                for mass in self.all_masses.copy()[-3:]:
-                    self.all_masses.remove(mass)
+            if self.ens[:2]=='M1':
+                for mass in self.all_masses[-3:]:
+                    df[mass].replace(16, 0, inplace=True)
+            df.replace(16, 100, inplace=True)
+
+        self.mass_cfgs = {m:df.index[df[m].eq(100)].to_list()
+                          for m in self.all_masses}
+        for mass in self.all_masses.copy():
+            if len(self.mass_cfgs[mass])==0:
+                self.all_masses.remove(mass)
+
+        self.cfgs_df = df
 
     def Z_A_correlator(self, mass, load=True,
                        meson_num=33,N_src=16,
