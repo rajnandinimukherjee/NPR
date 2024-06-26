@@ -456,6 +456,7 @@ class Z_bl_analysis:
                     plot=False, pass_plot=False,
                     **kwargs):
 
+        pdb.set_trace()
         x = self.momenta[masses]*self.ainv
         y = self.Z[masses][key]
 

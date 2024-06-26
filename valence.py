@@ -459,6 +459,8 @@ class valence:
             call_PDF(f'{self.ens}_eta_h.pdf', open=True)
 
     def calc_all(self, load=False, **kwargs):
+        if not load:
+            self.all_masses = ['{:.4f}'.format(m) for m in self.info['masses']]
 
         self.compute_eta_h(load=load, **kwargs)
         self.compute_amres(load=load, **kwargs)
