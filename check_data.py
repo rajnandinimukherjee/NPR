@@ -1,10 +1,12 @@
 path = '/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/'
 import glob
 import pandas as pd
+import itertools
 from ensemble_parameters import *
 
-def check_NPR(ens):
-    print(f'Ensemble: {ens}')
+def check_NPR(ens, pass_only=False):
+    if not pass_only:
+        print(f'Ensemble: {ens}')
     loc = path+ens+'/results'
     if ens=='C1S' or ens=='M1S':
         ens = ens[:-1]
@@ -17,7 +19,7 @@ def check_NPR(ens):
 
     exp_num_data = len(moms)*len(twistvals)*len(cfgs)*len(masses)
     count = 0
-    df = pd.DataFrame(0, index=masses, columns=cfgs)
+    df = pd.DataFrame(0, index=cfgs, columns=masses)
     for cfg in cfgs:
         for mass in masses:
             for mom, tw in itertools.product(moms, twistvals):
@@ -27,15 +29,19 @@ def check_NPR(ens):
                 files = glob.glob(f'{loc}/{cfg}/NPR/bilinears/*_{action}'+\
                         f'*am_{mass}*{tw_str}*{mom_str1}*_{action}*am_{mass}*{mom_str2}*{cfg}*')
                 count += len(files)
-                df[cfg][mass] += len(files)
+                df[mass][cfg] += len(files)
 
-    print(f'Found {count}/{exp_num_data} files')
-    print(f'Expecting (mom)x(tw) = {len(moms)}x{len(twistvals)} = {len(moms)*len(twistvals)} files per config per mass point\n')
-    print(df)
+    if pass_only:
+        return df
+    else:
+        print(f'Found {count}/{exp_num_data} files')
+        print(f'Expecting (mom)x(tw) = {len(moms)}x{len(twistvals)} = {len(moms)*len(twistvals)} files per config per mass point\n')
+        print(df)
 
 pd.set_option('display.max_rows', None)
-def check_valence(ens, data='mesons'):
-    print(f'Ensemble: {ens}')
+def check_valence(ens, data='mesons', pass_only=False):
+    if not pass_only:
+        print(f'Ensemble: {ens}')
     loc = path+ens+'/results'
     if ens=='C1S' or ens=='M1S':
         ens = ens[:-1]
@@ -64,8 +70,11 @@ def check_valence(ens, data='mesons'):
             count += len(files)
             df[mass][cfg] += len(files)
 
-    print(f'Valence data: {data}\n')
-    print(f'Found {count}/{exp_num} files')
-    print(f'Expecting N_src = 16 (32 if sm data available) files per config per mass point\n')
-    print(df)
+    if pass_only:
+        return df
+    else:
+        print(f'Valence data: {data}\n')
+        print(f'Found {count}/{exp_num} files')
+        print(f'Expecting N_src = 16 (32 if sm data available) files per config per mass point\n')
+        print(df)
 

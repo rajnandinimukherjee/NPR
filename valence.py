@@ -1,10 +1,13 @@
 from basics import *
+from check_data import *
+datapath = '/'.join(os.getcwd().split('/')[:-1])+'/data'
 
 class valence:
     eta_h_gamma = ('Gamma5', 'Gamma5')
     Z_A_gamma = ('Gamma5', 'GammaTGamma5')
+    path = datapath
 
-    def __init__(self, ens, action=(0,0), **kwargs):
+    def __init__(self, ens, action=(0,0), smeared=False, **kwargs):
         self.ens = ens
         self.action = action
         self.info = params[self.ens]
@@ -12,7 +15,6 @@ class valence:
             val=self.info['ainv'],
             err=self.info['ainv_err'],
             btsp='fill')
-
         self.T = int(self.info['TT'])
         self.all_masses = ['{:.4f}'.format(m) for m in self.info['masses']]
         self.N_mass = len(self.all_masses)
@@ -24,15 +26,42 @@ class valence:
             {self.all_masses[m]: f'c{m-4}'
              for m in range(4, self.N_mass)})
 
+        self.smeared = smeared
+        if load:
+            self.cfgs = self.info['valence_cfgs']
+            df = check_valence(self.ens+'S'\
+                    if ens in ['C1', 'M1'] else self.ens, pass_only=True)
+            if smeared:
+                if self.ens[:2]=='M1':
+                    for mass in self.all_masses[-3:]:
+                        df[mass].replace(16, 32, inplace=True)
+                df.replace(32, 100, inplace=True)
+            else:
+                if self.ens[:2]=='M1':
+                    for mass in self.all_masses[-3:]:
+                        df[mass].replace(16, 0, inplace=True)
+                df.replace(16, 100, inplace=True)
+
+            self.mass_cfgs = {m:df.index[df[m].eq(100)].to_list()
+                              for m in self.all_masses}
+            for mass in self.all_masses.copy():
+                if len(self.mass_cfgs[mass])==0:
+                    self.all_masses.remove(mass)
+
+            self.cfgs_df = df
+        else:
+            if self.ens[:2]=='M1' and not smeared:
+                for mass in self.all_masses.copy()[-3:]:
+                    self.all_masses.remove(mass)
 
     def Z_A_correlator(self, mass, load=True,
-                       cfgs=None, meson_num=33,
-                       N_src=16, save=True,
+                       meson_num=33,N_src=16,
+                       save=True, end_only=False,
                        fit_start=19, fit_end=28, 
                        **kwargs):
 
         a1, a2 = self.action
-        fname = f'NPR/action{a1}_action{a2}/'
+        fname = f'{self.path}/action{a1}_action{a2}/'
         fname += '__'.join(['NPR', self.ens,
                     self.info['baseactions'][a1],
                     self.info['baseactions'][a2]])
@@ -42,18 +71,18 @@ class valence:
         if load:
             datapath = path+self.ens
             datapath += 'S/results' if self.ens[-1] not in ['M', 'S'] else '/results'
-            R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
             massname = self.mass_names[mass]
+            R = 'R16' if massname[0]=='c' else 'R08'
+            cfgs = self.mass_cfgs[mass]
 
-            self.cfgs = self.info['valence_cfgs'] if cfgs==None else cfgs
             t_src_range = range(0,self.T,int(self.T/N_src))
-            corr = np.zeros(shape=(len(self.cfgs), N_src, self.T))
+            corr = np.zeros(shape=(len(cfgs), N_src, self.T))
 
-            for cf_idx, cf in enumerate(self.cfgs):
+            for cf_idx, cf in enumerate(cfgs):
                 filename = f'{datapath}/{cf}/conserved/'
                 for t_idx, t_src in enumerate(t_src_range):
                     f_string = f'prop_{massname}_{R}_Z2_t'+'{:02d}'.format(t_src)
-                    f_string += f'_p+0_+0_+0.{cf}.h5'
+                    f_string += '_p+0_+0_+0'+self.sm+f'.{cf}.h5'
                     data = h5py.File(filename+f_string, 'r')['wardIdentity']
                     corr[cf_idx,t_idx,:] = np.roll(
                             np.array(data['PA0'][:]['re']),-t_src)
@@ -84,20 +113,26 @@ class valence:
 
             folded_corr = (corr_new[1:]+corr_new[::-1][:-1])[:int(self.T/2)]*0.5
 
-            fit_points = np.arange(fit_start, fit_end)
-            def constant_Z_A(t, param, **kwargs):
-                return param[0]*np.ones(len(t))
-            x = stat(val=fit_points, btsp='fill')
-            y = folded_corr[fit_points]
-            res = fit_func(x, y, constant_Z_A, [1, 0])
-            fit = res[0] if res[0].val!=0 else folded_corr[-1]
+            if end_only:
+                fit = folded_corr[-4]
+            else:
+                fit_points = np.arange(fit_start, fit_end)
+                def constant_Z_A(t, param, **kwargs):
+                    return param[0]*np.ones(len(t))
+                x = stat(val=fit_points, btsp='fill')
+                y = folded_corr[fit_points]
+                res = fit_func(x, y, constant_Z_A, [1, 0])
+                fit = res[0] if res[0].val!=0 else folded_corr[-1]
             print(f'For am_q={mass}, Z_A={err_disp(fit.val,fit.err)}')
 
             if save:
                 f = h5py.File(fname, 'a')
                 if grp_name in f:
                     del f[grp_name]
+                if grp_name+'_sm' in f:
+                    del f[grp_name+'_sm']
                 mes_grp = f.create_group(grp_name)
+                mes_grp.attrs['configs'] = cfgs
                 mes_grp.create_dataset('central', data=corr.val) 
                 mes_grp.create_dataset('errors', data=corr.err) 
                 mes_grp.create_dataset('bootstrap', data=corr.btsp) 
@@ -180,11 +215,12 @@ class valence:
     def amres_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
                          N_src=16, save=True,
+                         end_only=False,
                          num_end_points=5,
                          **kwargs):
 
         a1, a2 = self.action
-        fname = f'NPR/action{a1}_action{a2}/'
+        fname = f'{self.path}/action{a1}_action{a2}/'
         fname += '__'.join(['NPR', self.ens,
                     self.info['baseactions'][a1],
                     self.info['baseactions'][a2]])
@@ -194,18 +230,18 @@ class valence:
         if load:
             datapath = path+self.ens
             datapath += 'S/results' if self.ens[-1] not in ['M', 'S'] else '/results'
-            R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
             massname = self.mass_names[mass]
+            R = 'R16' if massname[0]=='c' else 'R08'
+            cfgs = self.mass_cfgs[mass]
 
-            self.cfgs = self.info['valence_cfgs'] if cfgs==None else cfgs
             t_src_range = range(0,self.T,int(self.T/N_src))
-            corr = np.zeros(shape=(len(self.cfgs), N_src, self.T))
+            corr = np.zeros(shape=(len(cfgs), N_src, self.T))
 
-            for cf_idx, cf in enumerate(self.cfgs):
+            for cf_idx, cf in enumerate(cfgs):
                 filename = f'{datapath}/{cf}/conserved/'
                 for t_idx, t_src in enumerate(t_src_range):
                     f_string = f'prop_{massname}_{R}_Z2_t'+'{:02d}'.format(t_src)
-                    f_string += f'_p+0_+0_+0.{cf}.h5'
+                    f_string += '_p+0_+0_+0'+self.sm+f'.{cf}.h5'
                     data = h5py.File(filename+f_string, 'r')['wardIdentity']
                     corr[cf_idx,t_idx,:] = np.roll(
                             np.array(data['PJ5q'][:]['re']),-t_src)
@@ -222,20 +258,26 @@ class valence:
             corr_new = corr/meson
             folded_corr = (corr_new[1:]+corr_new[::-1][:-1])[:int(self.T/2)]*0.5
 
-            fit_points = np.arange(int(self.T/2))[-num_end_points:]
-            def constant_mass(t, param, **kwargs):
-                return param[0]*np.ones(len(t))
-            x = stat(val=fit_points, btsp='fill')
-            y = folded_corr[fit_points]
-            res = fit_func(x, y, constant_mass, [0.1, 0])
-            fit = res[0] if res[0].val!=0 else folded_corr[-1]
+            if end_only:
+                fit = folded_corr[-4]
+            else:
+                fit_points = np.arange(int(self.T/2))[-num_end_points:]
+                def constant_mass(t, param, **kwargs):
+                    return param[0]*np.ones(len(t))
+                x = stat(val=fit_points, btsp='fill')
+                y = folded_corr[fit_points]
+                res = fit_func(x, y, constant_mass, [0.1, 0])
+                fit = res[0] if res[0].val!=0 else folded_corr[-1]
             print(f'For am_q={mass}, am_res={err_disp(fit.val,fit.err)}')
 
             if save:
                 f = h5py.File(fname, 'a')
                 if grp_name in f:
                     del f[grp_name]
+                if grp_name+'_sm' in f:
+                    del f[grp_name+'_sm']
                 mes_grp = f.create_group(grp_name)
+                mes_grp.attrs['configs'] = cfgs
                 mes_grp.create_dataset('central', data=corr.val) 
                 mes_grp.create_dataset('errors', data=corr.err) 
                 mes_grp.create_dataset('bootstrap', data=corr.btsp) 
@@ -288,11 +330,11 @@ class valence:
     def meson_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
                          N_src=16, save=True, fit_corr=True, 
-                         fit_start=15, fit_end=30, 
+                         end_only=False, fit_start=15, fit_end=30, 
                          **kwargs):
 
         a1, a2 = self.action
-        fname = f'NPR/action{a1}_action{a2}/'
+        fname = f'{self.path}/action{a1}_action{a2}/'
         fname += '__'.join(['NPR', self.ens,
                     self.info['baseactions'][a1],
                     self.info['baseactions'][a2]])
@@ -302,20 +344,21 @@ class valence:
         if load:
             datapath = path+self.ens
             datapath += 'S/results' if self.ens[-1] not in ['M', 'S'] else '/results'
-            R = 'R08' if self.all_masses.index(mass)<4 else 'R16'
             massname = self.mass_names[mass]
+            R = 'R16' if massname[0]=='c' else 'R08'
+            cfgs = self.mass_cfgs[mass]
+
             foldername = f'{massname}_{R}__{massname}_{R}'
             mes = f'meson_{meson_num}'
 
-            self.cfgs = self.info['valence_cfgs'] if cfgs==None else cfgs
             t_src_range = range(0,self.T,int(self.T/N_src))
-            corr = np.zeros(shape=(len(self.cfgs), N_src, self.T))
+            corr = np.zeros(shape=(len(cfgs), N_src, self.T))
 
-            for cf_idx, cf in enumerate(self.cfgs):
+            for cf_idx, cf in enumerate(cfgs):
                 filename = f'{datapath}/{cf}/mesons/{foldername}/meson_'
                 for t_idx, t_src in enumerate(t_src_range):
                     f_string = f'prop_{massname}_{R}_Z2_t'+'{:02d}'.format(t_src)
-                    f_string += '_p+0_+0_+0'
+                    f_string += '_p+0_+0_+0'+self.sm
                     fstring = '__'.join([f_string, f_string, f'snk_0_0_0.{cf}.h5'])
                     data = h5py.File(filename+fstring, 'r')['meson'][mes]
                     corr[cf_idx,t_idx,:] = np.roll(
@@ -334,19 +377,25 @@ class valence:
                 div = ((folded_corr[2:]+folded_corr[:-2])/folded_corr[1:-1])*0.5
                 m_eff = div.use_func(np.arccosh)
 
-                def constant_mass(t, param, **kwargs):
-                    return param[0]*np.ones(len(t))
-                x = stat(val=np.arange(fit_start, fit_end), btsp='fill')
-                y = m_eff[fit_start:fit_end]
-                res = fit_func(x, y, constant_mass, [0.1, 0])
-                fit = res[0]
+                if end_only:
+                    fit = m_eff[-4]
+                else:
+                    def constant_mass(t, param, **kwargs):
+                        return param[0]*np.ones(len(t))
+                    x = stat(val=np.arange(fit_start, fit_end), btsp='fill')
+                    y = m_eff[fit_start:fit_end]
+                    res = fit_func(x, y, constant_mass, [0.1, 0])
+                    fit = res[0]
                 print(f'For am_q={mass}, am_eta_h={err_disp(fit.val, fit.err)}')
 
             if save:
                 f = h5py.File(fname, 'a')
                 if grp_name in f:
                     del f[grp_name]
+                if grp_name+'_sm' in f:
+                    del f[grp_name+'_sm']
                 mes_grp = f.create_group(grp_name)
+                mes_grp.attrs['configs'] = cfgs
                 mes_grp.create_dataset('central', data=corr.val) 
                 mes_grp.create_dataset('errors', data=corr.err) 
                 mes_grp.create_dataset('bootstrap', data=corr.btsp) 
@@ -413,12 +462,14 @@ class valence:
         if plot:
             call_PDF(f'{self.ens}_eta_h.pdf', open=True)
 
-    def calc_all(self, **kwargs):
-        self.compute_eta_h(**kwargs)
-        self.compute_amres(**kwargs)
+    def calc_all(self, load=False, **kwargs):
+
+        self.compute_eta_h(load=load, **kwargs)
+        self.compute_amres(load=load, **kwargs)
         for mass in self.all_masses:
-            self.meson_correlator(mass, meson_num=33, fit_corr=False, **kwargs)
-        self.compute_Z_A(**kwargs)
+            self.meson_correlator(mass, meson_num=33,
+                                  fit_corr=False, load=load, **kwargs)
+        self.compute_Z_A(load=load, **kwargs)
 
     def interpolate_amres(self, M, start=0, stop=None,
                           plot=False, **kwargs):

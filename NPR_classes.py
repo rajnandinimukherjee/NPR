@@ -2,7 +2,6 @@ from basics import *
 from fourquark import *
 from valence import *
 
-
 class bilinear_analysis:
     keys = ['S', 'P', 'V', 'A', 'T', 'm']
     N_boot = N_boot
@@ -87,7 +86,7 @@ class bilinear_analysis:
                     continue
                 else:
                     a1, a2 = action
-                    filename = f'NPR/action{a1}_action{a2}/'
+                    filename = f'{datapath}/action{a1}_action{a2}/'
                     filename += '__'.join(['NPR', self.ens,
                         params[self.ens]['baseactions'][a1],
                         params[self.ens]['baseactions'][a2]])
@@ -121,10 +120,10 @@ class bilinear_analysis:
     def NPR_all(self, massive=False, save=True, renorm='mSMOM', **kwargs):
         if massive:
             self.valence = valence(self.ens)
-            self.valence.compute_amres(load=False)
-            self.valence.compute_Z_A(load=False)
+            self.valence.calc_all(load=False)
             self.amres_dict = self.valence.amres
             self.Z_A_dict = self.valence.Z_A
+
 
             self.momenta[(0, 0)] = {}
             self.Z[(0, 0)] = {}
@@ -237,7 +236,7 @@ class fourquark_analysis:
                     continue
                 else:
                     a1, a2 = action
-                    filename = f'NPR/action{a1}_action{a2}/'
+                    filename = f'{datapath}/action{a1}_action{a2}/'
                     filename += '__'.join(['NPR', self.ens,
                         params[self.ens]['baseactions'][a1],
                         params[self.ens]['baseactions'][a2],

@@ -28,7 +28,7 @@ class Z_bl_analysis:
         self.renorm = renorm
 
         a1, a2 = action
-        datafile = f'NPR/action{a1}_action{a2}/'
+        datafile = f'{datapath}/action{a1}_action{a2}/'
         datafile += '__'.join(['NPR', self.ens, params[self.ens]['baseactions'][a1],
                               params[self.ens]['baseactions'][a2]])
         datafile += f'_{renorm}.h5'
