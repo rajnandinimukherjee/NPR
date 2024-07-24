@@ -205,6 +205,15 @@ class stat:
         for idx, central in np.ndenumerate(self.val):
             if seed != None:
                 np.random.seed(seed)
+                self.seed = seed
+            else:
+                if int(central)!=0:
+                    digits = -int(np.log10(np.abs(central)))+6
+                    self.seed = np.abs(int(central*(10**digits)))
+                else:
+                    self.seed = 0
+
+            np.random.seed(self.seed)
             self.btsp[idx] = np.random.normal(
                 central, self.err[idx], self.N_boot)
         self.btsp = np.moveaxis(self.btsp, -1, 0)

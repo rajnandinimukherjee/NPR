@@ -32,8 +32,8 @@ def Bcoeffs(f, **kwargs):
 amz = 0.118
 gmz = np.sqrt(4*np.pi*amz)
 m_z = 91.1876
-m_c = 1.28
-m_b = 4.18
+m_c = 1.273
+m_b = 4.183
 m_t = 174.200
 
 
@@ -65,11 +65,15 @@ def ODE(g, mu, f, **kwargs):
     return dg_dmu
 
 
-gmc = odeint(ODE, gmz, [m_z, m_c], args=(None,))[-1]
+def g(mu, f=3, m_z=m_z, m_c=m_c, m_c_scale=m_c, **kwargs):
+    if f==3:
+        gmc = odeint(ODE, gmz, [m_z, m_c], args=(None,))[-1]
+        return odeint(ODE, gmc, [m_c_scale, mu], args=(f,))[-1]
+    else:
+        return odeint(ODE, gmz, [m_z, mu], args=(None,))[-1]
 
-
-def g(mu, f=3, **kwargs):
-    return odeint(ODE, gmc, [m_c, mu], args=(f,))[-1]
+def alpha_s(mu, **kwargs):
+    return (g(mu, **kwargs)[0]**2)/(4*np.pi)
 
 
 # ====C0 function================================================
@@ -127,38 +131,83 @@ def C0_int(u):
         return -quad(real_func, 0, 1)[0]
 
 
-def alpha_s(mu, f=3):
-    return (g(mu, f=f)**2)/(4*np.pi)
 
-
-def Z_m_mSMOM(mu, mbar, gauge='Landau'):
+def R_mSMOM_to_MSbar(mu, mbar, mu_hat=None, f=4):
+    if mu_hat==None:
+        mu_hat = mu
     CF = 4/3
-    sq = (mbar/mu)**2
-    mratio = (mbar**2)/(mbar**2 + mu**2)
-
-    if gauge=='Landau':
-        order_a = 4-(3/2)*C0_int(sq)
-        if mbar!=0.0:
-            order_a += -3*np.log(1+sq)+3*sq*np.log(sq/(1+sq))
-    else:
-        order_a = 5-2*C0_int(sq)
-        if mbar!=0.0:
-            mass = 1 + 4*np.log(mratio) + sq*np.log(mratio)
-            mass = sq*mass - 3*np.log(sq/mratio)
-            order_a += mass
-        order_a *= CF/(4*np.pi)
-    return 1 + alpha_s(mu)*order_a
-
-def R_mSMOM_to_MSbar(mu, mbar):
-    MSbar = 1
-    mSMOM = Z_m_mSMOM(mu, mbar)-1
-    return MSbar - mSMOM
+    u = (mbar/mu)**2 
+    one_loop = -4 + C0_int(u)*3/2 + 3*np.log(1+u) + 6*np.log(mu/mu_hat)
+    if mbar!=0.0:
+        one_loop -= 3*u*np.log(u/(1+u))
+    return 1 + alpha_s(mu, f=f)*CF*one_loop/(4*np.pi)
 
 def R_mSMOM_to_SMOM(mu, mbar):
-    SMOM = Z_m_mSMOM(mu, 0.0)
-    mSMOM = Z_m_mSMOM(mu, mbar)
-    return SMOM/mSMOM
+    return (R_mSMOM_to_MSbar(mu, mbar)/R_mSMOM_to_MSbar(mu, 0.0))[0]
 
+def g_powers(n, mu):
+    factor = (g(mu/(2*np.pi)))**2
+    return factor**(n+1)
+
+def R_m_PT_err(mu, f=4, **kwargs):
+    mult = alpha_s(mu, f=f)/(4*np.pi)
+    num = (22.60768757-4.013539470*f)*mult**2
+    den = 1 - 0.6455188560*mult
+    return num/den
+
+def MSbar_m_running(mu_start, mu_end, N_f=3, **kwargs):
+    gamma_0_m = 1 
+    gamma_1_m = (101/2 - (5*N_f)/3)/12
+    gamma_2_m = (3747/4 - (N_f*(1108/9 + (70*N_f)/27 + 80*zeta(3)))/2)/48
+    gamma_3_m = 4603055/41472 - (91723*N_f)/6912 + (2621*N_f**2)/31104 -\
+            (83*N_f**3)/15552 + (11*N_f*np.pi**4)/288 - ((N_f**2)*np.pi**4)/432 +\
+            (530*zeta(3))/27 - (2137*N_f*zeta(3))/144 + (25*(N_f**2)*zeta(3))/72 +\
+            ((N_f**3)*zeta(3))/108 - (275*zeta(5))/8 + (575*N_f*zeta(5))/72
+    gamma_4_m = ((1/4)**5)*(99512327/162 + 46402466/243*zeta(3) + 96800*zeta(3)**2 -\
+            698126/9*zeta(4) - 231757160/243*zeta(5) + 242000*zeta(6) +\
+            412720*zeta(7) + N_f*(-150736283/1458 - 12538016/81*zeta(3) -\
+            75680/9*zeta(3)**2 + 2038742/27*zeta(4) + 49876180/243*zeta(5) -\
+            638000/9*zeta(6) - 1820000/27*zeta(7)) + (N_f**2)*(1320742/729 +\
+            2010824/243*zeta(3) + 46400/27*zeta(3)**2 - 166300/27*zeta(4) -\
+            264040/81*zeta(5) + 92000/27*zeta(6)) + N_f**3*(91865/1458 +\
+            12848/81*zeta(3) + 448/9*zeta(4) - 5120/27*zeta(5)) +\
+            (N_f**4)*(-260/243 - 320/243*zeta(3) + 64/27*zeta(4)))
+
+    betas = Bcoeffs(N_f)
+    betas = np.array([betas[i]/(4**(i+1)) for i in range(len(betas))])
+    gammas = np.array([gamma_0_m, gamma_1_m, gamma_2_m, gamma_3_m, gamma_4_m])/betas[0]
+    betas = betas/betas[0]
+
+    def running(a):
+        a = a/np.pi
+        return (a**gammas[0])*(1 + (gammas[1] - betas[1]*gammas[0])*a +\
+                ((gammas[1] - betas[1]*gammas[0])**2 + gammas[2] -\
+                betas[1]*gammas[1] + (betas[1]**2)*gammas[0] - betas[2]*gammas[0])*(a**2)/2 +\
+                ((gammas[1] - betas[1]*(gammas[0])**3)/6 + (gammas[1] - betas[1]*gammas[0])*\
+                (gammas[2] - betas[1]*gammas[1] + (betas[1]**2)*gammas[0] -\
+                betas[2]*gammas[0])/2 + (gammas[3] - betas[1]*gammas[2] +\
+                (betas[1]**2)*gammas[1] - betas[2]*gammas[1] - (betas[1]**3)*gammas[0] +\
+                2*betas[1]*betas[2]*gammas[0] - betas[3]*gammas[0])/3)*(a**3))
+
+    return running(alpha_s(mu_end, **kwargs))/running(alpha_s(mu_start, **kwargs))
+
+def mcmc(mc_init, mu_init, tol=1e-5, f=4, max_iter=30, **kwargs):
+    mc, mu = mc_init, mu_init 
+    count = 0
+    while np.abs(mc-mu)>tol and count<max_iter:
+        mu_newp = mu+((mc-mu)/2)
+        mu_newm = mu-((mc-mu)/2)
+
+        mc_newp = MSbar_m_running(mu, mu_newp, f=f, **kwargs)*mc 
+        mc_newm = MSbar_m_running(mu, mu_newm, f=f, **kwargs)*mc 
+
+        if np.abs(mc_newp-mu_newp)>=np.abs(mc_newm-mu_newm):
+            mc, mu = mc_newm, mu_newm 
+        else:
+            mc, mu = mc_newp, mu_newp
+        count += 1
+
+    return mc
 
 # ====computing RISMOM(gamma-gamma)->MSbar matching factors======
 C_0 = (2/3)*polygamma(1, 1/3) - (2*np.pi/3)**2

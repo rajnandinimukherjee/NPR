@@ -151,7 +151,7 @@ class valence:
         return corr, fit
 
     def compute_Z_A(self, masses=None, plot=False, 
-            meson_num=33, leave_out=None, **kwargs):
+            meson_num=33, leave_out=None, xlabel='', **kwargs):
 
         self.Z_A = {}
         if masses==None:
@@ -192,9 +192,8 @@ class valence:
 
 
         if 'amres' in self.__dict__.keys() and plot:
-            fig, ax = plt.subplots(figsize=(5,6))
-            x = join_stats([self.amres[mass]+self.info['masses'][
-                self.all_masses.index(mass)]
+            fig, ax = plt.subplots(figsize=(2,3))
+            x = join_stats([self.amres[mass]+eval(mass)
                     for mass in self.all_masses])
             if leave_out==None:
                 leave_out = len(x.val)
@@ -202,8 +201,13 @@ class valence:
             ax.errorbar(x.val[:leave_out], y.val[:leave_out],
                         yerr=y.err[:leave_out], xerr=x.err[:leave_out],
                         fmt='o', capsize=4)
-            ax.set_xlabel(r'$am_q+am_\mathrm{res}$')
-            ax.set_ylabel(r'$Z_A^\mathrm{eff}$')
+            if xlabel=='':
+                xlabel = r'$am_q+am_\mathrm{res}$'
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel(r'$Z_A^\mathrm{PCAC}$')
+            ax.text(0.5, 0.1, self.ens,
+                       va='center', ha='center',
+                       transform=ax.transAxes)
 
         if plot:
             call_PDF(f'{self.ens}_Z_A.pdf', open=True)
@@ -295,7 +299,7 @@ class valence:
                     btsp=np.array(f['fit/bootstrap'][:]))
         return corr, fit
 
-    def compute_amres(self, masses=None, plot=False, **kwargs):
+    def compute_amres(self, masses=None, plot=False, xlabel='', **kwargs):
         self.amres = {}
         if masses==None:
             masses = self.all_masses
@@ -321,7 +325,23 @@ class valence:
                 ax.legend()
 
         if plot:
-            call_PDF(f'{self.ens}_amres.pdf', open=True)
+            fig, ax = plt.subplots(figsize=(2,3))
+            x = stat(
+                    val=[eval(mass) for mass in self.all_masses],
+                    err=np.zeros(len(self.all_masses)),
+                    btsp='fill'
+                    )
+            y = join_stats([self.amres[mass] for mass in self.all_masses])
+            ax.errorbar(x.val, y.val, yerr=y.err, xerr=x.err,
+                    fmt='o', capsize=4)
+            if xlabel=='':
+                xlabel = r'$am_\mathrm{input}$'
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel(r'$am_{res}$')
+            ax.text(0.5, 0.9, self.ens,
+                       va='center', ha='center',
+                       transform=ax.transAxes)
+            call_PDF(f'{self.ens}_amres.pdf')
 
     def meson_correlator(self, mass, load=True, 
                          cfgs=None, meson_num=1,
@@ -422,7 +442,7 @@ class valence:
         else:
             return corr
 
-    def compute_eta_h(self, plot=False, **kwargs):
+    def compute_eta_h(self, plot=False, xlabel='', **kwargs):
         self.eta_h_masses = {}
         for mass in self.all_masses:
             corr, fit = self.meson_correlator(mass, **kwargs)
@@ -444,23 +464,30 @@ class valence:
                 ax.set_ylabel(r'$m_\mathrm{eff}$')
 
         if 'amres' in self.__dict__.keys() and plot:
-            fig, ax = plt.subplots(figsize=(5,6))
-            x = join_stats([self.amres[mass]+self.info['masses'][
-                self.all_masses.index(mass)]
+            fig, ax = plt.subplots(figsize=(2,3))
+            x = join_stats([self.amres[mass]+eval(mass)
                     for mass in self.all_masses])
             y = join_stats([self.ainv*self.eta_h_masses[mass]
                 for mass in self.all_masses])
             ax.errorbar(x.val, y.val, yerr=y.err, xerr=x.err,
                     fmt='o', capsize=4)
-            ax.set_xlabel(r'$am_q+am_\mathrm{res}$')
-            ax.set_ylabel(r'$M_{\eta_h}$')
+            if xlabel=='':
+                xlabel = r'$am_q+am_\mathrm{res}$'
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel(r'$M_{\eta_h}\,[\mathrm{GeV}]$')
+            ax.text(0.5, 0.1, self.ens,
+                       va='center', ha='center',
+                       transform=ax.transAxes)
 
         if plot:
             call_PDF(f'{self.ens}_eta_h.pdf', open=True)
 
-    def calc_all(self, load=False, **kwargs):
+    def calc_all(self, load=False, safe=True, **kwargs):
         if not load:
-            self.all_masses = ['{:.4f}'.format(m) for m in self.info['masses']]
+            if safe:
+                self.all_masses = ['{:.4f}'.format(m) for m in self.info['safe_masses']]
+            else:
+                self.all_masses = ['{:.4f}'.format(m) for m in self.info['masses']]
 
         self.compute_eta_h(load=load, **kwargs)
         self.compute_amres(load=load, **kwargs)
@@ -539,3 +566,27 @@ class valence:
             closest_idx.append(nth_closest_point)
         return closest_idx
 
+    def create_ens_table(self, **kwargs):
+        self.calc_all()
+        rv = [r'\begin{tabular}{c|ccc}']
+        rv += [r'\hline']
+        rv += [r'\hline']
+
+        rv += [r'$am_\mathrm{input}$ & $am_\mathrm{res}\times 10^3$ & $aM_{\eta_h}$ & $Z_A^\mathrm{PCAC}$ \\']
+        rv += [r'\hline']
+        for mass in self.all_masses:
+            amres, aM, ZA = self.amres[mass], self.eta_h_masses[mass], self.Z_A[mass]
+            rv += [r'$'+'$ & $'.join([mass]+[err_disp(o.val, o.err)
+                                            for o in [amres*1000, aM, ZA]])+r'$ \\']
+
+        rv += [r'\hline']
+        rv += [r'\hline']
+        rv += [r'\end{tabular}']
+
+        ens = self.ens+'S' if self.ens[-1]=='1' else self.ens
+        filename = f'/Users/rajnandinimukherjee/PhD/thesis/inputs/MassiveNPR/tables/{ens}_valence.tex'
+
+        f = open(filename, 'w')
+        f.write('\n'.join(rv))
+        f.close()
+        print(f'valence table written to {filename}')
