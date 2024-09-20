@@ -47,8 +47,11 @@ class bilinear_analysis:
         self.momenta[action][masses] = {}
         self.Z[action][masses] = {}
 
-        self.data = path + self.ens
-        self.data += "S/results" if self.ens[-1] not in ["M", "S"] else "/results"
+        if self.ens[:3]=='KEK':
+            self.data = KEK_path+self.ens
+        else:
+            self.data = path+self.ens
+            self.data += "S/results" if self.ens[-1] not in ["M", "S"] else "/results"
         if not os.path.isdir(self.data):
             print("NPR data for this ensemble could not be found on this machine")
         else:
@@ -228,7 +231,8 @@ class fourquark_analysis:
         self.momenta[action] = {masses: {}}
         self.Z[action] = {masses: {}}
 
-        self.data = path + self.ens + "/results/"
+        self.data = KEK_path if self.ens[:3]=='KEK' else path 
+        self.data += self.ens
         if not os.path.isdir(self.data):
             print("NPR data for this ensemble could not be found on this machine")
         else:
