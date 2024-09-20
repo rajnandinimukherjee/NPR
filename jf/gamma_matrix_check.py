@@ -33,7 +33,7 @@
 """
 
 import numpy as np
-from gamma_matrices import Gamma,GHsign,G5sign,G5Gi
+from gamma_matrices import Gamma, GHsign, G5sign, G5Gi
 
 # Use the Kronecker product to make the tensor product of a spin
 # matrix S with a color matrix C. From np.kron(S,C) we get a
@@ -44,55 +44,71 @@ from gamma_matrices import Gamma,GHsign,G5sign,G5Gi
 #  [ S10 C, S11 C, S12 C, ...],
 #  ...                       ]]
 
-Is=Gamma[0] # spin identity
-G1=Gamma[1]
-G2=Gamma[2]
-G3=Gamma[4]
-G4=Gamma[8]
-G5=Gamma[15]
+Is = Gamma[0]  # spin identity
+G1 = Gamma[1]
+G2 = Gamma[2]
+G3 = Gamma[4]
+G4 = Gamma[8]
+G5 = Gamma[15]
 
-Ic=np.identity(3,int) # colour identity
+Ic = np.identity(3, int)  # colour identity
 
-IsIc=np.kron(Is,Ic)
-G5Ic=np.kron(G5,Ic)
-G1Ic=np.kron(G1,Ic)
-G2Ic=np.kron(G2,Ic)
-G3Ic=np.kron(G3,Ic)
-G4Ic=np.kron(G4,Ic)
+IsIc = np.kron(Is, Ic)
+G5Ic = np.kron(G5, Ic)
+G1Ic = np.kron(G1, Ic)
+G2Ic = np.kron(G2, Ic)
+G3Ic = np.kron(G3, Ic)
+G4Ic = np.kron(G4, Ic)
 
-chromagammas=(IsIc,G1Ic,G2Ic,np.dot(G1Ic,G2Ic),
-              G3Ic,np.dot(G1Ic,G3Ic),np.dot(G2Ic,G3Ic),np.dot(G5Ic,G4Ic),
-              G4Ic,np.dot(G1Ic,G4Ic),np.dot(G2Ic,G4Ic),np.dot(G3Ic,G5Ic),
-              np.dot(G3Ic,G4Ic),np.dot(G5Ic,G2Ic),np.dot(G1Ic,G5Ic),G5Ic)
+chromagammas = (
+    IsIc,
+    G1Ic,
+    G2Ic,
+    np.dot(G1Ic, G2Ic),
+    G3Ic,
+    np.dot(G1Ic, G3Ic),
+    np.dot(G2Ic, G3Ic),
+    np.dot(G5Ic, G4Ic),
+    G4Ic,
+    np.dot(G1Ic, G4Ic),
+    np.dot(G2Ic, G4Ic),
+    np.dot(G3Ic, G5Ic),
+    np.dot(G3Ic, G4Ic),
+    np.dot(G5Ic, G2Ic),
+    np.dot(G1Ic, G5Ic),
+    G5Ic,
+)
 
-print('Checking G5 Gi = sigma Gj')
-for i,g in enumerate(chromagammas):
-  GiIc=np.kron(Gamma[i],Ic)
-  sgn,j=G5Gi[i]
-  print(i,np.allclose(GiIc,g),
-        np.allclose(np.dot(G5Ic,GiIc),sgn*np.kron(Gamma[j],Ic)))
+print("Checking G5 Gi = sigma Gj")
+for i, g in enumerate(chromagammas):
+    GiIc = np.kron(Gamma[i], Ic)
+    sgn, j = G5Gi[i]
+    print(
+        i,
+        np.allclose(GiIc, g),
+        np.allclose(np.dot(G5Ic, GiIc), sgn * np.kron(Gamma[j], Ic)),
+    )
 
-print('\nChecking Gi^dag = GHsign Gi')
-for i,g in enumerate(chromagammas):
-  GiIc=np.kron(g,Ic)
-  GiIcdag=GiIc.transpose().conjugate()
-  if np.allclose(GiIc,GiIcdag):
-    h=1
-  elif np.allclose(GiIc,-GiIcdag):
-    h=-1
-  else:
-    print('Neither hermitian nor antihermitian')
-  print('{:2d}  {:2d} {:2d}'.format(i,h,GHsign[i]))
+print("\nChecking Gi^dag = GHsign Gi")
+for i, g in enumerate(chromagammas):
+    GiIc = np.kron(g, Ic)
+    GiIcdag = GiIc.transpose().conjugate()
+    if np.allclose(GiIc, GiIcdag):
+        h = 1
+    elif np.allclose(GiIc, -GiIcdag):
+        h = -1
+    else:
+        print("Neither hermitian nor antihermitian")
+    print("{:2d}  {:2d} {:2d}".format(i, h, GHsign[i]))
 
 ##G5sign=(1,-1,-1,1,-1,1,1,-1,-1,1,1,-1,1,-1,-1,1)
 ##GHsign=Gammahermiticity
-print('\nChecking GHsign[i] G5sign[i] = GHsign[j] if G5 Gi = sigma Gj')
-print('Last two columns should match')
-print(' i   j  ghi g5i gh5i ghj')
-for i,g in enumerate(chromagammas):
-  sigma,j=G5Gi[i]
-  ghi=GHsign[i]
-  ghj=GHsign[j]
-  g5i=G5sign[i]
-  print(('{:2d}  '*6).format(i,j,ghi,g5i,ghi*g5i,ghj))
-  
+print("\nChecking GHsign[i] G5sign[i] = GHsign[j] if G5 Gi = sigma Gj")
+print("Last two columns should match")
+print(" i   j  ghi g5i gh5i ghj")
+for i, g in enumerate(chromagammas):
+    sigma, j = G5Gi[i]
+    ghi = GHsign[i]
+    ghj = GHsign[j]
+    g5i = G5sign[i]
+    print(("{:2d}  " * 6).format(i, j, ghi, g5i, ghi * g5i, ghj))
