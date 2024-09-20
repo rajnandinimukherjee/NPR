@@ -151,7 +151,7 @@ class fourquark:
     def __init__(self, ensemble, prop1, prop2, scheme="gamma", cfgs=None, **kwargs):
 
         if ensemble[:3]=='KEK':
-            data = KEK_path+ensemble
+            data = KEK_path+ensemble+'/results'
         else:
             data = path+ensemble
             data += "S/results" if ensemble[-1] not in ["M", "S"] else "/results"

@@ -41,7 +41,7 @@ class bilinear:
     ):
 
         if ensemble[:3]=='KEK':
-            data = KEK_path+ensemble
+            data = KEK_path+ensemble+'/results'
         else:
             data = path+ensemble
             data += "S/results" if ensemble[-1] not in ["M", "S"] else "/results"

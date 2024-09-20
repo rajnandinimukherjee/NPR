@@ -48,7 +48,7 @@ class bilinear_analysis:
         self.Z[action][masses] = {}
 
         if self.ens[:3]=='KEK':
-            self.data = KEK_path+self.ens
+            self.data = KEK_path+self.ens+'/results'
         else:
             self.data = path+self.ens
             self.data += "S/results" if self.ens[-1] not in ["M", "S"] else "/results"
