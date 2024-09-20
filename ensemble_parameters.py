@@ -573,7 +573,7 @@ params = {
         "Lss": [12],
         "M5s": [1.0],
         "masses": [0.0035],
-        "NPR_cfgs": list(str(x) for x in range(3410, 13410+1, 1000) if x not in ['9410']),
+        "NPR_cfgs": list(str(x) for x in range(3410, 13410+1, 1000) if x not in [9410]),
         "resids": [1.0e-8],
     },
     "KEKC1S": {
