@@ -324,6 +324,7 @@ UKQCD_ens = ["C0", "C1", "C2", "M0", "M1", "M2", "M3", "F1M", "F1S"]
 KEK_ens = ["KEKC1L", "KEKC1S", "KEKC2a", "KEKC2b", "KEKM1a", "KEKM1b", "KEKF1"]
 all_ens = UKQCD_ens + KEK_ens
 phys_ens = ["C0", "M0"]
+ensemble_seeds = {ens: int(hash(ens)) % (2**32) for ens in all_ens + ["C1M", "M1M"]}
 
 NPR_to_SUSY = np.zeros(shape=(len(operators), len(operators)))
 NPR_to_SUSY[0, 0] = 1

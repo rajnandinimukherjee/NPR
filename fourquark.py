@@ -150,11 +150,12 @@ class fourquark:
 
     def __init__(self, ensemble, prop1, prop2, scheme="gamma", cfgs=None, **kwargs):
 
-        if ensemble[:3]=='KEK':
-            data = KEK_path+ensemble+'/results'
+        self.ens = ensemble
+        if self.ens[:3]=='KEK':
+            data = KEK_path+self.ens+'/results'
         else:
-            data = path+ensemble
-            data += "S/results" if ensemble[-1] not in ["M", "S"] else "/results"
+            data = path+self.ens
+            data += "S/results" if self.ens[-1] not in ["M", "S"] else "/results"
         if cfgs == None:
             self.cfgs = sorted(os.listdir(data)[1:])
         else:
@@ -293,7 +294,8 @@ class fourquark:
         Z = (self.F @ np.linalg.inv(projected.T)).real
 
         # ===bootstrap====
-        self.samples = {k: bootstrap(self.operator[k], K=N_boot) for k in operators}
+        self.samples = {k: bootstrap(self.operator[k], K=N_boot,
+                                     seed=ensemble_seeds[self.ens]) for k in operators}
 
         Z_btsp = np.zeros(shape=(N_boot, len(operators), len(operators)))
 
@@ -307,6 +309,8 @@ class fourquark:
                     self.samples[key][k,] - self.samples[key][k,].swapaxes(1, 3)
                 )
                 samples_amp[key] = self.amputation(out_, in_, samples_op)
+
+            pdb.set_trace()
             proj_btsp = np.array(
                 [
                     [

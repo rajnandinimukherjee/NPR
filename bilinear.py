@@ -111,7 +111,9 @@ class bilinear:
             dtype=object,
         )
         self.btsp_bilinear = np.array(
-            [bootstrap(self.bilinears[i,], K=N_boot) for i in range(self.N_bl)]
+            [bootstrap(self.bilinears[i,], K=N_boot, 
+                       seed=ensemble_seeds[ensemble])
+             for i in range(self.N_bl)]
         )
 
         self.m_q = float(self.prop_in.info["am"])

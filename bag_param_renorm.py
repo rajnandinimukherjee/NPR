@@ -7,7 +7,6 @@ fit_file = "Tobi"
 
 all_bag_data = h5py.File(f"kaon_bag_fits_{fit_file}.h5", "r")
 bag_ensembles = [key for key in all_bag_data.keys() if key in UKQCD_ens]
-ensemble_seeds = {ens: int(hash(ens)) % (2**32) for ens in all_ens + ["C1M", "M1M"]}
 
 
 def load_info(key, ens, ops=operators, meson="ls", **kwargs):

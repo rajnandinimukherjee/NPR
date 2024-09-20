@@ -71,7 +71,8 @@ class external:
             )
 
         self.propagator.avg = np.mean(self.propagator.val, axis=0)
-        self.propagator.btsp = bootstrap(self.propagator.val, K=N_boot)
+        self.propagator.btsp = bootstrap(self.propagator.val, K=N_boot,
+                                         seed=ensemble_seeds[ensemble])
         self.propagator.dagger = self.propagator.avg.conj().T
 
         self.outgoing_propagator = stat(
