@@ -468,6 +468,7 @@ params = {
         "Lss": [8],
         "M5s": [1.0],
         "masses": [0.0030],
+        "NPR_cfgs": list(str(x) for x in range(1010, 3010+1, 500)),
         "resids": [1.0e-8],
     },
     "KEKC2a": {
@@ -488,6 +489,7 @@ params = {
         "Lss": [12],
         "M5s": [1.0],
         "masses": [0.0070],
+        "NPR_cfgs": list(str(x) for x in range(10010, 16010+1, 1000))+['1010','5010','6010'],
         "resids": [1.0e-8],
     },
     "KEKC2b": {
@@ -508,6 +510,7 @@ params = {
         "Lss": [12],
         "M5s": [1.0],
         "masses": [0.0070],
+        "NPR_cfgs": list(str(x) for x in range(10010, 16010+1, 1000))+['1010','2010','6010'],
         "resids": [1.0e-8],
     },
     "KEKM1a": {
@@ -528,6 +531,7 @@ params = {
         "Lss": [8],
         "M5s": [1.0],
         "masses": [0.0042],
+        "NPR_cfgs": list(str(x) for x in range(5010, 9010+1, 1000)),
         "resids": [1.0e-8],
     },
     "KEKM1b": {
@@ -548,6 +552,7 @@ params = {
         "Lss": [8],
         "M5s": [1.0],
         "masses": [0.0042],
+        "NPR_cfgs": list(str(x) for x in range(5010, 9010+1, 1000)),
         "resids": [1.0e-8],
     },
     "KEKC1L": {
@@ -568,6 +573,7 @@ params = {
         "Lss": [12],
         "M5s": [1.0],
         "masses": [0.0035],
+        "NPR_cfgs": list(str(x) for x in range(3410, 13410+1, 1000) if x not in ['9410']),
         "resids": [1.0e-8],
     },
     "KEKC1S": {
@@ -588,6 +594,7 @@ params = {
         "Lss": [12],
         "M5s": [1.0],
         "masses": [0.0035],
+        "NPR_cfgs": list(str(x) for x in range(10910, 16910+1, 1000))+['1910','5410','6410'],
         "resids": [1.0e-8],
     },
 }
