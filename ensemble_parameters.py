@@ -510,7 +510,7 @@ params = {
         "Lss": [12],
         "M5s": [1.0],
         "masses": [0.0070],
-        "NPR_cfgs": list(str(x) for x in range(10010, 16010+1, 1000))+['1010','2010','6010'],
+        "NPR_cfgs": list(str(x) for x in range(10010, 16010+1, 1000))+['1010','2010','5010'],
         "resids": [1.0e-8],
     },
     "KEKM1a": {

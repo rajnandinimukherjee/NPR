@@ -185,7 +185,7 @@ class bilinear_analysis:
                 self.NPR((self.sea_mass, self.sea_mass), action=(a1, a2))
             if N_a == 2:
                 self.merge_mixed()
-            filename_add = "_{self.scheme}"
+            filename_add = f"__{self.scheme}"
 
         if save:
             self.save_NPR(filename_add=filename_add)

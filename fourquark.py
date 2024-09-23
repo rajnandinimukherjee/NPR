@@ -308,9 +308,8 @@ class fourquark:
                 samples_op = 2 * (
                     self.samples[key][k,] - self.samples[key][k,].swapaxes(1, 3)
                 )
-                samples_amp[key] = self.amputation(out_, in_, samples_op)
+                samples_amp[key] = self.amputation(out_, in_, samples_op).astype(complex)
 
-            pdb.set_trace()
             proj_btsp = np.array(
                 [
                     [
