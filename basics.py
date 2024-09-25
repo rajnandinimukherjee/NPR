@@ -1,6 +1,3 @@
-path = "/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/"
-KEK_path = "/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/"
-
 import glob
 import itertools
 import os

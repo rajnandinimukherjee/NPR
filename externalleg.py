@@ -19,11 +19,14 @@ class external:
         **kwargs,
     ):
 
+        data = params[ensemble]['dataloc']+ensemble
         if ensemble[:3]=='KEK':
-            data = KEK_path+ensemble+'/results'
+            data += '/results'
         else:
-            data = path+ensemble
-            data += "S/results" if ensemble[-1] not in ["M", "S"] else "/results"
+            if ensemble[-1] not in ["M", "S"] and ensemble[-1]!='0':
+                data += "S/results"
+            else:
+                data += "/results"
         L = params[ensemble]["XX"]
         if cfgs == None:
             self.cfgs = sorted(os.listdir(data)[1:])

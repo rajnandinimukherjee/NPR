@@ -150,12 +150,15 @@ class fourquark:
 
     def __init__(self, ensemble, prop1, prop2, scheme="gamma", cfgs=None, **kwargs):
 
-        self.ens = ensemble
-        if self.ens[:3]=='KEK':
-            data = KEK_path+self.ens+'/results'
+        data = params[ensemble]['dataloc']+ensemble
+        if ensemble[:3]=='KEK':
+            data += '/results'
         else:
-            data = path+self.ens
-            data += "S/results" if self.ens[-1] not in ["M", "S"] else "/results"
+            if ensemble[-1] not in ["M", "S"] and ensemble[-1]!='0':
+                data += "S/results"
+            else:
+                data += "/results"
+        self.ens = ensemble
         if cfgs == None:
             self.cfgs = sorted(os.listdir(data)[1:])
         else:

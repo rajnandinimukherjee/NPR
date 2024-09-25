@@ -26,6 +26,8 @@ params = {
         "Lss": [24, 12],
         "M5s": [1.8, 1.0],
         "masses": [0.0181, 0.2, 0.3, 0.4, 0.5],
+        "NPR_cfgs": list(str(x) for x in range(500, 2000 + 1, 500)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8, 1.0e-10, 1.0e-10, 1.0e-12, 1.0e-12],
     },
     "C1M": {
@@ -53,6 +55,7 @@ params = {
         "safe_masses": [0.005, 0.01, 0.0181, 0.0362, 0.05, 0.1, 0.15, 0.2, 0.3],
         "NPR_cfgs": list(str(x) for x in range(600, 1880 + 1, 160)),
         "valence_cfgs": list(str(x) for x in range(600, 1880 + 1, 20)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [
             1.0e-8,
             1.0e-8,
@@ -91,6 +94,7 @@ params = {
         "safe_masses": [0.005, 0.01, 0.02, 0.04, 0.05, 0.1, 0.15, 0.2, 0.3, 0.33],
         "NPR_cfgs": list(str(x) for x in range(1000, 8000 + 1, 1000)),
         "valence_cfgs": list(str(x) for x in range(3000, 6160 + 1, 40) if x < 5080),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [1.0e-8, 1.0e-10, 1.0e-10, 1.0e-12, 1.0e-12, 1.0e-12],
     },
     "C2": {
@@ -114,6 +118,7 @@ params = {
         "M5s": [1.8, 1.0],
         "masses": [0.01, 0.02, 0.2, 0.3, 0.4, 0.5],
         "NPR_cfgs": list(str(x) for x in range(1500, 4000 + 1, 500)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [1.0e-8, 1.0e-10, 1.0e-10, 1.0e-12, 1.0e-12, 1.0e-12],
     },
     "M0": {
@@ -136,6 +141,8 @@ params = {
         "Lss": [12, 12],
         "M5s": [1.8, 1.0],
         "masses": [0.0133, 0.15, 0.225, 0.3, 0.375, 0.45],
+        "NPR_cfgs": ['1200', '1600', '2000', '2400', '2780'],
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [
             1.0e-8,
             1.0e-10,
@@ -193,6 +200,7 @@ params = {
         ],
         "NPR_cfgs": list(str(x) for x in range(600, 1880 + 1, 160) if x != 1400),
         "valence_cfgs": list(str(x) for x in range(600, 1880 + 1, 20)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [
             1.0e-8,
             1.0e-8,
@@ -262,6 +270,7 @@ params = {
         "valence_cfgs": list(
             str(x) for x in range(880, 3400 + 1, 40) if x not in [1320, 1600, 1680]
         ),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [
             1.0e-8,
             1.0e-10,
@@ -292,6 +301,7 @@ params = {
         "M5s": [1.8, 1.0],
         "masses": [0.006, 0.012, 0.015, 0.15, 0.225, 0.3, 0.375, 0.45],
         "NPR_cfgs": list(str(x) for x in range(500, 1750 + 1, 250)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [
             1.0e-8,
             1.0e-10,
@@ -322,6 +332,7 @@ params = {
         "M5s": [1.8, 1.0],
         "masses": [0.008, 0.015, 0.016, 0.15, 0.225, 0.3, 0.375, 0.45],
         "NPR_cfgs": list(str(x) for x in range(500, 1750 + 1, 250)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [
             1.0e-8,
             1.0e-10,
@@ -387,6 +398,7 @@ params = {
                 list(set(list(range(200, 400, 20)) + list(range(400, 1600 + 1, 100))))
             )
         ),  # [:15],
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [1.0e-8, 1.0e-10, 1.0e-10, 1.0e-12, 1.0e-12, 1.0e-12, 1.0e-12],
     },
     "F1S": {
@@ -448,6 +460,7 @@ params = {
                 )
             )
         ),  # [9:],
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/projects/npr/',
         "resids": [1.0e-8, 1.0e-10, 1.0e-10, 1.0e-12, 1.0e-12, 1.0e-12],
     },
     "KEKF1": {
@@ -469,6 +482,7 @@ params = {
         "M5s": [1.0],
         "masses": [0.0030],
         "NPR_cfgs": list(str(x) for x in range(1010, 3010+1, 500)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8],
     },
     "KEKC2a": {
@@ -490,6 +504,7 @@ params = {
         "M5s": [1.0],
         "masses": [0.0070],
         "NPR_cfgs": list(str(x) for x in range(10010, 16010+1, 1000))+['1010','5010','6010'],
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8],
     },
     "KEKC2b": {
@@ -511,6 +526,7 @@ params = {
         "M5s": [1.0],
         "masses": [0.0070],
         "NPR_cfgs": list(str(x) for x in range(10010, 16010+1, 1000))+['1010','2010','5010'],
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8],
     },
     "KEKM1a": {
@@ -532,6 +548,7 @@ params = {
         "M5s": [1.0],
         "masses": [0.0042],
         "NPR_cfgs": list(str(x) for x in range(5010, 9010+1, 1000)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8],
     },
     "KEKM1b": {
@@ -553,6 +570,7 @@ params = {
         "M5s": [1.0],
         "masses": [0.0042],
         "NPR_cfgs": list(str(x) for x in range(5010, 9010+1, 1000)),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8],
     },
     "KEKC1L": {
@@ -574,6 +592,7 @@ params = {
         "M5s": [1.0],
         "masses": [0.0035],
         "NPR_cfgs": list(str(x) for x in range(3410, 13410+1, 1000) if x not in [9410]),
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8],
     },
     "KEKC1S": {
@@ -595,6 +614,7 @@ params = {
         "M5s": [1.0],
         "masses": [0.0035],
         "NPR_cfgs": list(str(x) for x in range(10910, 16910+1, 1000))+['1910','5410','6410'],
+        "dataloc":'/mnt/lustre/tursafs1/home/dp207/dp207/shared/Tesseract_archive/work/runs/dc-tsan1_npr/',
         "resids": [1.0e-8],
     },
 }
